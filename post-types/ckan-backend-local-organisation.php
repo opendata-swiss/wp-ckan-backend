@@ -190,11 +190,11 @@ class Ckan_Backend_Local_Organisation {
 		// remove current organisation from result
 		if(isset($_GET['post'])) {
 			$current_organisation_name = get_post_meta($_GET['post'], Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'name', true);
-			if(($key = array_search($current_organisation_name, $response->result)) !== false) {
-				unset($response->result[$key]);
+			if(($key = array_search($current_organisation_name, $response['result'])) !== false) {
+				unset($response['result'][$key]);
 			}
 		}
-		foreach($response->result as $organisation_slug) {
+		foreach($response['result'] as $organisation_slug) {
 			$endpoint = CKAN_API_ENDPOINT . 'action/organization_show';
 			$data = array(
 				'id' => $organisation_slug
@@ -204,8 +204,8 @@ class Ckan_Backend_Local_Organisation {
 			$response = Ckan_Backend_Helper::do_api_request($endpoint, $data);
 			$notices = $this->check_response_for_errors($response);
 			$this->print_error_messages($notices);
-			$organisation = $response->result;
-			$organisation_options[$organisation->name] = $organisation->title;
+			$organisation = $response['result'];
+			$organisation_options[$organisation['name']] = $organisation['title'];
 		}
 
 		return $organisation_options;
@@ -220,15 +220,15 @@ class Ckan_Backend_Local_Organisation {
 	 */
 	public function check_response_for_errors( $response ) {
 		$notices = array();
-		if ( ! is_object( $response ) ) {
+		if ( ! is_array( $response ) ) {
 			$notices[] = 'There was a problem sending the request.';
 		}
 
-		if ( isset( $response->success ) && $response->success === false ) {
-			if ( isset( $response->error ) && isset( $response->error->name ) && is_array( $response->error->name ) ) {
-				$notices[] = $response->error->name[0];
-			} else if ( isset( $response->error ) && isset( $response->error->id ) && is_array( $response->error->id ) ) {
-				$notices[] = $response->error->id[0];
+		if ( isset( $response['success'] ) && $response['success'] === false ) {
+			if ( isset( $response['error'] ) && isset( $response['error']['name'] ) && is_array( $response['error']['name'] ) ) {
+				$notices[] = $response['error']['name'][0];
+			} else if ( isset( $response['error'] ) && isset( $response['error']['id'] ) && is_array( $response['error']['id'] ) ) {
+				$notices[] = $response['error']['id'][0];
 			} else {
 				$notices[] = 'API responded with unknown error.';
 			}

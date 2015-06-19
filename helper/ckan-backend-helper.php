@@ -7,7 +7,7 @@ class Ckan_Backend_Helper {
 	 * @param string $endpoint CKAN API endpoint which gets called
 	 * @param string $data JSON-encoded data to send
 	 *
-	 * @return object The CKAN data as object
+	 * @return array The CKAN data as array
 	 */
 	public static function do_api_request( $endpoint, $data = '' ) {
 		if ( is_array( $data ) ) {
@@ -22,7 +22,7 @@ class Ckan_Backend_Helper {
 
 		// send request
 		$response = curl_exec( $ch );
-		$response = json_decode( $response );
+		$response = json_decode( $response, true );
 
 		curl_close( $ch );
 

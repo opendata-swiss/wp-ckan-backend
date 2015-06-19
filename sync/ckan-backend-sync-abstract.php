@@ -125,14 +125,14 @@ abstract class Ckan_Backend_Sync_Abstract {
 		$endpoint = CKAN_API_ENDPOINT . 'action/' . $this->api_type . '_show?id=' . $ckan_ref;
 		$response = Ckan_Backend_Helper::do_api_request( $endpoint );
 		$success  = $this->check_response_for_errors( $response );
-		$data     = $response->result;
+		$data     = $response['result'];
 
 		if ( $untrash ) {
 			// Set CKAN state to active.
-			$data->state = 'active';
+			$data['state'] = 'active';
 		} else {
 			// Set CKAN state to deleted
-			$data->state = 'deleted';
+			$data['state'] = 'deleted';
 		}
 
 		$data = json_encode( $data );
@@ -154,15 +154,15 @@ abstract class Ckan_Backend_Sync_Abstract {
 	protected function check_response_for_errors( $response ) {
 		// store all error notices in option array
 		$notice = get_option( $this->field_prefix . 'notice' );
-		if ( ! is_object( $response ) ) {
+		if ( ! is_array( $response ) ) {
 			$notice[] = 'There was a problem sending the request.';
 		}
 
-		if ( isset( $response->success ) && $response->success === false ) {
-			if ( isset( $response->error ) && isset( $response->error->name ) && is_array( $response->error->name ) ) {
-				$notice[] = $response->error->name[0];
-			} else if ( isset( $response->error ) && isset( $response->error->id ) && is_array( $response->error->id ) ) {
-				$notice[] = $response->error->id[0];
+		if ( isset( $response['success'] ) && $response['success'] === false ) {
+			if ( isset( $response['error'] ) && isset( $response['error']['name'] ) && is_array( $response['error']['name'] ) ) {
+				$notice[] = $response['error']['name'][0];
+			} else if ( isset( $response['error'] ) && isset( $response['error']['id'] ) && is_array( $response['error']['id'] ) ) {
+				$notice[] = $response['error']['id'][0];
 			} else {
 				$notice[] = 'API responded with unknown error.';
 			}
@@ -207,13 +207,13 @@ abstract class Ckan_Backend_Sync_Abstract {
 
 		$success = $this->check_response_for_errors( $response );
 		if ( $success ) {
-			$result = $response->result;
-			if ( isset( $result->id ) && $result->id != '' ) {
+			$result = $response['result'];
+			if ( isset( $result['id'] ) && $result['id'] != '' ) {
 				// Set reference id from CKAN and add it to $_POST because the real meta save will follow after this action
-				update_post_meta( $post->ID, $this->field_prefix . 'reference', $result->id );
-				update_post_meta( $post->ID, $this->field_prefix . 'name', $result->name );
-				$_POST[ $this->field_prefix . 'reference' ] = $result->id;
-				$_POST[ $this->field_prefix . 'name' ]      = $result->name;
+				update_post_meta( $post->ID, $this->field_prefix . 'reference', $result['id'] );
+				update_post_meta( $post->ID, $this->field_prefix . 'name', $result['name'] );
+				$_POST[ $this->field_prefix . 'reference' ] = $result['id'];
+				$_POST[ $this->field_prefix . 'name' ]      = $result['name'];
 			}
 		}
 
