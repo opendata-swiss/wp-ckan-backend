@@ -148,7 +148,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 	 * Sends a curl request with given data to specified CKAN endpoint.
 	 *
 	 * @param string $endpoint CKAN API endpoint which gets called
-	 * @param string $data Data to send
+	 * @param string $data JSON-encoded data to send
 	 *
 	 * @return object The CKAN data as object
 	 */

@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: CKAN Backend
- * Description: Syncs data from and to CKAN
+ * Description: Plugin to create manual datasets, organisations and groups in CKAN via API.
  * Author: Team Jazz <juerg.hunziker@liip.ch>
  * Version: 1.0
  * Date: 17.06.2015

@@ -67,36 +67,7 @@ class Ckan_Backend_Local_Group {
 			'show_names'   => true,
 		) );
 
-		/* CKAN Ref ID (If Set.. update.. set on first save) */
-		$cmb->add_field( array(
-			'name'       => __( 'CKAN Ref. ID', 'ogdch' ),
-			'id'         => self::FIELD_PREFIX . 'reference',
-			'type'       => 'text',
-			'desc'       => __( 'Ref. ID from CKAN', 'ogdch' ),
-			'attributes' => array(
-				'readonly' => 'readonly',
-			),
-		) );
-
-		/* Permalink */
-		$cmb->add_field( array(
-			'name'       => __( 'Name (Slug)', 'ogdch' ),
-			'id'         => self::FIELD_PREFIX . 'name',
-			'type'       => 'text',
-			'desc'       => __( 'Permalink Name', 'ogdch' ),
-			'attributes' => array(
-				'placeholder' => 'my-group',
-				'readonly'    => 'readonly',
-			),
-		) );
-
 		/* Visibility */
-		$cmb->add_field( array(
-			'name' => __( 'Sichtbarkeit', 'ogdch' ),
-			'type' => 'title',
-			'id'   => 'visibility_title',
-		) );
-
 		$cmb->add_field( array(
 			'name'    => __( 'Visibility', 'ogdch' ),
 			'desc'    => __( 'Select the visibility of the Dataset', 'ogdch' ),
@@ -155,6 +126,35 @@ class Ckan_Backend_Local_Group {
 			'name'       => __( 'Image', 'ogdch' ),
 			'id'         => self::FIELD_PREFIX . 'image',
 			'type'    => 'file'
+		) );
+
+		$cmb_side = new_cmb2_box( array(
+			'id'           => self::POST_TYPE . '-sidebox',
+			'title'        => __( 'CKAN Data', 'ogdch' ),
+			'object_types' => array( self::POST_TYPE, ),
+			'context'      => 'side',
+			'priority'     => 'low',
+			'show_names'   => true,
+		) );
+
+		/* CKAN Ref ID (If Set.. update.. set on first save) */
+		$cmb_side->add_field( array(
+			'name'       => __( 'Reference ID', 'ogdch' ),
+			'id'         => self::FIELD_PREFIX . 'reference',
+			'type'       => 'text',
+			'attributes' => array(
+				'readonly' => 'readonly',
+			),
+		) );
+
+		/* Permalink */
+		$cmb_side->add_field( array(
+			'name'       => __( 'Name (Slug)', 'ogdch' ),
+			'id'         => self::FIELD_PREFIX . 'name',
+			'type'       => 'text',
+			'attributes' => array(
+				'readonly'    => 'readonly',
+			),
 		) );
 	}
 

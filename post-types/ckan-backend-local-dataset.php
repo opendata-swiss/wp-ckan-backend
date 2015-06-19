@@ -58,6 +58,7 @@ class Ckan_Backend_Local_Dataset {
 	public function define_fields() {
 		global $language_priority;
 
+		/* CMB Mainbox */
 		$cmb = new_cmb2_box( array(
 			'id'           => self::POST_TYPE . '-box',
 			'title'        => __( 'Ressource Data', 'ogdch' ),
@@ -67,26 +68,16 @@ class Ckan_Backend_Local_Dataset {
 			'show_names'   => true,
 		) );
 
-		/* CKAN Ref ID (If Set.. update.. set on first save) */
+		/* Visibility */
 		$cmb->add_field( array(
-			'name'       => __( 'CKAN Ref. ID', 'ogdch' ),
-			'id'         => self::FIELD_PREFIX . 'reference',
-			'type'       => 'text',
-			'desc'       => __( 'Ref. ID from CKAN', 'ogdch' ),
-			'attributes' => array(
-				'readonly' => 'readonly',
-			),
-		) );
-
-		/* Permalink */
-		$cmb->add_field( array(
-			'name'       => __( 'Name (Slug)', 'ogdch' ),
-			'id'         => self::FIELD_PREFIX . 'name',
-			'type'       => 'text',
-			'desc'       => __( 'Permalink Name', 'ogdch' ),
-			'attributes' => array(
-				'placeholder' => 'my-dataset-about-paper',
-				'readonly'    => 'readonly',
+			'name'    => __( 'Visibility', 'ogdch' ),
+			'desc'    => __( 'Select the visibility of the Dataset', 'ogdch' ),
+			'id'      => self::FIELD_PREFIX . 'visibility',
+			'type'    => 'radio',
+			'default' => 'active',
+			'options' => array(
+				'active'  => __( 'Active', 'ogdch' ),
+				'deleted' => __( 'Deleted', 'ogdch' ),
 			),
 		) );
 
@@ -108,7 +99,6 @@ class Ckan_Backend_Local_Dataset {
 			) );
 		}
 
-
 		/* Description */
 		$cmb->add_field( array(
 			'name' => __( 'Dataset Description', 'ogdch' ),
@@ -125,25 +115,6 @@ class Ckan_Backend_Local_Dataset {
 				'attributes' => array( 'rows' => 3 ),
 			) );
 		}
-
-		/* Visibility */
-		$cmb->add_field( array(
-			'name' => __( 'Sichtbarkeit', 'ogdch' ),
-			'type' => 'title',
-			'id'   => 'visibility_title',
-		) );
-
-		$cmb->add_field( array(
-			'name'    => __( 'Visibility', 'ogdch' ),
-			'desc'    => __( 'Select the visibility of the Dataset', 'ogdch' ),
-			'id'      => self::FIELD_PREFIX . 'visibility',
-			'type'    => 'radio',
-			'default' => 'active',
-			'options' => array(
-				'active'  => __( 'Active', 'ogdch' ),
-				'deleted' => __( 'Deleted', 'ogdch' ),
-			),
-		) );
 
 		/* Source */
 		$cmb->add_field( array(
@@ -263,6 +234,36 @@ class Ckan_Backend_Local_Dataset {
 			'name' => __( 'Value', 'ogdch' ),
 			'id'   => 'value',
 			'type' => 'text',
+		) );
+
+		/* CMB Sidebox */
+		$cmb_side = new_cmb2_box( array(
+			'id'           => self::POST_TYPE . '-sidebox',
+			'title'        => __( 'CKAN Data', 'ogdch' ),
+			'object_types' => array( self::POST_TYPE, ),
+			'context'      => 'side',
+			'priority'     => 'low',
+			'show_names'   => true,
+		) );
+
+		/* CKAN Ref ID (If Set.. update.. set on first save) */
+		$cmb_side->add_field( array(
+			'name'       => __( 'Reference ID', 'ogdch' ),
+			'id'         => self::FIELD_PREFIX . 'reference',
+			'type'       => 'text',
+			'attributes' => array(
+				'readonly' => 'readonly',
+			),
+		) );
+
+		/* Permalink */
+		$cmb_side->add_field( array(
+			'name'       => __( 'Name (Slug)', 'ogdch' ),
+			'id'         => self::FIELD_PREFIX . 'name',
+			'type'       => 'text',
+			'attributes' => array(
+				'readonly'    => 'readonly',
+			),
 		) );
 
 	}
