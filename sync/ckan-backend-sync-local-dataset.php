@@ -9,7 +9,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	protected function get_update_data() {
 		$extras                 = $this->prepare_custom_fields( $_POST[Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'custom_fields'] );
 		$resources              = $this->prepare_resources( $_POST[Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'resources'] );
-		$groups                 = $this->get_selected_groups( $_POST['tax_input']['ckan_group'] );
+		$groups                 = $this->get_selected_groups( $_POST[Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'groups'] );
 
 		// Gernerate slug of dataset. If no title is entered use an uniqid
 		if ( $_POST[Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'name'] != '' ) {
@@ -97,15 +97,9 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	protected function get_selected_groups( $selected_groups ) {
 		$ckan_groups = array();
 
-		foreach ( $selected_groups as $group_id ) {
-			// First entry is always a 0 -> not used
-			if ( $group_id == 0 ) {
-				continue;
-			}
-
-			$group = get_term( $group_id, 'ckan_group' );
-			if ( is_object( $group ) && $group->slug != '' ) {
-				$ckan_groups[] = array( 'name' => $group->slug );
+		if(is_array($selected_groups)) {
+			foreach ( $selected_groups as $key => $group_slug ) {
+				$ckan_groups[] = array( 'name' => $group_slug );
 			}
 		}
 
