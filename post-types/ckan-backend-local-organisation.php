@@ -185,8 +185,8 @@ class Ckan_Backend_Local_Organisation {
 		$endpoint = CKAN_API_ENDPOINT . 'action/organization_list';
 
 		$response = Ckan_Backend_Helper::do_api_request($endpoint);
-		$notices = $this->check_response_for_errors($response);
-		$this->print_error_messages($notices);
+		$errors = Ckan_Backend_Helper::check_response_for_errors($response);
+		$this->print_error_messages($errors);
 		// remove current organisation from result
 		if(isset($_GET['post'])) {
 			$current_organisation_name = get_post_meta($_GET['post'], Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'name', true);
@@ -202,8 +202,8 @@ class Ckan_Backend_Local_Organisation {
 			$data = json_encode($data);
 
 			$response = Ckan_Backend_Helper::do_api_request($endpoint, $data);
-			$notices = $this->check_response_for_errors($response);
-			$this->print_error_messages($notices);
+			$errors = Ckan_Backend_Helper::check_response_for_errors($response);
+			$this->print_error_messages($errors);
 			$organisation = $response['result'];
 			$organisation_options[$organisation['name']] = $organisation['title'];
 		}
@@ -212,41 +212,19 @@ class Ckan_Backend_Local_Organisation {
 	}
 
 	/**
-	 * Validates CKAN API response
-	 *
-	 * @param object $response The json_decoded response from the CKAN API
-	 *
-	 * @return bool True if response looks good
-	 */
-	public function check_response_for_errors( $response ) {
-		$notices = array();
-		if ( ! is_array( $response ) ) {
-			$notices[] = 'There was a problem sending the request.';
-		}
-
-		if ( isset( $response['success'] ) && $response['success'] === false ) {
-			if ( isset( $response['error'] ) && isset( $response['error']['name'] ) && is_array( $response['error']['name'] ) ) {
-				$notices[] = $response['error']['name'][0];
-			} else if ( isset( $response['error'] ) && isset( $response['error']['id'] ) && is_array( $response['error']['id'] ) ) {
-				$notices[] = $response['error']['id'][0];
-			} else {
-				$notices[] = 'API responded with unknown error.';
-			}
-		}
-
-		return $notices;
-	}
-
-	/**
 	 * Displays all admin notices
 	 *
 	 * @return string
 	 */
-	public function print_error_messages($notices) {
+	public function print_error_messages($errors) {
 		//print the message
-		foreach ( $notices as $key => $m ) {
-			echo '<div class="error"><p>' . $m . '</p></div>';
+		if( is_array($errors) && count($errors) > 0 ) {
+			foreach ( $errors as $key => $m ) {
+				echo '<div class="error"><p>' . $m . '</p></div>';
+			}
 		}
+		return true;
+
 	}
 
 }

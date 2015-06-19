@@ -28,4 +28,30 @@ class Ckan_Backend_Helper {
 
 		return $response;
 	}
+
+	/**
+	 * Validates CKAN API response
+	 *
+	 * @param array $response The JSON-decoded response from the CKAN API
+	 *
+	 * @return bool An Array with error messages if there where any.
+	 */
+	public static function check_response_for_errors( $response ) {
+		$errors = array();
+		if ( ! is_array( $response ) ) {
+			$errors[] = 'There was a problem sending the request.';
+		}
+
+		if ( isset( $response['success'] ) && $response['success'] === false ) {
+			if ( isset( $response['error'] ) && isset( $response['error']['name'] ) && is_array( $response['error']['name'] ) ) {
+				$errors[] = $response['error']['name'][0];
+			} else if ( isset( $response['error'] ) && isset( $response['error']['id'] ) && is_array( $response['error']['id'] ) ) {
+				$errors[] = $response['error']['id'][0];
+			} else {
+				$errors[] = 'API responded with unknown error.';
+			}
+		}
+
+		return $errors;
+	}
 }
