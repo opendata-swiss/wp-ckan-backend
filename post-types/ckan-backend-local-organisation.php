@@ -196,7 +196,7 @@ class Ckan_Backend_Local_Organisation {
 		curl_close( $ch );
 
 		$notices = $this->check_response_for_errors($response);
-		print_r($notices);
+		$this->print_error_messages($notices);
 		// remove current organisation from result
 		if(isset($_GET['post'])) {
 			$current_organisation_name = get_post_meta($_GET['post'], Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'name', true);
@@ -223,7 +223,8 @@ class Ckan_Backend_Local_Organisation {
 
 			curl_close( $ch );
 
-			$this->check_response_for_errors($response);
+			$notices = $this->check_response_for_errors($response);
+			$this->print_error_messages($notices);
 			$organisation = $response->result;
 			$organisation_options[$organisation->name] = $organisation->title;
 		}
@@ -239,21 +240,34 @@ class Ckan_Backend_Local_Organisation {
 	 * @return bool True if response looks good
 	 */
 	public function check_response_for_errors( $response ) {
+		$notices = array();
 		if ( ! is_object( $response ) ) {
-			$notice[] = 'There was a problem sending the request.';
+			$notices[] = 'There was a problem sending the request.';
 		}
 
 		if ( isset( $response->success ) && $response->success === false ) {
 			if ( isset( $response->error ) && isset( $response->error->name ) && is_array( $response->error->name ) ) {
-				$notice[] = $response->error->name[0];
+				$notices[] = $response->error->name[0];
 			} else if ( isset( $response->error ) && isset( $response->error->id ) && is_array( $response->error->id ) ) {
-				$notice[] = $response->error->id[0];
+				$notices[] = $response->error->id[0];
 			} else {
-				$notice[] = 'API responded with unknown error.';
+				$notices[] = 'API responded with unknown error.';
 			}
 		}
 
-		return $notice;
+		return $notices;
+	}
+
+	/**
+	 * Displays all admin notices
+	 *
+	 * @return string
+	 */
+	public function print_error_messages($notices) {
+		//print the message
+		foreach ( $notices as $key => $m ) {
+			echo '<div class="error"><p>' . $m . '</p></div>';
+		}
 	}
 
 }
