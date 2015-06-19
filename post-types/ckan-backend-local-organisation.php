@@ -126,7 +126,7 @@ class Ckan_Backend_Local_Organisation {
 			'id'               => self::FIELD_PREFIX . 'parent',
 			'type'             => 'select',
 			'show_option_none' => __( 'None - top level', 'ogdch' ),
-			'options'          => array($this, 'get_parent_options'),
+			'options'          => array( $this, 'get_parent_options' ),
 		) );
 
 		/* Image */
@@ -167,7 +167,7 @@ class Ckan_Backend_Local_Organisation {
 			'id'         => self::FIELD_PREFIX . 'name',
 			'type'       => 'text',
 			'attributes' => array(
-				'readonly'    => 'readonly',
+				'readonly' => 'readonly',
 			),
 		) );
 	}
@@ -178,14 +178,15 @@ class Ckan_Backend_Local_Organisation {
 	 * @return array All possbile parent organisations
 	 */
 	public function get_parent_options() {
-		$organisations = Ckan_Backend_Helper::get_form_field_options('organization');
+		$organisations = Ckan_Backend_Helper::get_form_field_options( 'organization' );
 		// remove current organisation from result (current organisation can't be its on parent)
-		if(isset($_GET['post'])) {
-			$current_organisation_name = get_post_meta($_GET['post'], Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'name', true);
-			if(array_key_exists($current_organisation_name, $organisations)) {
-				unset($organisations[$current_organisation_name]);
+		if ( isset( $_GET['post'] ) ) {
+			$current_organisation_name = get_post_meta( $_GET['post'], Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'name', true );
+			if ( array_key_exists( $current_organisation_name, $organisations ) ) {
+				unset( $organisations[ $current_organisation_name ] );
 			}
 		}
+
 		return $organisations;
 	}
 

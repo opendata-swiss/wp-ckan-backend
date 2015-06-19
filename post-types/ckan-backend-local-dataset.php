@@ -204,7 +204,7 @@ class Ckan_Backend_Local_Dataset {
 			'id'               => self::FIELD_PREFIX . 'organisation',
 			'type'             => 'select',
 			'show_option_none' => __( 'No Organisation', 'ogdch' ),
-			'options'          => array($this, 'get_organisation_options'),
+			'options'          => array( $this, 'get_organisation_options' ),
 		) );
 
 		/* Groups */
@@ -215,11 +215,11 @@ class Ckan_Backend_Local_Dataset {
 		) );
 
 		$cmb->add_field( array(
-			'name'    => __( 'Groups', 'ogdch' ),
-			'id'      => self::FIELD_PREFIX . 'groups',
-			'type'    => 'multicheck',
+			'name'              => __( 'Groups', 'ogdch' ),
+			'id'                => self::FIELD_PREFIX . 'groups',
+			'type'              => 'multicheck',
 			'select_all_button' => false,
-			'options' => array($this, 'get_group_options'),
+			'options'           => array( $this, 'get_group_options' ),
 		) );
 
 		/* Resource */
@@ -292,16 +292,17 @@ class Ckan_Backend_Local_Dataset {
 			'id'         => self::FIELD_PREFIX . 'name',
 			'type'       => 'text',
 			'attributes' => array(
-				'readonly'    => 'readonly',
+				'readonly' => 'readonly',
 			),
 		) );
 
 	}
 
 	public function get_group_options() {
-		return Ckan_Backend_Helper::get_form_field_options('group');
+		return Ckan_Backend_Helper::get_form_field_options( 'group' );
 	}
+
 	public function get_organisation_options() {
-		return Ckan_Backend_Helper::get_form_field_options('organization');
+		return Ckan_Backend_Helper::get_form_field_options( 'organization' );
 	}
 }

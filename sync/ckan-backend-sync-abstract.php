@@ -5,9 +5,9 @@ abstract class Ckan_Backend_Sync_Abstract {
 	public $post_type = '';
 	public $field_prefix = '';
 	private $type_api_mapping = array(
-		'ckan-local-dataset'      => 'package',
-		'ckan-local-org' => 'organization',
-		'ckan-local-group'        => 'group',
+		'ckan-local-dataset' => 'package',
+		'ckan-local-org'     => 'organization',
+		'ckan-local-group'   => 'group',
 	);
 	private $api_type = '';
 
@@ -123,14 +123,14 @@ abstract class Ckan_Backend_Sync_Abstract {
 
 		// Get current CKAN data and update state property
 		$endpoint = CKAN_API_ENDPOINT . 'action/' . $this->api_type . '_show';
-		$data = array(
+		$data     = array(
 			'id' => $ckan_ref
 		);
-		$data = json_encode( $data );
+		$data     = json_encode( $data );
 		$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
 		$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
-		$this->store_errors_in_notices_option($errors);
-		$data     = $response['result'];
+		$this->store_errors_in_notices_option( $errors );
+		$data = $response['result'];
 
 		if ( $untrash ) {
 			// Set CKAN state to active.
@@ -146,7 +146,8 @@ abstract class Ckan_Backend_Sync_Abstract {
 		$endpoint = CKAN_API_ENDPOINT . 'action/' . $this->api_type . '_update';
 		$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
 		$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
-		$this->store_errors_in_notices_option($errors);
+		$this->store_errors_in_notices_option( $errors );
+
 		return true;
 	}
 
@@ -183,8 +184,8 @@ abstract class Ckan_Backend_Sync_Abstract {
 
 		$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
 		$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
-		$this->store_errors_in_notices_option($errors);
-		if ( count($errors) == 0 ) {
+		$this->store_errors_in_notices_option( $errors );
+		if ( count( $errors ) == 0 ) {
 			$result = $response['result'];
 			if ( isset( $result['id'] ) && $result['id'] != '' ) {
 				// Set reference id from CKAN and add it to $_POST because the real meta save will follow after this action
@@ -198,15 +199,16 @@ abstract class Ckan_Backend_Sync_Abstract {
 		return true;
 	}
 
-	protected function store_errors_in_notices_option($errors) {
-		if( is_array($errors) && count($errors) > 0 ) {
+	protected function store_errors_in_notices_option( $errors ) {
+		if ( is_array( $errors ) && count( $errors ) > 0 ) {
 			// store all error notices in option array
 			$notices = get_option( $this->field_prefix . 'notices' );
-			foreach($errors as $key => $m) {
+			foreach ( $errors as $key => $m ) {
 				$notices[] = $m;
 			}
 			update_option( $this->field_prefix . 'notices', $notices );
 		}
+
 		return true;
 	}
 

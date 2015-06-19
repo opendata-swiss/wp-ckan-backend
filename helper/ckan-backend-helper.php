@@ -61,29 +61,30 @@ class Ckan_Backend_Helper {
 	 *
 	 * @return array All instances from CKAN
 	 */
-	public static function get_form_field_options($type) {
+	public static function get_form_field_options( $type ) {
 		$available_types = array(
 			'group',
 			'organization'
 		);
-		if (!in_array($type, $available_types)) {
-			self::print_error_messages(array('Type not available!'));
+		if ( ! in_array( $type, $available_types ) ) {
+			self::print_error_messages( array( 'Type not available!' ) );
+
 			return false;
 		}
 
-		$options = array();
+		$options  = array();
 		$endpoint = CKAN_API_ENDPOINT . 'action/' . $type . '_list';
-		$data = array(
+		$data     = array(
 			'all_fields' => true
 		);
-		$data = json_encode($data);
+		$data     = json_encode( $data );
 
-		$response = Ckan_Backend_Helper::do_api_request($endpoint, $data);
-		$errors = Ckan_Backend_Helper::check_response_for_errors($response);
-		self::print_error_messages($errors);
+		$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
+		$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
+		self::print_error_messages( $errors );
 
-		foreach($response['result'] as $instance) {
-			$options[$instance['name']] = $instance['title'];
+		foreach ( $response['result'] as $instance ) {
+			$options[ $instance['name'] ] = $instance['title'];
 		}
 
 		return $options;
@@ -95,13 +96,14 @@ class Ckan_Backend_Helper {
 	 *
 	 * @return string
 	 */
-	public static function print_error_messages($errors) {
+	public static function print_error_messages( $errors ) {
 		//print the message
-		if( is_array($errors) && count($errors) > 0 ) {
+		if ( is_array( $errors ) && count( $errors ) > 0 ) {
 			foreach ( $errors as $key => $m ) {
 				echo '<div class="error"><p>' . $m . '</p></div>';
 			}
 		}
+
 		return true;
 
 	}
