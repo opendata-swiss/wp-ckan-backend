@@ -82,9 +82,8 @@ class Ckan_Backend_Local_Organisation {
 			'name'       => __( 'Name (Slug)', 'ogdch' ),
 			'id'         => self::FIELD_PREFIX . 'name',
 			'type'       => 'text',
-			'desc'       => __( 'Permalink Name', 'ogdch' ),
+			'desc'       => __( 'Permalink Name from CKAN', 'ogdch' ),
 			'attributes' => array(
-				'placeholder' => 'my-organisation',
 				'readonly'    => 'readonly',
 			),
 		) );
@@ -197,6 +196,13 @@ class Ckan_Backend_Local_Organisation {
 
 		$this->check_response_for_errors($response);
 
+		// remove current organisation from result
+		if(isset($_GET['post'])) {
+			$current_organisation_name = get_post_meta($_GET['post'], Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'name', true);
+			if(($key = array_search($current_organisation_name, $response->result)) !== false) {
+				unset($response->result[$key]);
+			}
+		}
 		foreach($response->result as $organisation_slug) {
 			$endpoint = CKAN_API_ENDPOINT . 'action/organization_show';
 			$data = array(
