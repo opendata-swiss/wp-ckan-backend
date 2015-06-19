@@ -173,12 +173,9 @@ class Ckan_Backend_Local_Organisation {
 	}
 
 	/**
-	 * Sends a curl request with given data to specified CKAN endpoint.
+	 * Gets all possible parent organisations from CKAN and returns them in an array.
 	 *
-	 * @param string $endpoint CKAN API endpoint which gets called
-	 * @param string $data Data to send
-	 *
-	 * @return object The CKAN data as object
+	 * @return array All possbile parent organisations
 	 */
 	public function get_parent_options() {
 		$organisation_options = array();
