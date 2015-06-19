@@ -27,6 +27,10 @@ class Ckan_Backend_Sync_Local_Organisation extends Ckan_Backend_Sync_Abstract {
 			'state'            => $_POST[Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'visibility'],
 		);
 
+		if( $_POST[Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'parent'] != '' ) {
+			$data['groups'] = array ( array( 'name' => $_POST[Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'parent'] ) );
+		}
+
 		if ( isset( $_POST[ Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'reference' ] ) && $_POST[ Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'reference' ] != '' ) {
 			$data['id'] = $_POST[ Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'reference' ];
 		}

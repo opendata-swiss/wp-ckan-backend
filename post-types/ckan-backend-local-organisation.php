@@ -109,7 +109,7 @@ class Ckan_Backend_Local_Organisation {
 		) );
 
 		/* Title */
-		$cmb->add_field( array(
+		$cmb->cmb2_init( array(
 			'name' => __( 'Organisation Title', 'ogdch' ),
 			'type' => 'title',
 			'id'   => 'title_title'
@@ -143,6 +143,21 @@ class Ckan_Backend_Local_Organisation {
 			) );
 		}
 
+		/* Parent */
+		$cmb->add_field( array(
+			'name' => __( 'Parent Organisation', 'ogdch' ),
+			'type' => 'title',
+			'id'   => 'parent_title',
+		) );
+
+		$cmb->add_field( array(
+			'name'             => __( 'Parent', 'ogdch' ),
+			'id'               => self::FIELD_PREFIX . 'parent',
+			'type'             => 'select',
+			'show_option_none' => __( 'None - top level', 'ogdch' ),
+			'options'          => $this->get_parent_options(),
+		) );
+
 		/* Image */
 		$cmb->add_field( array(
 			'name' => __( 'Organisation Image', 'ogdch' ),
@@ -151,10 +166,87 @@ class Ckan_Backend_Local_Organisation {
 		) );
 
 		$cmb->add_field( array(
-			'name'       => __( 'Image', 'ogdch' ),
-			'id'         => self::FIELD_PREFIX . 'image',
-			'type'    => 'file'
+			'name' => __( 'Image', 'ogdch' ),
+			'id'   => self::FIELD_PREFIX . 'image',
+			'type' => 'file'
 		) );
+	}
+
+	/**
+	 * Sends a curl request with given data to specified CKAN endpoint.
+	 *
+	 * @param string $endpoint CKAN API endpoint which gets called
+	 * @param string $data Data to send
+	 *
+	 * @return object The CKAN data as object
+	 */
+	protected function get_parent_options() {
+		$organisation_options = array();
+		$endpoint = CKAN_API_ENDPOINT . 'action/organization_list';
+
+		$ch = curl_init( $endpoint );
+		curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, "GET" );
+		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+		curl_setopt( $ch, CURLOPT_HTTPHEADER, [ 'Authorization: ' . CKAN_API_KEY . '' ] );
+
+		// send request
+		$response = curl_exec( $ch );
+		$response = json_decode( $response );
+
+		curl_close( $ch );
+
+		$this->check_response_for_errors($response);
+
+		foreach($response->result as $organisation_slug) {
+			$endpoint = CKAN_API_ENDPOINT . 'action/organization_show';
+			$data = array(
+				'id' => $organisation_slug
+			);
+			$data = json_encode($data);
+
+			$ch = curl_init( $endpoint );
+			curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, "POST" );
+			curl_setopt( $ch, CURLOPT_POSTFIELDS, $data );
+			curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+			curl_setopt( $ch, CURLOPT_HTTPHEADER, [ 'Authorization: ' . CKAN_API_KEY . '' ] );
+
+			// send request
+			$response = curl_exec( $ch );
+			$response = json_decode( $response );
+
+			curl_close( $ch );
+
+			$this->check_response_for_errors($response);
+			$organisation = $response->result;
+			$organisation_options[$organisation->name] = $organisation->title;
+		}
+
+		return $organisation_options;
+	}
+
+	/**
+	 * Validates CKAN API response
+	 *
+	 * @param object $response The json_decoded response from the CKAN API
+	 *
+	 * @return bool True if response looks good
+	 */
+	protected function check_response_for_errors( $response ) {
+		if ( ! is_object( $response ) ) {
+			$notice[] = 'There was a problem sending the request.';
+		}
+
+		if ( isset( $response->success ) && $response->success === false ) {
+			if ( isset( $response->error ) && isset( $response->error->name ) && is_array( $response->error->name ) ) {
+				$notice[] = $response->error->name[0];
+			} else if ( isset( $response->error ) && isset( $response->error->id ) && is_array( $response->error->id ) ) {
+				$notice[] = $response->error->id[0];
+			} else {
+				$notice[] = 'API responded with unknown error.';
+			}
+		}
+
+		return $notice;
 	}
 
 }
