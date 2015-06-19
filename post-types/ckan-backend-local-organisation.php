@@ -109,7 +109,7 @@ class Ckan_Backend_Local_Organisation {
 		) );
 
 		/* Title */
-		$cmb->cmb2_init( array(
+		$cmb->add_field( array(
 			'name' => __( 'Organisation Title', 'ogdch' ),
 			'type' => 'title',
 			'id'   => 'title_title'
