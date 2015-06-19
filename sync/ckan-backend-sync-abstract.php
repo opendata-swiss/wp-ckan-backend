@@ -123,7 +123,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 
 		// Get current CKAN data and update state property
 		$endpoint = CKAN_API_ENDPOINT . 'action/' . $this->api_type . '_show?id=' . $ckan_ref;
-		$response = $this->do_api_request( $endpoint );
+		$response = Ckan_Backend_Helper::do_api_request( $endpoint );
 		$success  = $this->check_response_for_errors( $response );
 		$data     = $response->result;
 
@@ -139,33 +139,9 @@ abstract class Ckan_Backend_Sync_Abstract {
 
 		// Send updated data to CKAN
 		$endpoint = CKAN_API_ENDPOINT . 'action/' . $this->api_type . '_update';
-		$response = $this->do_api_request( $endpoint, $data );
+		$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
 
 		return $this->check_response_for_errors( $response );
-	}
-
-	/**
-	 * Sends a curl request with given data to specified CKAN endpoint.
-	 *
-	 * @param string $endpoint CKAN API endpoint which gets called
-	 * @param string $data JSON-encoded data to send
-	 *
-	 * @return object The CKAN data as object
-	 */
-	protected function do_api_request( $endpoint, $data = '' ) {
-		$ch = curl_init( $endpoint );
-		curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, "POST" );
-		curl_setopt( $ch, CURLOPT_POSTFIELDS, $data );
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-		curl_setopt( $ch, CURLOPT_HTTPHEADER, [ 'Authorization: ' . CKAN_API_KEY . '' ] );
-
-		// send request
-		$response = curl_exec( $ch );
-		$response = json_decode( $response );
-
-		curl_close( $ch );
-
-		return $response;
 	}
 
 	/**
@@ -227,7 +203,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 
 		$data = json_encode( $data );
 
-		$response = $this->do_api_request( $endpoint, $data );
+		$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
 
 		$success = $this->check_response_for_errors( $response );
 		if ( $success ) {

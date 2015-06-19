@@ -184,17 +184,7 @@ class Ckan_Backend_Local_Organisation {
 		$organisation_options = array();
 		$endpoint = CKAN_API_ENDPOINT . 'action/organization_list';
 
-		$ch = curl_init( $endpoint );
-		curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, "GET" );
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-		curl_setopt( $ch, CURLOPT_HTTPHEADER, [ 'Authorization: ' . CKAN_API_KEY . '' ] );
-
-		// send request
-		$response = curl_exec( $ch );
-		$response = json_decode( $response );
-
-		curl_close( $ch );
-
+		$response = Ckan_Backend_Helper::do_api_request($endpoint);
 		$notices = $this->check_response_for_errors($response);
 		$this->print_error_messages($notices);
 		// remove current organisation from result
@@ -211,18 +201,7 @@ class Ckan_Backend_Local_Organisation {
 			);
 			$data = json_encode($data);
 
-			$ch = curl_init( $endpoint );
-			curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, "POST" );
-			curl_setopt( $ch, CURLOPT_POSTFIELDS, $data );
-			curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-			curl_setopt( $ch, CURLOPT_HTTPHEADER, [ 'Authorization: ' . CKAN_API_KEY . '' ] );
-
-			// send request
-			$response = curl_exec( $ch );
-			$response = json_decode( $response );
-
-			curl_close( $ch );
-
+			$response = Ckan_Backend_Helper::do_api_request($endpoint, $data);
 			$notices = $this->check_response_for_errors($response);
 			$this->print_error_messages($notices);
 			$organisation = $response->result;
