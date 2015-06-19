@@ -126,7 +126,7 @@ class Ckan_Backend_Local_Organisation {
 			'id'               => self::FIELD_PREFIX . 'parent',
 			'type'             => 'select',
 			'show_option_none' => __( 'None - top level', 'ogdch' ),
-			'options'          => $this->get_parent_options(),
+			'options'          => array($this, 'get_parent_options'),
 		) );
 
 		/* Image */
@@ -180,7 +180,7 @@ class Ckan_Backend_Local_Organisation {
 	 *
 	 * @return object The CKAN data as object
 	 */
-	protected function get_parent_options() {
+	public function get_parent_options() {
 		$organisation_options = array();
 		$endpoint = CKAN_API_ENDPOINT . 'action/organization_list';
 
@@ -195,8 +195,8 @@ class Ckan_Backend_Local_Organisation {
 
 		curl_close( $ch );
 
-		$this->check_response_for_errors($response);
-
+		$notices = $this->check_response_for_errors($response);
+		print_r($notices);
 		// remove current organisation from result
 		if(isset($_GET['post'])) {
 			$current_organisation_name = get_post_meta($_GET['post'], Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'name', true);
@@ -238,7 +238,7 @@ class Ckan_Backend_Local_Organisation {
 	 *
 	 * @return bool True if response looks good
 	 */
-	protected function check_response_for_errors( $response ) {
+	public function check_response_for_errors( $response ) {
 		if ( ! is_object( $response ) ) {
 			$notice[] = 'There was a problem sending the request.';
 		}
