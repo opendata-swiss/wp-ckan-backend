@@ -83,9 +83,8 @@ class Ckan_Backend_Local_Dataset {
 			'name'       => __( 'Name (Slug)', 'ogdch' ),
 			'id'         => self::FIELD_PREFIX . 'name',
 			'type'       => 'text',
-			'desc'       => __( 'Permalink Name', 'ogdch' ),
+			'desc'       => __( 'Permalink Name from CKAN', 'ogdch' ),
 			'attributes' => array(
-				'placeholder' => 'my-dataset-about-paper',
 				'readonly'    => 'readonly',
 			),
 		) );
