@@ -207,6 +207,21 @@ class Ckan_Backend_Local_Dataset {
 			'options'          => array($this, 'get_organisation_options'),
 		) );
 
+		/* Groups */
+		$cmb->add_field( array(
+			'name' => __( 'Groups', 'ogdch' ),
+			'type' => 'title',
+			'id'   => 'groups_title',
+		) );
+
+		$cmb->add_field( array(
+			'name'    => __( 'Groups', 'ogdch' ),
+			'id'      => self::FIELD_PREFIX . 'groups',
+			'type'    => 'multicheck',
+			'select_all_button' => false,
+			'options' => array($this, 'get_group_options'),
+		) );
+
 		/* Resource */
 		$cmb->add_field( array(
 			'name' => __( 'Resources', 'ogdch' ),
@@ -283,50 +298,10 @@ class Ckan_Backend_Local_Dataset {
 
 	}
 
-	/**
-	 * Gets all organisations from CKAN and returns them in an array.
-	 *
-	 * @return array All organisations from CKAN
-	 */
+	public function get_group_options() {
+		return Ckan_Backend_Helper::get_form_field_options('group');
+	}
 	public function get_organisation_options() {
-		$organisation_options = array();
-		$endpoint = CKAN_API_ENDPOINT . 'action/organization_list';
-
-		$response = Ckan_Backend_Helper::do_api_request($endpoint);
-		$errors = Ckan_Backend_Helper::check_response_for_errors($response);
-		$this->print_error_messages($errors);
-
-		foreach($response['result'] as $organisation_slug) {
-			$endpoint = CKAN_API_ENDPOINT . 'action/organization_show';
-			$data = array(
-				'id' => $organisation_slug
-			);
-			$data = json_encode($data);
-
-			$response = Ckan_Backend_Helper::do_api_request($endpoint, $data);
-			$errors = Ckan_Backend_Helper::check_response_for_errors($response);
-			$this->print_error_messages($errors);
-			$organisation = $response['result'];
-			$organisation_options[$organisation['name']] = $organisation['title'];
-		}
-
-		return $organisation_options;
+		return Ckan_Backend_Helper::get_form_field_options('organization');
 	}
-
-	/**
-	 * Displays all admin notices
-	 *
-	 * @return string
-	 */
-	public function print_error_messages($errors) {
-		//print the message
-		if( is_array($errors) && count($errors) > 0 ) {
-			foreach ( $errors as $key => $m ) {
-				echo '<div class="error"><p>' . $m . '</p></div>';
-			}
-		}
-		return true;
-
-	}
-
 }

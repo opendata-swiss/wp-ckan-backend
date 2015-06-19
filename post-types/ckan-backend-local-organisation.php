@@ -178,50 +178,16 @@ class Ckan_Backend_Local_Organisation {
 	 * @return array All possbile parent organisations
 	 */
 	public function get_parent_options() {
-		$organisation_options = array();
-		$endpoint = CKAN_API_ENDPOINT . 'action/organization_list';
-
-		$response = Ckan_Backend_Helper::do_api_request($endpoint);
-		$errors = Ckan_Backend_Helper::check_response_for_errors($response);
-		$this->print_error_messages($errors);
-		// remove current organisation from result
+		$organisations = Ckan_Backend_Helper::get_form_field_options('organization');
+		// remove current organisation from result (current organisation can't be its on parent)
 		if(isset($_GET['post'])) {
 			$current_organisation_name = get_post_meta($_GET['post'], Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'name', true);
-			if(($key = array_search($current_organisation_name, $response['result'])) !== false) {
-				unset($response['result'][$key]);
+			if(array_key_exists($current_organisation_name, $organisations)) {
+				unset($organisations[$current_organisation_name]);
 			}
 		}
-		foreach($response['result'] as $organisation_slug) {
-			$endpoint = CKAN_API_ENDPOINT . 'action/organization_show';
-			$data = array(
-				'id' => $organisation_slug
-			);
-			$data = json_encode($data);
-
-			$response = Ckan_Backend_Helper::do_api_request($endpoint, $data);
-			$errors = Ckan_Backend_Helper::check_response_for_errors($response);
-			$this->print_error_messages($errors);
-			$organisation = $response['result'];
-			$organisation_options[$organisation['name']] = $organisation['title'];
-		}
-
-		return $organisation_options;
+		return $organisations;
 	}
 
-	/**
-	 * Displays all admin notices
-	 *
-	 * @return string
-	 */
-	public function print_error_messages($errors) {
-		//print the message
-		if( is_array($errors) && count($errors) > 0 ) {
-			foreach ( $errors as $key => $m ) {
-				echo '<div class="error"><p>' . $m . '</p></div>';
-			}
-		}
-		return true;
-
-	}
 
 }
