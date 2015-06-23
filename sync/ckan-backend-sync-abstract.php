@@ -37,18 +37,18 @@ abstract class Ckan_Backend_Sync_Abstract {
 			return;
 		}
 
-		// If action is trash or delete set CKAN dataset to deleted
-		if ( isset( $_GET ) && ( $_GET['action'] === 'trash' || $_GET['action'] === 'delete' ) ) {
-			// If action was executed by selecting post with checkbox and choose delete in menu $_GET['post'] is array with all selected post ids
+		// If action is trash -> set CKAN dataset to deleted
+		if ( isset( $_GET ) && ( $_GET['action'] === 'trash' ) ) {
+			// If action was executed by selecting post with checkbox and choose trash in menu $_GET['post'] is array with all selected post ids
 			if ( is_array( $_GET['post'] ) ) {
 				foreach ( $_GET['post'] as $post_id ) {
 					$this->trash_action( $post_id );
 				}
 			} else {
-				// If action was executed with delete link next to post $_GET['post'] corresponds to id of post
+				// If action was executed with trash link next to post $_GET['post'] corresponds to id of post
 				$this->trash_action( $_GET['post'] );
 			}
-		} // If action is untrash set CKAN dataset to active
+		} // If action is untrash -> set CKAN dataset to active
 		elseif ( isset( $_GET ) && $_GET['action'] === 'untrash' ) {
 			// If Undo Link was clicked the $_GET['post'] variable isn't set
 			if ( $_GET['doaction'] === 'undo' ) {
@@ -66,6 +66,17 @@ abstract class Ckan_Backend_Sync_Abstract {
 					// If action was executed with untrash link next to post $_GET['post'] corresponds to id of post
 					$this->untrash_action( $_GET['post'] );
 				}
+			}
+		} // If action is delete -> delete the CKAN dataset completely
+		elseif ( isset( $_GET ) && $_GET['action'] === 'delete' ) {
+			// If action was executed by selecting post with checkbox and choose delete in menu $_GET['post'] is array with all selected post ids
+			if ( is_array( $_GET['post'] ) ) {
+				foreach ( $_GET['post'] as $post_id ) {
+					$this->delete_action( $post_id );
+				}
+			} else {
+				// If action was executed with delete link next to post $_GET['post'] corresponds to id of post
+				$this->delete_action( $_GET['post'] );
 			}
 		} // Or generate data for insert/update
 		else {
@@ -97,7 +108,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 	}
 
 	/**
-	 * Gets called when a CKAN post-type is trashed, untrashed or deleted.
+	 * Gets called when a CKAN data is trashed or untrashed.
 	 * Updates internal post visibility field and CKAN state.
 	 *
 	 * @param int $post_id ID of CKAN post-type
@@ -152,6 +163,37 @@ abstract class Ckan_Backend_Sync_Abstract {
 	}
 
 	/**
+	 * Gets called when a CKAN post-type is deleted.
+	 *
+	 * @param int $post_id ID of CKAN post-type
+	 *
+	 * @return bool True when CKAN request was successful.
+	 */
+	protected function delete_action( $post_id ) {
+		// purge command not available for datasets
+		if ( $this->api_type == 'package' ) {
+			return false;
+		}
+
+		$ckan_ref = get_post_meta( $post_id, $this->field_prefix . 'reference', true );
+		// If no CKAN reference id is defined don't send request a to CKAN
+		if ( $ckan_ref === '' ) {
+			return false;
+		}
+
+		$endpoint = CKAN_API_ENDPOINT . 'action/' . $this->api_type . '_purge';
+		$data = array(
+			'id' => $ckan_ref
+		);
+		$data     = json_encode( $data );
+		$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
+		$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
+		$this->store_errors_in_notices_option( $errors );
+
+		return true;
+	}
+
+	/**
 	 * This method should return an array with the updated data
 	 *
 	 * @return array $data Updated data to send
@@ -159,11 +201,11 @@ abstract class Ckan_Backend_Sync_Abstract {
 	abstract protected function get_update_data();
 
 	/**
-	 * Gets called when a CKAN data is saved/updated.
+	 * Gets called when a CKAN data is inserted or updated.
 	 * Sends new/updated data to CKAN and updates reference id and name (slug) from CKAN.
 	 *
-	 * @param object $post The post from WordPress which is updated/saved
-	 * @param array $data The updated/saved data to send
+	 * @param object $post The post from WordPress which is updated/inserted
+	 * @param array $data The inserted/updated data to send
 	 *
 	 * @return bool True when CKAN request was successful.
 	 */
@@ -199,6 +241,13 @@ abstract class Ckan_Backend_Sync_Abstract {
 		return true;
 	}
 
+	/**
+	 * Stores all error messages in Option to print them out after redirect of save action
+	 *
+	 * @param array $errors Array with error messages
+	 *
+	 * @return bool True if error messages were stored successfully
+	 */
 	protected function store_errors_in_notices_option( $errors ) {
 		if ( is_array( $errors ) && count( $errors ) > 0 ) {
 			// store all error notices in option array
