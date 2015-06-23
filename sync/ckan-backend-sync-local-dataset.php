@@ -7,14 +7,13 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	}
 
 	protected function get_update_data() {
-		$ckan_organisation_slug = $this->get_selected_organisation_slug( $_POST['ckan_organisation'] );
-		$extras                 = $this->prepare_custom_fields( $_POST['_ckan_local_dataset_custom_fields'] );
-		$resources              = $this->prepare_resources( $_POST['_ckan_local_dataset_resources'] );
-		$groups                 = $this->get_selected_groups( $_POST['tax_input']['ckan_group'] );
+		$extras    = $this->prepare_custom_fields( $_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'custom_fields' ] );
+		$resources = $this->prepare_resources( $_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'resources' ] );
+		$groups    = $this->prepare_selected_groups( $_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'groups' ] );
 
 		// Gernerate slug of dataset. If no title is entered use an uniqid
-		if ( $_POST[Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'name'] != '' ) {
-			$title = $_POST[Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'name'];
+		if ( $_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'name' ] != '' ) {
+			$title = $_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'name' ];
 		} else {
 			$title = $_POST['post_title'];
 
@@ -27,17 +26,17 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		$data = array(
 			'name'             => $slug,
 			'title'            => $_POST['post_title'], // TODO: use all language here
-			'maintainer'       => $_POST['_ckan_local_dataset_maintainer'],
-			'maintainer_email' => $_POST['_ckan_local_dataset_maintainer_email'],
-			'author'           => $_POST['_ckan_local_dataset_author'],
-			'author_email'     => $_POST['_ckan_local_dataset_author_email'],
-			'notes'            => $_POST['_ckan_local_dataset_description_de'], // TODO: use all language here
-			'version'          => $_POST['_ckan_local_dataset_version'],
-			'state'            => $_POST['_ckan_local_dataset_visibility'],
+			'maintainer'       => $_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'maintainer' ],
+			'maintainer_email' => $_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'maintainer_email' ],
+			'author'           => $_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'author' ],
+			'author_email'     => $_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'author_email' ],
+			'notes'            => $_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'description_de' ], // TODO: use all language here
+			'version'          => $_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'version' ],
+			'state'            => $_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'visibility' ],
 			'extras'           => $extras,
 			'resources'        => $resources,
 			'groups'           => $groups,
-			'owner_org'        => $ckan_organisation_slug
+			'owner_org'        => $_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'organisation' ],
 		);
 
 		if ( isset( $_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'reference' ] ) && $_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'reference' ] != '' ) {
@@ -89,44 +88,18 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	}
 
 	/**
-	 * Gets slug from selected organisation
-	 *
-	 * @param int $organisation_id
-	 *
-	 * @return string Slug of organisation or empty string if organisation wasn't found
-	 */
-	protected function get_selected_organisation_slug( $organisation_id ) {
-		if ( $organisation_id < 1 ) {
-			return '';
-		}
-
-		$organisation = get_term( $organisation_id, 'ckan_organisation' );
-		if ( is_object( $organisation ) && $organisation->slug != '' ) {
-			return $organisation->slug;
-		}
-
-		return '';
-	}
-
-	/**
 	 * Create CKAN friendly array of all selected groups
 	 *
 	 * @param array $selected_groups IDs of selected groups
 	 *
 	 * @return array CKAN friendly array with all selected groups
 	 */
-	protected function get_selected_groups( $selected_groups ) {
+	protected function prepare_selected_groups( $selected_groups ) {
 		$ckan_groups = array();
 
-		foreach ( $selected_groups as $group_id ) {
-			// First entry is always a 0 -> not used
-			if ( $group_id == 0 ) {
-				continue;
-			}
-
-			$group = get_term( $group_id, 'ckan_group' );
-			if ( is_object( $group ) && $group->slug != '' ) {
-				$ckan_groups[] = array( 'name' => $group->slug );
+		if ( is_array( $selected_groups ) ) {
+			foreach ( $selected_groups as $key => $group_slug ) {
+				$ckan_groups[] = array( 'name' => $group_slug );
 			}
 		}
 

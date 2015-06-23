@@ -126,7 +126,7 @@ class Ckan_Backend_Local_Organisation {
 			'id'               => self::FIELD_PREFIX . 'parent',
 			'type'             => 'select',
 			'show_option_none' => __( 'None - top level', 'ogdch' ),
-			'options'          => array($this, 'get_parent_options'),
+			'options'          => array( $this, 'get_parent_options' ),
 		) );
 
 		/* Image */
@@ -167,93 +167,28 @@ class Ckan_Backend_Local_Organisation {
 			'id'         => self::FIELD_PREFIX . 'name',
 			'type'       => 'text',
 			'attributes' => array(
-				'readonly'    => 'readonly',
+				'readonly' => 'readonly',
 			),
 		) );
 	}
 
 	/**
-	 * Sends a curl request with given data to specified CKAN endpoint.
+	 * Gets all possible parent organisations from CKAN and returns them in an array.
 	 *
-	 * @param string $endpoint CKAN API endpoint which gets called
-	 * @param string $data Data to send
-	 *
-	 * @return object The CKAN data as object
+	 * @return array All possbile parent organisations
 	 */
 	public function get_parent_options() {
-		$organisation_options = array();
-		$endpoint = CKAN_API_ENDPOINT . 'action/organization_list';
-
-		$ch = curl_init( $endpoint );
-		curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, "GET" );
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-		curl_setopt( $ch, CURLOPT_HTTPHEADER, [ 'Authorization: ' . CKAN_API_KEY . '' ] );
-
-		// send request
-		$response = curl_exec( $ch );
-		$response = json_decode( $response );
-
-		curl_close( $ch );
-
-		$notices = $this->check_response_for_errors($response);
-		print_r($notices);
-		// remove current organisation from result
-		if(isset($_GET['post'])) {
-			$current_organisation_name = get_post_meta($_GET['post'], Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'name', true);
-			if(($key = array_search($current_organisation_name, $response->result)) !== false) {
-				unset($response->result[$key]);
-			}
-		}
-		foreach($response->result as $organisation_slug) {
-			$endpoint = CKAN_API_ENDPOINT . 'action/organization_show';
-			$data = array(
-				'id' => $organisation_slug
-			);
-			$data = json_encode($data);
-
-			$ch = curl_init( $endpoint );
-			curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, "POST" );
-			curl_setopt( $ch, CURLOPT_POSTFIELDS, $data );
-			curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-			curl_setopt( $ch, CURLOPT_HTTPHEADER, [ 'Authorization: ' . CKAN_API_KEY . '' ] );
-
-			// send request
-			$response = curl_exec( $ch );
-			$response = json_decode( $response );
-
-			curl_close( $ch );
-
-			$this->check_response_for_errors($response);
-			$organisation = $response->result;
-			$organisation_options[$organisation->name] = $organisation->title;
-		}
-
-		return $organisation_options;
-	}
-
-	/**
-	 * Validates CKAN API response
-	 *
-	 * @param object $response The json_decoded response from the CKAN API
-	 *
-	 * @return bool True if response looks good
-	 */
-	public function check_response_for_errors( $response ) {
-		if ( ! is_object( $response ) ) {
-			$notice[] = 'There was a problem sending the request.';
-		}
-
-		if ( isset( $response->success ) && $response->success === false ) {
-			if ( isset( $response->error ) && isset( $response->error->name ) && is_array( $response->error->name ) ) {
-				$notice[] = $response->error->name[0];
-			} else if ( isset( $response->error ) && isset( $response->error->id ) && is_array( $response->error->id ) ) {
-				$notice[] = $response->error->id[0];
-			} else {
-				$notice[] = 'API responded with unknown error.';
+		$organisations = Ckan_Backend_Helper::get_form_field_options( 'organization' );
+		// remove current organisation from result (current organisation can't be its on parent)
+		if ( isset( $_GET['post'] ) ) {
+			$current_organisation_name = get_post_meta( $_GET['post'], Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'name', true );
+			if ( array_key_exists( $current_organisation_name, $organisations ) ) {
+				unset( $organisations[ $current_organisation_name ] );
 			}
 		}
 
-		return $notice;
+		return $organisations;
 	}
+
 
 }

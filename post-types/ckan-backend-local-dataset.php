@@ -192,6 +192,36 @@ class Ckan_Backend_Local_Dataset {
 			)
 		) );
 
+		/* Organisation */
+		$cmb->add_field( array(
+			'name' => __( 'Organisation', 'ogdch' ),
+			'type' => 'title',
+			'id'   => 'organisation_title',
+		) );
+
+		$cmb->add_field( array(
+			'name'             => __( 'Organisation', 'ogdch' ),
+			'id'               => self::FIELD_PREFIX . 'organisation',
+			'type'             => 'select',
+			'show_option_none' => __( 'No Organisation', 'ogdch' ),
+			'options'          => array( $this, 'get_organisation_options' ),
+		) );
+
+		/* Groups */
+		$cmb->add_field( array(
+			'name' => __( 'Groups', 'ogdch' ),
+			'type' => 'title',
+			'id'   => 'groups_title',
+		) );
+
+		$cmb->add_field( array(
+			'name'              => __( 'Groups', 'ogdch' ),
+			'id'                => self::FIELD_PREFIX . 'groups',
+			'type'              => 'multicheck',
+			'select_all_button' => false,
+			'options'           => array( $this, 'get_group_options' ),
+		) );
+
 		/* Resource */
 		$cmb->add_field( array(
 			'name' => __( 'Resources', 'ogdch' ),
@@ -262,10 +292,17 @@ class Ckan_Backend_Local_Dataset {
 			'id'         => self::FIELD_PREFIX . 'name',
 			'type'       => 'text',
 			'attributes' => array(
-				'readonly'    => 'readonly',
+				'readonly' => 'readonly',
 			),
 		) );
 
 	}
 
+	public function get_group_options() {
+		return Ckan_Backend_Helper::get_form_field_options( 'group' );
+	}
+
+	public function get_organisation_options() {
+		return Ckan_Backend_Helper::get_form_field_options( 'organization' );
+	}
 }

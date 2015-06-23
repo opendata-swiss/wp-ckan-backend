@@ -5,9 +5,9 @@ abstract class Ckan_Backend_Sync_Abstract {
 	public $post_type = '';
 	public $field_prefix = '';
 	private $type_api_mapping = array(
-		'ckan-local-dataset'      => 'package',
-		'ckan-local-org' => 'organization',
-		'ckan-local-group'        => 'group',
+		'ckan-local-dataset' => 'package',
+		'ckan-local-org'     => 'organization',
+		'ckan-local-group'   => 'group',
 	);
 	private $api_type = '';
 
@@ -122,76 +122,31 @@ abstract class Ckan_Backend_Sync_Abstract {
 		}
 
 		// Get current CKAN data and update state property
-		$endpoint = CKAN_API_ENDPOINT . 'action/' . $this->api_type . '_show?id=' . $ckan_ref;
-		$response = $this->do_api_request( $endpoint );
-		$success  = $this->check_response_for_errors( $response );
-		$data     = $response->result;
+		$endpoint = CKAN_API_ENDPOINT . 'action/' . $this->api_type . '_show';
+		$data     = array(
+			'id' => $ckan_ref
+		);
+		$data     = json_encode( $data );
+		$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
+		$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
+		$this->store_errors_in_notices_option( $errors );
+		$data = $response['result'];
 
 		if ( $untrash ) {
 			// Set CKAN state to active.
-			$data->state = 'active';
+			$data['state'] = 'active';
 		} else {
 			// Set CKAN state to deleted
-			$data->state = 'deleted';
+			$data['state'] = 'deleted';
 		}
 
 		$data = json_encode( $data );
 
 		// Send updated data to CKAN
 		$endpoint = CKAN_API_ENDPOINT . 'action/' . $this->api_type . '_update';
-		$response = $this->do_api_request( $endpoint, $data );
-
-		return $this->check_response_for_errors( $response );
-	}
-
-	/**
-	 * Sends a curl request with given data to specified CKAN endpoint.
-	 *
-	 * @param string $endpoint CKAN API endpoint which gets called
-	 * @param string $data JSON-encoded data to send
-	 *
-	 * @return object The CKAN data as object
-	 */
-	protected function do_api_request( $endpoint, $data = '' ) {
-		$ch = curl_init( $endpoint );
-		curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, "POST" );
-		curl_setopt( $ch, CURLOPT_POSTFIELDS, $data );
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-		curl_setopt( $ch, CURLOPT_HTTPHEADER, [ 'Authorization: ' . CKAN_API_KEY . '' ] );
-
-		// send request
-		$response = curl_exec( $ch );
-		$response = json_decode( $response );
-
-		curl_close( $ch );
-
-		return $response;
-	}
-
-	/**
-	 * Validates CKAN API response
-	 *
-	 * @param object $response The json_decoded response from the CKAN API
-	 *
-	 * @return bool True if response looks good
-	 */
-	protected function check_response_for_errors( $response ) {
-		// store all error notices in option array
-		$notice = get_option( $this->field_prefix . 'notice' );
-		if ( ! is_object( $response ) ) {
-			$notice[] = 'There was a problem sending the request.';
-		}
-
-		if ( isset( $response->success ) && $response->success === false ) {
-			if ( isset( $response->error ) && isset( $response->error->name ) && is_array( $response->error->name ) ) {
-				$notice[] = $response->error->name[0];
-			} else if ( isset( $response->error ) && isset( $response->error->id ) && is_array( $response->error->id ) ) {
-				$notice[] = $response->error->id[0];
-			} else {
-				$notice[] = 'API responded with unknown error.';
-			}
-		}
-		update_option( $this->field_prefix . 'notice', $notice );
+		$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
+		$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
+		$this->store_errors_in_notices_option( $errors );
 
 		return true;
 	}
@@ -227,21 +182,34 @@ abstract class Ckan_Backend_Sync_Abstract {
 
 		$data = json_encode( $data );
 
-		$response = $this->do_api_request( $endpoint, $data );
-
-		$success = $this->check_response_for_errors( $response );
-		if ( $success ) {
-			$result = $response->result;
-			if ( isset( $result->id ) && $result->id != '' ) {
+		$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
+		$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
+		$this->store_errors_in_notices_option( $errors );
+		if ( count( $errors ) == 0 ) {
+			$result = $response['result'];
+			if ( isset( $result['id'] ) && $result['id'] != '' ) {
 				// Set reference id from CKAN and add it to $_POST because the real meta save will follow after this action
-				update_post_meta( $post->ID, $this->field_prefix . 'reference', $result->id );
-				update_post_meta( $post->ID, $this->field_prefix . 'name', $result->name );
-				$_POST[ $this->field_prefix . 'reference' ] = $result->id;
-				$_POST[ $this->field_prefix . 'name' ]      = $result->name;
+				update_post_meta( $post->ID, $this->field_prefix . 'reference', $result['id'] );
+				update_post_meta( $post->ID, $this->field_prefix . 'name', $result['name'] );
+				$_POST[ $this->field_prefix . 'reference' ] = $result['id'];
+				$_POST[ $this->field_prefix . 'name' ]      = $result['name'];
 			}
 		}
 
-		return $success;
+		return true;
+	}
+
+	protected function store_errors_in_notices_option( $errors ) {
+		if ( is_array( $errors ) && count( $errors ) > 0 ) {
+			// store all error notices in option array
+			$notices = get_option( $this->field_prefix . 'notices' );
+			foreach ( $errors as $key => $m ) {
+				$notices[] = $m;
+			}
+			update_option( $this->field_prefix . 'notices', $notices );
+		}
+
+		return true;
 	}
 
 	/**
@@ -250,14 +218,14 @@ abstract class Ckan_Backend_Sync_Abstract {
 	 * @return string
 	 */
 	public function show_admin_notices() {
-		$notice = get_option( $this->field_prefix . 'notice' );
-		if ( empty( $notice ) ) {
+		$notices = get_option( $this->field_prefix . 'notices' );
+		if ( empty( $notices ) ) {
 			return '';
 		}
 		//print the message
-		foreach ( $notice as $key => $m ) {
+		foreach ( $notices as $key => $m ) {
 			echo '<div class="error"><p>' . $m . '</p></div>';
 		}
-		delete_option( $this->field_prefix . 'notice' );
+		delete_option( $this->field_prefix . 'notices' );
 	}
 }

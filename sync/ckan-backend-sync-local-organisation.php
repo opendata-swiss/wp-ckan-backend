@@ -8,8 +8,8 @@ class Ckan_Backend_Sync_Local_Organisation extends Ckan_Backend_Sync_Abstract {
 
 	protected function get_update_data() {
 		// Gernerate slug of organisation. If no title is entered use an uniqid
-		if ( $_POST[Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'name'] != '' ) {
-			$title = $_POST[Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'name'];
+		if ( $_POST[ Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'name' ] != '' ) {
+			$title = $_POST[ Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'name' ];
 		} else {
 			$title = $_POST['post_title'];
 
@@ -20,15 +20,15 @@ class Ckan_Backend_Sync_Local_Organisation extends Ckan_Backend_Sync_Abstract {
 		$slug = sanitize_title_with_dashes( $title );
 
 		$data = array(
-			'name'             => $slug,
-			'title'            => $_POST['post_title'], // TODO: use all language here
-			'description'      => $_POST[Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'description_de'], // TODO: use all language here
-			'image_url'        => $_POST[Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'image'],
-			'state'            => $_POST[Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'visibility'],
+			'name'        => $slug,
+			'title'       => $_POST['post_title'], // TODO: use all language here
+			'description' => $_POST[ Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'description_de' ], // TODO: use all language here
+			'image_url'   => $_POST[ Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'image' ],
+			'state'       => $_POST[ Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'visibility' ],
 		);
 
-		if( $_POST[Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'parent'] != '' ) {
-			$data['groups'] = array ( array( 'name' => $_POST[Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'parent'] ) );
+		if ( $_POST[ Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'parent' ] != '' ) {
+			$data['groups'] = array( array( 'name' => $_POST[ Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'parent' ] ) );
 		}
 
 		if ( isset( $_POST[ Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'reference' ] ) && $_POST[ Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'reference' ] != '' ) {
