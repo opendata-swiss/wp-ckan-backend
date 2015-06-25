@@ -119,7 +119,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 
 		// If no CKAN reference id is defined don't send request a to CKAN
 		if ( $ckan_ref === '' ) {
-			return;
+			return true;
 		}
 
 		$data     = array(
@@ -245,7 +245,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 			foreach ( $errors as $key => $m ) {
 				$notices[] = $m;
 			}
-			update_option( $this->field_prefix . 'notices', $notices );
+			return update_option( $this->field_prefix . 'notices', $notices );
 		}
 
 		return true;
@@ -265,6 +265,6 @@ abstract class Ckan_Backend_Sync_Abstract {
 		foreach ( $notices as $key => $m ) {
 			echo '<div class="error"><p>' . $m . '</p></div>';
 		}
-		delete_option( $this->field_prefix . 'notices' );
+		return delete_option( $this->field_prefix . 'notices' );
 	}
 }
