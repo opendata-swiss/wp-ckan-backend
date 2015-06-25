@@ -7,6 +7,8 @@ class Ckan_Backend_Sync_Local_Organisation extends Ckan_Backend_Sync_Abstract {
 	}
 
 	protected function get_update_data() {
+		// TODO: What happens to children when parent group gets deleted? What does CKAN?
+
 		// Gernerate slug of organisation. If no title is entered use an uniqid
 		if ( $_POST[ Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'name' ] != '' ) {
 			$title = $_POST[ Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'name' ];
