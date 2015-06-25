@@ -46,13 +46,14 @@ abstract class Ckan_Backend_Sync_Abstract {
 
 		// If action is trash -> set CKAN dataset to deleted
 		if ( isset( $_GET ) && ( $_GET['action'] === 'trash' ) ) {
-			$this->trash_action( $post_id );
+			$success = $this->trash_action( $post_id );
 		} // If action is untrash -> set CKAN dataset to active
 		elseif ( isset( $_GET ) && $_GET['action'] === 'untrash' ) {
-			$this->untrash_action( $post_id );
+			$success = $this->untrash_action( $post_id );
 		} // If action is delete -> delete the CKAN dataset completely
 		elseif ( isset( $_GET ) && $_GET['action'] === 'delete' ) {
-			// this action is handled by the before_delete_post hook -> do nothing
+			// The delete action is handled by the before_delete_post hook -> do nothing
+			return;
 		} // Or generate data for insert/update
 		else {
 			// Exit if saved post is a revision (revisions are deactivated in wp-config... but just in case)
@@ -62,12 +63,19 @@ abstract class Ckan_Backend_Sync_Abstract {
 
 			if ( $post->post_status == 'publish' ) {
 				$data = $this->get_update_data();
-				$this->update_action( $post, $data );
+				// If post data holds reference id -> do update in CKAN
+				if ( isset( $data['id'] ) ) {
+					$success = $this->update_action( $data );
+				} else {
+					// Insert new dataset
+					$success = $this->insert_action( $post, $data );
+				}
 			} else {
-				// if post gets unpublished set status in ckan to deleted
-				$this->trash_action( $post_id );
+				// if post gets unpublished -> set CKAN dataset to deleted
+				$success = $this->trash_action( $post_id );
 			}
 		}
+		return $success;
 	}
 
 	/**
@@ -81,11 +89,9 @@ abstract class Ckan_Backend_Sync_Abstract {
 			return;
 		}
 
-		$success = $this->delete_action( $post_id );
-
 		// TODO: do not delete post in WordPress if there was an error sending the ckan request
 
-		return $success;
+		return $this->delete_action( $post_id );
 	}
 
 	/**
@@ -113,7 +119,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 
 		// If no CKAN reference id is defined don't send request a to CKAN
 		if ( $ckan_ref === '' ) {
-			return false;
+			return;
 		}
 
 		$data     = array(
@@ -127,15 +133,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 			$data['state'] = 'deleted';
 		}
 
-		$data = json_encode( $data );
-
-		// Send updated data to CKAN
-		$endpoint = CKAN_API_ENDPOINT . 'action/' . $this->api_type . '_patch';
-		$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
-		$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
-		$this->store_errors_in_notices_option( $errors );
-
-		return true;
+		return $this->update_action($data);
 	}
 
 	/**
@@ -146,9 +144,9 @@ abstract class Ckan_Backend_Sync_Abstract {
 	 * @return bool True when CKAN request was successful.
 	 */
 	protected function delete_action( $post_id ) {
-		// purge command not available for datasets
+		// purge command not available for datasets -> do nothing
 		if ( $this->api_type == 'package' ) {
-			return false;
+			return;
 		}
 
 		$ckan_ref = get_post_meta( $post_id, $this->field_prefix . 'reference', true );
@@ -167,11 +165,8 @@ abstract class Ckan_Backend_Sync_Abstract {
 		$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
 		$this->store_errors_in_notices_option( $errors );
 
-		if ( count( $errors ) > 0 ) {
-			return false;
-		}
-
-		return true;
+		// Return true if there were no errors
+		return count( $errors ) == 0;
 	}
 
 	/**
@@ -182,25 +177,39 @@ abstract class Ckan_Backend_Sync_Abstract {
 	abstract protected function get_update_data();
 
 	/**
-	 * Gets called when a CKAN data is inserted or updated.
-	 * Sends new/updated data to CKAN and updates reference id and name (slug) from CKAN.
+	 * Gets called when a CKAN data is updated.
+	 * Sends updated data to CKAN.
 	 *
-	 * @param object $post The post from WordPress which is updated/inserted
-	 * @param array $data The inserted/updated data to send
+	 * @param array $data The updated data to send
 	 *
-	 * @return bool True when CKAN request was successful.
+	 * @return bool True if data was successfully updated in CKAN
 	 */
-	protected function update_action( $post, $data ) {
+	protected function update_action( $data ) {
 		// Define endpoint for request
-		$endpoint = CKAN_API_ENDPOINT . 'action/';
+		$endpoint = CKAN_API_ENDPOINT . 'action/' . $this->api_type . '_patch';
 
-		// If post data holds reference id -> do update in CKAN
-		if ( isset( $data['id'] ) ) {
-			$endpoint .= $this->api_type . '_patch';
-		} else {
-			// Insert new dataset
-			$endpoint .= $this->api_type . '_create';
-		}
+		$data = json_encode( $data );
+		$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
+		$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
+		$this->store_errors_in_notices_option( $errors );
+
+		// Return true if there were no errors
+		return count( $errors ) == 0;
+	}
+
+	/**
+	 * Gets called when a CKAN data is inserted.
+	 * Sends inserted data to CKAN and updates reference id and name (slug) from CKAN.
+
+	 *
+	 * @param object $post The post from WordPress which is inserted
+	 * @param array $data The inserted data to send
+	 *
+	 * @return bool True if data was successfully inserted in CKAN
+	 */
+	protected function insert_action( $post, $data ) {
+		// Define endpoint for request
+		$endpoint = CKAN_API_ENDPOINT . 'action/' . $this->api_type . '_create';
 
 		$data = json_encode( $data );
 
@@ -216,9 +225,10 @@ abstract class Ckan_Backend_Sync_Abstract {
 				$_POST[ $this->field_prefix . 'reference' ] = $result['id'];
 				$_POST[ $this->field_prefix . 'name' ]      = $result['name'];
 			}
+			return true;
+		} else {
+			return false;
 		}
-
-		return true;
 	}
 
 	/**
