@@ -116,17 +116,9 @@ abstract class Ckan_Backend_Sync_Abstract {
 			return false;
 		}
 
-		// Get current CKAN data and update state property
-		$endpoint = CKAN_API_ENDPOINT . 'action/' . $this->api_type . '_show';
 		$data     = array(
 			'id' => $ckan_ref
 		);
-		$data     = json_encode( $data );
-		$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
-		$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
-		$this->store_errors_in_notices_option( $errors );
-		$data = $response['result'];
-
 		if ( $untrash ) {
 			// Set CKAN state to active.
 			$data['state'] = 'active';
@@ -138,7 +130,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 		$data = json_encode( $data );
 
 		// Send updated data to CKAN
-		$endpoint = CKAN_API_ENDPOINT . 'action/' . $this->api_type . '_update';
+		$endpoint = CKAN_API_ENDPOINT . 'action/' . $this->api_type . '_patch';
 		$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
 		$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
 		$this->store_errors_in_notices_option( $errors );
@@ -199,13 +191,12 @@ abstract class Ckan_Backend_Sync_Abstract {
 	 * @return bool True when CKAN request was successful.
 	 */
 	protected function update_action( $post, $data ) {
-
 		// Define endpoint for request
 		$endpoint = CKAN_API_ENDPOINT . 'action/';
 
 		// If post data holds reference id -> do update in CKAN
 		if ( isset( $data['id'] ) ) {
-			$endpoint .= $this->api_type . '_update';
+			$endpoint .= $this->api_type . '_patch';
 		} else {
 			// Insert new dataset
 			$endpoint .= $this->api_type . '_create';
