@@ -24,7 +24,7 @@ class Ckan_Backend_Sync_Local_Organisation extends Ckan_Backend_Sync_Abstract {
 			'title'       => $_POST['post_title'], // TODO: use all language here
 			'description' => $_POST[ Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'description_de' ], // TODO: use all language here
 			'image_url'   => $_POST[ Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'image' ],
-			'state'       => $_POST[ Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'visibility' ],
+			'state'       => 'active',
 		);
 
 		if ( $_POST[ Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'parent' ] != '' ) {

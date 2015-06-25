@@ -22,11 +22,11 @@ abstract class Ckan_Backend_Sync_Abstract {
 		}
 
 		// add save post action for current post type
-		add_action( 'save_post_' . $this->post_type, array( $this, 'do_sync' ) );
+		add_action( 'save_post_' . $this->post_type, array( $this, 'do_sync' ), 0, 2 );
 
 		if ( $this->api_type != 'package' ) {
 			// add before delete post action
-			add_action( 'before_delete_post', array( $this, 'do_delete' ) );
+			add_action( 'before_delete_post', array( $this, 'do_delete' ), 0, 1 );
 		}
 
 		// display all notices after saving post
@@ -36,7 +36,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 	/**
 	 * This action gets called when a CKAN post-type is saved, changed, trashed or deleted.
 	 */
-	public function do_sync() {
+	public function do_sync($post_id, $post) {
 		// TODO use publish settings from WP for visibility
 
 		// Exit if WP is doing an auto-save
@@ -46,59 +46,29 @@ abstract class Ckan_Backend_Sync_Abstract {
 
 		// If action is trash -> set CKAN dataset to deleted
 		if ( isset( $_GET ) && ( $_GET['action'] === 'trash' ) ) {
-			// If action was executed by selecting post with checkbox and choose trash in menu $_GET['post'] is array with all selected post ids
-			if ( is_array( $_GET['post'] ) ) {
-				foreach ( $_GET['post'] as $post_id ) {
-					$this->trash_action( $post_id );
-				}
-			} else {
-				// If action was executed with trash link next to post $_GET['post'] corresponds to id of post
-				$this->trash_action( $_GET['post'] );
-			}
+			$this->trash_action( $post_id );
 		} // If action is untrash -> set CKAN dataset to active
 		elseif ( isset( $_GET ) && $_GET['action'] === 'untrash' ) {
-			// If Undo Link was clicked the $_GET['post'] variable isn't set
-			if ( $_GET['doaction'] === 'undo' ) {
-				$post_ids = explode( ',', $_GET['ids'] );
-				foreach ( $post_ids as $post_id ) {
-					$this->untrash_action( $post_id );
-				}
-			} else {
-				// If action was executed by selecting post with checkbox and choose untrash in menu $_GET['post'] is array with all selected post ids
-				if ( is_array( $_GET['post'] ) ) {
-					foreach ( $_GET['post'] as $post_id ) {
-						$this->untrash_action( $post_id );
-					}
-				} else {
-					// If action was executed with untrash link next to post $_GET['post'] corresponds to id of post
-					$this->untrash_action( $_GET['post'] );
-				}
-			}
+			$this->untrash_action( $post_id );
 		} // If action is delete -> delete the CKAN dataset completely
 		elseif ( isset( $_GET ) && $_GET['action'] === 'delete' ) {
 			// this action is handled by the before_delete_post hook -> do nothing
 		} // Or generate data for insert/update
 		else {
-			global $post;
-
-			// Exit if $post is empty (Should never happen when post gets inserted or updated)
-			if ( ! $post || ! is_object( $post ) ) {
-				return;
-			}
-
 			// Exit if saved post is a revision (revisions are deactivated in wp-config... but just in case)
-			if ( wp_is_post_revision( $post->ID ) || ! isset( $post->post_status ) ) {
+			if ( wp_is_post_revision( $post_id ) || ! isset( $post->post_status ) ) {
 				return;
 			}
 
 			// Exit if post status isn't publish
 			// TODO post status seems not to be updated at this state of post save
-			if($post->post_status != 'publish') {
-				return;
+			if($post->post_status == 'publish') {
+				$data = $this->get_update_data();
+				$this->update_action( $post, $data );
+			} else {
+				// if post gets unpublished set status in ckan to deleted
+				$this->trash_action( $post_id );
 			}
-
-			$data = $this->get_update_data();
-			$this->update_action( $post, $data );
 		}
 	}
 
@@ -107,21 +77,13 @@ abstract class Ckan_Backend_Sync_Abstract {
 	 *
 	 * @return bool|void
 	 */
-	public function do_delete() {
+	public function do_delete($post_id) {
 		global $post_type;
 		if( $post_type != $this->post_type ) {
 			return;
 		}
 
-		// If action was executed by selecting post with checkbox and choose delete in menu $_GET['post'] is array with all selected post ids
-		if ( is_array( $_GET['post'] ) ) {
-			foreach ( $_GET['post'] as $post_id ) {
-				$success = $this->delete_action( $post_id );
-			}
-		} else {
-			// If action was executed with delete link next to post $_GET['post'] corresponds to id of post
-			$success = $this->delete_action( $_GET['post'] );
-		}
+		$success = $this->delete_action( $post_id );
 
 		// TODO: do not delete post in WordPress if there was an error sending the ckan request
 
@@ -141,7 +103,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 
 	/**
 	 * Gets called when a CKAN data is trashed or untrashed.
-	 * Updates internal post visibility field and CKAN state.
+	 * Updates CKAN state.
 	 *
 	 * @param int $post_id ID of CKAN post-type
 	 * @param bool $untrash Set true if dataset should be untrashed
@@ -149,14 +111,6 @@ abstract class Ckan_Backend_Sync_Abstract {
 	 * @return bool True when CKAN request was successful.
 	 */
 	protected function trash_action( $post_id, $untrash = false ) {
-		if ( $untrash ) {
-			// Set internal post visibility state to active
-			update_post_meta( $post_id, $this->field_prefix . 'visibility', 'active' );
-		} else {
-			// Set internal post visibility state to deleted
-			update_post_meta( $post_id, $this->field_prefix . 'visibility', 'deleted' );
-		}
-
 		$ckan_ref = get_post_meta( $post_id, $this->field_prefix . 'reference', true );
 
 		// If no CKAN reference id is defined don't send request a to CKAN

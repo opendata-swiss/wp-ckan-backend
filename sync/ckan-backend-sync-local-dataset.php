@@ -32,7 +32,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 			'author_email'     => $_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'author_email' ],
 			'notes'            => $_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'description_de' ], // TODO: use all language here
 			'version'          => $_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'version' ],
-			'state'            => $_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'visibility' ],
+			'state'            => 'active',
 			'extras'           => $extras,
 			'resources'        => $resources,
 			'groups'           => $groups,

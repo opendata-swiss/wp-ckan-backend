@@ -66,19 +66,6 @@ class Ckan_Backend_Local_Organisation {
 			'show_names'   => true,
 		) );
 
-		/* Visibility */
-		$cmb->add_field( array(
-			'name'    => __( 'Visibility', 'ogdch' ),
-			'desc'    => __( 'Select the visibility of the Dataset', 'ogdch' ),
-			'id'      => self::FIELD_PREFIX . 'visibility',
-			'type'    => 'radio',
-			'default' => 'active',
-			'options' => array(
-				'active'  => __( 'Active', 'ogdch' ),
-				'deleted' => __( 'Deleted', 'ogdch' ),
-			),
-		) );
-
 		/* Title */
 		$cmb->add_field( array(
 			'name' => __( 'Organisation Title', 'ogdch' ),
