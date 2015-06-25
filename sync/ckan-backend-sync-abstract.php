@@ -24,6 +24,11 @@ abstract class Ckan_Backend_Sync_Abstract {
 		// add save post action for current post type
 		add_action( 'save_post_' . $this->post_type, array( $this, 'do_sync' ) );
 
+		if ( $this->api_type != 'package' ) {
+			// add before delete post action
+			add_action( 'before_delete_post', array( $this, 'do_delete' ) );
+		}
+
 		// display all notices after saving post
 		add_action( 'admin_notices', array( $this, 'show_admin_notices' ), 0 );
 	}
@@ -32,6 +37,8 @@ abstract class Ckan_Backend_Sync_Abstract {
 	 * This action gets called when a CKAN post-type is saved, changed, trashed or deleted.
 	 */
 	public function do_sync() {
+		// TODO use publish settings from WP for visibility
+
 		// Exit if WP is doing an auto-save
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
 			return;
@@ -69,31 +76,56 @@ abstract class Ckan_Backend_Sync_Abstract {
 			}
 		} // If action is delete -> delete the CKAN dataset completely
 		elseif ( isset( $_GET ) && $_GET['action'] === 'delete' ) {
-			// If action was executed by selecting post with checkbox and choose delete in menu $_GET['post'] is array with all selected post ids
-			if ( is_array( $_GET['post'] ) ) {
-				foreach ( $_GET['post'] as $post_id ) {
-					$this->delete_action( $post_id );
-				}
-			} else {
-				// If action was executed with delete link next to post $_GET['post'] corresponds to id of post
-				$this->delete_action( $_GET['post'] );
-			}
+			// this action is handled by the before_delete_post hook -> do nothing
 		} // Or generate data for insert/update
 		else {
 			global $post;
 
 			// Exit if $post is empty (Should never happen when post gets inserted or updated)
-			if ( ! $post ) {
+			if ( ! $post || ! is_object( $post ) ) {
 				return;
 			}
 
 			// Exit if saved post is a revision (revisions are deactivated in wp-config... but just in case)
-			if ( is_object( $post ) && ( wp_is_post_revision( $post->ID ) || ! isset( $post->post_status ) ) ) {
+			if ( wp_is_post_revision( $post->ID ) || ! isset( $post->post_status ) ) {
 				return;
 			}
+
+			// Exit if post status isn't publish
+			// TODO post status seems not to be updated at this state of post save
+			if($post->post_status != 'publish') {
+				return;
+			}
+
 			$data = $this->get_update_data();
 			$this->update_action( $post, $data );
 		}
+	}
+
+	/**
+	 * Gets called when a CKAN post-type is deleted.
+	 *
+	 * @return bool|void
+	 */
+	public function do_delete() {
+		global $post_type;
+		if( $post_type != $this->post_type ) {
+			return;
+		}
+
+		// If action was executed by selecting post with checkbox and choose delete in menu $_GET['post'] is array with all selected post ids
+		if ( is_array( $_GET['post'] ) ) {
+			foreach ( $_GET['post'] as $post_id ) {
+				$success = $this->delete_action( $post_id );
+			}
+		} else {
+			// If action was executed with delete link next to post $_GET['post'] corresponds to id of post
+			$success = $this->delete_action( $_GET['post'] );
+		}
+
+		// TODO: do not delete post in WordPress if there was an error sending the ckan request
+
+		return $success;
 	}
 
 	/**
@@ -163,7 +195,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 	}
 
 	/**
-	 * Gets called when a CKAN post-type is deleted.
+	 * Purges data in CKAN database
 	 *
 	 * @param int $post_id ID of CKAN post-type
 	 *
@@ -176,9 +208,10 @@ abstract class Ckan_Backend_Sync_Abstract {
 		}
 
 		$ckan_ref = get_post_meta( $post_id, $this->field_prefix . 'reference', true );
+
 		// If no CKAN reference id is defined don't send request a to CKAN
 		if ( $ckan_ref === '' ) {
-			return false;
+			return true;
 		}
 
 		$endpoint = CKAN_API_ENDPOINT . 'action/' . $this->api_type . '_purge';
@@ -189,6 +222,10 @@ abstract class Ckan_Backend_Sync_Abstract {
 		$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
 		$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
 		$this->store_errors_in_notices_option( $errors );
+
+		if(count($errors) > 0) {
+			return false;
+		}
 
 		return true;
 	}
