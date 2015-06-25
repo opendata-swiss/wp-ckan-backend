@@ -36,7 +36,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 	/**
 	 * This action gets called when a CKAN post-type is saved, changed, trashed or deleted.
 	 */
-	public function do_sync($post_id, $post) {
+	public function do_sync( $post_id, $post ) {
 		// TODO use publish settings from WP for visibility
 
 		// Exit if WP is doing an auto-save
@@ -60,9 +60,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 				return;
 			}
 
-			// Exit if post status isn't publish
-			// TODO post status seems not to be updated at this state of post save
-			if($post->post_status == 'publish') {
+			if ( $post->post_status == 'publish' ) {
 				$data = $this->get_update_data();
 				$this->update_action( $post, $data );
 			} else {
@@ -77,9 +75,9 @@ abstract class Ckan_Backend_Sync_Abstract {
 	 *
 	 * @return bool|void
 	 */
-	public function do_delete($post_id) {
+	public function do_delete( $post_id ) {
 		global $post_type;
-		if( $post_type != $this->post_type ) {
+		if ( $post_type != $this->post_type ) {
 			return;
 		}
 
@@ -169,7 +167,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 		}
 
 		$endpoint = CKAN_API_ENDPOINT . 'action/' . $this->api_type . '_purge';
-		$data = array(
+		$data     = array(
 			'id' => $ckan_ref
 		);
 		$data     = json_encode( $data );
@@ -177,7 +175,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 		$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
 		$this->store_errors_in_notices_option( $errors );
 
-		if(count($errors) > 0) {
+		if ( count( $errors ) > 0 ) {
 			return false;
 		}
 
