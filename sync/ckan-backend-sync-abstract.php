@@ -122,7 +122,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 		$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
 		$this->store_errors_in_notices_option( $errors );
 
-		$this->additional_delete_action( $post );
+		$this->after_delete_action( $post );
 
 		// Return true if there were no errors
 		return count( $errors ) == 0;
@@ -133,7 +133,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 	 *
 	 * @param object $post The post from WordPress which is deleted
 	 */
-	protected function additional_delete_action( $post ) {
+	protected function after_delete_action( $post ) {
 		return;
 	}
 
