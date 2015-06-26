@@ -39,7 +39,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 
 		// If action is trash -> set CKAN dataset to deleted
 		if ( isset( $_GET ) && ( $_GET['action'] === 'trash' ) ) {
-			$success = $this->delete_action( $post_id );
+			$success = $this->delete_action( $post );
 		} // If action is untrash -> set CKAN dataset to active
 		elseif ( isset( $_GET ) && $_GET['action'] === 'untrash' ) {
 			$success = $this->untrash_action( $post_id );
@@ -65,7 +65,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 				}
 			} else {
 				// if post gets unpublished -> set CKAN dataset to deleted
-				$success = $this->delete_action( $post_id );
+				$success = $this->delete_action( $post );
 			}
 		}
 
@@ -100,12 +100,12 @@ abstract class Ckan_Backend_Sync_Abstract {
 	 * Gets called when a CKAN data is trashed.
 	 * Sets CKAN state to deleted.
 	 *
-	 * @param int $post_id ID of CKAN post-type
+	 * @param object $post The post from WordPress which is deleted
 	 *
 	 * @return bool True when CKAN request was successful.
 	 */
-	protected function delete_action( $post_id ) {
-		$ckan_ref = get_post_meta( $post_id, $this->field_prefix . 'reference', true );
+	protected function delete_action( $post ) {
+		$ckan_ref = get_post_meta( $post->ID, $this->field_prefix . 'reference', true );
 
 		// If no CKAN reference id is defined don't send request a to CKAN
 		if ( $ckan_ref === '' ) {
@@ -122,8 +122,19 @@ abstract class Ckan_Backend_Sync_Abstract {
 		$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
 		$this->store_errors_in_notices_option( $errors );
 
+		$this->additional_delete_action( $post );
+
 		// Return true if there were no errors
 		return count( $errors ) == 0;
+	}
+
+	/**
+	 * Possibility for specific sync classes to do additional actions after deleting data in CKAN
+	 *
+	 * @param object $post The post from WordPress which is deleted
+	 */
+	protected function additional_delete_action( $post ) {
+		return;
 	}
 
 	/**
