@@ -1,8 +1,25 @@
 <?php
 
 class Ckan_Backend_Sync_Local_Organisation extends Ckan_Backend_Sync_Abstract {
-	protected function additional_delete_action( $post ) {
-		// CKAN removes parent connection on delete -> so do we
+	protected function after_delete_action( $post ) {
+		// Select related datasets
+		$args = array(
+			'meta_key'       => Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'organisation',
+			'meta_value'     => $post->name,
+			'post_type'      => Ckan_Backend_Local_Dataset::POST_TYPE,
+			'post_status'    => 'any',
+			'posts_per_page' => - 1 // select all posts
+		);
+		$related_dataset_posts = get_posts( $args );
+
+		foreach ( $related_dataset_posts as $dataset_post ) {
+			// CKAN removes organisation relationship on delete -> so do we
+			update_post_meta( $dataset_post->ID, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'organisation', '' );
+			// CKAN sets all related datasets to deleted -> so do we
+			wp_trash_post( $dataset_post->ID );
+		}
+
+		// CKAN removes parent relationship on delete -> so do we
 		update_post_meta( $post->ID, $this->field_prefix . 'parent', '' );
 	}
 
