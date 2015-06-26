@@ -24,10 +24,8 @@ abstract class Ckan_Backend_Sync_Abstract {
 		// add save post action for current post type
 		add_action( 'save_post_' . $this->post_type, array( $this, 'do_sync' ), 0, 2 );
 
-		if ( $this->api_type != 'package' ) {
-			// add before delete post action
-			add_action( 'before_delete_post', array( $this, 'do_delete' ), 0, 1 );
-		}
+		// add before delete post action
+		add_action( 'before_delete_post', array( $this, 'do_delete' ), 0, 1 );
 
 		// display all notices after saving post
 		add_action( 'admin_notices', array( $this, 'show_admin_notices' ), 0 );
@@ -89,8 +87,6 @@ abstract class Ckan_Backend_Sync_Abstract {
 			return;
 		}
 
-		// TODO: do not delete post in WordPress if there was an error sending the ckan request
-
 		return $this->delete_action( $post_id );
 	}
 
@@ -144,11 +140,6 @@ abstract class Ckan_Backend_Sync_Abstract {
 	 * @return bool True when CKAN request was successful.
 	 */
 	protected function delete_action( $post_id ) {
-		// purge command not available for datasets -> do nothing
-		if ( $this->api_type == 'package' ) {
-			return;
-		}
-
 		$ckan_ref = get_post_meta( $post_id, $this->field_prefix . 'reference', true );
 
 		// If no CKAN reference id is defined don't send request a to CKAN
@@ -156,7 +147,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 			return true;
 		}
 
-		$endpoint = CKAN_API_ENDPOINT . 'action/' . $this->api_type . '_purge';
+		$endpoint = CKAN_API_ENDPOINT . 'action/' . $this->api_type . '_delete';
 		$data     = array(
 			'id' => $ckan_ref
 		);
