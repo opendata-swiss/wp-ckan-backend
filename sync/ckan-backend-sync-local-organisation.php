@@ -1,17 +1,15 @@
 <?php
 
 class Ckan_Backend_Sync_Local_Organisation extends Ckan_Backend_Sync_Abstract {
-
-	public function __construct() {
-		parent::__construct( Ckan_Backend_Local_Organisation::POST_TYPE, Ckan_Backend_Local_Organisation::FIELD_PREFIX );
+	protected function additional_delete_action( $post ) {
+		// CKAN removes parent connection on delete -> so do we
+		update_post_meta( $post->ID, $this->field_prefix . 'parent', '' );
 	}
 
 	protected function get_update_data() {
-		// TODO: What happens to children when parent group gets deleted? What does CKAN?
-
 		// Gernerate slug of organisation. If no title is entered use an uniqid
-		if ( $_POST[ Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'name' ] != '' ) {
-			$title = $_POST[ Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'name' ];
+		if ( $_POST[ $this->field_prefix . 'name' ] != '' ) {
+			$title = $_POST[ $this->field_prefix . 'name' ];
 		} else {
 			$title = $_POST['post_title'];
 
@@ -24,17 +22,17 @@ class Ckan_Backend_Sync_Local_Organisation extends Ckan_Backend_Sync_Abstract {
 		$data = array(
 			'name'        => $slug,
 			'title'       => $_POST['post_title'], // TODO: use all language here
-			'description' => $_POST[ Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'description_de' ], // TODO: use all language here
-			'image_url'   => $_POST[ Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'image' ],
+			'description' => $_POST[ $this->field_prefix . 'description_de' ], // TODO: use all language here
+			'image_url'   => $_POST[ $this->field_prefix . 'image' ],
 			'state'       => 'active',
 		);
 
-		if ( $_POST[ Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'parent' ] != '' ) {
-			$data['groups'] = array( array( 'name' => $_POST[ Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'parent' ] ) );
+		if ( $_POST[ $this->field_prefix . 'parent' ] != '' ) {
+			$data['groups'] = array( array( 'name' => $_POST[ $this->field_prefix . 'parent' ] ) );
 		}
 
-		if ( isset( $_POST[ Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'reference' ] ) && $_POST[ Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'reference' ] != '' ) {
-			$data['id'] = $_POST[ Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'reference' ];
+		if ( isset( $_POST[ $this->field_prefix . 'reference' ] ) && $_POST[ $this->field_prefix . 'reference' ] != '' ) {
+			$data['id'] = $_POST[ $this->field_prefix . 'reference' ];
 		}
 
 		return $data;
