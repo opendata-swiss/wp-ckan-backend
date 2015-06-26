@@ -32,8 +32,6 @@ abstract class Ckan_Backend_Sync_Abstract {
 	 * This action gets called when a CKAN post-type is saved, changed, trashed or deleted.
 	 */
 	public function do_sync( $post_id, $post ) {
-		// TODO use publish settings from WP for visibility
-
 		// Exit if WP is doing an auto-save
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
 			return;
@@ -70,6 +68,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 				$success = $this->delete_action( $post_id );
 			}
 		}
+
 		return $success;
 	}
 
@@ -89,12 +88,12 @@ abstract class Ckan_Backend_Sync_Abstract {
 			return true;
 		}
 
-		$data     = array(
-			'id' => $ckan_ref,
+		$data = array(
+			'id'    => $ckan_ref,
 			'state' => 'active'
 		);
 
-		return $this->update_action($data);
+		return $this->update_action( $data );
 	}
 
 	/**
@@ -118,6 +117,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 			'id' => $ckan_ref
 		);
 		$data     = json_encode( $data );
+
 		$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
 		$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
 		$this->store_errors_in_notices_option( $errors );
@@ -142,10 +142,9 @@ abstract class Ckan_Backend_Sync_Abstract {
 	 * @return bool True if data was successfully updated in CKAN
 	 */
 	protected function update_action( $data ) {
-		// Define endpoint for request
 		$endpoint = CKAN_API_ENDPOINT . 'action/' . $this->api_type . '_patch';
+		$data     = json_encode( $data );
 
-		$data = json_encode( $data );
 		$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
 		$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
 		$this->store_errors_in_notices_option( $errors );
@@ -157,7 +156,6 @@ abstract class Ckan_Backend_Sync_Abstract {
 	/**
 	 * Gets called when a CKAN data is inserted.
 	 * Sends inserted data to CKAN and updates reference id and name (slug) from CKAN.
-
 	 *
 	 * @param object $post The post from WordPress which is inserted
 	 * @param array $data The inserted data to send
@@ -165,10 +163,8 @@ abstract class Ckan_Backend_Sync_Abstract {
 	 * @return bool True if data was successfully inserted in CKAN
 	 */
 	protected function insert_action( $post, $data ) {
-		// Define endpoint for request
 		$endpoint = CKAN_API_ENDPOINT . 'action/' . $this->api_type . '_create';
-
-		$data = json_encode( $data );
+		$data     = json_encode( $data );
 
 		$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
 		$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
@@ -182,6 +178,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 				$_POST[ $this->field_prefix . 'reference' ] = $result['id'];
 				$_POST[ $this->field_prefix . 'name' ]      = $result['name'];
 			}
+
 			return true;
 		} else {
 			return false;
@@ -202,6 +199,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 			foreach ( $errors as $key => $m ) {
 				$notices[] = $m;
 			}
+
 			return update_option( $this->field_prefix . 'notices', $notices );
 		}
 
@@ -222,6 +220,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 		foreach ( $notices as $key => $m ) {
 			echo '<div class="error"><p>' . $m . '</p></div>';
 		}
+
 		return delete_option( $this->field_prefix . 'notices' );
 	}
 }
