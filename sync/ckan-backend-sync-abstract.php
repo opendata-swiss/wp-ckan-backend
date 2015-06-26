@@ -24,9 +24,6 @@ abstract class Ckan_Backend_Sync_Abstract {
 		// add save post action for current post type
 		add_action( 'save_post_' . $this->post_type, array( $this, 'do_sync' ), 0, 2 );
 
-		// add before delete post action
-		add_action( 'before_delete_post', array( $this, 'do_delete' ), 0, 1 );
-
 		// display all notices after saving post
 		add_action( 'admin_notices', array( $this, 'show_admin_notices' ), 0 );
 	}
@@ -44,13 +41,13 @@ abstract class Ckan_Backend_Sync_Abstract {
 
 		// If action is trash -> set CKAN dataset to deleted
 		if ( isset( $_GET ) && ( $_GET['action'] === 'trash' ) ) {
-			$success = $this->trash_action( $post_id );
+			$success = $this->delete_action( $post_id );
 		} // If action is untrash -> set CKAN dataset to active
 		elseif ( isset( $_GET ) && $_GET['action'] === 'untrash' ) {
 			$success = $this->untrash_action( $post_id );
 		} // If action is delete -> delete the CKAN dataset completely
 		elseif ( isset( $_GET ) && $_GET['action'] === 'delete' ) {
-			// The delete action is handled by the before_delete_post hook -> do nothing
+			// The trash action already set the CKAN dataset to deleted -> do nothing
 			return;
 		} // Or generate data for insert/update
 		else {
@@ -70,47 +67,21 @@ abstract class Ckan_Backend_Sync_Abstract {
 				}
 			} else {
 				// if post gets unpublished -> set CKAN dataset to deleted
-				$success = $this->trash_action( $post_id );
+				$success = $this->delete_action( $post_id );
 			}
 		}
 		return $success;
 	}
 
 	/**
-	 * Gets called when a CKAN post-type is deleted.
-	 *
-	 * @return bool|void
-	 */
-	public function do_delete( $post_id ) {
-		global $post_type;
-		if ( $post_type != $this->post_type ) {
-			return;
-		}
-
-		return $this->delete_action( $post_id );
-	}
-
-	/**
-	 * Just a convenience function which calls trash_action with preset untrash parameter
+	 * Gets called when a CKAN data is untrashed.
+	 * Sets CKAN state to active.
 	 *
 	 * @param int $post_id ID of CKAN post-type
 	 *
 	 * @return bool True when CKAN request was successful.
 	 */
 	protected function untrash_action( $post_id ) {
-		return $this->trash_action( $post_id, true );
-	}
-
-	/**
-	 * Gets called when a CKAN data is trashed or untrashed.
-	 * Updates CKAN state.
-	 *
-	 * @param int $post_id ID of CKAN post-type
-	 * @param bool $untrash Set true if dataset should be untrashed
-	 *
-	 * @return bool True when CKAN request was successful.
-	 */
-	protected function trash_action( $post_id, $untrash = false ) {
 		$ckan_ref = get_post_meta( $post_id, $this->field_prefix . 'reference', true );
 
 		// If no CKAN reference id is defined don't send request a to CKAN
@@ -119,21 +90,16 @@ abstract class Ckan_Backend_Sync_Abstract {
 		}
 
 		$data     = array(
-			'id' => $ckan_ref
+			'id' => $ckan_ref,
+			'state' => 'active'
 		);
-		if ( $untrash ) {
-			// Set CKAN state to active.
-			$data['state'] = 'active';
-		} else {
-			// Set CKAN state to deleted
-			$data['state'] = 'deleted';
-		}
 
 		return $this->update_action($data);
 	}
 
 	/**
-	 * Purges data in CKAN database
+	 * Gets called when a CKAN data is trashed.
+	 * Sets CKAN state to deleted.
 	 *
 	 * @param int $post_id ID of CKAN post-type
 	 *
