@@ -7,8 +7,9 @@ class Ckan_Backend_Local_Organisation {
 	const FIELD_PREFIX = '_ckan_local_org_';
 
 	public function __construct() {
-		add_action( 'init', array( $this, 'register_post_type' ), 0 );
+		$this->register_post_type();
 		add_action( 'cmb2_init', array( $this, 'define_fields' ) );
+
 		// initialize local organisation sync
 		$ckan_backend_sync_local_organisation = new Ckan_Backend_Sync_Local_Organisation();
 	}

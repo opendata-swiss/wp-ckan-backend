@@ -9,10 +9,66 @@
 
 defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 
-require_once plugin_dir_path( __FILE__ ) . 'ckan-backend-main.php';
+if ( ! class_exists( 'Ckan_Backend', false ) ) {
 
-function run_ckan_backend_main() {
-	$ckan_backend_main = new Ckan_Backend_Main();
+	class Ckan_Backend {
+
+		public $plugin_slug = 'ckan-backend';
+		public $version = '1.0.0';
+
+		/**
+		 * Single instance of the Ckan_Backend object
+		 *
+		 * @var Ckan_Backend
+		 */
+		public static $single_instance = null;
+
+		/**
+		 * Creates/returns the single instance Ckan_Backend object
+		 *
+		 * @return Ckan_Backend Single instance object
+		 */
+		public static function initiate() {
+			if ( null === self::$single_instance ) {
+				self::$single_instance = new self();
+			}
+			return self::$single_instance;
+		}
+
+		public function __construct() {
+			add_action( 'init', array( $this, 'bootstrap' ), 0 );
+		}
+
+		public function bootstrap() {
+			$this->load_dependencies();
+
+			$local_dataset      = new Ckan_Backend_Local_Dataset();
+			$local_group        = new Ckan_Backend_Local_Group();
+			$local_organisation = new Ckan_Backend_Local_Organisation();
+		}
+
+		protected function load_dependencies() {
+			$depedency_file_paths = array(
+				'helper/ckan-backend-helper.php',
+				'post-types/ckan-backend-local-dataset.php',
+				'post-types/ckan-backend-local-group.php',
+				'post-types/ckan-backend-local-organisation.php',
+				'sync/ckan-backend-sync-abstract.php',
+				'sync/ckan-backend-sync-local-dataset.php',
+				'sync/ckan-backend-sync-local-group.php',
+				'sync/ckan-backend-sync-local-organisation.php'
+			);
+
+			foreach ( $depedency_file_paths as $file_path ) {
+				require_once plugin_dir_path( __FILE__ ) . $file_path;
+			}
+		}
+
+		public function get_version() {
+			return $this->version;
+		}
+
+	}
+
+	Ckan_Backend::initiate();
 }
-
-run_ckan_backend_main();
