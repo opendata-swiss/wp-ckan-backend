@@ -43,7 +43,9 @@ class Ckan_Backend_Helper {
 		}
 
 		if ( isset( $response['success'] ) && $response['success'] === false ) {
-			if ( isset( $response['error'] ) && isset( $response['error']['name'] ) && is_array( $response['error']['name'] ) ) {
+			if ( isset( $response['error'] ) && isset( $response['error']['message'] ) ) {
+				$errors[] = $response['error']['message'];
+			} else if ( isset( $response['error'] ) && isset( $response['error']['name'] ) && is_array( $response['error']['name'] ) ) {
 				$errors[] = $response['error']['name'][0];
 			} else if ( isset( $response['error'] ) && isset( $response['error']['id'] ) && is_array( $response['error']['id'] ) ) {
 				$errors[] = $response['error']['id'][0];
