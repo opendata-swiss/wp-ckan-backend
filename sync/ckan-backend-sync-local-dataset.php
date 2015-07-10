@@ -1,19 +1,14 @@
 <?php
 
 class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
-
-	public function __construct() {
-		parent::__construct( Ckan_Backend_Local_Dataset::POST_TYPE, Ckan_Backend_Local_Dataset::FIELD_PREFIX );
-	}
-
 	protected function get_update_data() {
-		$extras    = $this->prepare_custom_fields( $_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'custom_fields' ] );
-		$resources = $this->prepare_resources( $_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'resources' ] );
-		$groups    = $this->prepare_selected_groups( $_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'groups' ] );
+		$extras    = $this->prepare_custom_fields( $_POST[ $this->field_prefix . 'custom_fields' ] );
+		$resources = $this->prepare_resources( $_POST[ $this->field_prefix . 'resources' ] );
+		$groups    = $this->prepare_selected_groups( $_POST[ $this->field_prefix . 'groups' ] );
 
 		// Gernerate slug of dataset. If no title is entered use an uniqid
-		if ( $_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'name' ] != '' ) {
-			$title = $_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'name' ];
+		if ( $_POST[ $this->field_prefix . 'name' ] != '' ) {
+			$title = $_POST[ $this->field_prefix . 'name' ];
 		} else {
 			$title = $_POST['post_title'];
 
@@ -26,21 +21,21 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		$data = array(
 			'name'             => $slug,
 			'title'            => $_POST['post_title'], // TODO: use all language here
-			'maintainer'       => $_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'maintainer' ],
-			'maintainer_email' => $_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'maintainer_email' ],
-			'author'           => $_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'author' ],
-			'author_email'     => $_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'author_email' ],
-			'notes'            => $_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'description_de' ], // TODO: use all language here
-			'version'          => $_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'version' ],
+			'maintainer'       => $_POST[ $this->field_prefix . 'maintainer' ],
+			'maintainer_email' => $_POST[ $this->field_prefix . 'maintainer_email' ],
+			'author'           => $_POST[ $this->field_prefix . 'author' ],
+			'author_email'     => $_POST[ $this->field_prefix . 'author_email' ],
+			'notes'            => $_POST[ $this->field_prefix . 'description_de' ], // TODO: use all language here
+			'version'          => $_POST[ $this->field_prefix . 'version' ],
 			'state'            => 'active',
 			'extras'           => $extras,
 			'resources'        => $resources,
 			'groups'           => $groups,
-			'owner_org'        => $_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'organisation' ],
+			'owner_org'        => $_POST[ $this->field_prefix . 'organisation' ],
 		);
 
-		if ( isset( $_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'reference' ] ) && $_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'reference' ] != '' ) {
-			$data['id'] = $_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'reference' ];
+		if ( isset( $_POST[ $this->field_prefix . 'reference' ] ) && $_POST[ $this->field_prefix . 'reference' ] != '' ) {
+			$data['id'] = $_POST[ $this->field_prefix . 'reference' ];
 		}
 
 		return $data;
