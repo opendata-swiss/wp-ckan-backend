@@ -20,11 +20,11 @@ function ckan_local_dataset_import_page_callback() {
 		wp_die( __('You do not have sufficient permissions to access this page.') );
 	}
 
-	$hidden_field_name = 'ckan_local_dataset_import_submit';
+	$import_submit_hidden_field_name = 'ckan_local_dataset_import_submit';
 	$file_path_field_name = 'ckan_local_dataset_import_file_path';
 
 	// Handle import
-	if( isset($_POST[ $hidden_field_name ]) && $_POST[ $hidden_field_name ] == 'Y' ) {
+	if( isset($_POST[ $import_submit_hidden_field_name ]) && $_POST[ $import_submit_hidden_field_name ] == 'Y' ) {
 		// Read their posted value
 		$file_path = $_POST[ $file_path_field_name ];
 
@@ -40,7 +40,7 @@ function ckan_local_dataset_import_page_callback() {
 		?>
 
 		<form name="form1" method="post" action="">
-			<input type="hidden" name="<?php echo $hidden_field_name; ?>" value="Y">
+			<input type="hidden" name="<?php echo $import_submit_hidden_field_name; ?>" value="Y">
 
 			<p><?php _e("File:", 'ogdch' ); ?>
 			<input type="file" name="<?php echo $file_path_field_name; ?>" value="" size="20">
