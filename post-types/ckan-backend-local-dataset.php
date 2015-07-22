@@ -11,7 +11,7 @@ class Ckan_Backend_Local_Dataset {
 		add_action( 'cmb2_init', array( $this, 'define_fields' ) );
 
 		// initialize local dataset sync
-		$ckan_backend_sync_local_dataset = new Ckan_Backend_Sync_Local_Dataset( self::POST_TYPE, self::FIELD_PREFIX );
+		$ckan_backend_sync_local_dataset = new Ckan_Backend_Sync_Local_Dataset();
 	}
 
 	public function register_post_type() {
@@ -50,9 +50,35 @@ class Ckan_Backend_Local_Dataset {
 			'has_archive'         => false,
 			'exclude_from_search' => false,
 			'publicly_queryable'  => false,
-			'capability_type'     => 'page',
+			'map_meta_cap' => true,
+			'capability_type' => 'dataset',
+			'capabilities' => array(
+				'publish_posts' => 'publish_datasets',
+				'edit_posts' => 'edit_datasets',
+				'edit_others_posts' => 'edit_others_datasets',
+				'delete_posts' => 'delete_datasets',
+				'delete_others_posts' => 'delete_others_datasets',
+				'read_private_posts' => 'read_private_datasets',
+				'edit_post' => 'edit_dataset',
+				'delete_post' => 'delete_dataset',
+				'read_post' => 'read_dataset',
+			),
 		);
 		register_post_type( self::POST_TYPE, $args );
+
+		// TODO this block is only needed to set the permissions once -> find another way to do this
+		$admin_role = get_role('administrator');
+		if(is_object($admin_role)) {
+			$admin_role->add_cap('publish_datasets');
+			$admin_role->add_cap('edit_datasets');
+			$admin_role->add_cap('edit_others_datasets');
+			$admin_role->add_cap('delete_datasets');
+			$admin_role->add_cap('delete_others_datasets');
+			$admin_role->add_cap('read_private_datasets');
+			$admin_role->add_cap('edit_dataset');
+			$admin_role->add_cap('delete_dataset');
+			$admin_role->add_cap('read_dataset');
+		}
 	}
 
 	public function define_fields() {
