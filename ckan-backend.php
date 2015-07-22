@@ -87,6 +87,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 				'post-types/ckan-backend-local-dataset.php',
 				'post-types/ckan-backend-local-group.php',
 				'post-types/ckan-backend-local-organisation.php',
+				'post-types/ckan-backend-local-dataset-import.php',
 				'sync/ckan-backend-sync-abstract.php',
 				'sync/ckan-backend-sync-local-dataset.php',
 				'sync/ckan-backend-sync-local-group.php',
