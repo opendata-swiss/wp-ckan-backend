@@ -85,30 +85,6 @@ class Ckan_Backend_Local_Dataset {
 			),
 		);
 		register_post_type( self::POST_TYPE, $args );
-
-		$newCapabilities = array(
-			'disable_datasets'
-		);
-
-		// TODO this block is only needed to set the permissions once -> find another way to do this
-		$admin_role = get_role('administrator');
-		if(is_object($admin_role)) {
-			$admin_role->add_cap('edit_datasets');
-			$admin_role->add_cap('edit_others_datasets');
-			$admin_role->add_cap('publish_datasets');
-			$admin_role->add_cap('read_private_datasets');
-			$admin_role->add_cap('delete_datasets');
-			$admin_role->add_cap('delete_private_datasets');
-			$admin_role->add_cap('delete_published_datasets');
-			$admin_role->add_cap('delete_others_datasets');
-			$admin_role->add_cap('edit_private_datasets');
-			$admin_role->add_cap('edit_published_datasets');
-			$admin_role->add_cap('create_datasets');
-
-			foreach($newCapabilities as $cap) {
-				$admin_role->add_cap($cap);
-			}
-		}
 	}
 
 	public function define_fields() {
