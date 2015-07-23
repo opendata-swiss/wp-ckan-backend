@@ -14,6 +14,20 @@ class Ckan_Backend_Local_Dataset {
 		$ckan_backend_sync_local_dataset = new Ckan_Backend_Sync_Local_Dataset( self::POST_TYPE, self::FIELD_PREFIX );
 	}
 
+	public function show_message_if_disabled( $field_args, $field ) {
+		if ( isset( $_GET['post'] ) ) {
+			$post_id = $_GET['post'];
+		} elseif ( isset( $_POST['post_ID'] ) ) {
+			$post_id = $_POST['post_ID'];
+		}
+
+		// see if dataset is disabled
+		$value = get_post_meta( $post_id, self::FIELD_PREFIX . 'disable', true );
+		if($value == 'on') {
+			echo '<div class="error"><p>' . __( 'This dataset is disabled. Please contact an adimistrator if this seems to be wrong.', 'ogdch' ) . '</p></div>';
+		}
+	}
+
 	public function register_post_type() {
 		$labels = array(
 			'name'               => __( 'CKAN local Datasets', 'ogdch' ),
@@ -325,28 +339,28 @@ class Ckan_Backend_Local_Dataset {
 			),
 		) );
 
-		if(current_user_can( 'disable_datasets' )) {
-			/* CMB Sidebox to disable */
-			$cmb_side_disable = new_cmb2_box( array(
-				'id'           => self::POST_TYPE . '-sidebox-disable',
-				'title'        => __( 'Disable Dataset', 'ogdch' ),
-				'object_types' => array( self::POST_TYPE, ),
-				'context'      => 'side',
-				'priority'     => 'low',
-				'show_names'   => true,
-			) );
+		/* CMB Sidebox to disable */
+		$cmb_side_disable = new_cmb2_box( array(
+			'id'           => self::POST_TYPE . '-sidebox-disable',
+			'title'        => __( 'Disable Dataset', 'ogdch' ),
+			'object_types' => array( self::POST_TYPE, ),
+			'context'      => 'side',
+			'priority'     => 'low',
+			'show_names'   => true,
+		) );
 
-			$cmb_side_disable->add_field( array(
-				'desc' => __( 'Disable Dataset', 'ogdch' ),
-				'id'   => self::FIELD_PREFIX . 'disable',
-				'type' => 'checkbox'
-			) );
-		} else {
-			$cmb->add_field( array(
-				'id'   => self::FIELD_PREFIX . 'disable',
-				'type' => 'hidden',
-			) );
+		$disable_checkbox_args = array(
+			'desc' => __( 'Disable Dataset', 'ogdch' ),
+			'id'   => self::FIELD_PREFIX . 'disable',
+			'type' => 'checkbox',
+			'before_row'   => array( $this, 'show_message_if_disabled' ),
+		);
+		if( ! current_user_can( 'disable_datasets' )) {
+			$disable_checkbox_args['attributes'] = array(
+				'disabled' => 'disabled'
+			);
 		}
+		$cmb_side_disable->add_field( $disable_checkbox_args );
 
 	}
 
