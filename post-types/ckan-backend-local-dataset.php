@@ -11,7 +11,7 @@ class Ckan_Backend_Local_Dataset {
 		add_action( 'cmb2_init', array( $this, 'define_fields' ) );
 
 		// initialize local dataset sync
-		$ckan_backend_sync_local_dataset = new Ckan_Backend_Sync_Local_Dataset();
+		$ckan_backend_sync_local_dataset = new Ckan_Backend_Sync_Local_Dataset( self::POST_TYPE, self::FIELD_PREFIX );
 	}
 
 	public function register_post_type() {
