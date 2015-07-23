@@ -341,6 +341,11 @@ class Ckan_Backend_Local_Dataset {
 				'id'   => self::FIELD_PREFIX . 'disable',
 				'type' => 'checkbox'
 			) );
+		} else {
+			$cmb->add_field( array(
+				'id'   => self::FIELD_PREFIX . 'disable',
+				'type' => 'hidden',
+			) );
 		}
 
 	}
