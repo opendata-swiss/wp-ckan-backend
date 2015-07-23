@@ -37,7 +37,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		if ( isset( $_POST[ $this->field_prefix . 'reference' ] ) && $_POST[ $this->field_prefix . 'reference' ] != '' ) {
 			$data['id'] = $_POST[ $this->field_prefix . 'reference' ];
 		}
-		if ( isset( $_POST[ $this->field_prefix . 'disable' ] ) && $_POST[ $this->field_prefix . 'disable' ] != 'on' ) {
+		if ( isset( $_POST[ $this->field_prefix . 'disable' ] ) && $_POST[ $this->field_prefix . 'disable' ] == 'on' ) {
 			$data['state'] = 'deleted';
 		}
 
