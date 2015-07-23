@@ -78,13 +78,16 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	 */
 	protected function prepare_resources( $resources ) {
 		$ckan_resources = array();
-		foreach ( $resources as $attachment_id => $url ) {
-			$attachment       = get_post( $attachment_id );
-			$ckan_resources[] = array(
-				'url'         => $url,
-				'name'        => $attachment->post_title,
-				'description' => $attachment->post_content
-			);
+
+		// Check if resources are added. If yes generate CKAN friendly array.
+		if ( $resources[0]['url'] != '' ) {
+			foreach ( $resources as $resource ) {
+				$ckan_resources[] = array(
+					'url'         => $resource['url'],
+					'name'        => $resource['title'], // TODO: use all language here
+					'description' => $resource['description_de'] // TODO: use all language here
+				);
+			}
 		}
 
 		return $ckan_resources;

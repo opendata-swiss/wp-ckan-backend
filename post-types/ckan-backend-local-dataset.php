@@ -241,19 +241,42 @@ class Ckan_Backend_Local_Dataset {
 			'options'           => array( $this, 'get_group_options' ),
 		) );
 
-		/* Resource */
+		/* Resources */
 		$cmb->add_field( array(
 			'name' => __( 'Resources', 'ogdch' ),
 			'type' => 'title',
 			'id'   => 'resource_title'
 		) );
 
-		$cmb->add_field( array(
-			'name' => 'Add Resource',
-			'desc' => '',
-			'id'   => self::FIELD_PREFIX . 'resources',
-			'type' => 'file_list',
+		$resources_group = $cmb->add_field( array(
+			'id'      => self::FIELD_PREFIX . 'resources',
+			'type'    => 'group',
+			'options' => array(
+				'group_title'   => __( 'Resource {#}', 'ogdch' ),
+				'add_button'    => __( 'Add another Resource', 'ogdch' ),
+				'remove_button' => __( 'Remove Resource', 'ogdch' ),
+			),
 		) );
+
+		$cmb->add_group_field( $resources_group, array(
+			'name' => __( 'Resource URL', 'ogdch' ),
+			'id'   => 'url',
+			'type' => 'text_url',
+		) );
+
+		$cmb->add_group_field( $resources_group, array(
+			'name' => __( 'Title', 'ogdch' ),
+			'id'   => 'title',
+			'type' => 'text',
+		) );
+
+		foreach ( $language_priority as $lang ) {
+			$cmb->add_group_field( $resources_group, array(
+				'name'       => __( 'Description', 'ogdch' ) . ' (' . strtoupper( $lang ) . ')',
+				'id'         => 'description_' . $lang,
+				'type' => 'text',
+			) );
+		}
 
 
 		/* Custom Fields */
@@ -263,7 +286,7 @@ class Ckan_Backend_Local_Dataset {
 			'id'   => 'customfields_title',
 		) );
 
-		$custom_fields_id = $cmb->add_field( array(
+		$custom_fields_group = $cmb->add_field( array(
 			'id'      => self::FIELD_PREFIX . 'custom_fields',
 			'type'    => 'group',
 			'options' => array(
@@ -273,13 +296,13 @@ class Ckan_Backend_Local_Dataset {
 			),
 		) );
 
-		$cmb->add_group_field( $custom_fields_id, array(
+		$cmb->add_group_field( $custom_fields_group, array(
 			'name' => __( 'Key', 'ogdch' ),
 			'id'   => 'key',
 			'type' => 'text',
 		) );
 
-		$cmb->add_group_field( $custom_fields_id, array(
+		$cmb->add_group_field( $custom_fields_group, array(
 			'name' => __( 'Value', 'ogdch' ),
 			'id'   => 'value',
 			'type' => 'text',
