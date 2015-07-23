@@ -53,15 +53,20 @@ class Ckan_Backend_Local_Dataset {
 			'map_meta_cap' => true,
 			'capability_type' => 'dataset',
 			'capabilities' => array(
-				'publish_posts' => 'publish_datasets',
+				'edit_post' => 'edit_dataset',
+				'read_post' => 'read_dataset',
+				'delete_post' => 'delete_dataset',
 				'edit_posts' => 'edit_datasets',
 				'edit_others_posts' => 'edit_others_datasets',
-				'delete_posts' => 'delete_datasets',
-				'delete_others_posts' => 'delete_others_datasets',
+				'publish_posts' => 'publish_datasets',
 				'read_private_posts' => 'read_private_datasets',
-				'edit_post' => 'edit_dataset',
-				'delete_post' => 'delete_dataset',
-				'read_post' => 'read_dataset',
+				'delete_posts' => 'delete_datasets',
+				'delete_private_posts' => 'delete_private_datasets',
+				'delete_published_posts' => 'delete_published_datasets',
+				'delete_others_posts' => 'delete_others_datasets',
+				'edit_private_posts' => 'edit_private_datasets',
+				'edit_published_posts' => 'edit_published_datasets',
+				'create_posts' => 'create_datasets',
 			),
 		);
 		register_post_type( self::POST_TYPE, $args );
@@ -69,15 +74,20 @@ class Ckan_Backend_Local_Dataset {
 		// TODO this block is only needed to set the permissions once -> find another way to do this
 		$admin_role = get_role('administrator');
 		if(is_object($admin_role)) {
-			$admin_role->add_cap('publish_datasets');
+			$admin_role->add_cap('edit_dataset');
+			$admin_role->add_cap('read_dataset');
+			$admin_role->add_cap('delete_dataset');
 			$admin_role->add_cap('edit_datasets');
 			$admin_role->add_cap('edit_others_datasets');
-			$admin_role->add_cap('delete_datasets');
-			$admin_role->add_cap('delete_others_datasets');
+			$admin_role->add_cap('publish_datasets');
 			$admin_role->add_cap('read_private_datasets');
-			$admin_role->add_cap('edit_dataset');
-			$admin_role->add_cap('delete_dataset');
-			$admin_role->add_cap('read_dataset');
+			$admin_role->add_cap('delete_datasets');
+			$admin_role->add_cap('delete_private_datasets');
+			$admin_role->add_cap('delete_published_datasets');
+			$admin_role->add_cap('delete_others_datasets');
+			$admin_role->add_cap('edit_private_datasets');
+			$admin_role->add_cap('edit_published_datasets');
+			$admin_role->add_cap('create_datasets');
 		}
 	}
 
