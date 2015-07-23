@@ -1,7 +1,7 @@
 <?php
 
 class Ckan_Backend_Sync_Local_Group extends Ckan_Backend_Sync_Abstract {
-	protected function get_update_data() {
+	protected function get_update_data( $post ) {
 		// Gernerate slug of group. If no title is entered use an uniqid
 		if ( $_POST[ $this->field_prefix . 'name' ] != '' ) {
 			$title = $_POST[ $this->field_prefix . 'name' ];

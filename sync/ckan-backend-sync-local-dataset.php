@@ -1,7 +1,7 @@
 <?php
 
 class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
-	protected function get_update_data() {
+	protected function get_update_data( $post ) {
 		$extras    = $this->prepare_custom_fields( $_POST[ $this->field_prefix . 'custom_fields' ] );
 		$resources = $this->prepare_resources( $_POST[ $this->field_prefix . 'resources' ] );
 		$groups    = $this->prepare_selected_groups( $_POST[ $this->field_prefix . 'groups' ] );
@@ -37,8 +37,12 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		if ( isset( $_POST[ $this->field_prefix . 'reference' ] ) && $_POST[ $this->field_prefix . 'reference' ] != '' ) {
 			$data['id'] = $_POST[ $this->field_prefix . 'reference' ];
 		}
-		// TODO check if user is allowed to disable datasets
-		if ( isset( $_POST[ $this->field_prefix . 'disable' ] ) && $_POST[ $this->field_prefix . 'disable' ] == 'on' ) {
+		// Check if user is allowed to disable datasets -> otherwise reset value
+		if( ! current_user_can( 'disable_datasets' )) {
+			$disable_value = get_post_meta( $post->ID, $_POST[ $this->field_prefix . 'disabled' ], true );
+			$_POST[ $this->field_prefix . 'disabled' ] = $disable_value;
+		}
+		if ( isset( $_POST[ $this->field_prefix . 'disabled' ] ) && $_POST[ $this->field_prefix . 'disabled' ] == 'on' ) {
 			$data['state'] = 'deleted';
 		}
 

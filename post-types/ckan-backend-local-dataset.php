@@ -22,7 +22,7 @@ class Ckan_Backend_Local_Dataset {
 		}
 
 		// see if dataset is disabled
-		$value = get_post_meta( $post_id, self::FIELD_PREFIX . 'disable', true );
+		$value = get_post_meta( $post_id, self::FIELD_PREFIX . 'disabled', true );
 		if($value == 'on') {
 			echo '<div class="error"><p>' . __( 'This dataset is disabled. Please contact an adimistrator if this seems to be wrong.', 'ogdch' ) . '</p></div>';
 		}
@@ -339,9 +339,9 @@ class Ckan_Backend_Local_Dataset {
 			),
 		) );
 
-		/* CMB Sidebox to disable */
-		$cmb_side_disable = new_cmb2_box( array(
-			'id'           => self::POST_TYPE . '-sidebox-disable',
+		/* CMB Sidebox to disable dataset */
+		$cmb_side_disabled = new_cmb2_box( array(
+			'id'           => self::POST_TYPE . '-sidebox-disabled',
 			'title'        => __( 'Disable Dataset', 'ogdch' ),
 			'object_types' => array( self::POST_TYPE, ),
 			'context'      => 'side',
@@ -349,18 +349,18 @@ class Ckan_Backend_Local_Dataset {
 			'show_names'   => true,
 		) );
 
-		$disable_checkbox_args = array(
+		$disabled_checkbox_args = array(
 			'desc' => __( 'Disable Dataset', 'ogdch' ),
-			'id'   => self::FIELD_PREFIX . 'disable',
+			'id'   => self::FIELD_PREFIX . 'disabled',
 			'type' => 'checkbox',
 			'before_row'   => array( $this, 'show_message_if_disabled' ),
 		);
 		if( ! current_user_can( 'disable_datasets' )) {
-			$disable_checkbox_args['attributes'] = array(
+			$disabled_checkbox_args['attributes'] = array(
 				'disabled' => 'disabled'
 			);
 		}
-		$cmb_side_disable->add_field( $disable_checkbox_args );
+		$cmb_side_disabled->add_field( $disabled_checkbox_args );
 
 	}
 

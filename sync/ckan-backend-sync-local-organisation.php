@@ -23,7 +23,7 @@ class Ckan_Backend_Sync_Local_Organisation extends Ckan_Backend_Sync_Abstract {
 		update_post_meta( $post->ID, $this->field_prefix . 'parent', '' );
 	}
 
-	protected function get_update_data() {
+	protected function get_update_data( $post ) {
 		// Gernerate slug of organisation. If no title is entered use an uniqid
 		if ( $_POST[ $this->field_prefix . 'name' ] != '' ) {
 			$title = $_POST[ $this->field_prefix . 'name' ];
