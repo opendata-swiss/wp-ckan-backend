@@ -37,6 +37,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 
 		public function __construct() {
 			add_action( 'init', array( $this, 'bootstrap' ), 0 );
+			add_action( 'admin_init', array( $this, 'add_scripts' ) );
 		}
 
 		public function bootstrap() {
@@ -45,6 +46,11 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			$local_dataset      = new Ckan_Backend_Local_Dataset();
 			$local_group        = new Ckan_Backend_Local_Group();
 			$local_organisation = new Ckan_Backend_Local_Organisation();
+		}
+
+		public function add_scripts() {
+			wp_register_style('ckan-backend-base', plugins_url( 'assets/css/base.css', __FILE__ ) );
+			wp_enqueue_style( 'ckan-backend-base' );
 		}
 
 		protected function load_dependencies() {
