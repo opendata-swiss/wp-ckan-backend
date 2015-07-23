@@ -53,9 +53,6 @@ class Ckan_Backend_Local_Dataset {
 			'map_meta_cap' => true,
 			'capability_type' => 'dataset',
 			'capabilities' => array(
-				'edit_post' => 'edit_dataset',
-				'read_post' => 'read_dataset',
-				'delete_post' => 'delete_dataset',
 				'edit_posts' => 'edit_datasets',
 				'edit_others_posts' => 'edit_others_datasets',
 				'publish_posts' => 'publish_datasets',
@@ -67,16 +64,21 @@ class Ckan_Backend_Local_Dataset {
 				'edit_private_posts' => 'edit_private_datasets',
 				'edit_published_posts' => 'edit_published_datasets',
 				'create_posts' => 'create_datasets',
+				// Meta capabilites assigned by WordPress. Do not give to any role.
+				'edit_post' => 'edit_dataset',
+				'read_post' => 'read_dataset',
+				'delete_post' => 'delete_dataset',
 			),
 		);
 		register_post_type( self::POST_TYPE, $args );
 
+		$newCapabilities = array(
+			'disable_datasets'
+		);
+
 		// TODO this block is only needed to set the permissions once -> find another way to do this
 		$admin_role = get_role('administrator');
 		if(is_object($admin_role)) {
-			$admin_role->add_cap('edit_dataset');
-			$admin_role->add_cap('read_dataset');
-			$admin_role->add_cap('delete_dataset');
 			$admin_role->add_cap('edit_datasets');
 			$admin_role->add_cap('edit_others_datasets');
 			$admin_role->add_cap('publish_datasets');
@@ -88,6 +90,10 @@ class Ckan_Backend_Local_Dataset {
 			$admin_role->add_cap('edit_private_datasets');
 			$admin_role->add_cap('edit_published_datasets');
 			$admin_role->add_cap('create_datasets');
+
+			foreach($newCapabilities as $cap) {
+				$admin_role->add_cap($cap);
+			}
 		}
 	}
 
@@ -318,6 +324,24 @@ class Ckan_Backend_Local_Dataset {
 				'readonly' => 'readonly',
 			),
 		) );
+
+		if(current_user_can( 'disable_datasets' )) {
+			/* CMB Sidebox to disable */
+			$cmb_side_disable = new_cmb2_box( array(
+				'id'           => self::POST_TYPE . '-sidebox-disable',
+				'title'        => __( 'Disable Dataset', 'ogdch' ),
+				'object_types' => array( self::POST_TYPE, ),
+				'context'      => 'side',
+				'priority'     => 'low',
+				'show_names'   => true,
+			) );
+
+			$cmb_side_disable->add_field( array(
+				'desc' => __( 'Disable Dataset', 'ogdch' ),
+				'id'   => self::FIELD_PREFIX . 'disable',
+				'type' => 'checkbox'
+			) );
+		}
 
 	}
 
