@@ -223,7 +223,7 @@ class Ckan_Backend_Local_Dataset {
 			'id'               => self::FIELD_PREFIX . 'organisation',
 			'type'             => 'select',
 			'show_option_none' => __( 'No Organisation', 'ogdch' ),
-			'options'          => array( $this, 'get_organisation_options' ),
+			'options'           => array( 'Ckan_Backend_Helper', 'get_organisation_form_field_options' ),
 		) );
 
 		/* Groups */
@@ -238,7 +238,7 @@ class Ckan_Backend_Local_Dataset {
 			'id'                => self::FIELD_PREFIX . 'groups',
 			'type'              => 'multicheck',
 			'select_all_button' => false,
-			'options'           => array( $this, 'get_group_options' ),
+			'options'           => array( 'Ckan_Backend_Helper', 'get_group_form_field_options' ),
 		) );
 
 		/* Resources */
@@ -361,13 +361,5 @@ class Ckan_Backend_Local_Dataset {
 		}
 		$cmb_side_disabled->add_field( $disabled_checkbox_args );
 
-	}
-
-	public function get_group_options() {
-		return Ckan_Backend_Helper::get_form_field_options( 'group' );
-	}
-
-	public function get_organisation_options() {
-		return Ckan_Backend_Helper::get_form_field_options( 'organization' );
 	}
 }
