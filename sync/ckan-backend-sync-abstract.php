@@ -55,7 +55,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 			}
 
 			if ( $post->post_status == 'publish' ) {
-				$data = $this->get_update_data();
+				$data = $this->get_update_data( $post );
 				// If post data holds reference id -> do update in CKAN
 				if ( isset( $data['id'] ) ) {
 					$success = $this->update_action( $data );
@@ -140,9 +140,11 @@ abstract class Ckan_Backend_Sync_Abstract {
 	/**
 	 * This method should return an array with the updated data
 	 *
+	 * @param object $post The post from WordPress
+	 *
 	 * @return array $data Updated data to send
 	 */
-	abstract protected function get_update_data();
+	abstract protected function get_update_data( $post );
 
 	/**
 	 * Gets called when a CKAN data is updated.

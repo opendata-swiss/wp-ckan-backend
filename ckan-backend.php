@@ -32,11 +32,14 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			if ( null === self::$single_instance ) {
 				self::$single_instance = new self();
 			}
+
 			return self::$single_instance;
 		}
 
 		public function __construct() {
 			add_action( 'init', array( $this, 'bootstrap' ), 0 );
+			add_action( 'admin_init', array( $this, 'add_scripts' ) );
+			register_activation_hook( __FILE__, array( $this, 'activate' ) );
 		}
 
 		public function bootstrap() {
@@ -45,6 +48,37 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			$local_dataset      = new Ckan_Backend_Local_Dataset();
 			$local_group        = new Ckan_Backend_Local_Group();
 			$local_organisation = new Ckan_Backend_Local_Organisation();
+		}
+
+		public function add_scripts() {
+			wp_register_style( 'ckan-backend-base', plugins_url( 'assets/css/base.css', __FILE__ ) );
+			wp_enqueue_style( 'ckan-backend-base' );
+		}
+
+		public function activate() {
+			// add all new capabilities of plugin to administrator role (save in database)
+			$new_capabilities = array(
+				'disable_datasets'
+			);
+
+			$admin_role = get_role( 'administrator' );
+			if ( is_object( $admin_role ) ) {
+				$admin_role->add_cap( 'edit_datasets' );
+				$admin_role->add_cap( 'edit_others_datasets' );
+				$admin_role->add_cap( 'publish_datasets' );
+				$admin_role->add_cap( 'read_private_datasets' );
+				$admin_role->add_cap( 'delete_datasets' );
+				$admin_role->add_cap( 'delete_private_datasets' );
+				$admin_role->add_cap( 'delete_published_datasets' );
+				$admin_role->add_cap( 'delete_others_datasets' );
+				$admin_role->add_cap( 'edit_private_datasets' );
+				$admin_role->add_cap( 'edit_published_datasets' );
+				$admin_role->add_cap( 'create_datasets' );
+
+				foreach ( $new_capabilities as $cap ) {
+					$admin_role->add_cap( $cap );
+				}
+			}
 		}
 
 		protected function load_dependencies() {

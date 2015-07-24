@@ -1,7 +1,7 @@
 <?php
 
 class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
-	protected function get_update_data() {
+	protected function get_update_data( $post ) {
 		$extras    = $this->prepare_custom_fields( $_POST[ $this->field_prefix . 'custom_fields' ] );
 		$resources = $this->prepare_resources( $_POST[ $this->field_prefix . 'resources' ] );
 		$groups    = $this->prepare_selected_groups( $_POST[ $this->field_prefix . 'groups' ] );
@@ -37,6 +37,14 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		if ( isset( $_POST[ $this->field_prefix . 'reference' ] ) && $_POST[ $this->field_prefix . 'reference' ] != '' ) {
 			$data['id'] = $_POST[ $this->field_prefix . 'reference' ];
 		}
+		// Check if user is allowed to disable datasets -> otherwise reset value
+		if ( ! current_user_can( 'disable_datasets' ) ) {
+			$disable_value                             = get_post_meta( $post->ID, $_POST[ $this->field_prefix . 'disabled' ], true );
+			$_POST[ $this->field_prefix . 'disabled' ] = $disable_value;
+		}
+		if ( isset( $_POST[ $this->field_prefix . 'disabled' ] ) && $_POST[ $this->field_prefix . 'disabled' ] == 'on' ) {
+			$data['state'] = 'deleted';
+		}
 
 		return $data;
 	}
@@ -70,13 +78,16 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	 */
 	protected function prepare_resources( $resources ) {
 		$ckan_resources = array();
-		foreach ( $resources as $attachment_id => $url ) {
-			$attachment       = get_post( $attachment_id );
-			$ckan_resources[] = array(
-				'url'         => $url,
-				'name'        => $attachment->post_title,
-				'description' => $attachment->post_content
-			);
+
+		// Check if resources are added. If yes generate CKAN friendly array.
+		if ( $resources[0]['url'] != '' ) {
+			foreach ( $resources as $resource ) {
+				$ckan_resources[] = array(
+					'url'         => $resource['url'],
+					'name'        => $resource['title'], // TODO: use all language here
+					'description' => $resource['description_de'] // TODO: use all language here
+				);
+			}
 		}
 
 		return $ckan_resources;

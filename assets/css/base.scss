@@ -1,0 +1,8 @@
+// Disable visibility selection from ckan posttypes
+.post-type-ckan-local-dataset,
+.post-type-ckan-local-group,
+.post-type-ckan-local-org {
+  .submitbox #visibility {
+    display: none;
+  }
+}
