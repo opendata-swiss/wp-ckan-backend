@@ -22,7 +22,7 @@ class Ckan_Backend_Local_Dataset_Import {
 
 	public function import_page_callback() {
 		// must check that the user has the required capability
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( 'create_datasets' ) ) {
 			wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 		}
 
@@ -31,13 +31,15 @@ class Ckan_Backend_Local_Dataset_Import {
 
 		// Handle import
 		if ( isset( $_POST[ $import_submit_hidden_field_name ] ) && $_POST[ $import_submit_hidden_field_name ] == 'Y' ) {
-			// TODO import file
+			$success = false;
 			if(isset($_FILES[$file_field_name])) {
-				$this->handle_file_import($_FILES[$file_field_name]);
+				$success = $this->handle_file_import($_FILES[$file_field_name]);
 			}
-			?>
-			<div class="updated"><p><strong><?php _e( 'Import successful', 'ogdch' ); ?></strong></p></div>
-		<?php } ?>
+
+			if ( $success ) {
+				echo '<div class="updated"><p><strong>' . __( 'Import successful', 'ogdch' ) . '</strong></p></div>';
+			}
+		} ?>
 		<div class="wrap">
 			<h2><?php _e( 'Import CKAN Dataset', 'ogdch' ); ?></h2>
 
@@ -82,13 +84,29 @@ class Ckan_Backend_Local_Dataset_Import {
 					throw new RuntimeException( 'Unknown errors.' );
 			}
 
-			$xml = simplexml_load_file($file['tmp_name']);
+			$xml_object = simplexml_load_file($file['tmp_name']);
+			$json_string = json_encode( $xml_object );
+			$xml = json_decode($json_string, TRUE);
 			if( ! $xml ) {
 				throw new RuntimeException( 'Uploaded file is not a vaild XML file' );
 			}
-			print_r($xml);
+
+			return $this->create_local_dataset($xml);
 		} catch ( RuntimeException $e ) {
 			echo $e->getMessage();
 		}
+	}
+
+	public function create_local_dataset($xml) {
+		foreach($xml['groups']['group'] as $group) {
+			if ( ! Ckan_Backend_Helper::group_exists( $group['name'] ) ) {
+				echo '<div class="error"><p>';
+				printf( __( 'Group %1$s does not exist! Import aborted.', 'ogdch' ), $group['name'] );
+				echo '</p></div>';
+				return false;
+			}
+		}
+
+		return true;
 	}
 }

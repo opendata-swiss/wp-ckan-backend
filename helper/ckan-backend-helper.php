@@ -109,6 +109,36 @@ class Ckan_Backend_Helper {
 		return $options;
 	}
 
+	public static function group_exists( $name ) {
+		return Ckan_Backend_Helper::object_exists( 'group', $name );
+	}
+
+	public static function organisation_exists( $name ) {
+		return Ckan_Backend_Helper::object_exists( 'organization', $name );
+	}
+
+	private static function object_exists( $type, $name ) {
+		$available_types = array(
+			'group',
+			'organization'
+		);
+		if ( ! in_array( $type, $available_types ) ) {
+			self::print_error_messages( array( 'Type not available!' ) );
+
+			return false;
+		}
+
+		$endpoint = CKAN_API_ENDPOINT . 'action/' . $type . '_show';
+		$data     = array(
+			'id' => $name
+		);
+		$data     = json_encode( $data );
+		$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
+		$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
+
+		return count( $errors ) == 0;
+	}
+
 
 	/**
 	 * Displays all admin notices
