@@ -1,4 +1,6 @@
-.submitbox #visibility {
+.post-type-ckan-local-dataset .submitbox #visibility,
+.post-type-ckan-local-group .submitbox #visibility,
+.post-type-ckan-local-org .submitbox #visibility {
   display: none; }
 
 /*# sourceMappingURL=base.css.map */
