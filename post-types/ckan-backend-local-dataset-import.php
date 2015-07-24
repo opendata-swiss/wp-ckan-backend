@@ -107,6 +107,13 @@ class Ckan_Backend_Local_Dataset_Import {
 			}
 		}
 
+		if ( ! Ckan_Backend_Helper::organisation_exists( $xml['owner_org'] ) ) {
+			echo '<div class="error"><p>';
+			printf( __( 'Organisation %1$s does not exist! Import aborted.', 'ogdch' ), $xml['owner_org'] );
+			echo '</p></div>';
+			return false;
+		}
+
 		return true;
 	}
 }
