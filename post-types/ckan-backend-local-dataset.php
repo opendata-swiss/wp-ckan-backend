@@ -223,7 +223,7 @@ class Ckan_Backend_Local_Dataset {
 			'id'               => self::FIELD_PREFIX . 'organisation',
 			'type'             => 'select',
 			'show_option_none' => __( 'No Organisation', 'ogdch' ),
-			'options'           => array( 'Ckan_Backend_Helper', 'get_organisation_form_field_options' ),
+			'options'          => array( 'Ckan_Backend_Helper', 'get_organisation_form_field_options' ),
 		) );
 
 		/* Groups */
@@ -308,36 +308,6 @@ class Ckan_Backend_Local_Dataset {
 			'type' => 'text',
 		) );
 
-		/* CMB Sidebox */
-		$cmb_side = new_cmb2_box( array(
-			'id'           => self::POST_TYPE . '-sidebox',
-			'title'        => __( 'CKAN Data', 'ogdch' ),
-			'object_types' => array( self::POST_TYPE, ),
-			'context'      => 'side',
-			'priority'     => 'low',
-			'show_names'   => true,
-		) );
-
-		/* CKAN Ref ID (If Set.. update.. set on first save) */
-		$cmb_side->add_field( array(
-			'name'       => __( 'Reference ID', 'ogdch' ),
-			'id'         => self::FIELD_PREFIX . 'reference',
-			'type'       => 'text',
-			'attributes' => array(
-				'readonly' => 'readonly',
-			),
-		) );
-
-		/* Permalink */
-		$cmb_side->add_field( array(
-			'name'       => __( 'Name (Slug)', 'ogdch' ),
-			'id'         => self::FIELD_PREFIX . 'name',
-			'type'       => 'text',
-			'attributes' => array(
-				'readonly' => 'readonly',
-			),
-		) );
-
 		/* CMB Sidebox to disable dataset */
 		$cmb_side_disabled = new_cmb2_box( array(
 			'id'           => self::POST_TYPE . '-sidebox-disabled',
@@ -360,6 +330,52 @@ class Ckan_Backend_Local_Dataset {
 			);
 		}
 		$cmb_side_disabled->add_field( $disabled_checkbox_args );
+
+		/* CMB Sidebox for CKAN data */
+		$cmb_side_ckan = new_cmb2_box( array(
+			'id'           => self::POST_TYPE . '-sidebox-ckan',
+			'title'        => __( 'CKAN Data', 'ogdch' ),
+			'object_types' => array( self::POST_TYPE, ),
+			'context'      => 'side',
+			'priority'     => 'low',
+			'show_names'   => true,
+		) );
+
+		/* CKAN Ref ID (If Set.. update.. set on first save) */
+		$cmb_side_ckan->add_field( array(
+			'name'       => __( 'Reference ID', 'ogdch' ),
+			'id'         => self::FIELD_PREFIX . 'reference',
+			'type'       => 'text',
+			'attributes' => array(
+				'readonly' => 'readonly',
+			),
+		) );
+
+		/* Permalink */
+		$cmb_side_ckan->add_field( array(
+			'name'       => __( 'Name (Slug)', 'ogdch' ),
+			'id'         => self::FIELD_PREFIX . 'name',
+			'type'       => 'text',
+			'attributes' => array(
+				'readonly' => 'readonly',
+			),
+		) );
+
+		/* CMB Sidebox for other data */
+		$cmb_side_other = new_cmb2_box( array(
+			'id'           => self::POST_TYPE . '-sidebox-other',
+			'title'        => __( 'Other Data', 'ogdch' ),
+			'object_types' => array( self::POST_TYPE, ),
+			'context'      => 'side',
+			'priority'     => 'low',
+			'show_names'   => true,
+		) );
+
+		$cmb_side_other->add_field( array(
+			'name' => __( 'Master ID', 'ogdch' ),
+			'id'   => self::FIELD_PREFIX . 'masterid',
+			'type' => 'text',
+		) );
 
 	}
 }
