@@ -30,13 +30,14 @@ class Ckan_Backend_Local_Dataset_Import {
 
 		// Handle import
 		if ( isset( $_POST[ $import_submit_hidden_field_name ] ) && $_POST[ $import_submit_hidden_field_name ] == 'Y' ) {
-			$success = false;
+			$dataset_id = false;
 			if ( isset( $_FILES[ $file_field_name ] ) ) {
-				$success = $this->handle_file_import( $_FILES[ $file_field_name ] );
+				$dataset_id = $this->handle_file_import( $_FILES[ $file_field_name ] );
 			}
 
-			if ( $success ) {
+			if ( $dataset_id > 0 ) {
 				echo '<div class="updated"><p><strong>' . __( 'Import successful', 'ogdch' ) . '</strong></p></div>';
+				printf(__('Click <a href="%s">here</a> to see the imported dataset.', 'ogdch'), esc_url( admin_url( 'post.php?post=' . $dataset_id . '&action=edit' ) ));
 			}
 		} ?>
 		<div class="wrap">
@@ -129,7 +130,6 @@ class Ckan_Backend_Local_Dataset_Import {
 		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'version' ]          = $xml['version'];
 		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'organisation' ]     = $xml['owner_org'];
 
-		// TODO check if it's an update or an insert action
 		$dataset_search_args = array(
 			'meta_key'    => Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'masterid',
 			'meta_value'  => $xml['masterid'],
