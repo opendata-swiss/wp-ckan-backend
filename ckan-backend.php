@@ -45,9 +45,10 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		public function bootstrap() {
 			$this->load_dependencies();
 
-			$local_dataset      = new Ckan_Backend_Local_Dataset();
-			$local_group        = new Ckan_Backend_Local_Group();
-			$local_organisation = new Ckan_Backend_Local_Organisation();
+			new Ckan_Backend_Local_Dataset();
+			new Ckan_Backend_Local_Group();
+			new Ckan_Backend_Local_Organisation();
+			new Ckan_Backend_Local_Dataset_Import();
 		}
 
 		public function add_scripts() {
