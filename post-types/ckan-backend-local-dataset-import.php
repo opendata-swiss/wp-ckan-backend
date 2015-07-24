@@ -117,9 +117,31 @@ class Ckan_Backend_Local_Dataset_Import {
 		}
 
 		// simulate $_POST data to make post_save hook work correctly
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'custom_fields' ]    = array();
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'resources' ]        = array();
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'groups' ]           = array();
+		$custom_fields = array();
+		// TODO WHY IS HERE A DIFFERENCE!??? dafuq
+		print_r($xml['custom_fields']['custom_field']); // multiple custom_field entries
+		print_r($xml['foos']['foo']); // just one foo entry
+		foreach ( $xml['custom_fields']['custom_field'] as $custom_field ) {
+			$custom_fields[] = array(
+				'key' => $custom_field['key'],
+				'value' => $custom_field['value'],
+			);
+		}
+		$resources = array();
+		foreach ( $xml['resources']['resource'] as $resource ) {
+			$resources[] = array(
+				'url' => $resource['url'],
+				'title' => $resource['title'],
+				'description_de' => $resource['description'],
+			);
+		}
+		$groups = array();
+		foreach ( $xml['groups']['group'] as $group ) {
+			$groups[] = $group;
+		}
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'custom_fields' ]    = $custom_fields;
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'resources' ]        = $resources;
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'groups' ]           = $groups;
 		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'name' ]             = $xml['name'];
 		$_POST['post_title']                                                    = $xml['title'];
 		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'maintainer' ]       = $xml['maintainer'];
