@@ -114,6 +114,47 @@ class Ckan_Backend_Local_Dataset_Import {
 			return false;
 		}
 
-		return true;
+		// TODO check if it's an update or an insert action
+		$dataset_search_args = array(
+			'meta_key' => Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'masterid',
+			'meta_value' => $xml['masterid'],
+			'post_type' => Ckan_Backend_Local_Dataset::POST_TYPE,
+			'post_status' => 'any',
+		);
+		$datasets = get_posts( $dataset_search_args );
+
+		if(count($datasets) > 0) {
+			// Dataset already exists -> update
+			$dataset_id = $datasets[0]->ID;
+			$this->update($dataset_id, $xml);
+		} else {
+			// Create new dataset
+			$dataset_id = $this->insert($xml);
+		}
+
+		return $dataset_id;
+	}
+
+	protected function update( $id, $xml ) {
+		$dataset_args = array(
+			'ID'             => $id,
+			'post_name'      => $xml['name'],
+			'post_title'     => $xml['title'],
+		);
+
+		wp_update_post( $dataset_args );
+	}
+
+	protected function insert( $xml ) {
+		$dataset_args = array(
+			'post_name'      => $xml['name'],
+			'post_title'     => $xml['title'],
+			'post_status'    => 'publish',
+			'post_type'      => Ckan_Backend_Local_Dataset::POST_TYPE,
+			'post_excerpt'   => '',
+		);
+
+		$dataset_id = wp_insert_post( $dataset_args );
+		return $dataset_id;
 	}
 }
