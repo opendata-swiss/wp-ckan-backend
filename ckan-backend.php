@@ -32,6 +32,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			if ( null === self::$single_instance ) {
 				self::$single_instance = new self();
 			}
+
 			return self::$single_instance;
 		}
 
@@ -50,7 +51,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		}
 
 		public function add_scripts() {
-			wp_register_style('ckan-backend-base', plugins_url( 'assets/css/base.css', __FILE__ ) );
+			wp_register_style( 'ckan-backend-base', plugins_url( 'assets/css/base.css', __FILE__ ) );
 			wp_enqueue_style( 'ckan-backend-base' );
 		}
 
@@ -60,22 +61,22 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 				'disable_datasets'
 			);
 
-			$admin_role = get_role('administrator');
-			if(is_object($admin_role)) {
-				$admin_role->add_cap('edit_datasets');
-				$admin_role->add_cap('edit_others_datasets');
-				$admin_role->add_cap('publish_datasets');
-				$admin_role->add_cap('read_private_datasets');
-				$admin_role->add_cap('delete_datasets');
-				$admin_role->add_cap('delete_private_datasets');
-				$admin_role->add_cap('delete_published_datasets');
-				$admin_role->add_cap('delete_others_datasets');
-				$admin_role->add_cap('edit_private_datasets');
-				$admin_role->add_cap('edit_published_datasets');
-				$admin_role->add_cap('create_datasets');
+			$admin_role = get_role( 'administrator' );
+			if ( is_object( $admin_role ) ) {
+				$admin_role->add_cap( 'edit_datasets' );
+				$admin_role->add_cap( 'edit_others_datasets' );
+				$admin_role->add_cap( 'publish_datasets' );
+				$admin_role->add_cap( 'read_private_datasets' );
+				$admin_role->add_cap( 'delete_datasets' );
+				$admin_role->add_cap( 'delete_private_datasets' );
+				$admin_role->add_cap( 'delete_published_datasets' );
+				$admin_role->add_cap( 'delete_others_datasets' );
+				$admin_role->add_cap( 'edit_private_datasets' );
+				$admin_role->add_cap( 'edit_published_datasets' );
+				$admin_role->add_cap( 'create_datasets' );
 
-				foreach($new_capabilities as $cap) {
-					$admin_role->add_cap($cap);
+				foreach ( $new_capabilities as $cap ) {
+					$admin_role->add_cap( $cap );
 				}
 			}
 		}

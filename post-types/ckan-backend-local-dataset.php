@@ -23,7 +23,7 @@ class Ckan_Backend_Local_Dataset {
 
 		// see if dataset is disabled
 		$value = get_post_meta( $post_id, self::FIELD_PREFIX . 'disabled', true );
-		if($value == 'on') {
+		if ( $value == 'on' ) {
 			echo '<div class="error"><p>' . __( 'This dataset is disabled. Please contact an adimistrator if this seems to be wrong.', 'ogdch' ) . '</p></div>';
 		}
 	}
@@ -64,24 +64,24 @@ class Ckan_Backend_Local_Dataset {
 			'has_archive'         => false,
 			'exclude_from_search' => false,
 			'publicly_queryable'  => false,
-			'map_meta_cap' => true,
-			'capability_type' => 'dataset',
-			'capabilities' => array(
-				'edit_posts' => 'edit_datasets',
-				'edit_others_posts' => 'edit_others_datasets',
-				'publish_posts' => 'publish_datasets',
-				'read_private_posts' => 'read_private_datasets',
-				'delete_posts' => 'delete_datasets',
-				'delete_private_posts' => 'delete_private_datasets',
+			'map_meta_cap'        => true,
+			'capability_type'     => 'dataset',
+			'capabilities'        => array(
+				'edit_posts'             => 'edit_datasets',
+				'edit_others_posts'      => 'edit_others_datasets',
+				'publish_posts'          => 'publish_datasets',
+				'read_private_posts'     => 'read_private_datasets',
+				'delete_posts'           => 'delete_datasets',
+				'delete_private_posts'   => 'delete_private_datasets',
 				'delete_published_posts' => 'delete_published_datasets',
-				'delete_others_posts' => 'delete_others_datasets',
-				'edit_private_posts' => 'edit_private_datasets',
-				'edit_published_posts' => 'edit_published_datasets',
-				'create_posts' => 'create_datasets',
+				'delete_others_posts'    => 'delete_others_datasets',
+				'edit_private_posts'     => 'edit_private_datasets',
+				'edit_published_posts'   => 'edit_published_datasets',
+				'create_posts'           => 'create_datasets',
 				// Meta capabilites assigned by WordPress. Do not give to any role.
-				'edit_post' => 'edit_dataset',
-				'read_post' => 'read_dataset',
-				'delete_post' => 'delete_dataset',
+				'edit_post'              => 'edit_dataset',
+				'read_post'              => 'read_dataset',
+				'delete_post'            => 'delete_dataset',
 			),
 		);
 		register_post_type( self::POST_TYPE, $args );
@@ -272,8 +272,8 @@ class Ckan_Backend_Local_Dataset {
 
 		foreach ( $language_priority as $lang ) {
 			$cmb->add_group_field( $resources_group, array(
-				'name'       => __( 'Description', 'ogdch' ) . ' (' . strtoupper( $lang ) . ')',
-				'id'         => 'description_' . $lang,
+				'name' => __( 'Description', 'ogdch' ) . ' (' . strtoupper( $lang ) . ')',
+				'id'   => 'description_' . $lang,
 				'type' => 'text',
 			) );
 		}
@@ -349,12 +349,12 @@ class Ckan_Backend_Local_Dataset {
 		) );
 
 		$disabled_checkbox_args = array(
-			'desc' => __( 'Disable Dataset', 'ogdch' ),
-			'id'   => self::FIELD_PREFIX . 'disabled',
-			'type' => 'checkbox',
-			'before_row'   => array( $this, 'show_message_if_disabled' ),
+			'desc'       => __( 'Disable Dataset', 'ogdch' ),
+			'id'         => self::FIELD_PREFIX . 'disabled',
+			'type'       => 'checkbox',
+			'before_row' => array( $this, 'show_message_if_disabled' ),
 		);
-		if( ! current_user_can( 'disable_datasets' )) {
+		if ( ! current_user_can( 'disable_datasets' ) ) {
 			$disabled_checkbox_args['attributes'] = array(
 				'disabled' => 'disabled'
 			);
