@@ -8,7 +8,6 @@ class Ckan_Backend_Local_Dataset_Import {
 		add_action( 'admin_menu', array( $this, 'register_submenu_page' ) );
 	}
 
-
 	public function register_submenu_page() {
 		add_submenu_page(
 			'edit.php?post_type=' . Ckan_Backend_Local_Dataset::POST_TYPE,
@@ -32,8 +31,8 @@ class Ckan_Backend_Local_Dataset_Import {
 		// Handle import
 		if ( isset( $_POST[ $import_submit_hidden_field_name ] ) && $_POST[ $import_submit_hidden_field_name ] == 'Y' ) {
 			$success = false;
-			if(isset($_FILES[$file_field_name])) {
-				$success = $this->handle_file_import($_FILES[$file_field_name]);
+			if ( isset( $_FILES[ $file_field_name ] ) ) {
+				$success = $this->handle_file_import( $_FILES[ $file_field_name ] );
 			}
 
 			if ( $success ) {
@@ -60,7 +59,7 @@ class Ckan_Backend_Local_Dataset_Import {
 		<?php
 	}
 
-	public function handle_file_import($file) {
+	public function handle_file_import( $file ) {
 		try {
 			// Undefined | Multiple Files | $_FILES Corruption Attack
 			// If this request falls under any of them, treat it invalid.
@@ -84,25 +83,26 @@ class Ckan_Backend_Local_Dataset_Import {
 					throw new RuntimeException( 'Unknown errors.' );
 			}
 
-			$xml_object = simplexml_load_file($file['tmp_name']);
+			$xml_object  = simplexml_load_file( $file['tmp_name'] );
 			$json_string = json_encode( $xml_object );
-			$xml = json_decode($json_string, TRUE);
-			if( ! $xml ) {
+			$xml         = json_decode( $json_string, true );
+			if ( ! $xml ) {
 				throw new RuntimeException( 'Uploaded file is not a vaild XML file' );
 			}
 
-			return $this->create_local_dataset($xml);
+			return $this->import_dataset( $xml );
 		} catch ( RuntimeException $e ) {
 			echo $e->getMessage();
 		}
 	}
 
-	public function create_local_dataset($xml) {
-		foreach($xml['groups']['group'] as $group) {
+	public function import_dataset( $xml ) {
+		foreach ( $xml['groups']['group'] as $group ) {
 			if ( ! Ckan_Backend_Helper::group_exists( $group['name'] ) ) {
 				echo '<div class="error"><p>';
 				printf( __( 'Group %1$s does not exist! Import aborted.', 'ogdch' ), $group['name'] );
 				echo '</p></div>';
+
 				return false;
 			}
 		}
@@ -111,52 +111,53 @@ class Ckan_Backend_Local_Dataset_Import {
 			echo '<div class="error"><p>';
 			printf( __( 'Organisation %1$s does not exist! Import aborted.', 'ogdch' ), $xml['owner_org'] );
 			echo '</p></div>';
+
 			return false;
 		}
 
 		// simulate $_POST data to make post_save hook work correctly
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'custom_fields' ] = array();
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'resources' ] = array();
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'groups' ] = array();
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'name' ] = $xml['name'];
-		$_POST['post_title'] = $xml['title'];
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'maintainer' ] = $xml['maintainer'];
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'custom_fields' ]    = array();
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'resources' ]        = array();
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'groups' ]           = array();
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'name' ]             = $xml['name'];
+		$_POST['post_title']                                                    = $xml['title'];
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'maintainer' ]       = $xml['maintainer'];
 		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'maintainer_email' ] = $xml['maintainer_email'];
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'author' ] = $xml['author'];
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'author_email' ] = $xml['author_email'];
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'description_de' ] = $xml['description_de'];
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'version' ] = $xml['version'];
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'organisation' ] = $xml['owner_org'];
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'author' ]           = $xml['author'];
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'author_email' ]     = $xml['author_email'];
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'description_de' ]   = $xml['description_de'];
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'version' ]          = $xml['version'];
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'organisation' ]     = $xml['owner_org'];
 
 		// TODO check if it's an update or an insert action
 		$dataset_search_args = array(
-			'meta_key' => Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'masterid',
-			'meta_value' => $xml['masterid'],
-			'post_type' => Ckan_Backend_Local_Dataset::POST_TYPE,
+			'meta_key'    => Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'masterid',
+			'meta_value'  => $xml['masterid'],
+			'post_type'   => Ckan_Backend_Local_Dataset::POST_TYPE,
 			'post_status' => 'any',
 		);
-		$datasets = get_posts( $dataset_search_args );
+		$datasets            = get_posts( $dataset_search_args );
 
-		if(count($datasets) > 0) {
+		if ( count( $datasets ) > 0 ) {
 			// Dataset already exists -> update
 			$dataset_id = $datasets[0]->ID;
-			$this->update($dataset_id, $xml);
+			$this->update( $dataset_id, $xml );
 		} else {
 			// Create new dataset
-			$dataset_id = $this->insert($xml);
+			$dataset_id = $this->insert( $xml );
 		}
 
 		return $dataset_id;
 	}
 
 	protected function update( $dataset_id, $xml ) {
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'disabled' ] = get_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'disabled', true );
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'disabled' ]  = get_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'disabled', true );
 		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'reference' ] = get_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'reference', true );
 
 		$dataset_args = array(
-			'ID'             => $dataset_id,
-			'post_name'      => $xml['name'],
-			'post_title'     => $xml['title'],
+			'ID'         => $dataset_id,
+			'post_name'  => $xml['name'],
+			'post_title' => $xml['title'],
 		);
 
 		wp_update_post( $dataset_args );
@@ -169,11 +170,11 @@ class Ckan_Backend_Local_Dataset_Import {
 		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'disabled' ] = '';
 
 		$dataset_args = array(
-			'post_name'      => $xml['name'],
-			'post_title'     => $xml['title'],
-			'post_status'    => 'publish',
-			'post_type'      => Ckan_Backend_Local_Dataset::POST_TYPE,
-			'post_excerpt'   => '',
+			'post_name'    => $xml['name'],
+			'post_title'   => $xml['title'],
+			'post_status'  => 'publish',
+			'post_type'    => Ckan_Backend_Local_Dataset::POST_TYPE,
+			'post_excerpt' => '',
 		);
 
 		$dataset_id = wp_insert_post( $dataset_args );
