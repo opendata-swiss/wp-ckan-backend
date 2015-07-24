@@ -114,6 +114,20 @@ class Ckan_Backend_Local_Dataset_Import {
 			return false;
 		}
 
+		// simulate $_POST data to make post_save hook work correctly
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'custom_fields' ] = array();
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'resources' ] = array();
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'groups' ] = array();
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'name' ] = $xml['name'];
+		$_POST['post_title'] = $xml['title'];
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'maintainer' ] = $xml['maintainer'];
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'maintainer_email' ] = $xml['maintainer_email'];
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'author' ] = $xml['author'];
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'author_email' ] = $xml['author_email'];
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'description_de' ] = $xml['description_de'];
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'version' ] = $xml['version'];
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'organisation' ] = $xml['owner_org'];
+
 		// TODO check if it's an update or an insert action
 		$dataset_search_args = array(
 			'meta_key' => Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'masterid',
@@ -135,17 +149,25 @@ class Ckan_Backend_Local_Dataset_Import {
 		return $dataset_id;
 	}
 
-	protected function update( $id, $xml ) {
+	protected function update( $dataset_id, $xml ) {
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'disabled' ] = get_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'disabled', true );
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'reference' ] = get_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'reference', true );
+
 		$dataset_args = array(
-			'ID'             => $id,
+			'ID'             => $dataset_id,
 			'post_name'      => $xml['name'],
 			'post_title'     => $xml['title'],
 		);
 
 		wp_update_post( $dataset_args );
+
+		// manually update all dataset metafields
+		update_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'name_de', $xml['title'] );
 	}
 
 	protected function insert( $xml ) {
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'disabled' ] = '';
+
 		$dataset_args = array(
 			'post_name'      => $xml['name'],
 			'post_title'     => $xml['title'],
@@ -155,6 +177,10 @@ class Ckan_Backend_Local_Dataset_Import {
 		);
 
 		$dataset_id = wp_insert_post( $dataset_args );
+
+		// manually insert all dataset metafields
+		add_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'name_de', $xml['title'], true );
+
 		return $dataset_id;
 	}
 }
