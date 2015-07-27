@@ -84,9 +84,7 @@ class Ckan_Backend_Local_Dataset_Import {
 					throw new RuntimeException( 'Unknown errors.' );
 			}
 
-			$xml_object  = simplexml_load_file( $file['tmp_name'] );
-			$json_string = json_encode( $xml_object );
-			$xml         = json_decode( $json_string, true );
+			$xml = simplexml_load_file( $file['tmp_name'] );
 			if ( ! $xml ) {
 				throw new RuntimeException( 'Uploaded file is not a vaild XML file' );
 			}
@@ -98,19 +96,19 @@ class Ckan_Backend_Local_Dataset_Import {
 	}
 
 	public function import_dataset( $xml ) {
-		foreach ( $xml['groups']['group'] as $group ) {
-			if ( ! Ckan_Backend_Helper::group_exists( $group['name'] ) ) {
+		foreach ( $xml->groups->group as $group ) {
+			if ( ! Ckan_Backend_Helper::group_exists( (string) $group ) ) {
 				echo '<div class="error"><p>';
-				printf( __( 'Group %1$s does not exist! Import aborted.', 'ogdch' ), $group['name'] );
+				printf( __( 'Group %1$s does not exist! Import aborted.', 'ogdch' ), (string) $group );
 				echo '</p></div>';
 
 				return false;
 			}
 		}
 
-		if ( ! Ckan_Backend_Helper::organisation_exists( $xml['owner_org'] ) ) {
+		if ( ! Ckan_Backend_Helper::organisation_exists( (string) $xml->owner_org ) ) {
 			echo '<div class="error"><p>';
-			printf( __( 'Organisation %1$s does not exist! Import aborted.', 'ogdch' ), $xml['owner_org'] );
+			printf( __( 'Organisation %1$s does not exist! Import aborted.', 'ogdch' ), (string) $xml->owner_org );
 			echo '</p></div>';
 
 			return false;
@@ -118,43 +116,40 @@ class Ckan_Backend_Local_Dataset_Import {
 
 		// simulate $_POST data to make post_save hook work correctly
 		$custom_fields = array();
-		// TODO WHY IS HERE A DIFFERENCE!??? dafuq
-		print_r($xml['custom_fields']['custom_field']); // multiple custom_field entries
-		print_r($xml['foos']['foo']); // just one foo entry
-		foreach ( $xml['custom_fields']['custom_field'] as $custom_field ) {
+		foreach ( $xml->custom_fields->custom_field as $custom_field ) {
 			$custom_fields[] = array(
-				'key' => $custom_field['key'],
-				'value' => $custom_field['value'],
+				'key' => (string) $custom_field->key,
+				'value' => (string) $custom_field->value,
 			);
 		}
 		$resources = array();
-		foreach ( $xml['resources']['resource'] as $resource ) {
+		foreach ( $xml->resources->resource as $resource ) {
 			$resources[] = array(
-				'url' => $resource['url'],
-				'title' => $resource['title'],
-				'description_de' => $resource['description'],
+				'url' => (string) $resource->url,
+				'title' => (string) $resource->title,
+				'description_de' => (string) $resource->description,
 			);
 		}
 		$groups = array();
-		foreach ( $xml['groups']['group'] as $group ) {
-			$groups[] = $group;
+		foreach ( $xml->groups->group as $group ) {
+			$groups[] = (string) $group;
 		}
 		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'custom_fields' ]    = $custom_fields;
 		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'resources' ]        = $resources;
 		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'groups' ]           = $groups;
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'name' ]             = $xml['name'];
-		$_POST['post_title']                                                    = $xml['title'];
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'maintainer' ]       = $xml['maintainer'];
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'maintainer_email' ] = $xml['maintainer_email'];
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'author' ]           = $xml['author'];
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'author_email' ]     = $xml['author_email'];
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'description_de' ]   = $xml['description_de'];
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'version' ]          = $xml['version'];
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'organisation' ]     = $xml['owner_org'];
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'name' ]             = (string) $xml->name;
+		$_POST['post_title']                                                    = (string) $xml->title;
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'maintainer' ]       = (string) $xml->maintainer;
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'maintainer_email' ] = (string) $xml->maintainer_email;
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'author' ]           = (string) $xml->author;
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'author_email' ]     = (string) $xml->author_email;
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'description_de' ]   = (string) $xml->description_de;
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'version' ]          = (string) $xml->version;
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'organisation' ]     = (string) $xml->owner_org;
 
 		$dataset_search_args = array(
 			'meta_key'    => Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'masterid',
-			'meta_value'  => $xml['masterid'],
+			'meta_value'  => (string) $xml->masterid,
 			'post_type'   => Ckan_Backend_Local_Dataset::POST_TYPE,
 			'post_status' => 'any',
 		);
@@ -178,22 +173,22 @@ class Ckan_Backend_Local_Dataset_Import {
 
 		$dataset_args = array(
 			'ID'         => $dataset_id,
-			'post_name'  => $xml['name'],
-			'post_title' => $xml['title'],
+			'post_name'  => (string) $xml->name,
+			'post_title' => (string) $xml->title,
 		);
 
 		wp_update_post( $dataset_args );
 
 		// manually update all dataset metafields
-		update_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'name_de', $xml['title'] );
+		update_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'name_de', (string) $xml->title );
 	}
 
 	protected function insert( $xml ) {
 		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'disabled' ] = '';
 
 		$dataset_args = array(
-			'post_name'    => $xml['name'],
-			'post_title'   => $xml['title'],
+			'post_name'    => (string) $xml->name,
+			'post_title'   => (string) $xml->title,
 			'post_status'  => 'publish',
 			'post_type'    => Ckan_Backend_Local_Dataset::POST_TYPE,
 			'post_excerpt' => '',
@@ -202,7 +197,7 @@ class Ckan_Backend_Local_Dataset_Import {
 		$dataset_id = wp_insert_post( $dataset_args );
 
 		// manually insert all dataset metafields
-		add_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'name_de', $xml['title'], true );
+		add_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'name_de', (string) $xml->title, true );
 
 		return $dataset_id;
 	}
