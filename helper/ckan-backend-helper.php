@@ -1,7 +1,7 @@
 <?php
 
 class Ckan_Backend_Helper {
-	/*
+	/**
 	 * Sends a curl request with given data to specified CKAN endpoint.
 	 *
 	 * @param string $endpoint CKAN API endpoint which gets called
