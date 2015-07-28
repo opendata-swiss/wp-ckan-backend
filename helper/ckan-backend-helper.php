@@ -1,7 +1,7 @@
 <?php
 
 class Ckan_Backend_Helper {
-	/**
+	/*
 	 * Sends a curl request with given data to specified CKAN endpoint.
 	 *
 	 * @param string $endpoint CKAN API endpoint which gets called
@@ -18,7 +18,7 @@ class Ckan_Backend_Helper {
 		curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'POST' );
 		curl_setopt( $ch, CURLOPT_POSTFIELDS, $data );
 		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-		curl_setopt( $ch, CURLOPT_HTTPHEADER, [ 'Authorization: ' . CKAN_API_KEY . '' ] );
+		curl_setopt( $ch, CURLOPT_HTTPHEADER, array( 'Authorization: ' . CKAN_API_KEY ) );
 
 		// send request
 		$response = curl_exec( $ch );
