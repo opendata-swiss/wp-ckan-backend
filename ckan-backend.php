@@ -85,13 +85,6 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		protected function load_dependencies() {
 			$depedency_file_paths = array(
 				'helper/ckan-backend-helper.php',
-				'model/ckan-backend-contact-point.php',
-				'model/ckan-backend-distribution.php',
-				'model/ckan-backend-publisher.php',
-				'model/ckan-backend-relation.php',
-				'model/ckan-backend-see-also.php',
-				'model/ckan-backend-temporal.php',
-				'model/ckan-backend-dataset.php',
 				'post-types/ckan-backend-local-dataset.php',
 				'post-types/ckan-backend-local-group.php',
 				'post-types/ckan-backend-local-organisation.php',
