@@ -57,13 +57,30 @@ class Ckan_Backend_Helper {
 		return $errors;
 	}
 
+	/**
+	 * Gets all group instances from CKAN and returns them in an array.
+	 *
+	 * @return array All group instances from CKAN
+	 */
+	public static function get_group_form_field_options() {
+		return Ckan_Backend_Helper::get_form_field_options('group');
+	}
+
+	/**
+	 * Gets all organisation instances from CKAN and returns them in an array.
+	 *
+	 * @return array All organisation instances from CKAN
+	 */
+	public static function get_organisation_form_field_options() {
+		return Ckan_Backend_Helper::get_form_field_options('organization');
+	}
 
 	/**
 	 * Gets all instances of given type from CKAN and returns them in an array.
 	 *
 	 * @return array All instances from CKAN
 	 */
-	public static function get_form_field_options( $type ) {
+	private static function get_form_field_options( $type ) {
 		$available_types = array(
 			'group',
 			'organization'
@@ -90,6 +107,36 @@ class Ckan_Backend_Helper {
 		}
 
 		return $options;
+	}
+
+	public static function group_exists( $name ) {
+		return Ckan_Backend_Helper::object_exists( 'group', $name );
+	}
+
+	public static function organisation_exists( $name ) {
+		return Ckan_Backend_Helper::object_exists( 'organization', $name );
+	}
+
+	private static function object_exists( $type, $name ) {
+		$available_types = array(
+			'group',
+			'organization'
+		);
+		if ( ! in_array( $type, $available_types ) ) {
+			self::print_error_messages( array( 'Type not available!' ) );
+
+			return false;
+		}
+
+		$endpoint = CKAN_API_ENDPOINT . 'action/' . $type . '_show';
+		$data     = array(
+			'id' => $name
+		);
+		$data     = json_encode( $data );
+		$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
+		$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
+
+		return count( $errors ) == 0;
 	}
 
 

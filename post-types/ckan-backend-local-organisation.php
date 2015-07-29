@@ -166,7 +166,7 @@ class Ckan_Backend_Local_Organisation {
 	 * @return array All possbile parent organisations
 	 */
 	public function get_parent_options() {
-		$organisations = Ckan_Backend_Helper::get_form_field_options( 'organization' );
+		$organisations = Ckan_Backend_Helper::get_organisation_form_field_options();
 		// remove current organisation from result (current organisation can't be its on parent)
 		if ( isset( $_GET['post'] ) ) {
 			$current_organisation_name = get_post_meta( $_GET['post'], Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'name', true );
