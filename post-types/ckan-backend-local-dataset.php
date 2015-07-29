@@ -101,6 +101,19 @@ class Ckan_Backend_Local_Dataset {
 			'show_names'   => true,
 		) );
 
+		$cmb->add_field( array(
+			'name'              => __( 'Language', 'ogdch' ),
+			'id'                => self::FIELD_PREFIX . 'language',
+			'type'              => 'multicheck_inline',
+			'select_all_button' => false,
+			'options'           => array(
+				'en' => __( 'English', 'ogdch' ),
+				'de' => __( 'German', 'ogdch' ),
+				'fr' => __( 'French', 'ogdch' ),
+				'it' => __( 'Italian', 'ogdch' ),
+			),
+		) );
+
 		/* Title */
 		$cmb->add_field( array(
 			'name' => __( 'Dataset Information', 'ogdch' ),
@@ -199,19 +212,6 @@ class Ckan_Backend_Local_Dataset {
 			'type'              => 'multicheck',
 			'select_all_button' => false,
 			'options'           => array( 'Ckan_Backend_Helper', 'get_group_form_field_options' ),
-		) );
-
-		$cmb->add_field( array(
-			'name'              => __( 'Language', 'ogdch' ),
-			'id'                => self::FIELD_PREFIX . 'language',
-			'type'              => 'multicheck',
-			'select_all_button' => false,
-			'options'           => array(
-				'en' => __( 'English', 'ogdch' ),
-				'de' => __( 'German', 'ogdch' ),
-				'fr' => __( 'French', 'ogdch' ),
-				'it' => __( 'Italian', 'ogdch' ),
-			),
 		) );
 
 		$cmb->add_field( array(
@@ -342,19 +342,6 @@ class Ckan_Backend_Local_Dataset {
 				'attributes' => array( 'rows' => 3 ),
 			) );
 		}
-
-		$cmb->add_group_field( $resource_group, array(
-			'name'              => __( 'Language', 'ogdch' ),
-			'id'                => 'language',
-			'type'              => 'multicheck',
-			'select_all_button' => false,
-			'options'           => array(
-				'en' => __( 'English', 'ogdch' ),
-				'de' => __( 'German', 'ogdch' ),
-				'fr' => __( 'French', 'ogdch' ),
-				'it' => __( 'Italian', 'ogdch' ),
-			),
-		) );
 
 		$cmb->add_group_field( $resource_group, array(
 			'name' => __( 'Issued', 'ogdch' ),
