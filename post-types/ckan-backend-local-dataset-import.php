@@ -1,13 +1,33 @@
 <?php
+/**
+ * Post type ckan-local-dataset-import-page
+ *
+ * @package CKAN\Backend
+ */
 
+/**
+ * Class Ckan_Backend_Local_Dataset_Import
+ */
 class Ckan_Backend_Local_Dataset_Import {
 
+	/**
+	 * Menu slug.
+	 * @var string
+	 */
 	public $menu_slug = 'ckan-local-dataset-import-page';
 
+	/**
+	 * Constructor of this class.
+	 */
 	public function __construct() {
 		add_action( 'admin_menu', array( $this, 'register_submenu_page' ) );
 	}
 
+	/**
+	 * Register a submenu page.
+	 *
+	 * @return void
+	 */
 	public function register_submenu_page() {
 		add_submenu_page(
 			'edit.php?post_type=' . Ckan_Backend_Local_Dataset::POST_TYPE,
@@ -19,35 +39,42 @@ class Ckan_Backend_Local_Dataset_Import {
 		);
 	}
 
+	/**
+	 * Callback for the import of a file.
+	 *
+	 * @return void
+	 */
 	public function import_page_callback() {
 		// must check that the user has the required capability
 		if ( ! current_user_can( 'create_datasets' ) ) {
-			wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
+			wp_die( esc_html( __( 'You do not have sufficient permissions to access this page.' ) ) );
 		}
 
 		$import_submit_hidden_field_name = 'ckan_local_dataset_import_submit';
 		$file_field_name                 = 'ckan_local_dataset_import_file';
 
 		// Handle import
-		if ( isset( $_POST[ $import_submit_hidden_field_name ] ) && $_POST[ $import_submit_hidden_field_name ] == 'Y' ) {
+		if ( isset( $_POST[ $import_submit_hidden_field_name ] ) && 'Y' === $_POST[ $import_submit_hidden_field_name ] ) {
 			$dataset_id = false;
 			if ( isset( $_FILES[ $file_field_name ] ) ) {
 				$dataset_id = $this->handle_file_import( $_FILES[ $file_field_name ] );
 			}
 
 			if ( $dataset_id > 0 ) {
-				echo '<div class="updated"><p><strong>' . __( 'Import successful', 'ogdch' ) . '</strong></p></div>';
-				printf(__('Click <a href="%s">here</a> to see the imported dataset.', 'ogdch'), esc_url( admin_url( 'post.php?post=' . $dataset_id . '&action=edit' ) ));
+				echo '<div class="updated"><p><strong>' . esc_html( __( 'Import successful', 'ogdch' ) ) . '</strong></p></div>';
+				// @codingStandardsIgnoreStart
+				printf( __( 'Click <a href="%s">here</a> to see the imported dataset.', 'ogdch' ), esc_url( admin_url( 'post.php?post=' . esc_attr( $dataset_id ) . '&action=edit' ) ) );
+				// @codingStandardsIgnoreEnd
 			}
 		} ?>
 		<div class="wrap">
-			<h2><?php _e( 'Import CKAN Dataset', 'ogdch' ); ?></h2>
+			<h2><?php esc_html_e( __( 'Import CKAN Dataset', 'ogdch' ) ); ?></h2>
 
 			<form enctype="multipart/form-data" action="" method="POST">
-				<input type="hidden" name="<?php echo $import_submit_hidden_field_name; ?>" value="Y">
+				<input type="hidden" name="<?php esc_attr_e( $import_submit_hidden_field_name ); ?>" value="Y">
 
-				<p><?php _e( "File:", 'ogdch' ); ?>
-					<input type="file" name="<?php echo $file_field_name; ?>" value="" size="20">
+				<p><?php esc_html_e( __( 'File:', 'ogdch' ) ); ?>
+					<input type="file" name="<?php esc_attr_e( $file_field_name ); ?>" value="" size="20">
 				</p>
 				<hr/>
 
@@ -60,6 +87,15 @@ class Ckan_Backend_Local_Dataset_Import {
 		<?php
 	}
 
+	/**
+	 * Handle to uploaded file.
+	 *
+	 * @param array $file Array with the information of the uploaded file.
+	 *
+	 * @return bool|int|WP_Error
+	 *
+	 * @throws RuntimeException If the file cannot be processed.
+	 */
 	public function handle_file_import( $file ) {
 		try {
 			// Undefined | Multiple Files | $_FILES Corruption Attack
@@ -91,15 +127,24 @@ class Ckan_Backend_Local_Dataset_Import {
 
 			return $this->import_dataset( $xml );
 		} catch ( RuntimeException $e ) {
-			echo $e->getMessage();
+			esc_html_e( $e->getMessage() );
 		}
 	}
 
+	/**
+	 * Imports a dataset from a given XML
+	 *
+	 * @param string $xml The XML to be imported.
+	 *
+	 * @return bool|int|WP_Error
+	 */
 	public function import_dataset( $xml ) {
 		foreach ( $xml->groups->group as $group ) {
 			if ( ! Ckan_Backend_Helper::group_exists( (string) $group ) ) {
 				echo '<div class="error"><p>';
+				// @codingStandardsIgnoreStart
 				printf( __( 'Group %1$s does not exist! Import aborted.', 'ogdch' ), (string) $group );
+				// @codingStandardsIgnoreEnd
 				echo '</p></div>';
 
 				return false;
@@ -108,7 +153,9 @@ class Ckan_Backend_Local_Dataset_Import {
 
 		if ( ! Ckan_Backend_Helper::organisation_exists( (string) $xml->owner_org ) ) {
 			echo '<div class="error"><p>';
+			// @codingStandardsIgnoreStart
 			printf( __( 'Organisation %1$s does not exist! Import aborted.', 'ogdch' ), (string) $xml->owner_org );
+			// @codingStandardsIgnoreEnd
 			echo '</p></div>';
 
 			return false;
@@ -118,11 +165,13 @@ class Ckan_Backend_Local_Dataset_Import {
 		$resources = $this->prepare_resources( $xml );
 		$groups = $this->prepare_groups( $xml );
 
-		$this->prepare_post_fields($xml, $custom_fields, $resources, $groups);
+		$this->prepare_post_fields( $xml, $custom_fields, $resources, $groups );
 
 		$dataset_search_args = array(
+			// @codingStandardsIgnoreStart
 			'meta_key'    => Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'masterid',
 			'meta_value'  => (string) $xml->masterid,
+			// @codingStandardsIgnoreEnd
 			'post_type'   => Ckan_Backend_Local_Dataset::POST_TYPE,
 			'post_status' => 'any',
 		);
@@ -140,7 +189,14 @@ class Ckan_Backend_Local_Dataset_Import {
 		return $dataset_id;
 	}
 
-	protected function prepare_custom_fields($xml) {
+	/**
+	 * Extracts the custom fields as key/values
+	 *
+	 * @param string $xml The XML to import.
+	 *
+	 * @return array
+	 */
+	protected function prepare_custom_fields( $xml ) {
 		$custom_fields = array();
 		foreach ( $xml->custom_fields->custom_field as $custom_field ) {
 			$custom_fields[] = array(
@@ -151,6 +207,13 @@ class Ckan_Backend_Local_Dataset_Import {
 		return $custom_fields;
 	}
 
+	/**
+	 * Extracts the resources from the given XML
+	 *
+	 * @param string $xml The XML to import.
+	 *
+	 * @return array
+	 */
 	protected function prepare_resources( $xml ) {
 		$resources = array();
 		foreach ( $xml->resources->resource as $resource ) {
@@ -163,6 +226,13 @@ class Ckan_Backend_Local_Dataset_Import {
 		return $resources;
 	}
 
+	/**
+	 * Extracts the groups from the given XML
+	 *
+	 * @param string $xml The XML to import.
+	 *
+	 * @return array
+	 */
 	protected function prepare_groups( $xml ) {
 		$groups = array();
 		foreach ( $xml->groups->group as $group ) {
@@ -171,6 +241,16 @@ class Ckan_Backend_Local_Dataset_Import {
 		return $groups;
 	}
 
+	/**
+	 * Description of prepare_post_fields.
+	 *
+	 * @param string $xml           The XML to import.
+	 * @param array  $custom_fields Array of custom fields.
+	 * @param array  $resources     Array of resources.
+	 * @param array  $groups        Array of groups.
+	 *
+	 * @return void
+	 */
 	protected function prepare_post_fields($xml, $custom_fields, $resources, $groups) {
 		// simulate $_POST data to make post_save hook work correctly
 		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'custom_fields' ]    = $custom_fields;
@@ -187,6 +267,17 @@ class Ckan_Backend_Local_Dataset_Import {
 		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'organisation' ]     = (string) $xml->owner_org;
 	}
 
+	/**
+	 * Updated the dataset with the given ID
+	 *
+	 * @param integer $dataset_id    ID of the dataset.
+	 * @param string  $xml           The XML to import.
+	 * @param array   $custom_fields Array of custom fields.
+	 * @param array   $resources     Array of resources.
+	 * @param array   $groups        Array of groups.
+	 *
+	 * @return void
+	 */
 	protected function update( $dataset_id, $xml, $custom_fields, $resources, $groups ) {
 		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'disabled' ]  = get_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'disabled', true );
 		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'reference' ] = get_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'reference', true );
@@ -208,6 +299,16 @@ class Ckan_Backend_Local_Dataset_Import {
 		update_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'organisation', (string) $xml->owner_org );
 	}
 
+	/**
+	 * Inserts a new dataset
+	 *
+	 * @param string $xml           The XML to import.
+	 * @param array  $custom_fields Array of custom fields.
+	 * @param array  $resources     Array of resources.
+	 * @param array  $groups        Array of groups.
+	 *
+	 * @return int|WP_Error
+	 */
 	protected function insert( $xml, $custom_fields, $resources, $groups ) {
 		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'disabled' ] = '';
 

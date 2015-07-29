@@ -5,15 +5,29 @@
  * Author: Team Jazz <juerg.hunziker@liip.ch>
  * Version: 1.0
  * Date: 17.06.2015
+ *
+ * @package CKAN\Backend
  */
 
 defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 
 if ( ! class_exists( 'Ckan_Backend', false ) ) {
 
+	/**
+	 * Class Ckan_Backend
+	 */
 	class Ckan_Backend {
 
+		/**
+		 * Slug of this plugin.
+		 * @var string
+		 */
 		public $plugin_slug = 'ckan-backend';
+
+		/**
+		 * Version number of this plugin.
+		 * @var string
+		 */
 		public $version = '1.0.0';
 
 		/**
@@ -36,12 +50,20 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			return self::$single_instance;
 		}
 
+		/**
+		 * Constructor
+		 */
 		public function __construct() {
 			add_action( 'init', array( $this, 'bootstrap' ), 0 );
 			add_action( 'admin_init', array( $this, 'add_scripts' ) );
 			register_activation_hook( __FILE__, array( $this, 'activate' ) );
 		}
 
+		/**
+		 * Bootstrap all post types.
+		 *
+		 * @return void
+		 */
 		public function bootstrap() {
 			$this->load_dependencies();
 
@@ -51,13 +73,23 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			new Ckan_Backend_Local_Dataset_Import();
 		}
 
+		/**
+		 * Add scripts and styles.
+		 *
+		 * @return void
+		 */
 		public function add_scripts() {
 			wp_register_style( 'ckan-backend-base', plugins_url( 'assets/css/base.css', __FILE__ ) );
 			wp_enqueue_style( 'ckan-backend-base' );
 		}
 
+		/**
+		 * Activate the plugin.
+		 *
+		 * @return void
+		 */
 		public function activate() {
-			// add all new capabilities of plugin to administrator role (save in database)
+			// Add all new capabilities of plugin to administrator role (save in database).
 			$new_capabilities = array(
 				'disable_datasets'
 			);
@@ -82,6 +114,11 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			}
 		}
 
+		/**
+		 * Load all the dependencies.
+		 *
+		 * @return void
+		 */
 		protected function load_dependencies() {
 			$depedency_file_paths = array(
 				'helper/ckan-backend-helper.php',
@@ -92,7 +129,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 				'sync/ckan-backend-sync-abstract.php',
 				'sync/ckan-backend-sync-local-dataset.php',
 				'sync/ckan-backend-sync-local-group.php',
-				'sync/ckan-backend-sync-local-organisation.php'
+				'sync/ckan-backend-sync-local-organisation.php',
 			);
 
 			foreach ( $depedency_file_paths as $file_path ) {
@@ -100,6 +137,11 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			}
 		}
 
+		/**
+		 * Getter of the version number.
+		 *
+		 * @return string
+		 */
 		public function get_version() {
 			return $this->version;
 		}
