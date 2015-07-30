@@ -2,8 +2,9 @@
 
 class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	protected function get_update_data( $post ) {
-		$distributions = $this->prepare_distributions( $_POST[ $this->field_prefix . 'distributions' ] );
-		$themes        = $this->prepare_selected_groups( $_POST[ $this->field_prefix . 'themes' ] );
+		$resources = $this->prepare_resources( $_POST[ $this->field_prefix . 'distributions' ] );
+		$groups    = $this->prepare_selected_groups( $_POST[ $this->field_prefix . 'themes' ] );
+		$tags      = $this->prepare_tags( $_POST['tax_input']['post_tag'] );
 
 		// Gernerate slug of dataset. If no title is entered use an uniqid
 		if ( $_POST[ $this->field_prefix . 'title_en' ] != '' ) {
@@ -33,9 +34,10 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 			'maintainer_email' => $_POST[ $this->field_prefix . 'contact_points' ][0]['email'],
 			'notes'            => $_POST[ $this->field_prefix . 'description_de' ], // TODO: use all language here
 			'state'            => 'active',
-			'resources'        => $distributions,
-			'groups'           => $themes,
+			'resources'        => $resources,
+			'groups'           => $groups,
 			'owner_org'        => $_POST[ $this->field_prefix . 'publisher' ],
+			'tags'             => $tags,
 		);
 
 		if ( isset( $_POST[ $this->field_prefix . 'reference' ] ) && $_POST[ $this->field_prefix . 'reference' ] != '' ) {
@@ -54,20 +56,20 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	}
 
 	/**
-	 * Transforms distributions field values from WP form to a CKAN friendly form.
+	 * Transforms resources field values from WP form to a CKAN friendly form.
 	 *
-	 * @return array CKAN friendly distributions
+	 * @return array CKAN friendly resources
 	 */
-	protected function prepare_distributions( $distributions ) {
+	protected function prepare_resources( $resources ) {
 		$ckan_resources = array();
 
 		// Check if resources are added. If yes generate CKAN friendly array.
-		if ( $distributions[0]['download_url'] != '' ) {
-			foreach ( $distributions as $distribution ) {
+		if ( $resources[0]['download_url'] != '' ) {
+			foreach ( $resources as $resource ) {
 				$ckan_resources[] = array(
-					'url'         => $distribution['download_url'],
-					'name'        => $distribution['title_de'], // TODO: use all language here
-					'description' => $distribution['description_de'] // TODO: use all language here
+					'url'         => $resource['download_url'],
+					'name'        => $resource['title_de'], // TODO: use all language here
+					'description' => $resource['description_de'] // TODO: use all language here
 				);
 			}
 		}
@@ -94,5 +96,18 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		}
 
 		return $ckan_groups;
+	}
+
+	protected function prepare_tags( $tags ) {
+		$ckan_tags = array();
+
+		$tags_array = explode( ', ', $tags );
+		foreach ( $tags_array as $tag ) {
+			$ckan_tags[] = array(
+				'name' => $tag
+			);
+		}
+
+		return $ckan_tags;
 	}
 }
