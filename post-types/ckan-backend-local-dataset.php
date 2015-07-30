@@ -129,7 +129,7 @@ class Ckan_Backend_Local_Dataset {
 			'title'        => __( 'Ressource Data', 'ogdch' ),
 			'object_types' => array( self::POST_TYPE ),
 			'context'      => 'normal',
-			Description of define_fields.'priority'     => 'high',
+			'priority'     => 'high',
 			'show_names'   => true,
 		) );
 
