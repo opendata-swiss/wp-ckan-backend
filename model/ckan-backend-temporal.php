@@ -17,4 +17,11 @@ class Ckan_Backend_Temporal_Model {
 	public function setEndDate($endDate) {
 		$this->endDate = $endDate;
 	}
+
+	public function toArray() {
+		return array(
+			'start_date' => $this->getStartDate(),
+			'end_date' => $this->getEndDate(),
+		);
+	}
 }

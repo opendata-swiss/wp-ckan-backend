@@ -17,4 +17,11 @@ class Ckan_Backend_Publisher_Model {
 	public function setMbox($mbox) {
 		$this->mbox = $mbox;
 	}
+
+	public function toArray() {
+		return array(
+			'name' => $this->getName(),
+			'mbox' => $this->getMbox(),
+		);
+	}
 }

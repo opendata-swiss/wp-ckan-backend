@@ -4,7 +4,7 @@ class Ckan_Backend_Distribution_Model {
 	protected $identifier = '';
 	protected $title = array();
 	protected $description = array();
-	protected $language = array();
+	protected $languages = array();
 	protected $issued = '';
 	protected $modified = '';
 	protected $accessUrls = array();
@@ -35,6 +35,18 @@ class Ckan_Backend_Distribution_Model {
 	}
 	public function setDescription($description, $lang = 'en') {
 		$this->description[$lang] = $description;
+	}
+
+	public function getLanguages() {
+		return $this->languages;
+	}
+	public function addLanguage($language) {
+		$this->languages[] = $language;
+	}
+	public function removeLanguage($language) {
+		if(($key = array_search($language, $this->getLanguages())) !== false) {
+			unset($this->languages[$key]);
+		}
 	}
 
 	public function getIssued() {
@@ -120,5 +132,31 @@ class Ckan_Backend_Distribution_Model {
 	}
 	public function setCoverage($coverage) {
 		$this->coverage = $coverage;
+	}
+
+	public function toArray() {
+		global $langauge_priority;
+
+		$distribution = array(
+			'identifier' => $this->getIdentifier(),
+			'languages' => $this->getLanguages(),
+			'issued' => $this->getIssued(),
+			'modified' => $this->getModified(),
+			'access_urls' => $this->getAccessUrls(),
+			'download_urls' => $this->getDownloadUrls(),
+			'rights' => $this->getRights(),
+			'license' => $this->getLicense(),
+			'byte_size' => $this->getByteSize(),
+			'media_type' => $this->getMediaType(),
+			'format' => $this->getFormat(),
+			'coverage' => $this->getCoverage(),
+		);
+
+		foreach($langauge_priority as $lang) {
+			$distribution['title_' . $lang] = $this->getTitle($lang);
+			$distribution['description_' . $lang] = $this->getDescription($lang);
+		}
+
+		return $distribution;
 	}
 }

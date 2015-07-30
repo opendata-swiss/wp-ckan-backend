@@ -214,4 +214,47 @@ class Ckan_Backend_Dataset_Model {
 	public function getDistributions() {
 		return $this->distributions;
 	}
+
+	public function toArray() {
+		global $langauge_priority;
+
+		$dataset = array(
+			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'identifier' => $this->getIdentifier(),
+			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'issued' => $this->getIssued(),
+			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'modified' => $this->getModified(),
+			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'themes' => $this->getThemes(),
+			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'languages' => $this->getLanguages(),
+			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'keywords' => $this->getKeywords(),
+			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'landing_page' => $this->getLandingPage(),
+			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'spatial' => $this->getSpatial(),
+			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'coverage' => $this->getCoverage(),
+			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'accrual_periodicy' => $this->getAccrualPeriodicy()
+		);
+
+		foreach($langauge_priority as $lang) {
+			$dataset[Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'title_' . $lang] = $this->getTitle($lang);
+			$dataset[Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'description_' . $lang] = $this->getDescription($lang);
+		}
+
+		foreach($this->getPublishers() as $publisher) {
+			$dataset[Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'publishers'][] = $publisher->toArray();
+		}
+		foreach($this->getContactPoints() as $contact_point) {
+			$dataset[Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'contact_points'][] = $contact_point->toArray();
+		}
+		foreach($this->getRelations() as $relation) {
+			$dataset[Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'relations'][] = $relation->toArray();
+		}
+		foreach($this->getTemporals() as $temporal) {
+			$dataset[Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'temporals'][] = $temporal->toArray();
+		}
+		foreach($this->getSeeAlsos() as $see_also) {
+			$dataset[Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'see_alsos'][] = $see_also->toArray();
+		}
+		foreach($this->getDistributions() as $distribution) {
+			$dataset[Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'distributions'][] = $distribution->toArray();
+		}
+
+		return $dataset;
+	}
 }

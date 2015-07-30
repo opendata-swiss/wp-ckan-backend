@@ -17,4 +17,11 @@ class Ckan_Backend_Relation_Model {
 	public function setLabel($label) {
 		$this->label = $label;
 	}
+
+	public function toArray() {
+		return array(
+			'description' => $this->getDescription(),
+			'label' => $this->getLabel(),
+		);
+	}
 }

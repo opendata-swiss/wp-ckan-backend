@@ -17,4 +17,11 @@ class Ckan_Backend_SeeAlso_Model {
 	public function setFormat($format) {
 		$this->format = $format;
 	}
+
+	public function toArray() {
+		return array(
+			'about' => $this->getAbout(),
+			'format' => $this->getFormat(),
+		);
+	}
 }

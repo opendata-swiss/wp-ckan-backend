@@ -107,31 +107,31 @@ class Ckan_Backend_Local_Dataset_Import {
 	public function import_dataset( $xml ) {
 		$dataset = $this->get_dataset_object( $xml );
 
-		foreach ( $xml->xpath('//dcat:Dataset/dcat:theme') as $group ) {
-			if ( ! Ckan_Backend_Helper::group_exists( (string) $group ) ) {
+		foreach ( $dataset->getThemes() as $group ) {
+			if ( ! Ckan_Backend_Helper::group_exists( $group ) ) {
 				echo '<div class="error"><p>';
-				printf( __( 'Group %1$s does not exist! Import aborted.', 'ogdch' ), (string) $group );
+				printf( __( 'Group %1$s does not exist! Import aborted.', 'ogdch' ), $group );
 				echo '</p></div>';
 
 				return false;
 			}
 		}
 
-		$publisher =  $xml->xpath('//dcat:Dataset/dct:publisher/foaf:Organization/foaf:name');
-		if( count( $publisher ) > 0 ) {
-			if ( ! Ckan_Backend_Helper::organisation_exists( (string) $publisher[0] ) ) {
+		$publishers =  $dataset->getPublishers();
+		if( count( $publishers ) > 0 ) {
+			// use only first element
+			$publisher = reset( $publishers );
+			if ( ! Ckan_Backend_Helper::organisation_exists( $publisher->getName() ) ) {
 				echo '<div class="error"><p>';
-				printf( __( 'Organisation %1$s does not exist! Import aborted.', 'ogdch' ), (string) $publisher[0] );
+				printf( __( 'Organisation %1$s does not exist! Import aborted.', 'ogdch' ), $publisher->getName() );
 				echo '</p></div>';
 
 				return false;
 			}
 		}
 
-		$groups = $this->prepare_groups( $xml );
-		$resources = $this->prepare_resources( $xml );
-
-		$this->prepare_post_fields($xml, $resources, $groups);
+		// simulate $_POST data to make post_save hook work correctly
+		$_POST = array_merge($_POST, $dataset->toArray());
 
 		$dataset_search_args = array(
 			'meta_key'    => Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'masterid',
@@ -144,83 +144,41 @@ class Ckan_Backend_Local_Dataset_Import {
 		if ( count( $datasets ) > 0 ) {
 			// Dataset already exists -> update
 			$dataset_id = $datasets[0]->ID;
-			$this->update( $dataset_id, $xml, $resources, $groups );
+			$this->update( $dataset_id, $dataset );
 		} else {
 			// Create new dataset
-			$dataset_id = $this->insert( $xml, $resources, $groups );
+			$dataset_id = $this->insert( $dataset );
 		}
 
 		return $dataset_id;
 	}
 
-	protected function prepare_resources( $xml ) {
-		$resources = array();
-		foreach ( $xml->xpath('//dcat:Dataset/dcat:distribution/dcat:Distribution') as $resource ) {
-			$download_urls = $resource->xpath('dcat:downloadURL');
-			$title_de = $resource->xpath('dct:title[@xml:lang="de"]');
-			$description_de = $resource->xpath('dct:description[@xml:lang="de"]');
-			$resources[] = array(
-				'url' => (string) $download_urls[0],
-				'title' => (string) $title_de[0],
-				'description_de' => (string) $description_de[0],
-			);
-		}
-		return $resources;
-	}
-
-	protected function prepare_groups( $xml ) {
-		$groups = array();
-		foreach ( $xml->xpath('//dcat:Dataset/dcat:theme') as $group ) {
-			$groups[] = (string) $group;
-		}
-		return $groups;
-	}
-
-	protected function prepare_post_fields($xml, $resources, $groups) {
-		$title_en = $xml->xpath('//dcat:Dataset/dct:title[@xml:lang="en"]');
-		$title_de = $xml->xpath('//dcat:Dataset/dct:title[@xml:lang="de"]');
-		$description_de = $xml->xpath('//dcat:Dataset/dct:description[@xml:lang="de"]');
-		$contact_point_name = $xml->xpath('//dcat:Dataset/dcat:contactPoint/vcard:Organization/vcard:fn');
-		$contact_point_email_element = $xml->xpath('//dcat:Dataset/dcat:contactPoint/vcard:Organization/vcard:hasEmail');
-		$contact_point_email = str_replace( 'mailto:', '', $contact_point_email_element[0]->attributes('rdf', true));
-
-		// simulate $_POST data to make post_save hook work correctly
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'resources' ]        = $resources;
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'groups' ]           = $groups;
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'title_en' ]         = (string) $title_en[0];
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'title_de' ]         = (string) $title_de[0];
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'contact_point' ]    = (string) $contact_point_name[0];
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'maintainer_email' ] = (string) $contact_point_email;
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'description_de' ]   = (string) $description_de[0];
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'organisation' ]     = (string) $xml->owner_org;
-	}
-
-	protected function update( $dataset_id, $xml, $resources, $groups ) {
+	/**
+	 * @param int $dataset_id
+	 * @param Ckan_Backend_Dataset_Model $dataset
+	 */
+	protected function update( $dataset_id, $dataset ) {
 		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'disabled' ]  = get_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'disabled', true );
 		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'reference' ] = get_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'reference', true );
 
 		$dataset_args = array(
 			'ID'         => $dataset_id,
-			'post_name'  => (string) $xml->name,
-			'post_title' => (string) $xml->title,
+			'post_title' => $dataset->getTitle('en'),
 		);
 
 		wp_update_post( $dataset_args );
 
 		// manually update all dataset metafields
-		update_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'name_de', (string) $xml->title );
+		/*update_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'name_de', (string) $xml->title );
 		update_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'description_de', (string) $xml->description_de );
 		update_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'resources', $resources );
 		update_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'groups', $groups );
-		update_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'organisation', (string) $xml->owner_org );
+		update_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'organisation', (string) $xml->owner_org );*/
 	}
 
-	protected function insert( $xml, $resources, $groups ) {
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'disabled' ] = '';
-
+	protected function insert( $dataset ) {
 		$dataset_args = array(
-			'post_name'    => (string) $xml->name,
-			'post_title'   => (string) $xml->title,
+			'post_title'   => $dataset->getTitle('en'),
 			'post_status'  => 'publish',
 			'post_type'    => Ckan_Backend_Local_Dataset::POST_TYPE,
 			'post_excerpt' => '',
@@ -229,11 +187,11 @@ class Ckan_Backend_Local_Dataset_Import {
 		$dataset_id = wp_insert_post( $dataset_args );
 
 		// manually insert all dataset metafields
-		add_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'name_de', (string) $xml->title, true );
+		/*add_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'name_de', (string) $xml->title, true );
 		add_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'description_de', (string) $xml->description_de, true );
 		add_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'resources', $resources, true );
 		add_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'groups', $groups, true );
-		add_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'organisation', (string) $xml->owner_org, true );
+		add_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'organisation', (string) $xml->owner_org, true );*/
 
 		return $dataset_id;
 	}
@@ -296,8 +254,7 @@ class Ckan_Backend_Local_Dataset_Import {
 			$dataset->addDistribution( $this->get_distribution_object( $distribution_xml ) );
 		}
 
-		print_r($dataset);
-		die();
+		return $dataset;
 	}
 
 	protected function get_publisher_object($xml) {

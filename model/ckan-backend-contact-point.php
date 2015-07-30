@@ -17,4 +17,11 @@ class Ckan_Backend_ContactPoint_Model {
 	public function setEmail($email) {
 		$this->email = $email;
 	}
+
+	public function toArray() {
+		return array(
+			'name' => $this->getName(),
+			'email' => $this->getEmail(),
+		);
+	}
 }
