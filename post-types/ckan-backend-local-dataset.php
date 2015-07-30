@@ -118,7 +118,7 @@ class Ckan_Backend_Local_Dataset {
 
 		$cmb->add_field( array(
 			'name'              => __( 'Language', 'ogdch' ),
-			'id'                => self::FIELD_PREFIX . 'language',
+			'id'                => self::FIELD_PREFIX . 'languages',
 			'type'              => 'multicheck_inline',
 			'select_all_button' => false,
 			'options'           => array(
@@ -256,8 +256,8 @@ class Ckan_Backend_Local_Dataset {
 		) );
 
 		$cmb->add_group_field( $relations_group, array(
-			'name' => __( 'About', 'ogdch' ),
-			'id'   => 'about',
+			'name' => __( 'Description', 'ogdch' ),
+			'id'   => 'description',
 			'type' => 'text',
 		) );
 
@@ -300,13 +300,13 @@ class Ckan_Backend_Local_Dataset {
 
 		$cmb->add_group_field( $temporals_group, array(
 			'name' => __( 'Start Date', 'ogdch' ),
-			'id'   => 'startdate',
+			'id'   => 'start_date',
 			'type' => 'text_date_timestamp',
 		) );
 
 		$cmb->add_group_field( $temporals_group, array(
 			'name' => __( 'End Date', 'ogdch' ),
-			'id'   => 'enddate',
+			'id'   => 'end_date',
 			'type' => 'text_date_timestamp',
 		) );
 
@@ -322,35 +322,35 @@ class Ckan_Backend_Local_Dataset {
 
 		$cmb->add_group_field( $see_alsos_group, array(
 			'name' => __( 'URL', 'ogdch' ),
-			'id'   => 'url',
+			'id'   => 'about',
 			'type' => 'text_url',
 		) );
 
 		/* Resources */
 		$cmb->add_field( array(
-			'name' => __( 'Resources', 'ogdch' ),
+			'name' => __( 'Distributions', 'ogdch' ),
 			'type' => 'title',
-			'id'   => 'resource_title'
+			'id'   => 'distributions_title'
 		) );
 
-		$resources_group = $cmb->add_field( array(
-			'id'      => self::FIELD_PREFIX . 'resources',
+		$distributions_group = $cmb->add_field( array(
+			'id'      => self::FIELD_PREFIX . 'distributions',
 			'type'    => 'group',
 			'options' => array(
-				'group_title'   => __( 'Resource {#}', 'ogdch' ),
-				'add_button'    => __( 'Add another Resource', 'ogdch' ),
-				'remove_button' => __( 'Remove Resource', 'ogdch' ),
+				'group_title'   => __( 'Distribution {#}', 'ogdch' ),
+				'add_button'    => __( 'Add another Distribution', 'ogdch' ),
+				'remove_button' => __( 'Remove Distribution', 'ogdch' ),
 			),
 		) );
 
 		foreach ( $language_priority as $lang ) {
-			$cmb->add_group_field( $resources_group, array(
+			$cmb->add_group_field( $distributions_group, array(
 				'name' => __( 'Title', 'ogdch' ) . ' (' . strtoupper( $lang ) . ')',
 				'id'   => 'title_' . $lang,
 				'type' => 'text',
 			) );
 
-			$cmb->add_group_field( $resources_group, array(
+			$cmb->add_group_field( $distributions_group, array(
 				'name' => __( 'Description', 'ogdch' ) . ' (' . strtoupper( $lang ) . ')',
 				'id'   => 'description_' . $lang,
 				'type'       => 'textarea',
@@ -358,59 +358,59 @@ class Ckan_Backend_Local_Dataset {
 			) );
 		}
 
-		$cmb->add_group_field( $resources_group, array(
+		$cmb->add_group_field( $distributions_group, array(
 			'name' => __( 'Issued', 'ogdch' ),
 			'id'   => 'issued',
 			'desc' => __( 'Date and time when dataset was issued.', 'ogdch' ),
 			'type' => 'text_datetime_timestamp',
 		) );
 
-		$cmb->add_group_field( $resources_group, array(
+		$cmb->add_group_field( $distributions_group, array(
 			'name' => __( 'Modified', 'ogdch' ),
 			'id'   => 'modified',
 			'desc' => __( 'Date and time when dataset was last modified.', 'ogdch' ),
 			'type' => 'text_datetime_timestamp',
 		) );
 
-		$cmb->add_group_field( $resources_group, array(
+		$cmb->add_group_field( $distributions_group, array(
 			'name' => __( 'Access URL', 'ogdch' ),
 			'id'   => 'access_url',
 			'type' => 'text_url',
 		) );
 
-		$cmb->add_group_field( $resources_group, array(
+		$cmb->add_group_field( $distributions_group, array(
 			'name' => __( 'Download URL', 'ogdch' ),
 			'id'   => 'download_url',
 			'type' => 'text_url',
 		) );
 
-		$cmb->add_group_field( $resources_group, array(
+		$cmb->add_group_field( $distributions_group, array(
 			'name' => __( 'Bytesize', 'ogdch' ),
-			'id'   => 'bytesize',
+			'id'   => 'byte_size',
 			'type' => 'text',
 		) );
 
-		$cmb->add_group_field( $resources_group, array(
+		$cmb->add_group_field( $distributions_group, array(
 			'name' => __( 'Mediatype', 'ogdch' ),
-			'id'   => 'mediatype',
+			'id'   => 'media_type',
 			'type' => 'text',
 		) );
 
-		$cmb->add_group_field( $resources_group, array(
+		$cmb->add_group_field( $distributions_group, array(
 			'name' => __( 'Format', 'ogdch' ),
 			'id'   => 'format',
 			'type' => 'text',
 		) );
 
-		$cmb->add_group_field( $resources_group, array(
+		$cmb->add_group_field( $distributions_group, array(
 			'name' => __( 'Coverage', 'ogdch' ),
 			'id'   => 'coverage',
 			'type' => 'text',
 		) );
 
-		$cmb->add_group_field( $resources_group, array(
-			'name' => __( 'Master ID', 'ogdch' ),
-			'id'   => 'masterid',
+		$cmb->add_group_field( $distributions_group, array(
+			'name' => __( 'Identifier', 'ogdch' ),
+			'id'   => 'identifier',
 			'type' => 'text',
 		) );
 
@@ -478,8 +478,8 @@ class Ckan_Backend_Local_Dataset {
 		) );
 
 		$cmb_side_other->add_field( array(
-			'name' => __( 'Master ID', 'ogdch' ),
-			'id'   => self::FIELD_PREFIX . 'masterid',
+			'name' => __( 'Identifier', 'ogdch' ),
+			'id'   => self::FIELD_PREFIX . 'identifier',
 			'type' => 'text',
 		) );
 

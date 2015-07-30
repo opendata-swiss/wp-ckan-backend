@@ -134,12 +134,12 @@ class Ckan_Backend_Local_Dataset_Import {
 		$_POST = array_merge($_POST, $dataset->toArray());
 
 		$dataset_search_args = array(
-			'meta_key'    => Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'masterid',
-			'meta_value'  => (string) $xml->masterid,
+			'meta_key'    => Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'identifier',
+			'meta_value'  => $dataset->getIdentifier(),
 			'post_type'   => Ckan_Backend_Local_Dataset::POST_TYPE,
 			'post_status' => 'any',
 		);
-		$datasets            = get_posts( $dataset_search_args );
+		$datasets = get_posts( $dataset_search_args );
 
 		if ( count( $datasets ) > 0 ) {
 			// Dataset already exists -> update
@@ -167,13 +167,9 @@ class Ckan_Backend_Local_Dataset_Import {
 		);
 
 		wp_update_post( $dataset_args );
-
-		// manually update all dataset metafields
-		/*update_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'name_de', (string) $xml->title );
-		update_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'description_de', (string) $xml->description_de );
-		update_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'resources', $resources );
-		update_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'groups', $groups );
-		update_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'organisation', (string) $xml->owner_org );*/
+		foreach($dataset->toArray() as $field => $value) {
+			update_post_meta( $dataset_id, $field, $value );
+		}
 	}
 
 	protected function insert( $dataset ) {
@@ -185,14 +181,9 @@ class Ckan_Backend_Local_Dataset_Import {
 		);
 
 		$dataset_id = wp_insert_post( $dataset_args );
-
-		// manually insert all dataset metafields
-		/*add_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'name_de', (string) $xml->title, true );
-		add_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'description_de', (string) $xml->description_de, true );
-		add_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'resources', $resources, true );
-		add_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'groups', $groups, true );
-		add_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'organisation', (string) $xml->owner_org, true );*/
-
+		foreach($dataset->toArray() as $field => $value) {
+			add_post_meta( $dataset_id, $field, $value, true );
+		}
 		return $dataset_id;
 	}
 
