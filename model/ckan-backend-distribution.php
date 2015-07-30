@@ -157,6 +157,12 @@ class Ckan_Backend_Distribution_Model {
 			$distribution['description_' . $lang] = $this->getDescription($lang);
 		}
 
+		// TODO remove these lines when better backend gui solution is found
+		$access_urls = $this->getAccessUrls();
+		$distribution['access_url'] = reset($access_urls);
+		$download_urls = $this->getDownloadUrls();
+		$distribution['download_url'] = reset($download_urls);
+
 		return $distribution;
 	}
 }
