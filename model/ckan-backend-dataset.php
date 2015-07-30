@@ -255,6 +255,13 @@ class Ckan_Backend_Dataset_Model {
 			$dataset[Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'distributions'][] = $distribution->toArray();
 		}
 
+		// TODO remove these lines when better backend gui solution is found
+		$publishers = $this->getPublishers();
+		if( count($publishers) > 0 ) {
+			$publisher = reset($publishers);
+			$dataset[Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'publisher'] = $publisher->getName();
+		}
+
 		return $dataset;
 	}
 }
