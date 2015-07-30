@@ -100,7 +100,7 @@ class Ckan_Backend_Dataset_Model {
 	}
 
 	public function getLanguages() {
-		return $this->language;
+		return $this->languages;
 	}
 	public function addLanguage($language) {
 		$this->languages[] = $language;
