@@ -9,24 +9,9 @@ class Ckan_Backend_Local_Dataset {
 	public function __construct() {
 		$this->register_post_type();
 		add_action( 'cmb2_init', array( $this, 'define_fields' ) );
-		add_action( 'cmb2_init', array( $this, 'define_fields' ) );
-
-		add_filter('pre_insert_term', array( $this, 'user_can_create_term' ), 10, 2 );
 
 		// initialize local dataset sync
 		$ckan_backend_sync_local_dataset = new Ckan_Backend_Sync_Local_Dataset( self::POST_TYPE, self::FIELD_PREFIX );
-	}
-
-	public function user_can_create_term( $term, $taxonomy ) {
-		if( $taxonomy != 'post_tag' ) {
-			return $term;
-		}
-
-		if( ! current_user_can('disable_datasets') ) {
-			return new WP_Error('not_authorized_create_term', __('Not authorized to create a new term'));
-		}
-
-		return $term;
 	}
 
 	public function show_message_if_disabled( $field_args, $field ) {
