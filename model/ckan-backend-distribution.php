@@ -9,7 +9,7 @@ class Ckan_Backend_Distribution_Model {
 	protected $modified = '';
 	protected $accessUrls = array();
 	protected $rights = array();
-	protected $licence = '';
+	protected $license = '';
 	protected $downloadUrls = array();
 	protected $byteSize = 0;
 	protected $mediaType = '';
@@ -75,11 +75,11 @@ class Ckan_Backend_Distribution_Model {
 		}
 	}
 
-	public function getLicence() {
-		return $this->licence;
+	public function getLicense() {
+		return $this->license;
 	}
-	public function setLicence($licence) {
-		$this->licence = $licence;
+	public function setLicense($license) {
+		$this->license = $license;
 	}
 
 	public function getDownloadUrls() {
