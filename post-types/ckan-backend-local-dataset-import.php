@@ -252,20 +252,11 @@ class Ckan_Backend_Local_Dataset_Import {
 
 		$publishers = $xml->xpath('//dcat:Dataset/dct:publisher/foaf:Organization');
 		foreach($publishers as $publisher_xml) {
-			$publisher = new Ckan_Backend_Publisher_Model();
-			$publisher->setName((string) $this->get_single_element_from_xpath($publisher_xml, 'foaf:name'));
-			$publisher->setMbox((string) $this->get_single_element_from_xpath($publisher_xml, 'foaf:mbox'));
-			$dataset->addPublisher($publisher);
+			$dataset->addPublisher( $this->get_publisher_object( $publisher_xml ) );
 		}
 		$contact_points = $xml->xpath('//dcat:Dataset/dcat:contactPoint/vcard:Organization');
 		foreach($contact_points as $contact_point_xml) {
-			$contact_point = new Ckan_Backend_ContactPoint_Model();
-			$contact_point->setName((string) $this->get_single_element_from_xpath($contact_point_xml, 'vcard:fn'));
-			$contact_point_email_element = $this->get_single_element_from_xpath($contact_point_xml, 'vcard:hasEmail');
-			$contact_point_email_attributes = $contact_point_email_element->attributes('rdf', true);
-			$contact_point_email = str_replace( 'mailto:', '', (string) $contact_point_email_attributes['resource'] );
-			$contact_point->setEmail($contact_point_email);
-			$dataset->addContactPoint($contact_point);
+			$dataset->addContactPoint( $this->get_contact_point_object( $contact_point_xml ) );
 		}
 		$themes = $xml->xpath('//dcat:Dataset/dcat:theme');
 		foreach($themes as $theme) {
@@ -277,11 +268,7 @@ class Ckan_Backend_Local_Dataset_Import {
 		}
 		$relations = $xml->xpath('//dcat:Dataset/dct:relation/rdf:Description');
 		foreach($relations as $relation_xml) {
-			$relation = new Ckan_Backend_Relation_Model();
-			$relation_attributes = $relation_xml->attributes('rdf', true);
-			$relation->setDescription((string) $relation_attributes['about']);
-			$relation->setLabel((string) $this->get_single_element_from_xpath($relation_xml, 'rdfs:label'));
-			$dataset->addRelation($relation);
+			$dataset->addRelation( $this->get_relation_object( $relation_xml ) );
 		}
 		$keywords = $xml->xpath('//dcat:Dataset/dcat:keyword');
 		foreach($keywords as $keyword) {
@@ -294,25 +281,100 @@ class Ckan_Backend_Local_Dataset_Import {
 		$dataset->setCoverage((string) $this->get_single_element_from_xpath($xml, '//dcat:Dataset/dct:coverage'));
 		$temporals = $xml->xpath('//dcat:Dataset/dct:temporal/dct:PeriodOfTime');
 		foreach($temporals as $temporal_xml) {
-			$temporal = new Ckan_Backend_Temporal_Model();
-			$temporal->setStartDate((string) $this->get_single_element_from_xpath($temporal_xml, 'schema:startDate'));
-			$temporal->setEndDate((string) $this->get_single_element_from_xpath($temporal_xml, 'schema:endDate'));
-			$dataset->addTemporal($temporal);
+			$dataset->addTemporal( $this->get_temporal_object( $temporal_xml ) );
 		}
 		$accural_periodicity_element = $this->get_single_element_from_xpath($xml, '//dcat:Dataset/dct:accrualPeriodicity');
 		$accural_periodicity_attributes = $accural_periodicity_element->attributes('rdf', true);
 		$dataset->setAccrualPeriodicy((string) $accural_periodicity_attributes['resource']);
 		$see_alsos = $xml->xpath('//dcat:Dataset/rdfs:seeAlso/rdf:Description');
 		foreach($see_alsos as $see_also_xml) {
-			$see_also = new Ckan_Backend_SeeAlso_Model();
-			$relation_attributes = $see_also_xml->attributes('rdf', true);
-			$see_also->setAbout((string) $relation_attributes['about']);
-			$see_also->setFormat((string) $this->get_single_element_from_xpath($see_also_xml, 'dc:format'));
-			$dataset->addSeeAlso($see_also);
+			$dataset->addSeeAlso( $this->get_see_also_object( $see_also_xml ) );
+		}
+
+		$distributions = $xml->xpath('//dcat:Dataset/dcat:distribution');
+		foreach($distributions as $distribution_xml) {
+			$dataset->addDistribution( $this->get_distribution_object( $distribution_xml ) );
 		}
 
 		print_r($dataset);
 		die();
+	}
+
+	protected function get_publisher_object($xml) {
+		$publisher = new Ckan_Backend_Publisher_Model();
+		$publisher->setName((string) $this->get_single_element_from_xpath($xml, 'foaf:name'));
+		$publisher->setMbox((string) $this->get_single_element_from_xpath($xml, 'foaf:mbox'));
+
+		return $publisher;
+	}
+
+	protected function get_contact_point_object($xml) {
+		$contact_point = new Ckan_Backend_ContactPoint_Model();
+		$contact_point->setName((string) $this->get_single_element_from_xpath($xml, 'vcard:fn'));
+		$contact_point_email_element = $this->get_single_element_from_xpath($xml, 'vcard:hasEmail');
+		$contact_point_email_attributes = $contact_point_email_element->attributes('rdf', true);
+		$contact_point_email = str_replace( 'mailto:', '', (string) $contact_point_email_attributes['resource'] );
+		$contact_point->setEmail($contact_point_email);
+
+		return $contact_point;
+	}
+
+	protected function get_relation_object($xml) {
+		$relation = new Ckan_Backend_Relation_Model();
+		$relation_attributes = $xml->attributes('rdf', true);
+		$relation->setDescription((string) $relation_attributes['about']);
+		$relation->setLabel((string) $this->get_single_element_from_xpath($xml, 'rdfs:label'));
+
+		return $relation;
+	}
+
+	protected function get_temporal_object($xml) {
+		$temporal = new Ckan_Backend_Temporal_Model();
+		$temporal->setStartDate((string) $this->get_single_element_from_xpath($xml, 'schema:startDate'));
+		$temporal->setEndDate((string) $this->get_single_element_from_xpath($xml, 'schema:endDate'));
+
+		return $temporal;
+	}
+
+	protected function get_see_also_object($xml) {
+		$see_also = new Ckan_Backend_SeeAlso_Model();
+		$relation_attributes = $xml->attributes('rdf', true);
+		$see_also->setAbout((string) $relation_attributes['about']);
+		$see_also->setFormat((string) $this->get_single_element_from_xpath($xml, 'dc:format'));
+
+		return $see_also;
+	}
+
+	protected function get_distribution_object($xml) {
+		global $language_priority;
+
+		$distribution = new Ckan_Backend_Distribution_Model();
+		$distribution->setIdentifier((string) $this->get_single_element_from_xpath($xml, 'dct:identifier'));
+		foreach($language_priority as $lang) {
+			$distribution->setTitle((string) $this->get_single_element_from_xpath($xml, 'dct:title[@xml:lang="' . $lang . '"]'), $lang);
+			$distribution->setDescription((string) $this->get_single_element_from_xpath($xml, 'dct:description[@xml:lang="' . $lang . '"]'), $lang);
+		}
+		$distribution->setIssued((string) $this->get_single_element_from_xpath($xml, 'dct:issued'));
+		$distribution->setModified((string) $this->get_single_element_from_xpath($xml, 'dct:modified'));
+		$access_urls = $xml->xpath('dcat:accessURL');
+		foreach($access_urls as $access_url) {
+			$distribution->addAccessUrl( (string) $access_url );
+		}
+		$download_urls = $xml->xpath('dcat:downloadURL');
+		foreach($download_urls as $download_url) {
+			$distribution->addDownloadUrl( (string) $download_url );
+		}
+		$rights = $xml->xpath('dcat:rights/odrs:dataLicence');
+		foreach($rights as $right) {
+			$distribution->addRight( (string) $right );
+		}
+		$distribution->setLicense((string) $this->get_single_element_from_xpath($xml, 'dct:license'));
+		$distribution->setByteSize((string) $this->get_single_element_from_xpath($xml, 'dcat:byteSize'));
+		$distribution->setMediaType((string) $this->get_single_element_from_xpath($xml, 'dcat:mediaType'));
+		$distribution->setFormat((string) $this->get_single_element_from_xpath($xml, 'dct:format'));
+		$distribution->setCoverage((string) $this->get_single_element_from_xpath($xml, 'dct:coverage'));
+
+		return $distribution;
 	}
 
 	protected function get_single_element_from_xpath($xml, $xpath) {
