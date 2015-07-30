@@ -132,6 +132,9 @@ class Ckan_Backend_Local_Dataset_Import {
 
 		// simulate $_POST data to make post_save hook work correctly
 		$_POST = array_merge($_POST, $dataset->toArray());
+		// add native WordPress $_POST variables
+		$_POST['tax_input']['post_tag'] = implode(', ', $dataset->getKeywords());
+		$_POST['post_title'] = $dataset->getTitle('en');
 
 		$dataset_search_args = array(
 			'meta_key'    => Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'identifier',
@@ -170,6 +173,7 @@ class Ckan_Backend_Local_Dataset_Import {
 		foreach($dataset->toArray() as $field => $value) {
 			update_post_meta( $dataset_id, $field, $value );
 		}
+		wp_set_object_terms( $dataset_id, $dataset->getKeywords(), 'post_tag' );
 	}
 
 	protected function insert( $dataset ) {
@@ -184,6 +188,7 @@ class Ckan_Backend_Local_Dataset_Import {
 		foreach($dataset->toArray() as $field => $value) {
 			add_post_meta( $dataset_id, $field, $value, true );
 		}
+		wp_set_object_terms( $dataset_id, $dataset->getKeywords(), 'post_tag' );
 		return $dataset_id;
 	}
 
@@ -232,9 +237,9 @@ class Ckan_Backend_Local_Dataset_Import {
 		foreach($temporals as $temporal_xml) {
 			$dataset->addTemporal( $this->get_temporal_object( $temporal_xml ) );
 		}
-		$accural_periodicity_element = $this->get_single_element_from_xpath($xml, '//dcat:Dataset/dct:accrualPeriodicity');
-		$accural_periodicity_attributes = $accural_periodicity_element->attributes('rdf', true);
-		$dataset->setAccrualPeriodicy((string) $accural_periodicity_attributes['resource']);
+		$accrual_periodicity_element = $this->get_single_element_from_xpath($xml, '//dcat:Dataset/dct:accrualPeriodicity');
+		$accrual_periodicity_attributes = $accrual_periodicity_element->attributes('rdf', true);
+		$dataset->setAccrualPeriodicy((string) $accrual_periodicity_attributes['resource']);
 		$see_alsos = $xml->xpath('//dcat:Dataset/rdfs:seeAlso/rdf:Description');
 		foreach($see_alsos as $see_also_xml) {
 			$dataset->addSeeAlso( $this->get_see_also_object( $see_also_xml ) );
