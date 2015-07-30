@@ -268,8 +268,8 @@ class Ckan_Backend_Local_Dataset {
 		) );
 
 		$cmb->add_field( array(
-			'name'       => __( 'Accural Periodicy', 'ogdch' ),
-			'id'         => self::FIELD_PREFIX . 'accural_periodicy',
+			'name'       => __( 'Accrual Periodicy', 'ogdch' ),
+			'id'         => self::FIELD_PREFIX . 'accrual_periodicy',
 			'type'       => 'text',
 		) );
 
