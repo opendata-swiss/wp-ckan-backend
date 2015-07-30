@@ -216,7 +216,7 @@ class Ckan_Backend_Dataset_Model {
 	}
 
 	public function toArray() {
-		global $langauge_priority;
+		global $language_priority;
 
 		$dataset = array(
 			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'identifier' => $this->getIdentifier(),
@@ -231,7 +231,7 @@ class Ckan_Backend_Dataset_Model {
 			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'accrual_periodicy' => $this->getAccrualPeriodicy()
 		);
 
-		foreach($langauge_priority as $lang) {
+		foreach($language_priority as $lang) {
 			$dataset[Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'title_' . $lang] = $this->getTitle($lang);
 			$dataset[Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'description_' . $lang] = $this->getDescription($lang);
 		}

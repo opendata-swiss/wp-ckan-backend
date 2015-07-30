@@ -135,7 +135,7 @@ class Ckan_Backend_Distribution_Model {
 	}
 
 	public function toArray() {
-		global $langauge_priority;
+		global $language_priority;
 
 		$distribution = array(
 			'identifier' => $this->getIdentifier(),
@@ -152,7 +152,7 @@ class Ckan_Backend_Distribution_Model {
 			'coverage' => $this->getCoverage(),
 		);
 
-		foreach($langauge_priority as $lang) {
+		foreach($language_priority as $lang) {
 			$distribution['title_' . $lang] = $this->getTitle($lang);
 			$distribution['description_' . $lang] = $this->getDescription($lang);
 		}
