@@ -17,36 +17,42 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	 * @return array $data Updated data to send
 	 */
 	protected function get_update_data( $post ) {
-		$extras    = $this->prepare_custom_fields( $_POST[ $this->field_prefix . 'custom_fields' ] );
-		$resources = $this->prepare_resources( $_POST[ $this->field_prefix . 'resources' ] );
-		$groups    = $this->prepare_selected_groups( $_POST[ $this->field_prefix . 'groups' ] );
+		$resources = $this->prepare_resources( $_POST[ $this->field_prefix . 'distributions' ] );
+		$groups    = $this->prepare_selected_groups( $_POST[ $this->field_prefix . 'themes' ] );
+		$tags      = $this->prepare_tags( $_POST['tax_input']['post_tag'] );
 
 		// Generate slug of dataset. If no title is entered use an uniqid
 		if ( $_POST[ $this->field_prefix . 'name' ] !== '' ) {
-			$title = $_POST[ $this->field_prefix . 'name' ];
+			$slug = $_POST[ $this->field_prefix . 'title_en' ];
 		} else {
-			$title = $_POST['post_title'];
+			$slug = $_POST['post_title'];
 
-			if ( '' === $title ) {
-				$title = uniqid();
+			if ( '' === $slug ) {
+				$slug = uniqid();
 			}
 		}
-		$slug = sanitize_title_with_dashes( $title );
+		$slug = sanitize_title_with_dashes( $slug );
+
+		/**
+		 * TODO
+		 * - if publisher not exists us publishers[0]
+		 * - if distribution[languages] not exists use languages
+		 * - use tags as keywords
+		 * - if distribution[access_urls] not exists use distribution[access_url]
+		 * - if distribution[download_urls] not exists use distribution[download_url]
+		 */
 
 		$data = array(
 			'name'             => $slug,
-			'title'            => $_POST['post_title'], // TODO: use all language here
-			'maintainer'       => $_POST[ $this->field_prefix . 'maintainer' ],
-			'maintainer_email' => $_POST[ $this->field_prefix . 'maintainer_email' ],
-			'author'           => $_POST[ $this->field_prefix . 'author' ],
-			'author_email'     => $_POST[ $this->field_prefix . 'author_email' ],
+			'title'            => $_POST[ $this->field_prefix . 'title_de' ], // TODO: use all language here
+			'maintainer'       => $_POST[ $this->field_prefix . 'contact_points' ][0]['name'],
+			'maintainer_email' => $_POST[ $this->field_prefix . 'contact_points' ][0]['email'],
 			'notes'            => $_POST[ $this->field_prefix . 'description_de' ], // TODO: use all language here
-			'version'          => $_POST[ $this->field_prefix . 'version' ],
 			'state'            => 'active',
-			'extras'           => $extras,
 			'resources'        => $resources,
 			'groups'           => $groups,
-			'owner_org'        => $_POST[ $this->field_prefix . 'organisation' ],
+			'owner_org'        => $_POST[ $this->field_prefix . 'publisher' ],
+			'tags'             => $tags,
 		);
 
 		if ( isset( $_POST[ $this->field_prefix . 'reference' ] ) && $_POST[ $this->field_prefix . 'reference' ] !== '' ) {
@@ -65,45 +71,21 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	}
 
 	/**
-	 * Transforms custom field values from WP form to a CKAN friendly form.
-	 *
-	 * @param array $custom_fields Array of custom field objects.
-	 *
-	 * @return array CKAN friendly custom fields
-	 */
-	protected function prepare_custom_fields( $custom_fields ) {
-		$ckan_custom_fields = array();
-
-		// Check if custom fields are added. If yes generate CKAN friendly array.
-		if ( '' !== $custom_fields[0]['key'] ) {
-			foreach ( $custom_fields as $custom_field ) {
-				$ckan_custom_fields[] = array(
-					'key'   => $custom_field['key'],
-					'value' => $custom_field['value'],
-				);
-			}
-		}
-
-		return $ckan_custom_fields;
-	}
-
-
-	/**
 	 * Transforms resources field values from WP form to a CKAN friendly form.
 	 *
 	 * @param array $resources Array of resource objects.
 	 *
-	 * @return array CKAN friendly custom fields
+	 * @return array CKAN friendly resources
 	 */
 	protected function prepare_resources( $resources ) {
 		$ckan_resources = array();
 
 		// Check if resources are added. If yes generate CKAN friendly array.
-		if ( '' !== $resources[0]['url'] ) {
+		if ( '' !== $resources[0]['download_url'] ) {
 			foreach ( $resources as $resource ) {
 				$ckan_resources[] = array(
-					'url'         => $resource['url'],
-					'name'        => $resource['title'], // TODO: use all language here
+					'url'         => $resource['download_url'],
+					'name'        => $resource['title_de'], // TODO: use all language here
 					'description' => $resource['description_de'], // TODO: use all language here
 				);
 			}
@@ -124,10 +106,32 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 
 		if ( is_array( $selected_groups ) ) {
 			foreach ( $selected_groups as $key => $group_slug ) {
-				$ckan_groups[] = array( 'name' => $group_slug );
+				$ckan_groups[] = array(
+					'name' => $group_slug,
+				);
 			}
 		}
 
 		return $ckan_groups;
+	}
+
+	/**
+	 * Create CKAN fiendly array of all tags
+	 *
+	 * @param string $tags Comma-seperated tags.
+	 *
+	 * @return array
+	 */
+	protected function prepare_tags( $tags ) {
+		$ckan_tags = array();
+
+		$tags_array = explode( ', ', $tags );
+		foreach ( $tags_array as $tag ) {
+			$ckan_tags[] = array(
+				'name' => $tag,
+			);
+		}
+
+		return $ckan_tags;
 	}
 }

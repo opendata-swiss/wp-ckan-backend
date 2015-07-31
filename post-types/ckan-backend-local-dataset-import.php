@@ -121,29 +121,42 @@ class Ckan_Backend_Local_Dataset_Import {
 			}
 
 			$xml = simplexml_load_file( $file['tmp_name'] );
-			if ( ! $xml ) {
+			if ( ! is_object( $xml ) ) {
 				throw new RuntimeException( 'Uploaded file is not a vaild XML file' );
 			}
+			$xml->registerXPathNamespace( 'dcat', 'http://www.w3.org/ns/dcat#' );
+			$xml->registerXPathNamespace( 'dct', 'http://purl.org/dc/terms/' );
+			$xml->registerXPathNamespace( 'dc', 'http://purl.org/dc/elements/1.1/' );
+			$xml->registerXPathNamespace( 'foaf', 'http://xmlns.com/foaf/0.1/' );
+			$xml->registerXPathNamespace( 'rdfs', 'http://www.w3.org/2000/01/rdf-schema#' );
+			$xml->registerXPathNamespace( 'rdf', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#' );
+			$xml->registerXPathNamespace( 'vcard', 'http://www.w3.org/2006/vcard/ns#' );
+			$xml->registerXPathNamespace( 'odrs', 'http://schema.theodi.org/odrs#' );
+			$xml->registerXPathNamespace( 'schema', 'http://schema.org/' );
 
 			return $this->import_dataset( $xml );
 		} catch ( RuntimeException $e ) {
 			esc_html_e( $e->getMessage() );
 		}
+
+		return false;
 	}
 
 	/**
 	 * Imports a dataset from a given XML
 	 *
-	 * @param string $xml The XML to be imported.
+	 * @param SimpleXMLElement $xml The XML to be imported.
 	 *
 	 * @return bool|int|WP_Error
 	 */
 	public function import_dataset( $xml ) {
-		foreach ( $xml->groups->group as $group ) {
-			if ( ! Ckan_Backend_Helper::group_exists( (string) $group ) ) {
+		$dataset = $this->get_dataset_object( $xml );
+
+		foreach ( $dataset->get_themes() as $group ) {
+			if ( ! Ckan_Backend_Helper::group_exists( $group ) ) {
 				echo '<div class="error"><p>';
 				// @codingStandardsIgnoreStart
-				printf( __( 'Group %1$s does not exist! Import aborted.', 'ogdch' ), (string) $group );
+				printf( __( 'Group %1$s does not exist! Import aborted.', 'ogdch' ), $group );
 				// @codingStandardsIgnoreEnd
 				echo '</p></div>';
 
@@ -151,26 +164,31 @@ class Ckan_Backend_Local_Dataset_Import {
 			}
 		}
 
-		if ( ! Ckan_Backend_Helper::organisation_exists( (string) $xml->owner_org ) ) {
-			echo '<div class="error"><p>';
-			// @codingStandardsIgnoreStart
-			printf( __( 'Organisation %1$s does not exist! Import aborted.', 'ogdch' ), (string) $xml->owner_org );
-			// @codingStandardsIgnoreEnd
-			echo '</p></div>';
+		$publishers = $dataset->get_publishers();
+		if ( count( $publishers ) > 0 ) {
+			// use only first element
+			$publisher = reset( $publishers );
+			if ( ! Ckan_Backend_Helper::organisation_exists( $publisher->get_name() ) ) {
+				echo '<div class="error"><p>';
+				// @codingStandardsIgnoreStart
+				printf( __( 'Organisation %1$s does not exist! Import aborted.', 'ogdch' ), $publisher->get_name() );
+				// @codingStandardsIgnoreEnd
+				echo '</p></div>';
 
-			return false;
+				return false;
+			}
 		}
 
-		$custom_fields = $this->prepare_custom_fields( $xml );
-		$resources = $this->prepare_resources( $xml );
-		$groups = $this->prepare_groups( $xml );
-
-		$this->prepare_post_fields( $xml, $custom_fields, $resources, $groups );
+		// simulate $_POST data to make post_save hook work correctly
+		$_POST = array_merge( $_POST, $dataset->to_array() );
+		// add native WordPress $_POST variables
+		$_POST['tax_input']['post_tag'] = implode( ', ', $dataset->get_keywords() );
+		$_POST['post_title']            = $dataset->get_title( 'en' );
 
 		$dataset_search_args = array(
 			// @codingStandardsIgnoreStart
-			'meta_key'    => Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'masterid',
-			'meta_value'  => (string) $xml->masterid,
+			'meta_key'    => Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'identifier',
+			'meta_value'  => $dataset->get_identifier(),
 			// @codingStandardsIgnoreEnd
 			'post_type'   => Ckan_Backend_Local_Dataset::POST_TYPE,
 			'post_status' => 'any',
@@ -180,156 +198,262 @@ class Ckan_Backend_Local_Dataset_Import {
 		if ( count( $datasets ) > 0 ) {
 			// Dataset already exists -> update
 			$dataset_id = $datasets[0]->ID;
-			$this->update( $dataset_id, $xml, $custom_fields, $resources, $groups );
+			$this->update( $dataset_id, $dataset );
 		} else {
 			// Create new dataset
-			$dataset_id = $this->insert( $xml, $custom_fields, $resources, $groups );
+			$dataset_id = $this->insert( $dataset );
 		}
 
 		return $dataset_id;
 	}
 
 	/**
-	 * Extracts the custom fields as key/values
+	 * Updates an existing dataset
 	 *
-	 * @param string $xml The XML to import.
-	 *
-	 * @return array
+	 * @param int                        $dataset_id ID of dataset to update.
+	 * @param Ckan_Backend_Dataset_Model $dataset Dataset instance with values.
 	 */
-	protected function prepare_custom_fields( $xml ) {
-		$custom_fields = array();
-		foreach ( $xml->custom_fields->custom_field as $custom_field ) {
-			$custom_fields[] = array(
-				'key' => (string) $custom_field->key,
-				'value' => (string) $custom_field->value,
-			);
-		}
-		return $custom_fields;
-	}
-
-	/**
-	 * Extracts the resources from the given XML
-	 *
-	 * @param string $xml The XML to import.
-	 *
-	 * @return array
-	 */
-	protected function prepare_resources( $xml ) {
-		$resources = array();
-		foreach ( $xml->resources->resource as $resource ) {
-			$resources[] = array(
-				'url' => (string) $resource->url,
-				'title' => (string) $resource->title,
-				'description_de' => (string) $resource->description,
-			);
-		}
-		return $resources;
-	}
-
-	/**
-	 * Extracts the groups from the given XML
-	 *
-	 * @param string $xml The XML to import.
-	 *
-	 * @return array
-	 */
-	protected function prepare_groups( $xml ) {
-		$groups = array();
-		foreach ( $xml->groups->group as $group ) {
-			$groups[] = (string) $group;
-		}
-		return $groups;
-	}
-
-	/**
-	 * Description of prepare_post_fields.
-	 *
-	 * @param string $xml           The XML to import.
-	 * @param array  $custom_fields Array of custom fields.
-	 * @param array  $resources     Array of resources.
-	 * @param array  $groups        Array of groups.
-	 *
-	 * @return void
-	 */
-	protected function prepare_post_fields($xml, $custom_fields, $resources, $groups) {
-		// simulate $_POST data to make post_save hook work correctly
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'custom_fields' ]    = $custom_fields;
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'resources' ]        = $resources;
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'groups' ]           = $groups;
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'name' ]             = (string) $xml->name;
-		$_POST['post_title']                                                    = (string) $xml->title;
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'maintainer' ]       = (string) $xml->maintainer;
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'maintainer_email' ] = (string) $xml->maintainer_email;
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'author' ]           = (string) $xml->author;
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'author_email' ]     = (string) $xml->author_email;
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'description_de' ]   = (string) $xml->description_de;
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'version' ]          = (string) $xml->version;
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'organisation' ]     = (string) $xml->owner_org;
-	}
-
-	/**
-	 * Updated the dataset with the given ID
-	 *
-	 * @param integer $dataset_id    ID of the dataset.
-	 * @param string  $xml           The XML to import.
-	 * @param array   $custom_fields Array of custom fields.
-	 * @param array   $resources     Array of resources.
-	 * @param array   $groups        Array of groups.
-	 *
-	 * @return void
-	 */
-	protected function update( $dataset_id, $xml, $custom_fields, $resources, $groups ) {
+	protected function update( $dataset_id, $dataset ) {
 		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'disabled' ]  = get_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'disabled', true );
 		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'reference' ] = get_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'reference', true );
 
 		$dataset_args = array(
 			'ID'         => $dataset_id,
-			'post_name'  => (string) $xml->name,
-			'post_title' => (string) $xml->title,
+			'post_title' => $dataset->get_title( 'en' ),
 		);
 
 		wp_update_post( $dataset_args );
-
-		// manually update all dataset metafields
-		update_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'name_de', (string) $xml->title );
-		update_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'description_de', (string) $xml->description_de );
-		update_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'custom_fields', $custom_fields );
-		update_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'resources', $resources );
-		update_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'groups', $groups );
-		update_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'organisation', (string) $xml->owner_org );
+		foreach ( $dataset->to_array() as $field => $value ) {
+			update_post_meta( $dataset_id, $field, $value );
+		}
+		wp_set_object_terms( $dataset_id, $dataset->get_keywords(), 'post_tag' );
 	}
 
 	/**
 	 * Inserts a new dataset
 	 *
-	 * @param string $xml           The XML to import.
-	 * @param array  $custom_fields Array of custom fields.
-	 * @param array  $resources     Array of resources.
-	 * @param array  $groups        Array of groups.
+	 * @param Ckan_Backend_Dataset_Model $dataset Dataset instance with values.
 	 *
-	 * @return int|WP_Error
+	 * @return bool|int|WP_Error
 	 */
-	protected function insert( $xml, $custom_fields, $resources, $groups ) {
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'disabled' ] = '';
-
+	protected function insert( $dataset ) {
 		$dataset_args = array(
-			'post_name'    => (string) $xml->name,
-			'post_title'   => (string) $xml->title,
+			'post_title'   => $dataset->get_title( 'en' ),
 			'post_status'  => 'publish',
 			'post_type'    => Ckan_Backend_Local_Dataset::POST_TYPE,
 			'post_excerpt' => '',
 		);
 
 		$dataset_id = wp_insert_post( $dataset_args );
-
-		// manually insert all dataset metafields
-		add_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'name_de', (string) $xml->title, true );
-		add_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'description_de', (string) $xml->description_de, true );
-		add_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'custom_fields', $custom_fields, true );
-		add_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'resources', $resources, true );
-		add_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'groups', $groups, true );
-		add_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'organisation', (string) $xml->owner_org, true );
+		foreach ( $dataset->to_array() as $field => $value ) {
+			add_post_meta( $dataset_id, $field, $value, true );
+		}
+		wp_set_object_terms( $dataset_id, $dataset->get_keywords(), 'post_tag' );
 
 		return $dataset_id;
+	}
+
+	/**
+	 * Returns a dataset object from given xml
+	 *
+	 * @param SimpleXMLElement $xml XML content from file.
+	 *
+	 * @return Ckan_Backend_Dataset_Model
+	 */
+	protected function get_dataset_object( $xml ) {
+		global $language_priority;
+
+		$dataset = new Ckan_Backend_Dataset_Model();
+		$dataset->set_identifier( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:identifier' ) );
+		foreach ( $language_priority as $lang ) {
+			$dataset->set_title( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:title[@xml:lang="' . $lang . '"]' ), $lang );
+			$dataset->set_description( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:description[@xml:lang="' . $lang . '"]' ), $lang );
+		}
+		$dataset->set_issued( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:issued' ) );
+		$dataset->set_modified( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:modified' ) );
+
+		$publishers = $xml->xpath( '//dcat:Dataset/dct:publisher/foaf:Organization' );
+		foreach ( $publishers as $publisher_xml ) {
+			$dataset->add_publisher( $this->get_publisher_object( $publisher_xml ) );
+		}
+		$contact_points = $xml->xpath( '//dcat:Dataset/dcat:contactPoint/vcard:Organization' );
+		foreach ( $contact_points as $contact_point_xml ) {
+			$dataset->add_contact_point( $this->get_contact_point_object( $contact_point_xml ) );
+		}
+		$themes = $xml->xpath( '//dcat:Dataset/dcat:theme' );
+		foreach ( $themes as $theme ) {
+			$dataset->add_theme( (string) $theme );
+		}
+		$languages = $xml->xpath( '//dcat:Dataset/dct:language' );
+		foreach ( $languages as $language ) {
+			$dataset->add_language( (string) $language );
+		}
+		$relations = $xml->xpath( '//dcat:Dataset/dct:relation/rdf:Description' );
+		foreach ( $relations as $relation_xml ) {
+			$dataset->add_relation( $this->get_relation_object( $relation_xml ) );
+		}
+		$keywords = $xml->xpath( '//dcat:Dataset/dcat:keyword' );
+		foreach ( $keywords as $keyword ) {
+			$dataset->add_keyword( (string) $keyword );
+		}
+		$dataset->set_landing_page( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dcat:landingPage' ) );
+		$spatial_element    = $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:spatial' );
+		$spatial_attributes = $spatial_element->attributes( 'rdf', true );
+		$dataset->set_spatial( (string) $spatial_attributes['resource'] );
+		$dataset->set_coverage( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:coverage' ) );
+		$temporals = $xml->xpath( '//dcat:Dataset/dct:temporal/dct:PeriodOfTime' );
+		foreach ( $temporals as $temporal_xml ) {
+			$dataset->add_temporal( $this->get_temporal_object( $temporal_xml ) );
+		}
+		$accrual_periodicity_element    = $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:accrualPeriodicity' );
+		$accrual_periodicity_attributes = $accrual_periodicity_element->attributes( 'rdf', true );
+		$dataset->set_accrual_periodicity( (string) $accrual_periodicity_attributes['resource'] );
+		$see_alsos = $xml->xpath( '//dcat:Dataset/rdfs:seeAlso/rdf:Description' );
+		foreach ( $see_alsos as $see_also_xml ) {
+			$dataset->add_see_also( $this->get_see_also_object( $see_also_xml ) );
+		}
+
+		$distributions = $xml->xpath( '//dcat:Dataset/dcat:distribution' );
+		foreach ( $distributions as $distribution_xml ) {
+			$dataset->add_distribution( $this->get_distribution_object( $distribution_xml ) );
+		}
+
+		return $dataset;
+	}
+
+	/**
+	 * Returns a publisher object from given xml
+	 *
+	 * @param SimpleXMLElement $xml XML content from file.
+	 *
+	 * @return Ckan_Backend_Publisher_Model
+	 */
+	protected function get_publisher_object( $xml ) {
+		$publisher = new Ckan_Backend_Publisher_Model();
+		$publisher->set_name( (string) $this->get_single_element_from_xpath( $xml, 'foaf:name' ) );
+		$publisher->set_mbox( (string) $this->get_single_element_from_xpath( $xml, 'foaf:mbox' ) );
+
+		return $publisher;
+	}
+
+	/**
+	 * Returns a ContactPoint object from given xml
+	 *
+	 * @param SimpleXMLElement $xml XML content from file.
+	 *
+	 * @return Ckan_Backend_ContactPoint_Model
+	 */
+	protected function get_contact_point_object( $xml ) {
+		$contact_point = new Ckan_Backend_ContactPoint_Model();
+		$contact_point->set_name( (string) $this->get_single_element_from_xpath( $xml, 'vcard:fn' ) );
+		$contact_point_email_element    = $this->get_single_element_from_xpath( $xml, 'vcard:hasEmail' );
+		$contact_point_email_attributes = $contact_point_email_element->attributes( 'rdf', true );
+		$contact_point_email            = str_replace( 'mailto:', '', (string) $contact_point_email_attributes['resource'] );
+		$contact_point->set_email( $contact_point_email );
+
+		return $contact_point;
+	}
+
+	/**
+	 * Returns a relation object from given xml
+	 *
+	 * @param SimpleXMLElement $xml XML content from file.
+	 *
+	 * @return Ckan_Backend_Relation_Model
+	 */
+	protected function get_relation_object( $xml ) {
+		$relation            = new Ckan_Backend_Relation_Model();
+		$relation_attributes = $xml->attributes( 'rdf', true );
+		$relation->set_description( (string) $relation_attributes['about'] );
+		$relation->set_label( (string) $this->get_single_element_from_xpath( $xml, 'rdfs:label' ) );
+
+		return $relation;
+	}
+
+	/**
+	 * Returns a Temporal object from given xml
+	 *
+	 * @param SimpleXMLElement $xml XML content from file.
+	 *
+	 * @return Ckan_Backend_Temporal_Model
+	 */
+	protected function get_temporal_object( $xml ) {
+		$temporal = new Ckan_Backend_Temporal_Model();
+		$temporal->set_start_date( (string) $this->get_single_element_from_xpath( $xml, 'schema:startDate' ) );
+		$temporal->set_end_date( (string) $this->get_single_element_from_xpath( $xml, 'schema:endDate' ) );
+
+		return $temporal;
+	}
+
+	/**
+	 * Returns a SeeAlso object from given xml
+	 *
+	 * @param SimpleXMLElement $xml XML content from file.
+	 *
+	 * @return Ckan_Backend_SeeAlso_Model
+	 */
+	protected function get_see_also_object( $xml ) {
+		$see_also            = new Ckan_Backend_SeeAlso_Model();
+		$relation_attributes = $xml->attributes( 'rdf', true );
+		$see_also->set_about( (string) $relation_attributes['about'] );
+		$see_also->set_format( (string) $this->get_single_element_from_xpath( $xml, 'dc:format' ) );
+
+		return $see_also;
+	}
+
+	/**
+	 * Returns a distribution object from given xml
+	 *
+	 * @param SimpleXMLElement $xml XML content from file.
+	 *
+	 * @return Ckan_Backend_Distribution_Model
+	 */
+	protected function get_distribution_object( $xml ) {
+		global $language_priority;
+
+		$distribution = new Ckan_Backend_Distribution_Model();
+		$distribution->set_identifier( (string) $this->get_single_element_from_xpath( $xml, 'dct:identifier' ) );
+		foreach ( $language_priority as $lang ) {
+			$distribution->set_title( (string) $this->get_single_element_from_xpath( $xml, 'dct:title[@xml:lang="' . $lang . '"]' ), $lang );
+			$distribution->set_description( (string) $this->get_single_element_from_xpath( $xml, 'dct:description[@xml:lang="' . $lang . '"]' ), $lang );
+		}
+		$distribution->set_issued( (string) $this->get_single_element_from_xpath( $xml, 'dct:issued' ) );
+		$distribution->set_modified( (string) $this->get_single_element_from_xpath( $xml, 'dct:modified' ) );
+		$access_urls = $xml->xpath( 'dcat:accessURL' );
+		foreach ( $access_urls as $access_url ) {
+			$distribution->add_access_url( (string) $access_url );
+		}
+		$download_urls = $xml->xpath( 'dcat:downloadURL' );
+		foreach ( $download_urls as $download_url ) {
+			$distribution->add_download_url( (string) $download_url );
+		}
+		$rights = $xml->xpath( 'dcat:rights/odrs:dataLicence' );
+		foreach ( $rights as $right ) {
+			$distribution->add_right( (string) $right );
+		}
+		$distribution->set_license( (string) $this->get_single_element_from_xpath( $xml, 'dct:license' ) );
+		$distribution->set_byte_size( (string) $this->get_single_element_from_xpath( $xml, 'dcat:byteSize' ) );
+		$distribution->set_media_type( (string) $this->get_single_element_from_xpath( $xml, 'dcat:mediaType' ) );
+		$distribution->set_format( (string) $this->get_single_element_from_xpath( $xml, 'dct:format' ) );
+		$distribution->set_coverage( (string) $this->get_single_element_from_xpath( $xml, 'dct:coverage' ) );
+
+		return $distribution;
+	}
+
+	/**
+	 * Returns a single xml element from a given xpath
+	 *
+	 * @param SimpleXMLElement $xml XML content from file.
+	 * @param String           $xpath Xpath for query.
+	 *
+	 * @return SimpleXMLElement|bool
+	 */
+	protected function get_single_element_from_xpath( $xml, $xpath ) {
+		$elements = $xml->xpath( $xpath );
+		if ( ! empty( $elements ) ) {
+			return $elements[0];
+		}
+
+		return false;
 	}
 }

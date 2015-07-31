@@ -22,7 +22,7 @@ class Ckan_Backend_Local_Organisation {
 		add_action( 'cmb2_init', array( $this, 'define_fields' ) );
 
 		// initialize local organisation sync
-		$ckan_backend_sync_local_organisation = new Ckan_Backend_Sync_Local_Organisation( self::POST_TYPE, self::FIELD_PREFIX );
+		new Ckan_Backend_Sync_Local_Organisation( self::POST_TYPE, self::FIELD_PREFIX );
 	}
 
 	/**

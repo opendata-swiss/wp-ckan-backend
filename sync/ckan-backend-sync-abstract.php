@@ -66,6 +66,8 @@ abstract class Ckan_Backend_Sync_Abstract {
 	 *
 	 * @param integer $post_id The ID of the post to sync.
 	 * @param object  $post    The wordpress post.
+	 *
+	 * @return bool|void
 	 */
 	public function do_sync( $post_id, $post ) {
 		// Exit if WP is doing an auto-save

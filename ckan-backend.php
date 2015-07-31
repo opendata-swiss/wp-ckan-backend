@@ -120,21 +120,22 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		 * @return void
 		 */
 		protected function load_dependencies() {
-			$depedency_file_paths = array(
-				'helper/ckan-backend-helper.php',
-				'post-types/ckan-backend-local-dataset.php',
-				'post-types/ckan-backend-local-group.php',
-				'post-types/ckan-backend-local-organisation.php',
-				'post-types/ckan-backend-local-dataset-import.php',
-				'sync/ckan-backend-sync-abstract.php',
-				'sync/ckan-backend-sync-local-dataset.php',
-				'sync/ckan-backend-sync-local-group.php',
-				'sync/ckan-backend-sync-local-organisation.php',
-			);
-
-			foreach ( $depedency_file_paths as $file_path ) {
-				require_once plugin_dir_path( __FILE__ ) . $file_path;
-			}
+			require_once plugin_dir_path( __FILE__ ) . 'helper/ckan-backend-helper.php';
+			require_once plugin_dir_path( __FILE__ ) . 'model/ckan-backend-contact-point.php';
+			require_once plugin_dir_path( __FILE__ ) . 'model/ckan-backend-distribution.php';
+			require_once plugin_dir_path( __FILE__ ) . 'model/ckan-backend-publisher.php';
+			require_once plugin_dir_path( __FILE__ ) . 'model/ckan-backend-relation.php';
+			require_once plugin_dir_path( __FILE__ ) . 'model/ckan-backend-see-also.php';
+			require_once plugin_dir_path( __FILE__ ) . 'model/ckan-backend-temporal.php';
+			require_once plugin_dir_path( __FILE__ ) . 'model/ckan-backend-dataset.php';
+			require_once plugin_dir_path( __FILE__ ) . 'post-types/ckan-backend-local-dataset.php';
+			require_once plugin_dir_path( __FILE__ ) . 'post-types/ckan-backend-local-group.php';
+			require_once plugin_dir_path( __FILE__ ) . 'post-types/ckan-backend-local-organisation.php';
+			require_once plugin_dir_path( __FILE__ ) . 'post-types/ckan-backend-local-dataset-import.php';
+			require_once plugin_dir_path( __FILE__ ) . 'sync/ckan-backend-sync-abstract.php';
+			require_once plugin_dir_path( __FILE__ ) . 'sync/ckan-backend-sync-local-dataset.php';
+			require_once plugin_dir_path( __FILE__ ) . 'sync/ckan-backend-sync-local-group.php';
+			require_once plugin_dir_path( __FILE__ ) . 'sync/ckan-backend-sync-local-organisation.php';
 		}
 
 		/**
