@@ -22,7 +22,7 @@ class Ckan_Backend_Local_Dataset {
 		add_action( 'cmb2_init', array( $this, 'define_fields' ) );
 
 		// initialize local dataset sync
-		$ckan_backend_sync_local_dataset = new Ckan_Backend_Sync_Local_Dataset( self::POST_TYPE, self::FIELD_PREFIX );
+		new Ckan_Backend_Sync_Local_Dataset( self::POST_TYPE, self::FIELD_PREFIX );
 	}
 
 	/**
@@ -36,6 +36,7 @@ class Ckan_Backend_Local_Dataset {
 	 * @return void
 	 */
 	public function show_message_if_disabled( $field_args, $field ) {
+		$post_id = 0;
 		if ( isset( $_GET['post'] ) ) {
 			$post_id = $_GET['post'];
 		} elseif ( isset( $_POST['post_ID'] ) ) {
