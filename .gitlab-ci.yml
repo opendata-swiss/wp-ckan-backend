@@ -1,0 +1,2 @@
+jobs:
+    script: ./build.sh

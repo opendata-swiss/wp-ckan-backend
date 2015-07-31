@@ -1,0 +1,13 @@
+{
+    "name": "liip/wp-ckan-backend",
+    "description": "Backend for OGD-CH",
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^2.2.0",
+        "wp-coding-standards/wpcs": "dev-master",
+        "phpunit/phpunit": "3.7.*"
+    },
+    "minimum-stability": "dev",
+    "config": {
+        "bin-dir": "bin"
+    }
+}
