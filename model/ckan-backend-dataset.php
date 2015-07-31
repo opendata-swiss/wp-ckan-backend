@@ -1,265 +1,691 @@
 <?php
+/**
+ * Model for Dataset
+ *
+ * @package CKAN\Backend
+ */
 
+/**
+ * Class Ckan_Backend_Dataset_Model
+ */
 class Ckan_Backend_Dataset_Model {
+	/**
+	 * Identifier
+	 *
+	 * @var string
+	 */
 	protected $identifier = '';
+
+	/**
+	 * Title in all languages
+	 *
+	 * @var string[]
+	 */
 	protected $title = array();
+
+	/**
+	 * Description in all languages
+	 *
+	 * @var string[]
+	 */
 	protected $description = array();
+
+	/**
+	 * Issued
+	 *
+	 * @var string
+	 */
 	protected $issued = '';
+
+	/**
+	 * Modified
+	 *
+	 * @var string
+	 */
 	protected $modified = '';
+
+	/**
+	 * Publishers
+	 *
+	 * @var Ckan_Backend_Publisher_Model[]
+	 */
 	protected $publishers = array();
-	protected $contactPoints = array();
+
+	/**
+	 * Contact Points
+	 *
+	 * @var Ckan_Backend_ContactPoint_Model[]
+	 */
+	protected $contact_points = array();
+
+	/**
+	 * Themes
+	 *
+	 * @var string[]
+	 */
 	protected $themes = array();
+
+	/**
+	 * Languages
+	 *
+	 * @var string[]
+	 */
 	protected $languages = array();
+
+	/**
+	 * Keywords
+	 *
+	 * @var string[]
+	 */
 	protected $keywords = array();
+
+	/**
+	 * Relations
+	 *
+	 * @var Ckan_Backend_Relation_Model[]
+	 */
 	protected $relations = array();
-	protected $landingPage = '';
+
+	/**
+	 * Landing Page
+	 *
+	 * @var string
+	 */
+	protected $landing_page = '';
+
+	/**
+	 * Spatial
+	 *
+	 * @var string
+	 */
 	protected $spatial = '';
+
+	/**
+	 * Coverage
+	 *
+	 * @var string
+	 */
 	protected $coverage = '';
-	protected $temporals = null;
-	protected $accrualPeriodicy = '';
-	protected $seeAlsos = array();
+
+	/**
+	 * Temporals
+	 *
+	 * @var Ckan_Backend_Temporal_Model[]
+	 */
+	protected $temporals = array();
+
+	/**
+	 * Accrual Periodicity
+	 *
+	 * @var string
+	 */
+	protected $accrual_periodicity = '';
+
+	/**
+	 * See Alsos
+	 *
+	 * @var Ckan_Backend_SeeAlso_Model[]
+	 */
+	protected $see_alsos = array();
+
+	/**
+	 * Distributions
+	 *
+	 * @var Ckan_Backend_Distribution_Model[]
+	 */
 	protected $distributions = array();
 
-	public function getIdentifier() {
+	/**
+	 * Returns Identifier
+	 *
+	 * @return string
+	 */
+	public function get_identifier() {
 		return $this->identifier;
 	}
-	public function setIdentifier($identifier) {
+
+	/**
+	 * Sets Identifier
+	 *
+	 * @param string $identifier identifier.
+	 */
+	public function set_identifier( $identifier ) {
 		$this->identifier = $identifier;
 	}
 
-	public function getTitle($lang = 'en') {
-		return $this->title[$lang];
-	}
-	public function setTitle($title, $lang = 'en') {
-		$this->title[$lang] = $title;
-	}
-
-	public function getDescription($lang = 'en') {
-		return $this->description[$lang];
-	}
-	public function setDescription($description, $lang = 'en') {
-		$this->description[$lang] = $description;
+	/**
+	 * Returns Title in given language
+	 *
+	 * @param string $lang Language.
+	 *
+	 * @return string
+	 */
+	public function get_title( $lang = 'en' ) {
+		return $this->title[ $lang ];
 	}
 
-	public function getIssued() {
+	/**
+	 * Sets Title in given language
+	 *
+	 * @param string $title Title.
+	 * @param string $lang Language.
+	 */
+	public function set_title( $title, $lang = 'en' ) {
+		$this->title[ $lang ] = $title;
+	}
+
+	/**
+	 * Returns Description in given language
+	 *
+	 * @param string $lang Language.
+	 *
+	 * @return string
+	 */
+	public function get_description( $lang = 'en' ) {
+		return $this->description[ $lang ];
+	}
+
+	/**
+	 * Sets Description in given language
+	 *
+	 * @param string $description Description.
+	 * @param string $lang Language.
+	 */
+	public function set_description( $description, $lang = 'en' ) {
+		$this->description[ $lang ] = $description;
+	}
+
+	/**
+	 * Returns Issued
+	 *
+	 * @return string
+	 */
+	public function get_issued() {
 		return $this->issued;
 	}
-	public function setIssued($issued) {
+
+	/**
+	 * Sets Issued
+	 *
+	 * @param string $issued Issued.
+	 */
+	public function set_issued( $issued ) {
 		$this->issued = $issued;
 	}
 
-	public function getModified() {
+	/**
+	 * Returns Modified
+	 *
+	 * @return string
+	 */
+	public function get_modified() {
 		return $this->modified;
 	}
-	public function setModified($modified) {
+
+	/**
+	 * Sets modified
+	 *
+	 * @param string $modified modified.
+	 */
+	public function set_modified( $modified ) {
 		$this->modified = $modified;
 	}
 
-	public function addPublisher($publisher) {
-		if(! $publisher instanceof Ckan_Backend_Publisher_Model) {
-			throw new RuntimeException( 'Publisher has to be a Ckan_Backend_Publisher_Model type' );
+	/**
+	 * Adds publisher
+	 *
+	 * @param Ckan_Backend_Publisher_Model $publisher Publisher to add.
+	 *
+	 * @return bool|WP_Error
+	 */
+	public function add_publisher( $publisher ) {
+		if ( ! $publisher instanceof Ckan_Backend_Publisher_Model ) {
+			return new WP_Error( 'wrong_type', 'Publisher has to be a Ckan_Backend_Publisher_Model type' );
 		}
-		$this->publishers[spl_object_hash($publisher)] = $publisher;
+		$this->publishers[ spl_object_hash( $publisher ) ] = $publisher;
+
+		return true;
 	}
-	public function removePublisher($publisher) {
-		if(! $publisher instanceof Ckan_Backend_Publisher_Model) {
-			throw new RuntimeException( 'Publisher has to be a Ckan_Backend_Publisher_Model type' );
+
+	/**
+	 * Removes publisher
+	 *
+	 * @param Ckan_Backend_Publisher_Model $publisher Publisher to remove.
+	 *
+	 * @return bool|WP_Error
+	 */
+	public function remove_publisher( $publisher ) {
+		if ( ! $publisher instanceof Ckan_Backend_Publisher_Model ) {
+			return new WP_Error( 'wrong_type', 'Publisher has to be a Ckan_Backend_Publisher_Model type' );
 		}
-		unset($this->publishers[spl_object_hash($publisher)]);
+		unset( $this->publishers[ spl_object_hash( $publisher ) ] );
+
+		return true;
 	}
-	public function getPublishers() {
+
+	/**
+	 * Returns all publishers
+	 *
+	 * @return Ckan_Backend_Publisher_Model[]
+	 */
+	public function get_publishers() {
 		return $this->publishers;
 	}
 
-	public function addContactPoint($contactPoint) {
-		if(! $contactPoint instanceof Ckan_Backend_ContactPoint_Model) {
-			throw new RuntimeException( 'Contact Point has to be a Ckan_Backend_ContactPoint_Model type' );
+	/**
+	 * Adds a ContactPoint
+	 *
+	 * @param Ckan_Backend_ContactPoint_Model $contact_point ContactPoint to add.
+	 *
+	 * @return bool|WP_Error
+	 */
+	public function add_contact_point( $contact_point ) {
+		if ( ! $contact_point instanceof Ckan_Backend_ContactPoint_Model ) {
+			return new WP_Error( 'wrong_type', 'Contact Point has to be a Ckan_Backend_ContactPoint_Model type' );
 		}
-		$this->contactPoints[spl_object_hash($contactPoint)] = $contactPoint;
-	}
-	public function removeContactPoint($contactPoint) {
-		if(! $contactPoint instanceof Ckan_Backend_ContactPoint_Model) {
-			throw new RuntimeException( 'Contact Point has to be a Ckan_Backend_ContactPoint_Model type' );
-		}
-		unset($this->contactPoints[spl_object_hash($contactPoint)]);
-	}
-	public function getContactPoints() {
-		return $this->contactPoints;
+		$this->contact_points[ spl_object_hash( $contact_point ) ] = $contact_point;
+
+		return true;
 	}
 
-	public function getThemes() {
+	/**
+	 * Removes ContactPoint
+	 *
+	 * @param Ckan_Backend_ContactPoint_Model $contact_point ContactPoint to remove.
+	 *
+	 * @return bool|WP_Error
+	 */
+	public function remove_contact_point( $contact_point ) {
+		if ( ! $contact_point instanceof Ckan_Backend_ContactPoint_Model ) {
+			return new WP_Error( 'wrong_type', 'Contact Point has to be a Ckan_Backend_ContactPoint_Model type' );
+		}
+		unset( $this->contact_points[ spl_object_hash( $contact_point ) ] );
+
+		return true;
+	}
+
+	/**
+	 * Returns all ContactPoints
+	 *
+	 * @return Ckan_Backend_ContactPoint_Model[]
+	 */
+	public function get_contact_points() {
+		return $this->contact_points;
+	}
+
+	/**
+	 * Returns all themes
+	 *
+	 * @return string[]
+	 */
+	public function get_themes() {
 		return $this->themes;
 	}
-	public function addTheme($theme) {
+
+	/**
+	 * Adds theme
+	 *
+	 * @param string $theme Theme to add.
+	 */
+	public function add_theme( $theme ) {
 		$this->themes[] = $theme;
 	}
-	public function removeTheme($theme) {
-		if(($key = array_search($theme, $this->getThemes())) !== false) {
-			unset($this->themes[$key]);
+
+	/**
+	 * Removes theme
+	 *
+	 * @param string $theme Theme to remove.
+	 */
+	public function remove_theme( $theme ) {
+		if ( ( $key = array_search( $theme, $this->get_themes() ) ) !== false ) {
+			unset( $this->themes[ $key ] );
 		}
 	}
 
-	public function getLanguages() {
+	/**
+	 * Returns all languages
+	 *
+	 * @return string[]
+	 */
+	public function get_languages() {
 		return $this->languages;
 	}
-	public function addLanguage($language) {
+
+	/**
+	 * Adds language
+	 *
+	 * @param string $language Language to add.
+	 */
+	public function add_language( $language ) {
 		$this->languages[] = $language;
 	}
-	public function removeLanguage($language) {
-		if(($key = array_search($language, $this->getLanguages())) !== false) {
-			unset($this->languages[$key]);
+
+	/**
+	 * Removes language
+	 *
+	 * @param string $language Language to remove.
+	 */
+	public function remove_language( $language ) {
+		if ( ( $key = array_search( $language, $this->get_languages() ) ) !== false ) {
+			unset( $this->languages[ $key ] );
 		}
 	}
 
-	public function getKeywords() {
+	/**
+	 * Returns all Keywords
+	 *
+	 * @return string[]
+	 */
+	public function get_keywords() {
 		return $this->keywords;
 	}
-	public function addKeyword($keyword) {
+
+	/**
+	 * Adds keyword
+	 *
+	 * @param string $keyword Keyword to add.
+	 */
+	public function add_keyword( $keyword ) {
 		$this->keywords[] = $keyword;
 	}
-	public function removeKeyword($keyword) {
-		if(($key = array_search($keyword, $this->getKeywords())) !== false) {
-			unset($this->keywords[$key]);
+
+	/**
+	 * Removes keyword
+	 *
+	 * @param string $keyword Keyword to remove.
+	 */
+	public function remove_keyword( $keyword ) {
+		if ( ( $key = array_search( $keyword, $this->get_keywords() ) ) !== false ) {
+			unset( $this->keywords[ $key ] );
 		}
 	}
 
-	public function addRelation($relation) {
-		if(! $relation instanceof Ckan_Backend_Relation_Model) {
-			throw new RuntimeException( 'Relation has to be a Ckan_Backend_Relation_Model type' );
+	/**
+	 * Adds relation
+	 *
+	 * @param Ckan_Backend_Relation_Model $relation Relation to add.
+	 *
+	 * @return bool|WP_Error
+	 */
+	public function add_relation( $relation ) {
+		if ( ! $relation instanceof Ckan_Backend_Relation_Model ) {
+			return new WP_Error( 'wrong_type', 'Relation has to be a Ckan_Backend_Relation_Model type' );
 		}
-		$this->relations[spl_object_hash($relation)] = $relation;
+		$this->relations[ spl_object_hash( $relation ) ] = $relation;
+
+		return true;
 	}
-	public function removeRelation($relation) {
-		if(! $relation instanceof Ckan_Backend_Relation_Model) {
-			throw new RuntimeException( 'Relation has to be a Ckan_Backend_Relation_Model type' );
+
+	/**
+	 * Removes relation
+	 *
+	 * @param Ckan_Backend_Relation_Model $relation Relation to remove.
+	 *
+	 * @return bool|WP_Error
+	 */
+	public function remove_relation( $relation ) {
+		if ( ! $relation instanceof Ckan_Backend_Relation_Model ) {
+			return new WP_Error( 'wrong_type', 'Relation has to be a Ckan_Backend_Relation_Model type' );
 		}
-		unset($this->relations[spl_object_hash($relation)]);
+		unset( $this->relations[ spl_object_hash( $relation ) ] );
+
+		return true;
 	}
-	public function getRelations() {
+
+	/**
+	 * Returns all relations
+	 *
+	 * @return Ckan_Backend_Relation_Model[]
+	 */
+	public function get_relations() {
 		return $this->relations;
 	}
 
-	public function getLandingPage() {
-		return $this->landingPage;
-	}
-	public function setLandingPage($landingPage) {
-		$this->landingPage = $landingPage;
+	/**
+	 * Returns landing page
+	 *
+	 * @return string
+	 */
+	public function get_landing_page() {
+		return $this->landing_page;
 	}
 
-	public function getSpatial() {
+	/**
+	 * Sets landing page
+	 *
+	 * @param string $landing_page Landing page.
+	 */
+	public function set_landing_page( $landing_page ) {
+		$this->landing_page = $landing_page;
+	}
+
+	/**
+	 * Returns spatial
+	 *
+	 * @return string
+	 */
+	public function get_spatial() {
 		return $this->spatial;
 	}
-	public function setSpatial($spatial) {
+
+	/**
+	 * Sets spatial
+	 *
+	 * @param string $spatial Spatial.
+	 */
+	public function set_spatial( $spatial ) {
 		$this->spatial = $spatial;
 	}
 
-	public function getCoverage() {
+	/**
+	 * Returns coverage
+	 *
+	 * @return string
+	 */
+	public function get_coverage() {
 		return $this->coverage;
 	}
-	public function setCoverage($coverage) {
+
+	/**
+	 * Sets coverage
+	 *
+	 * @param string $coverage Coverage.
+	 */
+	public function set_coverage( $coverage ) {
 		$this->coverage = $coverage;
 	}
 
-	public function addTemporal($temporal) {
-		if(! $temporal instanceof Ckan_Backend_Temporal_Model) {
-			throw new RuntimeException( 'Relation has to be a Ckan_Backend_Temporal_Model type' );
+	/**
+	 * Adds temporal
+	 *
+	 * @param Ckan_Backend_Temporal_Model $temporal Temporal to add.
+	 *
+	 * @return bool|WP_Error
+	 */
+	public function add_temporal( $temporal ) {
+		if ( ! $temporal instanceof Ckan_Backend_Temporal_Model ) {
+			return new WP_Error( 'wrong_type', 'Relation has to be a Ckan_Backend_Temporal_Model type' );
 		}
-		$this->temporals[spl_object_hash($temporal)] = $temporal;
+		$this->temporals[ spl_object_hash( $temporal ) ] = $temporal;
+
+		return true;
 	}
-	public function removeTemporal($temporal) {
-		if(! $temporal instanceof Ckan_Backend_Temporal_Model) {
-			throw new RuntimeException( 'Relation has to be a Ckan_Backend_Temporal_Model type' );
+
+	/**
+	 * Removes temporal
+	 *
+	 * @param Ckan_Backend_Temporal_Model $temporal Temporal to remove.
+	 *
+	 * @return bool|WP_Error
+	 */
+	public function remove_temporal( $temporal ) {
+		if ( ! $temporal instanceof Ckan_Backend_Temporal_Model ) {
+			return new WP_Error( 'wrong_type', 'Relation has to be a Ckan_Backend_Temporal_Model type' );
 		}
-		unset($this->temporals[spl_object_hash($temporal)]);
+		unset( $this->temporals[ spl_object_hash( $temporal ) ] );
+
+		return true;
 	}
-	public function getTemporals() {
+
+	/**
+	 * Returns all temporals
+	 *
+	 * @return Ckan_Backend_Temporal_Model[]
+	 */
+	public function get_temporals() {
 		return $this->temporals;
 	}
 
-	public function getAccrualPeriodicy() {
-		return $this->accrualPeriodicy;
-	}
-	public function setAccrualPeriodicy($accrualPeriodicy) {
-		$this->accrualPeriodicy = $accrualPeriodicy;
-	}
-
-	public function addSeeAlso($seeAlso) {
-		if(! $seeAlso instanceof Ckan_Backend_SeeAlso_Model) {
-			throw new RuntimeException( 'Relation has to be a Ckan_Backend_SeeAlso_Model type' );
-		}
-		$this->seeAlsos[spl_object_hash($seeAlso)] = $seeAlso;
-	}
-	public function removeSeeAlso($seeAlso) {
-		if(! $seeAlso instanceof Ckan_Backend_SeeAlso_Model) {
-			throw new RuntimeException( 'Relation has to be a Ckan_Backend_SeeAlso_Model type' );
-		}
-		unset($this->seeAlsos[spl_object_hash($seeAlso)]);
-	}
-	public function getSeeAlsos() {
-		return $this->seeAlsos;
+	/**
+	 * Returns accrual periodicity
+	 *
+	 * @return string
+	 */
+	public function get_accrual_periodicity() {
+		return $this->accrual_periodicity;
 	}
 
-	public function addDistribution($distribution) {
-		if(! $distribution instanceof Ckan_Backend_Distribution_Model) {
-			throw new RuntimeException( 'Relation has to be a Ckan_Backend_Distribution_Model type' );
-		}
-		$this->distributions[spl_object_hash($distribution)] = $distribution;
+	/**
+	 * Sets accrual periodicity
+	 *
+	 * @param string $accrual_periodicity Accrual periodicity.
+	 */
+	public function set_accrual_periodicity( $accrual_periodicity ) {
+		$this->accrual_periodicity = $accrual_periodicity;
 	}
-	public function removeDistribution($distribution) {
-		if(! $distribution instanceof Ckan_Backend_Distribution_Model) {
-			throw new RuntimeException( 'Relation has to be a Ckan_Backend_Distribution_Model type' );
+
+	/**
+	 * Adds SeeAlso
+	 *
+	 * @param Ckan_Backend_SeeAlso_Model $see_also SeeAlso to add.
+	 *
+	 * @return bool|WP_Error
+	 */
+	public function add_see_also( $see_also ) {
+		if ( ! $see_also instanceof Ckan_Backend_SeeAlso_Model ) {
+			return new WP_Error( 'wrong_type', 'Relation has to be a Ckan_Backend_SeeAlso_Model type' );
 		}
-		unset($this->distributions[spl_object_hash($distribution)]);
+		$this->see_alsos[ spl_object_hash( $see_also ) ] = $see_also;
+
+		return true;
 	}
-	public function getDistributions() {
+
+	/**
+	 * Removes SeeAlso
+	 *
+	 * @param Ckan_Backend_SeeAlso_Model $see_also SeeAlso to remove.
+	 *
+	 * @return bool|WP_Error
+	 */
+	public function remove_see_also( $see_also ) {
+		if ( ! $see_also instanceof Ckan_Backend_SeeAlso_Model ) {
+			return new WP_Error( 'wrong_type', 'Relation has to be a Ckan_Backend_SeeAlso_Model type' );
+		}
+		unset( $this->see_alsos[ spl_object_hash( $see_also ) ] );
+
+		return true;
+	}
+
+	/**
+	 * Returns all SeeAlsos
+	 *
+	 * @return Ckan_Backend_SeeAlso_Model[]
+	 */
+	public function get_see_alsos() {
+		return $this->see_alsos;
+	}
+
+	/**
+	 * Adds Distribution
+	 *
+	 * @param Ckan_Backend_Distribution_Model $distribution Distribution to add.
+	 *
+	 * @return bool|WP_Error
+	 */
+	public function add_distribution( $distribution ) {
+		if ( ! $distribution instanceof Ckan_Backend_Distribution_Model ) {
+			return new WP_Error( 'wrong_type', 'Relation has to be a Ckan_Backend_Distribution_Model type' );
+		}
+		$this->distributions[ spl_object_hash( $distribution ) ] = $distribution;
+
+		return true;
+	}
+
+	/**
+	 * Removes distribution
+	 *
+	 * @param Ckan_Backend_Distribution_Model $distribution Distribution to remove.
+	 *
+	 * @return bool|WP_Error
+	 */
+	public function remove_distribution( $distribution ) {
+		if ( ! $distribution instanceof Ckan_Backend_Distribution_Model ) {
+			return new WP_Error( 'wrong_type', 'Relation has to be a Ckan_Backend_Distribution_Model type' );
+		}
+		unset( $this->distributions[ spl_object_hash( $distribution ) ] );
+
+		return true;
+	}
+
+	/**
+	 * Returns all distributions
+	 *
+	 * @return Ckan_Backend_Distribution_Model[]
+	 */
+	public function get_distributions() {
 		return $this->distributions;
 	}
 
-	public function toArray() {
+	/**
+	 * Converts object to array
+	 *
+	 * @return array
+	 */
+	public function to_array() {
 		global $language_priority;
 
 		$dataset = array(
-			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'identifier' => $this->getIdentifier(),
-			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'issued' => $this->getIssued(),
-			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'modified' => $this->getModified(),
-			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'themes' => $this->getThemes(),
-			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'languages' => $this->getLanguages(),
-			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'keywords' => $this->getKeywords(),
-			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'landing_page' => $this->getLandingPage(),
-			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'spatial' => $this->getSpatial(),
-			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'coverage' => $this->getCoverage(),
-			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'accrual_periodicy' => $this->getAccrualPeriodicy()
+			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'identifier'        => $this->get_identifier(),
+			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'issued'            => $this->get_issued(),
+			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'modified'          => $this->get_modified(),
+			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'themes'            => $this->get_themes(),
+			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'languages'         => $this->get_languages(),
+			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'keywords'          => $this->get_keywords(),
+			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'landing_page'      => $this->get_landing_page(),
+			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'spatial'           => $this->get_spatial(),
+			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'coverage'          => $this->get_coverage(),
+			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'accrual_periodicy' => $this->get_accrual_periodicity(),
 		);
 
-		foreach($language_priority as $lang) {
-			$dataset[Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'title_' . $lang] = $this->getTitle($lang);
-			$dataset[Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'description_' . $lang] = $this->getDescription($lang);
+		foreach ( $language_priority as $lang ) {
+			$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'title_' . $lang ]       = $this->get_title( $lang );
+			$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'description_' . $lang ] = $this->get_description( $lang );
 		}
 
-		foreach($this->getPublishers() as $publisher) {
-			$dataset[Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'publishers'][] = $publisher->toArray();
+		foreach ( $this->get_publishers() as $publisher ) {
+			$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'publishers' ][] = $publisher->toArray();
 		}
-		foreach($this->getContactPoints() as $contact_point) {
-			$dataset[Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'contact_points'][] = $contact_point->toArray();
+		foreach ( $this->get_contact_points() as $contact_point ) {
+			$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'contact_points' ][] = $contact_point->to_array();
 		}
-		foreach($this->getRelations() as $relation) {
-			$dataset[Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'relations'][] = $relation->toArray();
+		foreach ( $this->get_relations() as $relation ) {
+			$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'relations' ][] = $relation->toArray();
 		}
-		foreach($this->getTemporals() as $temporal) {
-			$dataset[Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'temporals'][] = $temporal->toArray();
+		foreach ( $this->get_temporals() as $temporal ) {
+			$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'temporals' ][] = $temporal->toArray();
 		}
-		foreach($this->getSeeAlsos() as $see_also) {
-			$dataset[Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'see_alsos'][] = $see_also->toArray();
+		foreach ( $this->get_see_alsos() as $see_also ) {
+			$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'see_alsos' ][] = $see_also->toArray();
 		}
-		foreach($this->getDistributions() as $distribution) {
-			$dataset[Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'distributions'][] = $distribution->toArray();
+		foreach ( $this->get_distributions() as $distribution ) {
+			$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'distributions' ][] = $distribution->toArray();
 		}
 
 		// TODO remove these lines when better backend gui solution is found
-		$publishers = $this->getPublishers();
-		if( count($publishers) > 0 ) {
-			$publisher = reset($publishers);
-			$dataset[Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'publisher'] = $publisher->getName();
+		$publishers = $this->get_publishers();
+		if ( count( $publishers ) > 0 ) {
+			$publisher                                                         = reset( $publishers );
+			$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'publisher' ] = $publisher->getName();
 		}
 
 		return $dataset;
