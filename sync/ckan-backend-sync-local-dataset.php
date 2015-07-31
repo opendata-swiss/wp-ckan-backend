@@ -1,18 +1,33 @@
 <?php
+/**
+ * Sync of datasets
+ *
+ * @package CKAN\Backend
+ */
 
+/**
+ * Class Ckan_Backend_Sync_Local_Dataset
+ */
 class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
+	/**
+	 * This method should return an array with the updated data
+	 *
+	 * @param object $post The post from WordPress.
+	 *
+	 * @return array $data Updated data to send
+	 */
 	protected function get_update_data( $post ) {
 		$resources = $this->prepare_resources( $_POST[ $this->field_prefix . 'distributions' ] );
 		$groups    = $this->prepare_selected_groups( $_POST[ $this->field_prefix . 'themes' ] );
 		$tags      = $this->prepare_tags( $_POST['tax_input']['post_tag'] );
 
-		// Gernerate slug of dataset. If no title is entered use an uniqid
-		if ( $_POST[ $this->field_prefix . 'title_en' ] != '' ) {
+		// Generate slug of dataset. If no title is entered use an uniqid
+		if ( $_POST[ $this->field_prefix . 'name' ] !== '' ) {
 			$slug = $_POST[ $this->field_prefix . 'title_en' ];
 		} else {
 			$slug = $_POST['post_title'];
 
-			if ( $slug === '' ) {
+			if ( '' === $slug ) {
 				$slug = uniqid();
 			}
 		}
@@ -40,7 +55,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 			'tags'             => $tags,
 		);
 
-		if ( isset( $_POST[ $this->field_prefix . 'reference' ] ) && $_POST[ $this->field_prefix . 'reference' ] != '' ) {
+		if ( isset( $_POST[ $this->field_prefix . 'reference' ] ) && $_POST[ $this->field_prefix . 'reference' ] !== '' ) {
 			$data['id'] = $_POST[ $this->field_prefix . 'reference' ];
 		}
 		// Check if user is allowed to disable datasets -> otherwise reset value
@@ -48,7 +63,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 			$disable_value                             = get_post_meta( $post->ID, $_POST[ $this->field_prefix . 'disabled' ], true );
 			$_POST[ $this->field_prefix . 'disabled' ] = $disable_value;
 		}
-		if ( isset( $_POST[ $this->field_prefix . 'disabled' ] ) && $_POST[ $this->field_prefix . 'disabled' ] == 'on' ) {
+		if ( isset( $_POST[ $this->field_prefix . 'disabled' ] ) && $_POST[ $this->field_prefix . 'disabled' ] === 'on' ) {
 			$data['state'] = 'deleted';
 		}
 
@@ -58,13 +73,15 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	/**
 	 * Transforms resources field values from WP form to a CKAN friendly form.
 	 *
+	 * @param array $resources Array of resource objects.
+	 *
 	 * @return array CKAN friendly resources
 	 */
 	protected function prepare_resources( $resources ) {
 		$ckan_resources = array();
 
 		// Check if resources are added. If yes generate CKAN friendly array.
-		if ( $resources[0]['download_url'] != '' ) {
+		if ( '' !== $resources[0]['download_url'] ) {
 			foreach ( $resources as $resource ) {
 				$ckan_resources[] = array(
 					'url'         => $resource['download_url'],

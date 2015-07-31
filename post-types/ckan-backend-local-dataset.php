@@ -1,11 +1,22 @@
 <?php
+/**
+ * Post type ckan-local-dataset
+ *
+ * @package CKAN\Backend
+ */
 
+/**
+ * Class Ckan_Backend_Local_Dataset
+ */
 class Ckan_Backend_Local_Dataset {
 
 	// Be careful max. 20 characters allowed!
 	const POST_TYPE = 'ckan-local-dataset';
 	const FIELD_PREFIX = '_ckan_local_dataset_';
 
+	/**
+	 * Constructor
+	 */
 	public function __construct() {
 		$this->register_post_type();
 		add_action( 'cmb2_init', array( $this, 'define_fields' ) );
@@ -14,6 +25,16 @@ class Ckan_Backend_Local_Dataset {
 		$ckan_backend_sync_local_dataset = new Ckan_Backend_Sync_Local_Dataset( self::POST_TYPE, self::FIELD_PREFIX );
 	}
 
+	/**
+	 * Shows an error message if the dataset is disbaled
+	 *
+	 * This function is a callback function for CMB2
+	 *
+	 * @param array $field_args Array of field arguments.
+	 * @param object $field CMB field.
+	 *
+	 * @return void
+	 */
 	public function show_message_if_disabled( $field_args, $field ) {
 		if ( isset( $_GET['post'] ) ) {
 			$post_id = $_GET['post'];
@@ -24,10 +45,17 @@ class Ckan_Backend_Local_Dataset {
 		// see if dataset is disabled
 		$value = get_post_meta( $post_id, self::FIELD_PREFIX . 'disabled', true );
 		if ( $value == 'on' ) {
+			// @codingStandardsIgnoreStart
 			echo '<div class="error"><p>' . __( 'This dataset is disabled. Please contact an adimistrator if this seems to be wrong.', 'ogdch' ) . '</p></div>';
+			// @codingStandardsIgnoreEnd
 		}
 	}
 
+	/**
+	 * Registers the post type.
+	 *
+	 * @return void
+	 */
 	public function register_post_type() {
 		$labels = array(
 			'name'               => __( 'CKAN local Datasets', 'ogdch' ),
@@ -88,6 +116,11 @@ class Ckan_Backend_Local_Dataset {
 		register_post_type( self::POST_TYPE, $args );
 	}
 
+	/**
+	 * Define the custom fields of this post type
+	 *
+	 * @return void
+	 */
 	public function define_fields() {
 		global $language_priority;
 
@@ -118,7 +151,7 @@ class Ckan_Backend_Local_Dataset {
 		$cmb->add_field( array(
 			'name' => __( 'Dataset Information', 'ogdch' ),
 			'type' => 'title',
-			'id'   => 'title_title'
+			'id'   => 'title_title',
 		) );
 
 		foreach ( $language_priority as $lang ) {
@@ -128,7 +161,7 @@ class Ckan_Backend_Local_Dataset {
 				'id'         => self::FIELD_PREFIX . 'title_' . $lang,
 				'type'       => 'text',
 				'attributes' => array(
-					'placeholder' => __( 'e.g. Awesome dataset', 'ogdch' )
+					'placeholder' => __( 'e.g. Awesome dataset', 'ogdch' ),
 				)
 			) );
 
@@ -262,15 +295,15 @@ class Ckan_Backend_Local_Dataset {
 		) );
 
 		$cmb->add_field( array(
-			'name'       => __( 'Coverage', 'ogdch' ),
-			'id'         => self::FIELD_PREFIX . 'coverage',
-			'type'       => 'text',
+			'name' => __( 'Coverage', 'ogdch' ),
+			'id'   => self::FIELD_PREFIX . 'coverage',
+			'type' => 'text',
 		) );
 
 		$cmb->add_field( array(
-			'name'       => __( 'Accrual Periodicy', 'ogdch' ),
-			'id'         => self::FIELD_PREFIX . 'accrual_periodicy',
-			'type'       => 'text',
+			'name' => __( 'Accrual Periodicy', 'ogdch' ),
+			'id'   => self::FIELD_PREFIX . 'accrual_periodicy',
+			'type' => 'text',
 		) );
 
 		$temporals_group = $cmb->add_field( array(
@@ -315,7 +348,7 @@ class Ckan_Backend_Local_Dataset {
 		$cmb->add_field( array(
 			'name' => __( 'Distributions', 'ogdch' ),
 			'type' => 'title',
-			'id'   => 'distributions_title'
+			'id'   => 'distributions_title',
 		) );
 
 		$distributions_group = $cmb->add_field( array(
@@ -336,8 +369,8 @@ class Ckan_Backend_Local_Dataset {
 			) );
 
 			$cmb->add_group_field( $distributions_group, array(
-				'name' => __( 'Description', 'ogdch' ) . ' (' . strtoupper( $lang ) . ')',
-				'id'   => 'description_' . $lang,
+				'name'       => __( 'Description', 'ogdch' ) . ' (' . strtoupper( $lang ) . ')',
+				'id'         => 'description_' . $lang,
 				'type'       => 'textarea',
 				'attributes' => array( 'rows' => 3 ),
 			) );
@@ -417,7 +450,7 @@ class Ckan_Backend_Local_Dataset {
 		);
 		if ( ! current_user_can( 'disable_datasets' ) ) {
 			$disabled_checkbox_args['attributes'] = array(
-				'disabled' => 'disabled'
+				'disabled' => 'disabled',
 			);
 		}
 		$cmb_side_disabled->add_field( $disabled_checkbox_args );
