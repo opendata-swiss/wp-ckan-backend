@@ -174,7 +174,7 @@ class Ckan_Backend_Helper {
 	/**
 	 * Displays all admin notices
 	 *
-	 * @param array $errors Array of errors.
+	 * @param array|bool $errors Array of errors.
 	 *
 	 * @return string
 	 */
