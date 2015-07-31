@@ -168,10 +168,10 @@ class Ckan_Backend_Local_Dataset_Import {
 		if ( count( $publishers ) > 0 ) {
 			// use only first element
 			$publisher = reset( $publishers );
-			if ( ! Ckan_Backend_Helper::organisation_exists( $publisher->getName() ) ) {
+			if ( ! Ckan_Backend_Helper::organisation_exists( $publisher->get_name() ) ) {
 				echo '<div class="error"><p>';
 				// @codingStandardsIgnoreStart
-				printf( __( 'Organisation %1$s does not exist! Import aborted.', 'ogdch' ), $publisher->getName() );
+				printf( __( 'Organisation %1$s does not exist! Import aborted.', 'ogdch' ), $publisher->get_name() );
 				// @codingStandardsIgnoreEnd
 				echo '</p></div>';
 

@@ -685,7 +685,7 @@ class Ckan_Backend_Dataset_Model {
 		$publishers = $this->get_publishers();
 		if ( count( $publishers ) > 0 ) {
 			$publisher                                                         = reset( $publishers );
-			$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'publisher' ] = $publisher->getName();
+			$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'publisher' ] = $publisher->get_name();
 		}
 
 		return $dataset;
