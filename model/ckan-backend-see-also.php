@@ -1,27 +1,73 @@
 <?php
+/**
+ * Model for SeeAlso
+ *
+ * @package CKAN\Backend
+ */
 
+/**
+ * Class Ckan_Backend_SeeAlso_Model
+ */
 class Ckan_Backend_SeeAlso_Model {
+	/**
+	 * About
+	 *
+	 * @var string
+	 */
 	protected $about = '';
+
+	/**
+	 * Format
+	 *
+	 * @var string
+	 */
 	protected $format = '';
 
-	public function getAbout() {
+	/**
+	 * Returns about
+	 *
+	 * @return string
+	 */
+	public function get_about() {
 		return $this->about;
 	}
-	public function setAbout($about) {
+
+	/**
+	 * Sets about
+	 *
+	 * @param string $about About.
+	 */
+	public function set_about($about) {
 		$this->about = $about;
 	}
 
-	public function getFormat() {
+	/**
+	 * Returns format
+	 *
+	 * @return string
+	 */
+	public function get_format() {
 		return $this->format;
 	}
-	public function setFormat($format) {
+
+	/**
+	 * Sets format
+	 *
+	 * @param string $format Format.
+	 */
+	public function set_format($format) {
 		$this->format = $format;
 	}
 
-	public function toArray() {
+	/**
+	 * Converts object to array
+	 *
+	 * @return array
+	 */
+	public function to_array() {
 		return array(
-			'about' => $this->getAbout(),
-			'format' => $this->getFormat(),
+			'about' => $this->get_about(),
+			'format' => $this->get_format(),
 		);
 	}
 }

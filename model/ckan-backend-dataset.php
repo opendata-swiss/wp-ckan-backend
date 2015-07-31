@@ -663,22 +663,22 @@ class Ckan_Backend_Dataset_Model {
 		}
 
 		foreach ( $this->get_publishers() as $publisher ) {
-			$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'publishers' ][] = $publisher->toArray();
+			$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'publishers' ][] = $publisher->to_array();
 		}
 		foreach ( $this->get_contact_points() as $contact_point ) {
 			$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'contact_points' ][] = $contact_point->to_array();
 		}
 		foreach ( $this->get_relations() as $relation ) {
-			$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'relations' ][] = $relation->toArray();
+			$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'relations' ][] = $relation->to_array();
 		}
 		foreach ( $this->get_temporals() as $temporal ) {
-			$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'temporals' ][] = $temporal->toArray();
+			$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'temporals' ][] = $temporal->to_array();
 		}
 		foreach ( $this->get_see_alsos() as $see_also ) {
-			$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'see_alsos' ][] = $see_also->toArray();
+			$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'see_alsos' ][] = $see_also->to_array();
 		}
 		foreach ( $this->get_distributions() as $distribution ) {
-			$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'distributions' ][] = $distribution->toArray();
+			$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'distributions' ][] = $distribution->to_array();
 		}
 
 		// TODO remove these lines when better backend gui solution is found
