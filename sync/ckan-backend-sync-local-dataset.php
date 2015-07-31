@@ -1,18 +1,33 @@
 <?php
+/**
+ * Sync of datasets
+ *
+ * @package CKAN\Backend
+ */
 
+/**
+ * Class Ckan_Backend_Sync_Local_Dataset
+ */
 class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
+	/**
+	 * This method should return an array with the updated data
+	 *
+	 * @param object $post The post from WordPress.
+	 *
+	 * @return array $data Updated data to send
+	 */
 	protected function get_update_data( $post ) {
 		$extras    = $this->prepare_custom_fields( $_POST[ $this->field_prefix . 'custom_fields' ] );
 		$resources = $this->prepare_resources( $_POST[ $this->field_prefix . 'resources' ] );
 		$groups    = $this->prepare_selected_groups( $_POST[ $this->field_prefix . 'groups' ] );
 
-		// Gernerate slug of dataset. If no title is entered use an uniqid
-		if ( $_POST[ $this->field_prefix . 'name' ] != '' ) {
+		// Generate slug of dataset. If no title is entered use an uniqid
+		if ( $_POST[ $this->field_prefix . 'name' ] !== '' ) {
 			$title = $_POST[ $this->field_prefix . 'name' ];
 		} else {
 			$title = $_POST['post_title'];
 
-			if ( $title === '' ) {
+			if ( '' === $title ) {
 				$title = uniqid();
 			}
 		}
@@ -34,7 +49,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 			'owner_org'        => $_POST[ $this->field_prefix . 'organisation' ],
 		);
 
-		if ( isset( $_POST[ $this->field_prefix . 'reference' ] ) && $_POST[ $this->field_prefix . 'reference' ] != '' ) {
+		if ( isset( $_POST[ $this->field_prefix . 'reference' ] ) && $_POST[ $this->field_prefix . 'reference' ] !== '' ) {
 			$data['id'] = $_POST[ $this->field_prefix . 'reference' ];
 		}
 		// Check if user is allowed to disable datasets -> otherwise reset value
@@ -42,7 +57,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 			$disable_value                             = get_post_meta( $post->ID, $_POST[ $this->field_prefix . 'disabled' ], true );
 			$_POST[ $this->field_prefix . 'disabled' ] = $disable_value;
 		}
-		if ( isset( $_POST[ $this->field_prefix . 'disabled' ] ) && $_POST[ $this->field_prefix . 'disabled' ] == 'on' ) {
+		if ( isset( $_POST[ $this->field_prefix . 'disabled' ] ) && $_POST[ $this->field_prefix . 'disabled' ] === 'on' ) {
 			$data['state'] = 'deleted';
 		}
 
@@ -52,17 +67,19 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	/**
 	 * Transforms custom field values from WP form to a CKAN friendly form.
 	 *
+	 * @param array $custom_fields Array of custom field objects.
+	 *
 	 * @return array CKAN friendly custom fields
 	 */
 	protected function prepare_custom_fields( $custom_fields ) {
 		$ckan_custom_fields = array();
 
 		// Check if custom fields are added. If yes generate CKAN friendly array.
-		if ( $custom_fields[0]['key'] != '' ) {
+		if ( '' !== $custom_fields[0]['key'] ) {
 			foreach ( $custom_fields as $custom_field ) {
 				$ckan_custom_fields[] = array(
 					'key'   => $custom_field['key'],
-					'value' => $custom_field['value']
+					'value' => $custom_field['value'],
 				);
 			}
 		}
@@ -74,18 +91,20 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	/**
 	 * Transforms resources field values from WP form to a CKAN friendly form.
 	 *
+	 * @param array $resources Array of resource objects.
+	 *
 	 * @return array CKAN friendly custom fields
 	 */
 	protected function prepare_resources( $resources ) {
 		$ckan_resources = array();
 
 		// Check if resources are added. If yes generate CKAN friendly array.
-		if ( $resources[0]['url'] != '' ) {
+		if ( '' !== $resources[0]['url'] ) {
 			foreach ( $resources as $resource ) {
 				$ckan_resources[] = array(
 					'url'         => $resource['url'],
 					'name'        => $resource['title'], // TODO: use all language here
-					'description' => $resource['description_de'] // TODO: use all language here
+					'description' => $resource['description_de'], // TODO: use all language here
 				);
 			}
 		}
@@ -96,7 +115,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	/**
 	 * Create CKAN friendly array of all selected groups
 	 *
-	 * @param array $selected_groups IDs of selected groups
+	 * @param array $selected_groups IDs of selected groups.
 	 *
 	 * @return array CKAN friendly array with all selected groups
 	 */

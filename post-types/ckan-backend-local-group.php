@@ -1,11 +1,22 @@
 <?php
+/**
+ * Post type ckan-local-group
+ *
+ * @package CKAN\Backend
+ */
 
+/**
+ * Class Ckan_Backend_Local_Group
+ */
 class Ckan_Backend_Local_Group {
 
 	// Be careful max. 20 characters allowed!
 	const POST_TYPE = 'ckan-local-group';
 	const FIELD_PREFIX = '_ckan_local_group_';
 
+	/**
+	 * Constructor of this class.
+	 */
 	public function __construct() {
 		$this->register_post_type();
 		add_action( 'cmb2_init', array( $this, 'define_fields' ) );
@@ -14,6 +25,11 @@ class Ckan_Backend_Local_Group {
 		$ckan_backend_sync_local_group = new Ckan_Backend_Sync_Local_Group( self::POST_TYPE, self::FIELD_PREFIX );
 	}
 
+	/**
+	 * Registers the post type in WordPress
+	 *
+	 * @return void
+	 */
 	public function register_post_type() {
 		$labels = array(
 			'name'               => __( 'CKAN local Groups', 'ogdch' ),
@@ -55,13 +71,18 @@ class Ckan_Backend_Local_Group {
 		register_post_type( self::POST_TYPE, $args );
 	}
 
+	/**
+	 * Add custom fields.
+	 *
+	 * @return void
+	 */
 	public function define_fields() {
 		global $language_priority;
 
 		$cmb = new_cmb2_box( array(
 			'id'           => self::POST_TYPE . '-box',
 			'title'        => __( 'Ressource Data', 'ogdch' ),
-			'object_types' => array( self::POST_TYPE, ),
+			'object_types' => array( self::POST_TYPE ),
 			'context'      => 'normal',
 			'priority'     => 'high',
 			'show_names'   => true,
@@ -71,7 +92,7 @@ class Ckan_Backend_Local_Group {
 		$cmb->add_field( array(
 			'name' => __( 'Group Title', 'ogdch' ),
 			'type' => 'title',
-			'id'   => 'title_title'
+			'id'   => 'title_title',
 		) );
 
 		foreach ( $language_priority as $lang ) {
@@ -80,8 +101,8 @@ class Ckan_Backend_Local_Group {
 				'id'         => self::FIELD_PREFIX . 'name_' . $lang,
 				'type'       => 'text',
 				'attributes' => array(
-					'placeholder' => __( 'e.g. Awesome dataset', 'ogdch' )
-				)
+					'placeholder' => __( 'e.g. Awesome dataset', 'ogdch' ),
+				),
 			) );
 		}
 
@@ -112,13 +133,13 @@ class Ckan_Backend_Local_Group {
 		$cmb->add_field( array(
 			'name'       => __( 'Image', 'ogdch' ),
 			'id'         => self::FIELD_PREFIX . 'image',
-			'type'    => 'file'
+			'type'    => 'file',
 		) );
 
 		$cmb_side = new_cmb2_box( array(
 			'id'           => self::POST_TYPE . '-sidebox',
 			'title'        => __( 'CKAN Data', 'ogdch' ),
-			'object_types' => array( self::POST_TYPE, ),
+			'object_types' => array( self::POST_TYPE ),
 			'context'      => 'side',
 			'priority'     => 'low',
 			'show_names'   => true,
@@ -144,5 +165,4 @@ class Ckan_Backend_Local_Group {
 			),
 		) );
 	}
-
 }

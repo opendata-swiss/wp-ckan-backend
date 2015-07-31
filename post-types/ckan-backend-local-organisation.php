@@ -1,11 +1,22 @@
 <?php
+/**
+ * Post type ckan-local-org
+ *
+ * @package CKAN\Backend
+ */
 
+/**
+ * Class Ckan_Backend_Local_Organisation
+ */
 class Ckan_Backend_Local_Organisation {
 
 	// Be careful max. 20 characters allowed!
 	const POST_TYPE = 'ckan-local-org';
 	const FIELD_PREFIX = '_ckan_local_org_';
 
+	/**
+	 * Constructor of this class
+	 */
 	public function __construct() {
 		$this->register_post_type();
 		add_action( 'cmb2_init', array( $this, 'define_fields' ) );
@@ -14,6 +25,11 @@ class Ckan_Backend_Local_Organisation {
 		$ckan_backend_sync_local_organisation = new Ckan_Backend_Sync_Local_Organisation( self::POST_TYPE, self::FIELD_PREFIX );
 	}
 
+	/**
+	 * Registers a new post type
+	 *
+	 * @return void
+	 */
 	public function register_post_type() {
 		$labels = array(
 			'name'               => __( 'CKAN local Organisations', 'ogdch' ),
@@ -55,13 +71,18 @@ class Ckan_Backend_Local_Organisation {
 		register_post_type( self::POST_TYPE, $args );
 	}
 
+	/**
+	 * Define all custom fields of this post type
+	 *
+	 * @return void
+	 */
 	public function define_fields() {
 		global $language_priority;
 
 		$cmb = new_cmb2_box( array(
 			'id'           => self::POST_TYPE . '-box',
 			'title'        => __( 'Organisation Data', 'ogdch' ),
-			'object_types' => array( self::POST_TYPE, ),
+			'object_types' => array( self::POST_TYPE ),
 			'context'      => 'normal',
 			'priority'     => 'high',
 			'show_names'   => true,
@@ -71,7 +92,7 @@ class Ckan_Backend_Local_Organisation {
 		$cmb->add_field( array(
 			'name' => __( 'Organisation Title', 'ogdch' ),
 			'type' => 'title',
-			'id'   => 'title_title'
+			'id'   => 'title_title',
 		) );
 
 		foreach ( $language_priority as $lang ) {
@@ -80,8 +101,8 @@ class Ckan_Backend_Local_Organisation {
 				'id'         => self::FIELD_PREFIX . 'name_' . $lang,
 				'type'       => 'text',
 				'attributes' => array(
-					'placeholder' => __( 'e.g. Awesome dataset', 'ogdch' )
-				)
+					'placeholder' => __( 'e.g. Awesome dataset', 'ogdch' ),
+				),
 			) );
 		}
 
@@ -127,13 +148,13 @@ class Ckan_Backend_Local_Organisation {
 		$cmb->add_field( array(
 			'name' => __( 'Image', 'ogdch' ),
 			'id'   => self::FIELD_PREFIX . 'image',
-			'type' => 'file'
+			'type' => 'file',
 		) );
 
 		$cmb_side = new_cmb2_box( array(
 			'id'           => self::POST_TYPE . '-sidebox',
 			'title'        => __( 'CKAN Data', 'ogdch' ),
-			'object_types' => array( self::POST_TYPE, ),
+			'object_types' => array( self::POST_TYPE ),
 			'context'      => 'side',
 			'priority'     => 'low',
 			'show_names'   => true,
@@ -177,6 +198,4 @@ class Ckan_Backend_Local_Organisation {
 
 		return $organisations;
 	}
-
-
 }

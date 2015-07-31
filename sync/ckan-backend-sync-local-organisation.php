@@ -1,14 +1,31 @@
 <?php
+/**
+ * Sync for the organisation.
+ *
+ * @package CKAN\Backend
+ */
 
+/**
+ * Class Ckan_Backend_Sync_Local_Organisation
+ */
 class Ckan_Backend_Sync_Local_Organisation extends Ckan_Backend_Sync_Abstract {
+	/**
+	 * Hook for after-delete action.
+	 *
+	 * @param object $post The post being deleted.
+	 *
+	 * @return void
+	 */
 	protected function after_delete_action( $post ) {
-		// Select related datasets
+		// Select related datasets.
 		$args = array(
+			// @codingStandardsIgnoreStart
 			'meta_key'       => Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'organisation',
 			'meta_value'     => $post->name,
+			// @codingStandardsIgnoreEnd
 			'post_type'      => Ckan_Backend_Local_Dataset::POST_TYPE,
 			'post_status'    => 'any',
-			'posts_per_page' => - 1 // select all posts
+			'posts_per_page' => - 1, // Select all posts
 		);
 		$related_dataset_posts = get_posts( $args );
 
@@ -23,14 +40,21 @@ class Ckan_Backend_Sync_Local_Organisation extends Ckan_Backend_Sync_Abstract {
 		update_post_meta( $post->ID, $this->field_prefix . 'parent', '' );
 	}
 
+	/**
+	 * This method should return an array with the updated data
+	 *
+	 * @param object $post The post from WordPress.
+	 *
+	 * @return array $data Updated data to send
+	 */
 	protected function get_update_data( $post ) {
-		// Gernerate slug of organisation. If no title is entered use an uniqid
-		if ( $_POST[ $this->field_prefix . 'name' ] != '' ) {
+		// Generate slug of organisation. If no title is entered use an uniqid
+		if ( $_POST[ $this->field_prefix . 'name' ] !== '' ) {
 			$title = $_POST[ $this->field_prefix . 'name' ];
 		} else {
 			$title = $_POST['post_title'];
 
-			if ( $title === '' ) {
+			if ( '' === $title ) {
 				$title = uniqid();
 			}
 		}
@@ -44,11 +68,11 @@ class Ckan_Backend_Sync_Local_Organisation extends Ckan_Backend_Sync_Abstract {
 			'state'       => 'active',
 		);
 
-		if ( $_POST[ $this->field_prefix . 'parent' ] != '' ) {
+		if ( $_POST[ $this->field_prefix . 'parent' ] !== '' ) {
 			$data['groups'] = array( array( 'name' => $_POST[ $this->field_prefix . 'parent' ] ) );
 		}
 
-		if ( isset( $_POST[ $this->field_prefix . 'reference' ] ) && $_POST[ $this->field_prefix . 'reference' ] != '' ) {
+		if ( isset( $_POST[ $this->field_prefix . 'reference' ] ) && $_POST[ $this->field_prefix . 'reference' ] !== '' ) {
 			$data['id'] = $_POST[ $this->field_prefix . 'reference' ];
 		}
 

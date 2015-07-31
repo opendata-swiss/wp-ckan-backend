@@ -1,11 +1,22 @@
 <?php
+/**
+ * Post type ckan-local-dataset
+ *
+ * @package CKAN\Backend
+ */
 
+/**
+ * Class Ckan_Backend_Local_Dataset
+ */
 class Ckan_Backend_Local_Dataset {
 
 	// Be careful max. 20 characters allowed!
 	const POST_TYPE = 'ckan-local-dataset';
 	const FIELD_PREFIX = '_ckan_local_dataset_';
 
+	/**
+	 * Constructor
+	 */
 	public function __construct() {
 		$this->register_post_type();
 		add_action( 'cmb2_init', array( $this, 'define_fields' ) );
@@ -14,6 +25,16 @@ class Ckan_Backend_Local_Dataset {
 		$ckan_backend_sync_local_dataset = new Ckan_Backend_Sync_Local_Dataset( self::POST_TYPE, self::FIELD_PREFIX );
 	}
 
+	/**
+	 * Shows an error message if the dataset is disbaled
+	 *
+	 * This function is a callback function for CMB2
+	 *
+	 * @param array  $field_args Array of field arguments.
+	 * @param object $field      CMB field.
+	 *
+	 * @return void
+	 */
 	public function show_message_if_disabled( $field_args, $field ) {
 		if ( isset( $_GET['post'] ) ) {
 			$post_id = $_GET['post'];
@@ -23,11 +44,18 @@ class Ckan_Backend_Local_Dataset {
 
 		// see if dataset is disabled
 		$value = get_post_meta( $post_id, self::FIELD_PREFIX . 'disabled', true );
-		if ( $value == 'on' ) {
-			echo '<div class="error"><p>' . __( 'This dataset is disabled. Please contact an adimistrator if this seems to be wrong.', 'ogdch' ) . '</p></div>';
+		if ( 'on' === $value ) {
+			// @codingStandardsIgnoreStart
+			echo '<div class="error"><p>' . __( 'This dataset is disabled. Please contact an administrator if this seems to be wrong.', 'ogdch' ) . '</p></div>';
+			// @codingStandardsIgnoreEnd
 		}
 	}
 
+	/**
+	 * Registers the post type.
+	 *
+	 * @return void
+	 */
 	public function register_post_type() {
 		$labels = array(
 			'name'               => __( 'CKAN local Datasets', 'ogdch' ),
@@ -87,6 +115,11 @@ class Ckan_Backend_Local_Dataset {
 		register_post_type( self::POST_TYPE, $args );
 	}
 
+	/**
+	 * Define the custom fields of this post type
+	 *
+	 * @return void
+	 */
 	public function define_fields() {
 		global $language_priority;
 
@@ -94,7 +127,7 @@ class Ckan_Backend_Local_Dataset {
 		$cmb = new_cmb2_box( array(
 			'id'           => self::POST_TYPE . '-box',
 			'title'        => __( 'Ressource Data', 'ogdch' ),
-			'object_types' => array( self::POST_TYPE, ),
+			'object_types' => array( self::POST_TYPE ),
 			'context'      => 'normal',
 			'priority'     => 'high',
 			'show_names'   => true,
@@ -104,7 +137,7 @@ class Ckan_Backend_Local_Dataset {
 		$cmb->add_field( array(
 			'name' => __( 'Dataset Title', 'ogdch' ),
 			'type' => 'title',
-			'id'   => 'title_title'
+			'id'   => 'title_title',
 		) );
 
 		foreach ( $language_priority as $lang ) {
@@ -113,8 +146,8 @@ class Ckan_Backend_Local_Dataset {
 				'id'         => self::FIELD_PREFIX . 'name_' . $lang,
 				'type'       => 'text',
 				'attributes' => array(
-					'placeholder' => __( 'e.g. Awesome dataset', 'ogdch' )
-				)
+					'placeholder' => __( 'e.g. Awesome dataset', 'ogdch' ),
+				),
 			) );
 		}
 
@@ -156,16 +189,15 @@ class Ckan_Backend_Local_Dataset {
 			'id'         => self::FIELD_PREFIX . 'version',
 			'type'       => 'text',
 			'attributes' => array(
-				'placeholder' => '1.0'
-			)
+				'placeholder' => '1.0',
+			),
 		) );
-
 
 		/* Author */
 		$cmb->add_field( array(
 			'name' => __( 'Dataset Author', 'ogdch' ),
 			'type' => 'title',
-			'id'   => 'author_title'
+			'id'   => 'author_title',
 		) );
 
 		$cmb->add_field( array(
@@ -174,7 +206,7 @@ class Ckan_Backend_Local_Dataset {
 			'type'       => 'text',
 			'attributes' => array(
 				'placeholder' => __( 'Hans Musterman', 'ogdch' ),
-			)
+			),
 		) );
 
 		$cmb->add_field( array(
@@ -183,14 +215,14 @@ class Ckan_Backend_Local_Dataset {
 			'type'       => 'text',
 			'attributes' => array(
 				'placeholder' => __( 'hans@musterman.ch', 'ogdch' ),
-			)
+			),
 		) );
 
 		/* Maintainer */
 		$cmb->add_field( array(
 			'name' => __( 'Dataset Maintainer', 'ogdch' ),
 			'type' => 'title',
-			'id'   => 'maintainer_title'
+			'id'   => 'maintainer_title',
 		) );
 
 		$cmb->add_field( array(
@@ -199,7 +231,7 @@ class Ckan_Backend_Local_Dataset {
 			'type'       => 'text',
 			'attributes' => array(
 				'placeholder' => __( 'Peter Müller', 'ogdch' ),
-			)
+			),
 		) );
 
 		$cmb->add_field( array(
@@ -208,7 +240,7 @@ class Ckan_Backend_Local_Dataset {
 			'type'       => 'text',
 			'attributes' => array(
 				'placeholder' => __( 'peter@mueller.ch', 'ogdch' ),
-			)
+			),
 		) );
 
 		/* Organisation */
@@ -245,7 +277,7 @@ class Ckan_Backend_Local_Dataset {
 		$cmb->add_field( array(
 			'name' => __( 'Resources', 'ogdch' ),
 			'type' => 'title',
-			'id'   => 'resource_title'
+			'id'   => 'resource_title',
 		) );
 
 		$resources_group = $cmb->add_field( array(
@@ -277,7 +309,6 @@ class Ckan_Backend_Local_Dataset {
 				'type' => 'text',
 			) );
 		}
-
 
 		/* Custom Fields */
 		$cmb->add_field( array(
@@ -312,7 +343,7 @@ class Ckan_Backend_Local_Dataset {
 		$cmb_side_disabled = new_cmb2_box( array(
 			'id'           => self::POST_TYPE . '-sidebox-disabled',
 			'title'        => __( 'Disable Dataset', 'ogdch' ),
-			'object_types' => array( self::POST_TYPE, ),
+			'object_types' => array( self::POST_TYPE ),
 			'context'      => 'side',
 			'priority'     => 'low',
 			'show_names'   => true,
@@ -326,7 +357,7 @@ class Ckan_Backend_Local_Dataset {
 		);
 		if ( ! current_user_can( 'disable_datasets' ) ) {
 			$disabled_checkbox_args['attributes'] = array(
-				'disabled' => 'disabled'
+				'disabled' => 'disabled',
 			);
 		}
 		$cmb_side_disabled->add_field( $disabled_checkbox_args );
@@ -335,7 +366,7 @@ class Ckan_Backend_Local_Dataset {
 		$cmb_side_ckan = new_cmb2_box( array(
 			'id'           => self::POST_TYPE . '-sidebox-ckan',
 			'title'        => __( 'CKAN Data', 'ogdch' ),
-			'object_types' => array( self::POST_TYPE, ),
+			'object_types' => array( self::POST_TYPE ),
 			'context'      => 'side',
 			'priority'     => 'low',
 			'show_names'   => true,
@@ -365,7 +396,7 @@ class Ckan_Backend_Local_Dataset {
 		$cmb_side_other = new_cmb2_box( array(
 			'id'           => self::POST_TYPE . '-sidebox-other',
 			'title'        => __( 'Other Data', 'ogdch' ),
-			'object_types' => array( self::POST_TYPE, ),
+			'object_types' => array( self::POST_TYPE ),
 			'context'      => 'side',
 			'priority'     => 'low',
 			'show_names'   => true,
@@ -376,6 +407,5 @@ class Ckan_Backend_Local_Dataset {
 			'id'   => self::FIELD_PREFIX . 'masterid',
 			'type' => 'text',
 		) );
-
 	}
 }
