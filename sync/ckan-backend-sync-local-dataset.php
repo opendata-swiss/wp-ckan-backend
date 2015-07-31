@@ -86,7 +86,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 				$ckan_resources[] = array(
 					'url'         => $resource['download_url'],
 					'name'        => $resource['title_de'], // TODO: use all language here
-					'description' => $resource['description_de'] // TODO: use all language here
+					'description' => $resource['description_de'], // TODO: use all language here
 				);
 			}
 		}
@@ -97,7 +97,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	/**
 	 * Create CKAN friendly array of all selected groups
 	 *
-	 * @param array $selected_groups IDs of selected groups
+	 * @param array $selected_groups IDs of selected groups.
 	 *
 	 * @return array CKAN friendly array with all selected groups
 	 */
@@ -107,7 +107,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		if ( is_array( $selected_groups ) ) {
 			foreach ( $selected_groups as $key => $group_slug ) {
 				$ckan_groups[] = array(
-					'name' => $group_slug
+					'name' => $group_slug,
 				);
 			}
 		}
@@ -115,13 +115,20 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		return $ckan_groups;
 	}
 
+	/**
+	 * Create CKAN fiendly array of all tags
+	 *
+	 * @param string $tags Comma-seperated tags.
+	 *
+	 * @return array
+	 */
 	protected function prepare_tags( $tags ) {
 		$ckan_tags = array();
 
 		$tags_array = explode( ', ', $tags );
 		foreach ( $tags_array as $tag ) {
 			$ckan_tags[] = array(
-				'name' => $tag
+				'name' => $tag,
 			);
 		}
 

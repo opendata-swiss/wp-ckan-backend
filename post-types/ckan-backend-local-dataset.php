@@ -30,7 +30,7 @@ class Ckan_Backend_Local_Dataset {
 	 *
 	 * This function is a callback function for CMB2
 	 *
-	 * @param array $field_args Array of field arguments.
+	 * @param array  $field_args Array of field arguments.
 	 * @param object $field CMB field.
 	 *
 	 * @return void
@@ -44,7 +44,7 @@ class Ckan_Backend_Local_Dataset {
 
 		// see if dataset is disabled
 		$value = get_post_meta( $post_id, self::FIELD_PREFIX . 'disabled', true );
-		if ( $value == 'on' ) {
+		if ( 'on' === $value ) {
 			// @codingStandardsIgnoreStart
 			echo '<div class="error"><p>' . __( 'This dataset is disabled. Please contact an adimistrator if this seems to be wrong.', 'ogdch' ) . '</p></div>';
 			// @codingStandardsIgnoreEnd
@@ -128,7 +128,7 @@ class Ckan_Backend_Local_Dataset {
 		$cmb = new_cmb2_box( array(
 			'id'           => self::POST_TYPE . '-box',
 			'title'        => __( 'Ressource Data', 'ogdch' ),
-			'object_types' => array( self::POST_TYPE, ),
+			'object_types' => array( self::POST_TYPE ),
 			'context'      => 'normal',
 			'priority'     => 'high',
 			'show_names'   => true,
@@ -162,7 +162,7 @@ class Ckan_Backend_Local_Dataset {
 				'type'       => 'text',
 				'attributes' => array(
 					'placeholder' => __( 'e.g. Awesome dataset', 'ogdch' ),
-				)
+				),
 			) );
 
 			/* Description */
@@ -255,7 +255,6 @@ class Ckan_Backend_Local_Dataset {
 				'placeholder' => 'http://example.com/',
 			),
 		) );
-
 
 		$cmb->add_field( array(
 			'name' => __( 'Relation', 'ogdch' ),
@@ -436,7 +435,7 @@ class Ckan_Backend_Local_Dataset {
 		$cmb_side_disabled = new_cmb2_box( array(
 			'id'           => self::POST_TYPE . '-sidebox-disabled',
 			'title'        => __( 'Disable Dataset', 'ogdch' ),
-			'object_types' => array( self::POST_TYPE, ),
+			'object_types' => array( self::POST_TYPE ),
 			'context'      => 'side',
 			'priority'     => 'low',
 			'show_names'   => true,
@@ -459,7 +458,7 @@ class Ckan_Backend_Local_Dataset {
 		$cmb_side_ckan = new_cmb2_box( array(
 			'id'           => self::POST_TYPE . '-sidebox-ckan',
 			'title'        => __( 'CKAN Data', 'ogdch' ),
-			'object_types' => array( self::POST_TYPE, ),
+			'object_types' => array( self::POST_TYPE ),
 			'context'      => 'side',
 			'priority'     => 'low',
 			'show_names'   => true,
@@ -489,7 +488,7 @@ class Ckan_Backend_Local_Dataset {
 		$cmb_side_other = new_cmb2_box( array(
 			'id'           => self::POST_TYPE . '-sidebox-other',
 			'title'        => __( 'Other Data', 'ogdch' ),
-			'object_types' => array( self::POST_TYPE, ),
+			'object_types' => array( self::POST_TYPE ),
 			'context'      => 'side',
 			'priority'     => 'low',
 			'show_names'   => true,
