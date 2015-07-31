@@ -20,6 +20,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		$resources = $this->prepare_resources( $_POST[ $this->field_prefix . 'distributions' ] );
 		$groups    = $this->prepare_selected_groups( $_POST[ $this->field_prefix . 'themes' ] );
 		$tags      = $this->prepare_tags( wp_get_object_terms( $post->ID, 'post_tag' ) );
+		$titles    = $this->prepare_multilingual_field( 'title' );
 
 		// Generate slug of dataset. If no title is entered use an uniqid
 		if ( $_POST[ $this->field_prefix . 'title_en' ] !== '' ) {
@@ -44,7 +45,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 
 		$data = array(
 			'name'             => $slug,
-			'title'            => $_POST[ $this->field_prefix . 'title_de' ], // TODO: use all language here
+			'title'            => $titles, //$_POST[ $this->field_prefix . 'title_de' ], // TODO: use all language here
 			'maintainer'       => $_POST[ $this->field_prefix . 'contact_points' ][0]['name'],
 			'maintainer_email' => $_POST[ $this->field_prefix . 'contact_points' ][0]['email'],
 			'notes'            => $_POST[ $this->field_prefix . 'description_de' ], // TODO: use all language here
@@ -132,5 +133,15 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		}
 
 		return $ckan_tags;
+	}
+
+	protected function prepare_multilingual_field( $field_name ) {
+		global $language_priority;
+
+		$multilingual_field = array();
+		foreach ( $language_priority as $lang ) {
+			$multilingual_field[ $lang ] = $_POST[ $this->field_prefix . $field_name . '_' . $lang ];
+		}
+		return $multilingual_field;
 	}
 }
