@@ -42,7 +42,7 @@ class Ckan_Backend_Helper {
 	 *
 	 * @param array $response The JSON-decoded response from the CKAN API.
 	 *
-	 * @return bool An Array with error messages if there where any.
+	 * @return array An Array with error messages if there where any.
 	 */
 	public static function check_response_for_errors( $response ) {
 		$errors = array();
@@ -174,7 +174,7 @@ class Ckan_Backend_Helper {
 	/**
 	 * Displays all admin notices
 	 *
-	 * @param array|bool $errors Array of errors.
+	 * @param array $errors Array of errors.
 	 *
 	 * @return string
 	 */
