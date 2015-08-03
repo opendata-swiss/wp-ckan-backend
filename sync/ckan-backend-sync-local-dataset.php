@@ -84,8 +84,8 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		// Check if resources are added. If yes generate CKAN friendly array.
 		if ( '' !== $resources[0]['download_url'] ) {
 			foreach ( $resources as $resource ) {
-				$titles       = $this->prepare_multilingual_field( $resource, 'title' );
-				$descriptions = $this->prepare_multilingual_field( $resource, 'description' );
+				$titles           = $this->prepare_multilingual_field( $resource, 'title' );
+				$descriptions     = $this->prepare_multilingual_field( $resource, 'description' );
 				$ckan_resources[] = array(
 					'url'         => $resource['download_url'],
 					'name'        => $titles,
@@ -140,7 +140,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	/**
 	 * Returns a CKAN friendly array for multilingual fields
 	 *
-	 * @param array $base_array Array with the raw values. Format: array( 'field_de', 'field_en', ... ).
+	 * @param array  $base_array Array with the raw values. Format: array( 'field_de', 'field_en', ... ).
 	 * @param string $field_name Name of the field.
 	 *
 	 * @return array
@@ -152,6 +152,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		foreach ( $language_priority as $lang ) {
 			$multilingual_field[ $lang ] = $base_array[ $field_name . '_' . $lang ];
 		}
+
 		return $multilingual_field;
 	}
 }
