@@ -119,7 +119,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	}
 
 	/**
-	 * Create CKAN fiendly array of all tags
+	 * Create CKAN friendly array of all tags
 	 *
 	 * @param string $tags Comma-seperated tags.
 	 *
@@ -137,6 +137,14 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		return $ckan_tags;
 	}
 
+	/**
+	 * Returns a CKAN friendly array for multilingual fields
+	 *
+	 * @param array $base_array Array with the raw values. Format: array( 'field_de', 'field_en', ... ).
+	 * @param string $field_name Name of the field.
+	 *
+	 * @return array
+	 */
 	protected function prepare_multilingual_field( $base_array, $field_name ) {
 		global $language_priority;
 
