@@ -10,13 +10,13 @@
  */
 class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	/**
-	 * This method should return an array with the updated data
+	 * This method should return an array the ckan data
 	 *
 	 * @param object $post The post from WordPress.
 	 *
-	 * @return array $data Updated data to send
+	 * @return array $data Data to send
 	 */
-	protected function get_update_data( $post ) {
+	protected function get_ckan_data( $post ) {
 		$resources    = $this->prepare_resources( $_POST[ $this->field_prefix . 'distributions' ] );
 		$groups       = $this->prepare_selected_groups( $_POST[ $this->field_prefix . 'themes' ] );
 		$tags         = $this->prepare_tags( wp_get_object_terms( $post->ID, 'post_tag' ) );
