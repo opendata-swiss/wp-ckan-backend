@@ -181,9 +181,6 @@ class Ckan_Backend_Local_Dataset_Import {
 
 		// simulate $_POST data to make post_save hook work correctly
 		$_POST = array_merge( $_POST, $dataset->to_array() );
-		// add native WordPress $_POST variables
-		$_POST['tax_input']['post_tag'] = implode( ', ', $dataset->get_keywords() );
-		$_POST['post_title']            = $dataset->get_title( 'en' );
 
 		$dataset_search_args = array(
 			// @codingStandardsIgnoreStart
@@ -220,13 +217,13 @@ class Ckan_Backend_Local_Dataset_Import {
 		$dataset_args = array(
 			'ID'         => $dataset_id,
 			'post_title' => $dataset->get_title( 'en' ),
+			'tags_input' => $dataset->get_keywords(),
 		);
 
 		wp_update_post( $dataset_args );
 		foreach ( $dataset->to_array() as $field => $value ) {
 			update_post_meta( $dataset_id, $field, $value );
 		}
-		wp_set_object_terms( $dataset_id, $dataset->get_keywords(), 'post_tag' );
 	}
 
 	/**
@@ -242,13 +239,13 @@ class Ckan_Backend_Local_Dataset_Import {
 			'post_status'  => 'publish',
 			'post_type'    => Ckan_Backend_Local_Dataset::POST_TYPE,
 			'post_excerpt' => '',
+			'tags_input' => $dataset->get_keywords(),
 		);
 
 		$dataset_id = wp_insert_post( $dataset_args );
 		foreach ( $dataset->to_array() as $field => $value ) {
 			add_post_meta( $dataset_id, $field, $value, true );
 		}
-		wp_set_object_terms( $dataset_id, $dataset->get_keywords(), 'post_tag' );
 
 		return $dataset_id;
 	}

@@ -19,13 +19,13 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	protected function get_update_data( $post ) {
 		$resources = $this->prepare_resources( $_POST[ $this->field_prefix . 'distributions' ] );
 		$groups    = $this->prepare_selected_groups( $_POST[ $this->field_prefix . 'themes' ] );
-		$tags      = $this->prepare_tags( $_POST['tax_input']['post_tag'] );
+		$tags      = $this->prepare_tags( wp_get_object_terms( $post->ID, 'post_tag' ) );
 
 		// Generate slug of dataset. If no title is entered use an uniqid
-		if ( $_POST[ $this->field_prefix . 'name' ] !== '' ) {
+		if ( $_POST[ $this->field_prefix . 'title_en' ] !== '' ) {
 			$slug = $_POST[ $this->field_prefix . 'title_en' ];
 		} else {
-			$slug = $_POST['post_title'];
+			$slug = $post->post_title;
 
 			if ( '' === $slug ) {
 				$slug = uniqid();
@@ -125,10 +125,9 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	protected function prepare_tags( $tags ) {
 		$ckan_tags = array();
 
-		$tags_array = explode( ', ', $tags );
-		foreach ( $tags_array as $tag ) {
+		foreach ( $tags as $tag ) {
 			$ckan_tags[] = array(
-				'name' => $tag,
+				'name' => $tag->name,
 			);
 		}
 
