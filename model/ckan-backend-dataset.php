@@ -66,13 +66,6 @@ class Ckan_Backend_Dataset_Model {
 	protected $themes = array();
 
 	/**
-	 * Languages
-	 *
-	 * @var string[]
-	 */
-	protected $languages = array();
-
-	/**
 	 * Keywords
 	 *
 	 * @var string[]
@@ -316,35 +309,6 @@ class Ckan_Backend_Dataset_Model {
 	public function remove_theme( $theme ) {
 		if ( ( $key = array_search( $theme, $this->get_themes() ) ) !== false ) {
 			unset( $this->themes[ $key ] );
-		}
-	}
-
-	/**
-	 * Returns all languages
-	 *
-	 * @return string[]
-	 */
-	public function get_languages() {
-		return $this->languages;
-	}
-
-	/**
-	 * Adds language
-	 *
-	 * @param string $language Language to add.
-	 */
-	public function add_language( $language ) {
-		$this->languages[] = $language;
-	}
-
-	/**
-	 * Removes language
-	 *
-	 * @param string $language Language to remove.
-	 */
-	public function remove_language( $language ) {
-		if ( ( $key = array_search( $language, $this->get_languages() ) ) !== false ) {
-			unset( $this->languages[ $key ] );
 		}
 	}
 
@@ -627,7 +591,6 @@ class Ckan_Backend_Dataset_Model {
 			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'modified'          => $this->get_modified(),
 			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'publisher'          => $this->get_publisher(),
 			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'themes'            => $this->get_themes(),
-			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'languages'         => $this->get_languages(),
 			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'keywords'          => $this->get_keywords(),
 			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'landing_page'      => $this->get_landing_page(),
 			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'spatial'           => $this->get_spatial(),

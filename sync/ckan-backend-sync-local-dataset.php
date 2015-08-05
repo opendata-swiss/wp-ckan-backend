@@ -37,7 +37,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 
 		/**
 		 * TODO
-		 * - if distribution[languages] not exists use languages
+		 * - calculate languages from all distribution[languages]
 		 * - if distribution[access_urls] not exists use distribution[access_url]
 		 * - if distribution[download_urls] not exists use distribution[download_url]
 		 */

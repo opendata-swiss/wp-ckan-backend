@@ -290,10 +290,6 @@ class Ckan_Backend_Local_Dataset_Import {
 		foreach ( $themes as $theme ) {
 			$dataset->add_theme( (string) $theme );
 		}
-		$languages = $xml->xpath( '//dcat:Dataset/dct:language' );
-		foreach ( $languages as $language ) {
-			$dataset->add_language( (string) $language );
-		}
 		$relations = $xml->xpath( '//dcat:Dataset/dct:relation/rdf:Description' );
 		foreach ( $relations as $relation_xml ) {
 			$dataset->add_relation( $this->get_relation_object( $relation_xml ) );
@@ -407,6 +403,10 @@ class Ckan_Backend_Local_Dataset_Import {
 		foreach ( $language_priority as $lang ) {
 			$distribution->set_title( (string) $this->get_single_element_from_xpath( $xml, 'dct:title[@xml:lang="' . $lang . '"]' ), $lang );
 			$distribution->set_description( (string) $this->get_single_element_from_xpath( $xml, 'dct:description[@xml:lang="' . $lang . '"]' ), $lang );
+		}
+		$languages = $xml->xpath( 'dct:language' );
+		foreach ( $languages as $language ) {
+			$distribution->add_language( (string) $language );
 		}
 		$distribution->set_issued( (string) $this->get_single_element_from_xpath( $xml, 'dct:issued' ) );
 		$distribution->set_modified( (string) $this->get_single_element_from_xpath( $xml, 'dct:modified' ) );

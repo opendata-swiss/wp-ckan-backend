@@ -135,19 +135,6 @@ class Ckan_Backend_Local_Dataset {
 			'show_names'   => true,
 		) );
 
-		$cmb->add_field( array(
-			'name'              => __( 'Language', 'ogdch' ),
-			'id'                => self::FIELD_PREFIX . 'languages',
-			'type'              => 'multicheck_inline',
-			'select_all_button' => false,
-			'options'           => array(
-				'en' => __( 'English', 'ogdch' ),
-				'de' => __( 'German', 'ogdch' ),
-				'fr' => __( 'French', 'ogdch' ),
-				'it' => __( 'Italian', 'ogdch' ),
-			),
-		) );
-
 		/* Title */
 		$cmb->add_field( array(
 			'name' => __( 'Dataset Information', 'ogdch' ),
@@ -377,6 +364,19 @@ class Ckan_Backend_Local_Dataset {
 		}
 
 		$cmb->add_group_field( $distributions_group, array(
+			'name'              => __( 'Language', 'ogdch' ),
+			'id'                => 'languages',
+			'type'              => 'multicheck_inline',
+			'select_all_button' => false,
+			'options'           => array(
+				'en' => __( 'English', 'ogdch' ),
+				'de' => __( 'German', 'ogdch' ),
+				'fr' => __( 'French', 'ogdch' ),
+				'it' => __( 'Italian', 'ogdch' ),
+			),
+		) );
+
+		$cmb->add_group_field( $distributions_group, array(
 			'name' => __( 'Issued', 'ogdch' ),
 			'id'   => 'issued',
 			'desc' => __( 'Date and time when dataset was issued.', 'ogdch' ),
@@ -391,33 +391,33 @@ class Ckan_Backend_Local_Dataset {
 		) );
 
 		$cmb->add_group_field( $distributions_group, array(
-			'name'    => __( 'Quellenangabe', 'ogdch' ),
+			'name'    => __( 'Reference', 'ogdch' ),
 			'id'      => 'right_reference',
 			'type'    => 'radio',
 			'options' => array(
-				'reference_required'     => __( 'Erforderlich', 'ogdch' ),
-				'reference_not-required' => __( 'Nicht erforderlich', 'ogdch' ),
+				'reference_required'     => __( 'Required', 'ogdch' ),
+				'reference_not-required' => __( 'Nor required', 'ogdch' ),
 			),
 		) );
 
 		$cmb->add_group_field( $distributions_group, array(
-			'name'    => __( 'Nicht kommerzielle Nutzung', 'ogdch' ),
+			'name'    => __( 'Non-commercial usage', 'ogdch' ),
 			'id'      => 'right_non_commercial',
 			'type'    => 'radio',
 			'options' => array(
-				'non-commercial_allowed'     => __( 'Erlaubt', 'ogdch' ),
-				'non-commercial_not-allowed' => __( 'Nicht erlaubt', 'ogdch' ),
+				'non-commercial_allowed'     => __( 'Allowed', 'ogdch' ),
+				'non-commercial_not-allowed' => __( 'Not allowed', 'ogdch' ),
 			),
 		) );
 
 		$cmb->add_group_field( $distributions_group, array(
-			'name'    => __( 'Kommerzielle Nutzung', 'ogdch' ),
+			'name'    => __( 'Commercial usage', 'ogdch' ),
 			'id'      => 'right_commercial',
 			'type'    => 'radio',
 			'options' => array(
-				'commercial_allowed'            => __( 'Erlaubt', 'ogdch' ),
-				'commercial_not-allowed'        => __( 'Nicht erlaubt', 'ogdch' ),
-				'commercial_with-approval-only' => __( 'Nur mit Bewilligung', 'ogdch' ),
+				'commercial_allowed'            => __( 'Allowed', 'ogdch' ),
+				'commercial_not-allowed'        => __( 'Not allowed', 'ogdch' ),
+				'commercial_with-approval-only' => __( 'With approval only', 'ogdch' ),
 			),
 		) );
 
