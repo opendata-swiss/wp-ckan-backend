@@ -3,4 +3,8 @@
 .post-type-ckan-local-org .submitbox #visibility {
   display: none; }
 
+#cmb2-metabox-ckan-local-dataset-sidebox-disabled .cmb2-metabox-description {
+  color: #444;
+  font-style: normal; }
+
 /*# sourceMappingURL=base.css.map */
