@@ -93,53 +93,45 @@ class Ckan_Backend_Local_Dataset_Import {
 	 * @param array $file Array with the information of the uploaded file.
 	 *
 	 * @return bool|int|WP_Error
-	 *
-	 * @throws RuntimeException If the file cannot be processed.
 	 */
 	public function handle_file_import( $file ) {
-		try {
-			// Undefined | Multiple Files | $_FILES Corruption Attack
-			// If this request falls under any of them, treat it invalid.
-			if (
-				! isset( $file['error'] ) ||
-				is_array( $file['error'] )
-			) {
-				throw new RuntimeException( 'Invalid parameters.' );
-			}
-
-			// Check $file['error'] value.
-			switch ( $file['error'] ) {
-				case UPLOAD_ERR_OK:
-					break;
-				case UPLOAD_ERR_NO_FILE:
-					throw new RuntimeException( 'No file sent.' );
-				case UPLOAD_ERR_INI_SIZE:
-				case UPLOAD_ERR_FORM_SIZE:
-					throw new RuntimeException( 'Exceeded filesize limit.' );
-				default:
-					throw new RuntimeException( 'Unknown errors.' );
-			}
-
-			$xml = simplexml_load_file( $file['tmp_name'] );
-			if ( ! is_object( $xml ) ) {
-				throw new RuntimeException( 'Uploaded file is not a vaild XML file' );
-			}
-			$xml->registerXPathNamespace( 'dcat', 'http://www.w3.org/ns/dcat#' );
-			$xml->registerXPathNamespace( 'dct', 'http://purl.org/dc/terms/' );
-			$xml->registerXPathNamespace( 'dc', 'http://purl.org/dc/elements/1.1/' );
-			$xml->registerXPathNamespace( 'foaf', 'http://xmlns.com/foaf/0.1/' );
-			$xml->registerXPathNamespace( 'rdfs', 'http://www.w3.org/2000/01/rdf-schema#' );
-			$xml->registerXPathNamespace( 'rdf', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#' );
-			$xml->registerXPathNamespace( 'vcard', 'http://www.w3.org/2006/vcard/ns#' );
-			$xml->registerXPathNamespace( 'odrs', 'http://schema.theodi.org/odrs#' );
-			$xml->registerXPathNamespace( 'schema', 'http://schema.org/' );
-
-			return $this->import_dataset( $xml );
-		} catch ( RuntimeException $e ) {
-			esc_html_e( $e->getMessage() );
+		// Undefined | Multiple Files | $_FILES Corruption Attack
+		// If this request falls under any of them, treat it invalid.
+		if (
+			! isset( $file['error'] ) ||
+			is_array( $file['error'] )
+		) {
+			return new WP_Error( 'invalid_parameters', 'Invalid parameters.' );
 		}
 
-		return false;
+		// Check $file['error'] value.
+		switch ( $file['error'] ) {
+			case UPLOAD_ERR_OK:
+				break;
+			case UPLOAD_ERR_NO_FILE:
+				return new WP_Error( 'missing_file', 'Missing import file.' );
+			case UPLOAD_ERR_INI_SIZE:
+			case UPLOAD_ERR_FORM_SIZE:
+				return new WP_Error( 'exceeded_filesize', 'Exceeded filesize limit.' );
+			default:
+				return new WP_Error( 'unknown_errors', 'Unknown errors.' );
+		}
+
+		$xml = simplexml_load_file( $file['tmp_name'] );
+		if ( ! is_object( $xml ) ) {
+			return new WP_Error( 'invalid_xml', 'Uploaded file is not a vaild XML file.' );
+		}
+		$xml->registerXPathNamespace( 'dcat', 'http://www.w3.org/ns/dcat#' );
+		$xml->registerXPathNamespace( 'dct', 'http://purl.org/dc/terms/' );
+		$xml->registerXPathNamespace( 'dc', 'http://purl.org/dc/elements/1.1/' );
+		$xml->registerXPathNamespace( 'foaf', 'http://xmlns.com/foaf/0.1/' );
+		$xml->registerXPathNamespace( 'rdfs', 'http://www.w3.org/2000/01/rdf-schema#' );
+		$xml->registerXPathNamespace( 'rdf', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#' );
+		$xml->registerXPathNamespace( 'vcard', 'http://www.w3.org/2006/vcard/ns#' );
+		$xml->registerXPathNamespace( 'odrs', 'http://schema.theodi.org/odrs#' );
+		$xml->registerXPathNamespace( 'schema', 'http://schema.org/' );
+
+		return $this->import_dataset( $xml );
 	}
 
 	/**
