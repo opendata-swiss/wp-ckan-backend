@@ -205,7 +205,7 @@ class Ckan_Backend_Local_Dataset_Import {
 	/**
 	 * Updates an existing dataset
 	 *
-	 * @param int                        $dataset_id ID of dataset to update.
+	 * @param int $dataset_id ID of dataset to update.
 	 * @param Ckan_Backend_Dataset_Model $dataset Dataset instance with values.
 	 */
 	protected function update( $dataset_id, $dataset ) {
@@ -213,15 +213,21 @@ class Ckan_Backend_Local_Dataset_Import {
 		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'reference' ] = get_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'reference', true );
 
 		$dataset_args = array(
-			'ID'         => $dataset_id,
-			'post_title' => $dataset->get_title( 'en' ),
-			'tags_input' => $dataset->get_keywords(),
-			'post_date'  => date( 'Y-m-d H:i:s', strtotime( $dataset->get_issued() ) ),
+			'ID'            => $dataset_id,
+			'post_title'    => $dataset->get_title( 'en' ),
+			'tags_input'    => $dataset->get_keywords(),
+			'post_date'     => date( 'Y-m-d H:i:s', strtotime( $dataset->get_issued() ) ),
+			// We also have to set post_date_gmt to get post_status update to work correctly
+			'post_date_gmt' => gmdate( 'Y-m-d H:i:s', strtotime( $dataset->get_issued() ) ),
 		);
 		// set post status to future if needed
-		if( strtotime( $dataset->get_issued() ) > time() ) {
-			if ( get_post_status ( $dataset_id ) == 'publish' ) {
+		if ( strtotime( $dataset->get_issued() ) > time() ) {
+			if ( get_post_status( $dataset_id ) == 'publish' ) {
 				$dataset_args['post_status'] = 'future';
+			}
+		} else {
+			if ( get_post_status( $dataset_id ) == 'future' ) {
+				$dataset_args['post_status'] = 'publish';
 			}
 		}
 
@@ -242,9 +248,10 @@ class Ckan_Backend_Local_Dataset_Import {
 		$dataset_args = array(
 			'post_title'   => $dataset->get_title( 'en' ),
 			'post_status'  => ( ( strtotime( $dataset->get_issued() ) > time() ) ? 'future' : 'publish' ),
+			'post_date'    => date( 'Y-m-d H:i:s', strtotime( $dataset->get_issued() ) ),
 			'post_type'    => Ckan_Backend_Local_Dataset::POST_TYPE,
 			'post_excerpt' => '',
-			'tags_input' => $dataset->get_keywords(),
+			'tags_input'   => $dataset->get_keywords(),
 		);
 
 		$dataset_id = wp_insert_post( $dataset_args );
@@ -428,7 +435,7 @@ class Ckan_Backend_Local_Dataset_Import {
 	 * Returns a single xml element from a given xpath
 	 *
 	 * @param SimpleXMLElement $xml XML content from file.
-	 * @param String           $xpath Xpath for query.
+	 * @param String $xpath Xpath for query.
 	 *
 	 * @return SimpleXMLElement|bool
 	 */
