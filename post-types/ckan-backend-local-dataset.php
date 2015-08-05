@@ -397,7 +397,7 @@ class Ckan_Backend_Local_Dataset {
 			'options' => array(
 				'reference_required'     => __( 'Erforderlich', 'ogdch' ),
 				'reference_not-required' => __( 'Nicht erforderlich', 'ogdch' ),
-			)
+			),
 		) );
 
 		$cmb->add_group_field( $distributions_group, array(
@@ -407,7 +407,7 @@ class Ckan_Backend_Local_Dataset {
 			'options' => array(
 				'non-commercial_allowed'     => __( 'Erlaubt', 'ogdch' ),
 				'non-commercial_not-allowed' => __( 'Nicht erlaubt', 'ogdch' ),
-			)
+			),
 		) );
 
 		$cmb->add_group_field( $distributions_group, array(
@@ -418,7 +418,7 @@ class Ckan_Backend_Local_Dataset {
 				'commercial_allowed'            => __( 'Erlaubt', 'ogdch' ),
 				'commercial_not-allowed'        => __( 'Nicht erlaubt', 'ogdch' ),
 				'commercial_with-approval-only' => __( 'Nur mit Bewilligung', 'ogdch' ),
-			)
+			),
 		) );
 
 		$cmb->add_group_field( $distributions_group, array(
