@@ -16,7 +16,7 @@ class Ckan_Backend_Sync_Local_Group extends Ckan_Backend_Sync_Abstract {
 	 *
 	 * @return array $data Updated data to send
 	 */
-	protected function get_update_data( $post ) {
+	protected function get_ckan_data( $post ) {
 		// Gernerate slug of group. If no title is entered use an uniqid
 		if ( $_POST[ $this->field_prefix . 'name' ] !== '' ) {
 			$title = $_POST[ $this->field_prefix . 'name' ];

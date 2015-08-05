@@ -10,16 +10,18 @@
  */
 class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	/**
-	 * This method should return an array with the updated data
+	 * This method should return an array the ckan data
 	 *
 	 * @param object $post The post from WordPress.
 	 *
-	 * @return array $data Updated data to send
+	 * @return array $data Data to send
 	 */
-	protected function get_update_data( $post ) {
-		$resources = $this->prepare_resources( $_POST[ $this->field_prefix . 'distributions' ] );
-		$groups    = $this->prepare_selected_groups( $_POST[ $this->field_prefix . 'themes' ] );
-		$tags      = $this->prepare_tags( wp_get_object_terms( $post->ID, 'post_tag' ) );
+	protected function get_ckan_data( $post ) {
+		$resources    = $this->prepare_resources( $_POST[ $this->field_prefix . 'distributions' ] );
+		$groups       = $this->prepare_selected_groups( $_POST[ $this->field_prefix . 'themes' ] );
+		$tags         = $this->prepare_tags( wp_get_object_terms( $post->ID, 'post_tag' ) );
+		$titles       = $this->prepare_multilingual_field( $_POST, $this->field_prefix . 'title' );
+		$descriptions = $this->prepare_multilingual_field( $_POST, $this->field_prefix . 'description' );
 
 		// Generate slug of dataset. If no title is entered use an uniqid
 		if ( $_POST[ $this->field_prefix . 'title_en' ] !== '' ) {
@@ -37,17 +39,16 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		 * TODO
 		 * - if publisher not exists us publishers[0]
 		 * - if distribution[languages] not exists use languages
-		 * - use tags as keywords
 		 * - if distribution[access_urls] not exists use distribution[access_url]
 		 * - if distribution[download_urls] not exists use distribution[download_url]
 		 */
 
 		$data = array(
 			'name'             => $slug,
-			'title'            => $_POST[ $this->field_prefix . 'title_de' ], // TODO: use all language here
+			'title'            => $titles,
 			'maintainer'       => $_POST[ $this->field_prefix . 'contact_points' ][0]['name'],
 			'maintainer_email' => $_POST[ $this->field_prefix . 'contact_points' ][0]['email'],
-			'notes'            => $_POST[ $this->field_prefix . 'description_de' ], // TODO: use all language here
+			'notes'            => $descriptions,
 			'state'            => 'active',
 			'resources'        => $resources,
 			'groups'           => $groups,
@@ -83,10 +84,12 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		// Check if resources are added. If yes generate CKAN friendly array.
 		if ( '' !== $resources[0]['download_url'] ) {
 			foreach ( $resources as $resource ) {
+				$titles           = $this->prepare_multilingual_field( $resource, 'title' );
+				$descriptions     = $this->prepare_multilingual_field( $resource, 'description' );
 				$ckan_resources[] = array(
 					'url'         => $resource['download_url'],
-					'name'        => $resource['title_de'], // TODO: use all language here
-					'description' => $resource['description_de'], // TODO: use all language here
+					'name'        => $titles,
+					'description' => $descriptions,
 				);
 			}
 		}
@@ -116,7 +119,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	}
 
 	/**
-	 * Create CKAN fiendly array of all tags
+	 * Create CKAN friendly array of all tags
 	 *
 	 * @param string $tags Comma-seperated tags.
 	 *
@@ -132,5 +135,24 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		}
 
 		return $ckan_tags;
+	}
+
+	/**
+	 * Returns a CKAN friendly array for multilingual fields
+	 *
+	 * @param array  $base_array Array with the raw values. Format: array( 'field_de', 'field_en', ... ).
+	 * @param string $field_name Name of the field.
+	 *
+	 * @return array
+	 */
+	protected function prepare_multilingual_field( $base_array, $field_name ) {
+		global $language_priority;
+
+		$multilingual_field = array();
+		foreach ( $language_priority as $lang ) {
+			$multilingual_field[ $lang ] = $base_array[ $field_name . '_' . $lang ];
+		}
+
+		return $multilingual_field;
 	}
 }

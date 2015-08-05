@@ -80,7 +80,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 			$success = $this->delete_action( $post );
 		} // If action is untrash -> set CKAN dataset to active
 		elseif ( isset( $_GET ) && 'unstrash' === $_GET['action'] ) {
-			$success = $this->untrash_action( $post_id );
+			$success = $this->untrash_action( $post );
 		} // If action is delete -> delete the CKAN dataset completely
 		elseif ( isset( $_GET ) && 'delete' === $_GET['action'] ) {
 			// The trash action already set the CKAN dataset to deleted -> do nothing
@@ -93,10 +93,10 @@ abstract class Ckan_Backend_Sync_Abstract {
 			}
 
 			if ( $post->post_status === 'publish' ) {
-				$data = $this->get_update_data( $post );
+				$data = $this->get_ckan_data( $post );
 				// If post data holds reference id -> do update in CKAN
 				if ( isset( $data['id'] ) ) {
-					$success = $this->update_action( $data );
+					$success = $this->update_action( $post, $data );
 				} else {
 					// Insert new dataset
 					$success = $this->insert_action( $post, $data );
@@ -114,12 +114,12 @@ abstract class Ckan_Backend_Sync_Abstract {
 	 * Gets called when a CKAN data is untrashed.
 	 * Sets CKAN state to active.
 	 *
-	 * @param int $post_id ID of CKAN post-type.
+	 * @param object $post The post from WordPress which is untrashed.
 	 *
 	 * @return bool True when CKAN request was successful.
 	 */
-	protected function untrash_action( $post_id ) {
-		$ckan_ref = get_post_meta( $post_id, $this->field_prefix . 'reference', true );
+	protected function untrash_action( $post ) {
+		$ckan_ref = get_post_meta( $post->ID, $this->field_prefix . 'reference', true );
 
 		// If no CKAN reference id is defined don't send request a to CKAN
 		if ( '' === $ckan_ref ) {
@@ -131,7 +131,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 			'state' => 'active',
 		);
 
-		return $this->update_action( $data );
+		return $this->update_action( $post, $data );
 	}
 
 	/**
@@ -182,26 +182,29 @@ abstract class Ckan_Backend_Sync_Abstract {
 	 *
 	 * @return array $data Updated data to send
 	 */
-	abstract protected function get_update_data( $post );
+	abstract protected function get_ckan_data( $post );
 
 	/**
 	 * Gets called when a CKAN data is updated.
 	 * Sends updated data to CKAN.
 	 *
-	 * @param array $data The updated data to send.
+	 * @param object $post The post from WordPress which is updated.
+	 * @param array  $data The updated data to send.
 	 *
 	 * @return bool True if data was successfully updated in CKAN
 	 */
-	protected function update_action( $data ) {
+	protected function update_action( $post, $data ) {
 		$endpoint = CKAN_API_ENDPOINT . 'action/' . $this->api_type . '_patch';
 		$data     = wp_json_encode( $data );
 
 		$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
 		$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
 		$this->store_errors_in_notices_option( $errors );
-
-		// Return true if there were no errors
-		return count( $errors ) === 0;
+		if ( count( $errors ) === 0 ) {
+			return $this->update_ckan_data( $post, $response['result'] );
+		} else {
+			return false;
+		}
 	}
 
 	/**
@@ -221,19 +224,32 @@ abstract class Ckan_Backend_Sync_Abstract {
 		$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
 		$this->store_errors_in_notices_option( $errors );
 		if ( count( $errors ) === 0 ) {
-			$result = $response['result'];
-			if ( isset( $result['id'] ) && '' !== $result['id'] ) {
-				// Set reference id from CKAN and add it to $_POST because the real meta save will follow after this action
-				update_post_meta( $post->ID, $this->field_prefix . 'reference', $result['id'] );
-				update_post_meta( $post->ID, $this->field_prefix . 'name', $result['name'] );
-				$_POST[ $this->field_prefix . 'reference' ] = $result['id'];
-				$_POST[ $this->field_prefix . 'name' ]      = $result['name'];
-			}
-
-			return true;
+			return $this->update_ckan_data( $post, $response['result'] );
 		} else {
 			return false;
 		}
+	}
+
+	/**
+	 * Updateds CKAN data in WordPress dataset
+	 *
+	 * @param object $post The post from WordPress which is inserted.
+	 * @param array  $result Result from the CKAN api request.
+	 *
+	 * @return bool
+	 */
+	protected function update_ckan_data( $post, $result ) {
+		if ( isset( $result['id'] ) && '' !== $result['id'] ) {
+			// Set reference id from CKAN and add it to $_POST because the real meta save will follow after this action
+			update_post_meta( $post->ID, $this->field_prefix . 'reference', $result['id'] );
+			update_post_meta( $post->ID, $this->field_prefix . 'name', $result['name'] );
+			$_POST[ $this->field_prefix . 'reference' ] = $result['id'];
+			$_POST[ $this->field_prefix . 'name' ]      = $result['name'];
+
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
