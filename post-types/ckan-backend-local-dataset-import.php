@@ -216,7 +216,14 @@ class Ckan_Backend_Local_Dataset_Import {
 			'ID'         => $dataset_id,
 			'post_title' => $dataset->get_title( 'en' ),
 			'tags_input' => $dataset->get_keywords(),
+			'post_date'  => date( 'Y-m-d H:i:s', strtotime( $dataset->get_issued() ) ),
 		);
+		// set post status to future if needed
+		if( strtotime( $dataset->get_issued() ) > time() ) {
+			if ( get_post_status ( $dataset_id ) == 'publish' ) {
+				$dataset_args['post_status'] = 'future';
+			}
+		}
 
 		wp_update_post( $dataset_args );
 		foreach ( $dataset->to_array() as $field => $value ) {
@@ -234,7 +241,7 @@ class Ckan_Backend_Local_Dataset_Import {
 	protected function insert( $dataset ) {
 		$dataset_args = array(
 			'post_title'   => $dataset->get_title( 'en' ),
-			'post_status'  => 'publish',
+			'post_status'  => ( ( strtotime( $dataset->get_issued() ) > time() ) ? 'future' : 'publish' ),
 			'post_type'    => Ckan_Backend_Local_Dataset::POST_TYPE,
 			'post_excerpt' => '',
 			'tags_input' => $dataset->get_keywords(),
