@@ -205,7 +205,7 @@ class Ckan_Backend_Local_Dataset_Import {
 	/**
 	 * Updates an existing dataset
 	 *
-	 * @param int $dataset_id ID of dataset to update.
+	 * @param int                        $dataset_id ID of dataset to update.
 	 * @param Ckan_Backend_Dataset_Model $dataset Dataset instance with values.
 	 */
 	protected function update( $dataset_id, $dataset ) {
@@ -222,11 +222,11 @@ class Ckan_Backend_Local_Dataset_Import {
 		);
 		// set post status to future if needed
 		if ( strtotime( $dataset->get_issued() ) > time() ) {
-			if ( get_post_status( $dataset_id ) == 'publish' ) {
+			if ( get_post_status( $dataset_id ) === 'publish' ) {
 				$dataset_args['post_status'] = 'future';
 			}
 		} else {
-			if ( get_post_status( $dataset_id ) == 'future' ) {
+			if ( get_post_status( $dataset_id ) === 'future' ) {
 				$dataset_args['post_status'] = 'publish';
 			}
 		}
@@ -435,7 +435,7 @@ class Ckan_Backend_Local_Dataset_Import {
 	 * Returns a single xml element from a given xpath
 	 *
 	 * @param SimpleXMLElement $xml XML content from file.
-	 * @param String $xpath Xpath for query.
+	 * @param String           $xpath Xpath for query.
 	 *
 	 * @return SimpleXMLElement|bool
 	 */
