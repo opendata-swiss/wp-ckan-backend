@@ -187,4 +187,16 @@ class Ckan_Backend_Helper {
 		}
 		return true;
 	}
+
+	/**
+	 * Checks if a string starts with a given needle
+	 *
+	 * @param string $haystack String to search in.
+	 * @param string $needle String to look for.
+	 *
+	 * @return bool
+	 */
+	public static function starts_with( $haystack, $needle ) {
+		return $needle === "" || strrpos($haystack, $needle, -strlen($haystack)) !== false;
+	}
 }

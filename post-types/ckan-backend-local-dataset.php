@@ -391,6 +391,37 @@ class Ckan_Backend_Local_Dataset {
 		) );
 
 		$cmb->add_group_field( $distributions_group, array(
+			'name'    => __( 'Quellenangabe', 'ogdch' ),
+			'id'      => 'right_reference',
+			'type'    => 'radio',
+			'options' => array(
+				'reference_required'     => __( 'Erforderlich', 'ogdch' ),
+				'reference_not-required' => __( 'Nicht erforderlich', 'ogdch' ),
+			)
+		) );
+
+		$cmb->add_group_field( $distributions_group, array(
+			'name'    => __( 'Nicht kommerzielle Nutzung', 'ogdch' ),
+			'id'      => 'right_non_commercial',
+			'type'    => 'radio',
+			'options' => array(
+				'non-commercial_allowed'     => __( 'Erlaubt', 'ogdch' ),
+				'non-commercial_not-allowed' => __( 'Nicht erlaubt', 'ogdch' ),
+			)
+		) );
+
+		$cmb->add_group_field( $distributions_group, array(
+			'name'    => __( 'Kommerzielle Nutzung', 'ogdch' ),
+			'id'      => 'right_commercial',
+			'type'    => 'radio',
+			'options' => array(
+				'commercial_allowed'            => __( 'Erlaubt', 'ogdch' ),
+				'commercial_not-allowed'        => __( 'Nicht erlaubt', 'ogdch' ),
+				'commercial_with-approval-only' => __( 'Nur mit Bewilligung', 'ogdch' ),
+			)
+		) );
+
+		$cmb->add_group_field( $distributions_group, array(
 			'name' => __( 'Access URL', 'ogdch' ),
 			'id'   => 'access_url',
 			'type' => 'text_url',

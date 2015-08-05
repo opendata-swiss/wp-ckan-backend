@@ -59,11 +59,25 @@ class Ckan_Backend_Distribution_Model {
 	protected $access_urls = array();
 
 	/**
-	 * All Rights
+	 * Right reference
 	 *
-	 * @var string[]
+	 * @var string
 	 */
-	protected $rights = array();
+	protected $right_reference = '';
+
+	/**
+	 * Right non-commercial
+	 *
+	 * @var string
+	 */
+	protected $right_non_commercial = '';
+
+	/**
+	 * Right commercial
+	 *
+	 * @var string
+	 */
+	protected $right_commercial = '';
 
 	/**
 	 * License
@@ -262,32 +276,57 @@ class Ckan_Backend_Distribution_Model {
 	}
 
 	/**
-	 * Returns all rights
+	 * Returns right reference
 	 *
-	 * @return string[]
+	 * @return string
 	 */
-	public function get_rights() {
-		return $this->rights;
+	public function get_right_reference() {
+		return $this->right_reference;
 	}
 
 	/**
-	 * Adds right
+	 * Sets right reference
 	 *
-	 * @param string $right Right to add.
+	 * @param string $right_reference Right reference.
 	 */
-	public function add_right( $right ) {
-		$this->rights[] = $right;
+	public function set_right_reference( $right_reference ) {
+		$this->right_reference = $right_reference;
 	}
 
 	/**
-	 * Removes right
+	 * Returns right non commercial
 	 *
-	 * @param string $right Right to remove.
+	 * @return string
 	 */
-	public function remove_right( $right ) {
-		if ( ( $key = array_search( $right, $this->get_rights() ) ) !== false ) {
-			unset( $this->rights[ $key ] );
-		}
+	public function get_right_non_commercial() {
+		return $this->right_non_commercial;
+	}
+
+	/**
+	 * Sets right non commercial
+	 *
+	 * @param string $right_non_commercial Right non commercial.
+	 */
+	public function set_right_non_commercial( $right_non_commercial ) {
+		$this->right_non_commercial = $right_non_commercial;
+	}
+
+	/**
+	 * Returns right commercial
+	 *
+	 * @return string
+	 */
+	public function get_right_commercial() {
+		return $this->right_commercial;
+	}
+
+	/**
+	 * Sets right commercial
+	 *
+	 * @param string $right_commercial Right commercial.
+	 */
+	public function set_right_commercial( $right_commercial ) {
+		$this->right_commercial = $right_commercial;
 	}
 
 	/**
@@ -418,18 +457,20 @@ class Ckan_Backend_Distribution_Model {
 		global $language_priority;
 
 		$distribution = array(
-			'identifier'    => $this->get_identifier(),
-			'languages'     => $this->get_languages(),
-			'issued'        => $this->get_issued(),
-			'modified'      => $this->get_modified(),
-			'access_urls'   => $this->get_access_urls(),
-			'download_urls' => $this->get_download_urls(),
-			'rights'        => $this->get_rights(),
-			'license'       => $this->get_license(),
-			'byte_size'     => $this->get_byte_size(),
-			'media_type'    => $this->get_media_type(),
-			'format'        => $this->get_format(),
-			'coverage'      => $this->get_coverage(),
+			'identifier'           => $this->get_identifier(),
+			'languages'            => $this->get_languages(),
+			'issued'               => $this->get_issued(),
+			'modified'             => $this->get_modified(),
+			'access_urls'          => $this->get_access_urls(),
+			'download_urls'        => $this->get_download_urls(),
+			'right_reference'      => $this->get_right_reference(),
+			'right_non_commercial' => $this->get_right_non_commercial(),
+			'right_commercial'     => $this->get_right_commercial(),
+			'license'              => $this->get_license(),
+			'byte_size'            => $this->get_byte_size(),
+			'media_type'           => $this->get_media_type(),
+			'format'               => $this->get_format(),
+			'coverage'             => $this->get_coverage(),
 		);
 
 		foreach ( $language_priority as $lang ) {

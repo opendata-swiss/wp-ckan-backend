@@ -418,9 +418,20 @@ class Ckan_Backend_Local_Dataset_Import {
 		foreach ( $download_urls as $download_url ) {
 			$distribution->add_download_url( (string) $download_url );
 		}
-		$rights = $xml->xpath( 'dcat:rights/odrs:dataLicence' );
+		$rights = $xml->xpath( 'dct:rights/odrs:dataLicence' );
 		foreach ( $rights as $right ) {
-			$distribution->add_right( (string) $right );
+			if ( Ckan_Backend_Helper::starts_with( (string) $right, 'reference_' ) ) {
+				$distribution->set_right_reference( (string) $right );
+				continue;
+			}
+			if ( Ckan_Backend_Helper::starts_with( (string) $right, 'non-commercial_' ) ) {
+				$distribution->set_right_non_commercial( (string) $right );
+				continue;
+			}
+			if ( Ckan_Backend_Helper::starts_with( (string) $right, 'commercial_' ) ) {
+				$distribution->set_right_commercial( (string) $right );
+				continue;
+			}
 		}
 		$distribution->set_license( (string) $this->get_single_element_from_xpath( $xml, 'dct:license' ) );
 		$distribution->set_byte_size( (string) $this->get_single_element_from_xpath( $xml, 'dcat:byteSize' ) );
