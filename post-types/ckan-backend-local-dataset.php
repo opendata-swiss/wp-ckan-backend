@@ -135,19 +135,6 @@ class Ckan_Backend_Local_Dataset {
 			'show_names'   => true,
 		) );
 
-		$cmb->add_field( array(
-			'name'              => __( 'Language', 'ogdch' ),
-			'id'                => self::FIELD_PREFIX . 'languages',
-			'type'              => 'multicheck_inline',
-			'select_all_button' => false,
-			'options'           => array(
-				'en' => __( 'English', 'ogdch' ),
-				'de' => __( 'German', 'ogdch' ),
-				'fr' => __( 'French', 'ogdch' ),
-				'it' => __( 'Italian', 'ogdch' ),
-			),
-		) );
-
 		/* Title */
 		$cmb->add_field( array(
 			'name' => __( 'Dataset Information', 'ogdch' ),
@@ -274,9 +261,9 @@ class Ckan_Backend_Local_Dataset {
 		) );
 
 		$cmb->add_group_field( $relations_group, array(
-			'name' => __( 'Description', 'ogdch' ),
-			'id'   => 'description',
-			'type' => 'text',
+			'name' => __( 'URL', 'ogdch' ),
+			'id'   => 'url',
+			'type' => 'text_url',
 		) );
 
 		$cmb->add_group_field( $relations_group, array(
@@ -340,7 +327,7 @@ class Ckan_Backend_Local_Dataset {
 
 		$cmb->add_group_field( $see_alsos_group, array(
 			'name' => __( 'URL', 'ogdch' ),
-			'id'   => 'about',
+			'id'   => 'url',
 			'type' => 'text_url',
 		) );
 
@@ -377,6 +364,19 @@ class Ckan_Backend_Local_Dataset {
 		}
 
 		$cmb->add_group_field( $distributions_group, array(
+			'name'              => __( 'Language', 'ogdch' ),
+			'id'                => 'languages',
+			'type'              => 'multicheck_inline',
+			'select_all_button' => false,
+			'options'           => array(
+				'en' => __( 'English', 'ogdch' ),
+				'de' => __( 'German', 'ogdch' ),
+				'fr' => __( 'French', 'ogdch' ),
+				'it' => __( 'Italian', 'ogdch' ),
+			),
+		) );
+
+		$cmb->add_group_field( $distributions_group, array(
 			'name' => __( 'Issued', 'ogdch' ),
 			'id'   => 'issued',
 			'desc' => __( 'Date and time when dataset was issued.', 'ogdch' ),
@@ -388,6 +388,37 @@ class Ckan_Backend_Local_Dataset {
 			'id'   => 'modified',
 			'desc' => __( 'Date and time when dataset was last modified.', 'ogdch' ),
 			'type' => 'text_datetime_timestamp',
+		) );
+
+		$cmb->add_group_field( $distributions_group, array(
+			'name'    => __( 'Reference', 'ogdch' ),
+			'id'      => 'right_reference',
+			'type'    => 'radio',
+			'options' => array(
+				'reference_required'     => __( 'Required', 'ogdch' ),
+				'reference_not-required' => __( 'Nor required', 'ogdch' ),
+			),
+		) );
+
+		$cmb->add_group_field( $distributions_group, array(
+			'name'    => __( 'Non-commercial usage', 'ogdch' ),
+			'id'      => 'right_non_commercial',
+			'type'    => 'radio',
+			'options' => array(
+				'non-commercial_allowed'     => __( 'Allowed', 'ogdch' ),
+				'non-commercial_not-allowed' => __( 'Not allowed', 'ogdch' ),
+			),
+		) );
+
+		$cmb->add_group_field( $distributions_group, array(
+			'name'    => __( 'Commercial usage', 'ogdch' ),
+			'id'      => 'right_commercial',
+			'type'    => 'radio',
+			'options' => array(
+				'commercial_allowed'            => __( 'Allowed', 'ogdch' ),
+				'commercial_not-allowed'        => __( 'Not allowed', 'ogdch' ),
+				'commercial_with-approval-only' => __( 'With approval only', 'ogdch' ),
+			),
 		) );
 
 		$cmb->add_group_field( $distributions_group, array(

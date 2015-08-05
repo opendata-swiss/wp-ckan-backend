@@ -13,7 +13,7 @@ class Ckan_Backend_Helper {
 	 * Sends a curl request with given data to specified CKAN endpoint.
 	 *
 	 * @param string $endpoint CKAN API endpoint which gets called.
-	 * @param string $data     JSON-encoded data to send.
+	 * @param string $data JSON-encoded data to send.
 	 *
 	 * @return array The CKAN data as array
 	 */
@@ -185,6 +185,19 @@ class Ckan_Backend_Helper {
 				echo '<div class="error"><p>' . esc_html( $m ) . '</p></div>';
 			}
 		}
+
 		return true;
+	}
+
+	/**
+	 * Checks if a string starts with a given needle
+	 *
+	 * @param string $haystack String to search in.
+	 * @param string $needle String to look for.
+	 *
+	 * @return bool
+	 */
+	public static function starts_with( $haystack, $needle ) {
+		return '' === $needle || strrpos( $haystack, $needle, -strlen( $haystack ) ) !== false;
 	}
 }

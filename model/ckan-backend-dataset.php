@@ -45,11 +45,11 @@ class Ckan_Backend_Dataset_Model {
 	protected $modified = '';
 
 	/**
-	 * Publishers
+	 * Publisher
 	 *
-	 * @var Ckan_Backend_Publisher_Model[]
+	 * @var string
 	 */
-	protected $publishers = array();
+	protected $publisher = '';
 
 	/**
 	 * Contact Points
@@ -64,13 +64,6 @@ class Ckan_Backend_Dataset_Model {
 	 * @var string[]
 	 */
 	protected $themes = array();
-
-	/**
-	 * Languages
-	 *
-	 * @var string[]
-	 */
-	protected $languages = array();
 
 	/**
 	 * Keywords
@@ -225,51 +218,28 @@ class Ckan_Backend_Dataset_Model {
 	/**
 	 * Sets modified
 	 *
-	 * @param string $modified modified.
+	 * @param string $modified Modified.
 	 */
 	public function set_modified( $modified ) {
 		$this->modified = $modified;
 	}
 
 	/**
-	 * Adds publisher
+	 * Returns publisher
 	 *
-	 * @param Ckan_Backend_Publisher_Model $publisher Publisher to add.
-	 *
-	 * @return bool|WP_Error
+	 * @return string
 	 */
-	public function add_publisher( $publisher ) {
-		if ( ! $publisher instanceof Ckan_Backend_Publisher_Model ) {
-			return new WP_Error( 'wrong_type', 'Publisher has to be a Ckan_Backend_Publisher_Model type' );
-		}
-		$this->publishers[ spl_object_hash( $publisher ) ] = $publisher;
-
-		return true;
+	public function get_publisher() {
+		return $this->publisher;
 	}
 
 	/**
-	 * Removes publisher
+	 * Sets publisher
 	 *
-	 * @param Ckan_Backend_Publisher_Model $publisher Publisher to remove.
-	 *
-	 * @return bool|WP_Error
+	 * @param string $publisher Publisher.
 	 */
-	public function remove_publisher( $publisher ) {
-		if ( ! $publisher instanceof Ckan_Backend_Publisher_Model ) {
-			return new WP_Error( 'wrong_type', 'Publisher has to be a Ckan_Backend_Publisher_Model type' );
-		}
-		unset( $this->publishers[ spl_object_hash( $publisher ) ] );
-
-		return true;
-	}
-
-	/**
-	 * Returns all publishers
-	 *
-	 * @return Ckan_Backend_Publisher_Model[]
-	 */
-	public function get_publishers() {
-		return $this->publishers;
+	public function set_publisher( $publisher ) {
+		$this->publisher = $publisher;
 	}
 
 	/**
@@ -339,35 +309,6 @@ class Ckan_Backend_Dataset_Model {
 	public function remove_theme( $theme ) {
 		if ( ( $key = array_search( $theme, $this->get_themes() ) ) !== false ) {
 			unset( $this->themes[ $key ] );
-		}
-	}
-
-	/**
-	 * Returns all languages
-	 *
-	 * @return string[]
-	 */
-	public function get_languages() {
-		return $this->languages;
-	}
-
-	/**
-	 * Adds language
-	 *
-	 * @param string $language Language to add.
-	 */
-	public function add_language( $language ) {
-		$this->languages[] = $language;
-	}
-
-	/**
-	 * Removes language
-	 *
-	 * @param string $language Language to remove.
-	 */
-	public function remove_language( $language ) {
-		if ( ( $key = array_search( $language, $this->get_languages() ) ) !== false ) {
-			unset( $this->languages[ $key ] );
 		}
 	}
 
@@ -648,8 +589,8 @@ class Ckan_Backend_Dataset_Model {
 			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'identifier'        => $this->get_identifier(),
 			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'issued'            => $this->get_issued(),
 			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'modified'          => $this->get_modified(),
+			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'publisher'          => $this->get_publisher(),
 			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'themes'            => $this->get_themes(),
-			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'languages'         => $this->get_languages(),
 			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'keywords'          => $this->get_keywords(),
 			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'landing_page'      => $this->get_landing_page(),
 			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'spatial'           => $this->get_spatial(),
@@ -662,9 +603,6 @@ class Ckan_Backend_Dataset_Model {
 			$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'description_' . $lang ] = $this->get_description( $lang );
 		}
 
-		foreach ( $this->get_publishers() as $publisher ) {
-			$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'publishers' ][] = $publisher->to_array();
-		}
 		foreach ( $this->get_contact_points() as $contact_point ) {
 			$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'contact_points' ][] = $contact_point->to_array();
 		}
@@ -679,13 +617,6 @@ class Ckan_Backend_Dataset_Model {
 		}
 		foreach ( $this->get_distributions() as $distribution ) {
 			$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'distributions' ][] = $distribution->to_array();
-		}
-
-		// TODO remove these lines when better backend gui solution is found
-		$publishers = $this->get_publishers();
-		if ( count( $publishers ) > 0 ) {
-			$publisher                                                         = reset( $publishers );
-			$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'publisher' ] = $publisher->get_name();
 		}
 
 		return $dataset;

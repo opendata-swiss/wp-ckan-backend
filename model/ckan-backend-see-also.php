@@ -10,11 +10,11 @@
  */
 class Ckan_Backend_SeeAlso_Model {
 	/**
-	 * About
+	 * Url
 	 *
 	 * @var string
 	 */
-	protected $about = '';
+	protected $url = '';
 
 	/**
 	 * Format
@@ -24,21 +24,21 @@ class Ckan_Backend_SeeAlso_Model {
 	protected $format = '';
 
 	/**
-	 * Returns about
+	 * Returns url
 	 *
 	 * @return string
 	 */
-	public function get_about() {
-		return $this->about;
+	public function get_url() {
+		return $this->url;
 	}
 
 	/**
-	 * Sets about
+	 * Sets url
 	 *
-	 * @param string $about About.
+	 * @param string $url Url.
 	 */
-	public function set_about($about) {
-		$this->about = $about;
+	public function set_url($url) {
+		$this->url = $url;
 	}
 
 	/**
@@ -66,7 +66,7 @@ class Ckan_Backend_SeeAlso_Model {
 	 */
 	public function to_array() {
 		return array(
-			'about' => $this->get_about(),
+			'url'    => $this->get_url(),
 			'format' => $this->get_format(),
 		);
 	}
