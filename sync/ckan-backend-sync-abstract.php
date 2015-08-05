@@ -230,6 +230,14 @@ abstract class Ckan_Backend_Sync_Abstract {
 		}
 	}
 
+	/**
+	 * Updateds CKAN data in WordPress dataset
+	 *
+	 * @param object $post The post from WordPress which is inserted.
+	 * @param array  $result Result from the CKAN api request.
+	 *
+	 * @return bool
+	 */
 	protected function update_ckan_data( $post, $result ) {
 		if ( isset( $result['id'] ) && '' !== $result['id'] ) {
 			// Set reference id from CKAN and add it to $_POST because the real meta save will follow after this action
