@@ -164,14 +164,12 @@ class Ckan_Backend_Local_Dataset_Import {
 			}
 		}
 
-		$publishers = $dataset->get_publishers();
-		if ( count( $publishers ) > 0 ) {
-			// use only first element
-			$publisher = reset( $publishers );
-			if ( ! Ckan_Backend_Helper::organisation_exists( $publisher->get_name() ) ) {
+		$publisher = $dataset->get_publisher();
+		if ( $dataset->get_publisher() !== '' ) {
+			if ( ! Ckan_Backend_Helper::organisation_exists( $publisher ) ) {
 				echo '<div class="error"><p>';
 				// @codingStandardsIgnoreStart
-				printf( __( 'Organisation %1$s does not exist! Import aborted.', 'ogdch' ), $publisher->get_name() );
+				printf( __( 'Organisation %1$s does not exist! Import aborted.', 'ogdch' ), $publisher );
 				// @codingStandardsIgnoreEnd
 				echo '</p></div>';
 
@@ -269,10 +267,7 @@ class Ckan_Backend_Local_Dataset_Import {
 		$dataset->set_issued( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:issued' ) );
 		$dataset->set_modified( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:modified' ) );
 
-		$publishers = $xml->xpath( '//dcat:Dataset/dct:publisher/foaf:Organization' );
-		foreach ( $publishers as $publisher_xml ) {
-			$dataset->add_publisher( $this->get_publisher_object( $publisher_xml ) );
-		}
+		$dataset->set_publisher( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:publisher' ) );
 		$contact_points = $xml->xpath( '//dcat:Dataset/dcat:contactPoint/vcard:Organization' );
 		foreach ( $contact_points as $contact_point_xml ) {
 			$dataset->add_contact_point( $this->get_contact_point_object( $contact_point_xml ) );
@@ -316,21 +311,6 @@ class Ckan_Backend_Local_Dataset_Import {
 		}
 
 		return $dataset;
-	}
-
-	/**
-	 * Returns a publisher object from given xml
-	 *
-	 * @param SimpleXMLElement $xml XML content from file.
-	 *
-	 * @return Ckan_Backend_Publisher_Model
-	 */
-	protected function get_publisher_object( $xml ) {
-		$publisher = new Ckan_Backend_Publisher_Model();
-		$publisher->set_name( (string) $this->get_single_element_from_xpath( $xml, 'foaf:name' ) );
-		$publisher->set_mbox( (string) $this->get_single_element_from_xpath( $xml, 'foaf:mbox' ) );
-
-		return $publisher;
 	}
 
 	/**

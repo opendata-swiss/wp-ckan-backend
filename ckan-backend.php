@@ -123,7 +123,6 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			require_once plugin_dir_path( __FILE__ ) . 'helper/ckan-backend-helper.php';
 			require_once plugin_dir_path( __FILE__ ) . 'model/ckan-backend-contact-point.php';
 			require_once plugin_dir_path( __FILE__ ) . 'model/ckan-backend-distribution.php';
-			require_once plugin_dir_path( __FILE__ ) . 'model/ckan-backend-publisher.php';
 			require_once plugin_dir_path( __FILE__ ) . 'model/ckan-backend-relation.php';
 			require_once plugin_dir_path( __FILE__ ) . 'model/ckan-backend-see-also.php';
 			require_once plugin_dir_path( __FILE__ ) . 'model/ckan-backend-temporal.php';
