@@ -61,10 +61,12 @@ class Ckan_Backend_Local_Dataset_Import {
 			}
 
 			if ( $dataset_id > 0 ) {
-				echo '<div class="updated"><p><strong>' . esc_html( __( 'Import successful', 'ogdch' ) ) . '</strong></p></div>';
-				// @codingStandardsIgnoreStart
-				printf( __( 'Click <a href="%s">here</a> to see the imported dataset.', 'ogdch' ), esc_url( admin_url( 'post.php?post=' . esc_attr( $dataset_id ) . '&action=edit' ) ) );
-				// @codingStandardsIgnoreEnd
+				echo '<div class="updated">';
+					echo '<p><strong>' . esc_html( __( 'Import successful', 'ogdch' ) ) . '</strong></p>';
+					// @codingStandardsIgnoreStart
+					printf( __( 'Click <a href="%s">here</a> to see the imported dataset.', 'ogdch' ), esc_url( admin_url( 'post.php?post=' . esc_attr( $dataset_id ) . '&action=edit' ) ) );
+					// @codingStandardsIgnoreEnd
+				echo '</div>';
 			}
 		} ?>
 		<div class="wrap">
