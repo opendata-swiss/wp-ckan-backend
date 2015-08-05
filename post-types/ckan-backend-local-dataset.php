@@ -274,9 +274,9 @@ class Ckan_Backend_Local_Dataset {
 		) );
 
 		$cmb->add_group_field( $relations_group, array(
-			'name' => __( 'Description', 'ogdch' ),
-			'id'   => 'description',
-			'type' => 'text',
+			'name' => __( 'URL', 'ogdch' ),
+			'id'   => 'url',
+			'type' => 'text_url',
 		) );
 
 		$cmb->add_group_field( $relations_group, array(
@@ -340,7 +340,7 @@ class Ckan_Backend_Local_Dataset {
 
 		$cmb->add_group_field( $see_alsos_group, array(
 			'name' => __( 'URL', 'ogdch' ),
-			'id'   => 'about',
+			'id'   => 'url',
 			'type' => 'text_url',
 		) );
 
