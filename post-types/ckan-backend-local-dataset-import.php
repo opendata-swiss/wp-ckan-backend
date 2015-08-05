@@ -348,7 +348,7 @@ class Ckan_Backend_Local_Dataset_Import {
 	protected function get_relation_object( $xml ) {
 		$relation            = new Ckan_Backend_Relation_Model();
 		$relation_attributes = $xml->attributes( 'rdf', true );
-		$relation->set_description( (string) $relation_attributes['about'] );
+		$relation->set_url( (string) $relation_attributes['about'] );
 		$relation->set_label( (string) $this->get_single_element_from_xpath( $xml, 'rdfs:label' ) );
 
 		return $relation;
@@ -379,7 +379,7 @@ class Ckan_Backend_Local_Dataset_Import {
 	protected function get_see_also_object( $xml ) {
 		$see_also            = new Ckan_Backend_SeeAlso_Model();
 		$relation_attributes = $xml->attributes( 'rdf', true );
-		$see_also->set_about( (string) $relation_attributes['about'] );
+		$see_also->set_url( (string) $relation_attributes['about'] );
 		$see_also->set_format( (string) $this->get_single_element_from_xpath( $xml, 'dc:format' ) );
 
 		return $see_also;

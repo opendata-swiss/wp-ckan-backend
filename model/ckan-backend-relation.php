@@ -10,11 +10,11 @@
  */
 class Ckan_Backend_Relation_Model {
 	/**
-	 * Description
+	 * Url
 	 *
 	 * @var string
 	 */
-	protected $description = '';
+	protected $url = '';
 
 	/**
 	 * Label
@@ -24,21 +24,21 @@ class Ckan_Backend_Relation_Model {
 	protected $label = '';
 
 	/**
-	 * Returns description
+	 * Returns url
 	 *
 	 * @return string
 	 */
-	public function get_description() {
-		return $this->description;
+	public function get_url() {
+		return $this->url;
 	}
 
 	/**
-	 * Sets description
+	 * Sets url
 	 *
-	 * @param string $description Description.
+	 * @param string $url Url.
 	 */
-	public function set_description($description) {
-		$this->description = $description;
+	public function set_url($url) {
+		$this->url = $url;
 	}
 
 	/**
@@ -66,7 +66,7 @@ class Ckan_Backend_Relation_Model {
 	 */
 	public function to_array() {
 		return array(
-			'description' => $this->get_description(),
+			'url'   => $this->get_url(),
 			'label' => $this->get_label(),
 		);
 	}
