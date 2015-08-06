@@ -98,10 +98,10 @@ class Ckan_Backend_Local_Group {
 		foreach ( $language_priority as $lang ) {
 			$cmb->add_field( array(
 				'name'       => __( 'Title', 'ogdch' ) . ' (' . strtoupper( $lang ) . ')',
-				'id'         => self::FIELD_PREFIX . 'name_' . $lang,
+				'id'         => self::FIELD_PREFIX . 'title_' . $lang,
 				'type'       => 'text',
 				'attributes' => array(
-					'placeholder' => __( 'e.g. Awesome dataset', 'ogdch' ),
+					'placeholder' => __( 'e.g. Awesome group', 'ogdch' ),
 				),
 			) );
 		}
