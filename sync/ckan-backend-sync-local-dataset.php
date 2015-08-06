@@ -57,7 +57,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 			'tags'             => $tags,
 		);
 
-		$ckan_id = get_post_meta( $post->ID, $this->field_prefix . 'reference', true );
+		$ckan_id = get_post_meta( $post->ID, $this->field_prefix . 'ckan_id', true );
 		if ( '' !== $ckan_id ) {
 			$data['id'] = $ckan_id;
 		}

@@ -151,7 +151,7 @@ class Ckan_Backend_Local_Organisation {
 			'type' => 'file',
 		) );
 
-		$cmb_side = new_cmb2_box( array(
+		$cmb_side_ckan = new_cmb2_box( array(
 			'id'           => self::POST_TYPE . '-sidebox',
 			'title'        => __( 'CKAN Data', 'ogdch' ),
 			'object_types' => array( self::POST_TYPE ),
@@ -160,20 +160,20 @@ class Ckan_Backend_Local_Organisation {
 			'show_names'   => true,
 		) );
 
-		/* CKAN Ref ID (If Set.. update.. set on first save) */
-		$cmb_side->add_field( array(
-			'name'       => __( 'Reference ID', 'ogdch' ),
-			'id'         => self::FIELD_PREFIX . 'reference',
+		/* Ckan id (If Set -> update. Set on first save) */
+		$cmb_side_ckan->add_field( array(
+			'name'       => __( 'CKAN ID', 'ogdch' ),
+			'id'         => self::FIELD_PREFIX . 'ckan_id',
 			'type'       => 'text',
 			'attributes' => array(
 				'readonly' => 'readonly',
 			),
 		) );
 
-		/* Permalink */
-		$cmb_side->add_field( array(
-			'name'       => __( 'Name (Slug)', 'ogdch' ),
-			'id'         => self::FIELD_PREFIX . 'name',
+		/* Ckan name */
+		$cmb_side_ckan->add_field( array(
+			'name'       => __( 'CKAN Name (Slug)', 'ogdch' ),
+			'id'         => self::FIELD_PREFIX . 'ckan_name',
 			'type'       => 'text',
 			'attributes' => array(
 				'readonly' => 'readonly',
@@ -190,7 +190,7 @@ class Ckan_Backend_Local_Organisation {
 		$organisations = Ckan_Backend_Helper::get_organisation_form_field_options();
 		// remove current organisation from result (current organisation can't be its on parent)
 		if ( isset( $_GET['post'] ) ) {
-			$current_organisation_name = get_post_meta( $_GET['post'], Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'name', true );
+			$current_organisation_name = get_post_meta( $_GET['post'], self::FIELD_PREFIX . 'ckan_name', true );
 			if ( array_key_exists( $current_organisation_name, $organisations ) ) {
 				unset( $organisations[ $current_organisation_name ] );
 			}

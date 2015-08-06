@@ -204,7 +204,7 @@ class Ckan_Backend_Local_Dataset_Import {
 	 */
 	protected function update( $dataset_id, $dataset ) {
 		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'disabled' ]  = get_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'disabled', true );
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'reference' ] = get_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'reference', true );
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'ckan_id' ] = get_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'ckan_id', true );
 
 		$dataset_args = array(
 			'ID'            => $dataset_id,
