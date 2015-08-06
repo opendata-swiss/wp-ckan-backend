@@ -58,7 +58,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		);
 
 		$ckan_id = get_post_meta( $post->ID, $this->field_prefix . 'reference', true );
-		if ( $ckan_id !== '' ) {
+		if ( '' !== $ckan_id ) {
 			$data['id'] = $ckan_id;
 		}
 		// Check if user is allowed to disable datasets -> otherwise reset value
@@ -90,11 +90,11 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 
 				$titles = array();
 				foreach ( $language_priority as $lang ) {
-					$titles[ $lang ] = $resource[ 'title_' . $lang];
+					$titles[ $lang ] = $resource[ 'title_' . $lang ];
 				}
 				$descriptions = array();
 				foreach ( $language_priority as $lang ) {
-					$descriptions[ $lang ] = $resource[ 'description_' . $lang];
+					$descriptions[ $lang ] = $resource[ 'description_' . $lang ];
 				}
 
 				$ckan_resources[] = array(
