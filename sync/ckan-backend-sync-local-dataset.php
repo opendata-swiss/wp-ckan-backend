@@ -20,8 +20,8 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		$resources    = $this->prepare_resources( Ckan_Backend_Helper::get_value_for_metafield( $post->ID, $this->field_prefix . 'distributions' ) );
 		$groups       = $this->prepare_selected_groups( Ckan_Backend_Helper::get_value_for_metafield( $post->ID, $this->field_prefix . 'themes' ) );
 		$tags         = $this->prepare_tags( wp_get_object_terms( $post->ID, 'post_tag' ) );
-		$titles       = $this->prepare_multilingual_field( $post->ID, $this->field_prefix . 'title' );
-		$descriptions = $this->prepare_multilingual_field( $post->ID, $this->field_prefix . 'description' );
+		$titles       = Ckan_Backend_Helper::prepare_multilingual_field( $post->ID, $this->field_prefix . 'title' );
+		$descriptions = Ckan_Backend_Helper::prepare_multilingual_field( $post->ID, $this->field_prefix . 'description' );
 
 		// Generate slug of dataset. If no title is entered use an uniqid
 		if ( Ckan_Backend_Helper::get_value_for_metafield( $post->ID, $this->field_prefix . 'title_en' ) !== '' ) {
@@ -146,24 +146,5 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		}
 
 		return $ckan_tags;
-	}
-
-	/**
-	 * Returns a CKAN friendly array for multilingual fields
-	 *
-	 * @param array  $base_array Array with the raw values. Format: array( 'field_de', 'field_en', ... ).
-	 * @param string $field_name Name of the field.
-	 *
-	 * @return array
-	 */
-	protected function prepare_multilingual_field( $post_id, $field_name ) {
-		global $language_priority;
-
-		$multilingual_field = array();
-		foreach ( $language_priority as $lang ) {
-			$multilingual_field[ $lang ] = Ckan_Backend_Helper::get_value_for_metafield( $post_id, $field_name . '_' . $lang );
-		}
-
-		return $multilingual_field;
 	}
 }
