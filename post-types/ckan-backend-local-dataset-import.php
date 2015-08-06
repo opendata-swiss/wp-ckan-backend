@@ -55,18 +55,29 @@ class Ckan_Backend_Local_Dataset_Import {
 
 		// Handle import
 		if ( isset( $_POST[ $import_submit_hidden_field_name ] ) && 'Y' === $_POST[ $import_submit_hidden_field_name ] ) {
-			$dataset_id = false;
+			$dataset_id = 0;
 			if ( isset( $_FILES[ $file_field_name ] ) ) {
 				$dataset_id = $this->handle_file_import( $_FILES[ $file_field_name ] );
 			}
 
-			if ( $dataset_id > 0 ) {
-				echo '<div class="updated">';
+			// check for notices
+			$notices = get_option( Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'notices' );
+			delete_option( Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'notices' );
+
+			if( ! empty( $notices ) ) {
+				// print available notices
+				foreach ( $notices as $key => $m ) {
+					echo '<div class="error"><p>' . esc_html( $m ) . '</p></div>';
+				}
+			} else {
+				if ( $dataset_id > 0 ) {
+					echo '<div class="updated">';
 					echo '<p><strong>' . esc_html( __( 'Import successful', 'ogdch' ) ) . '</strong></p>';
 					// @codingStandardsIgnoreStart
 					printf( __( 'Click <a href="%s">here</a> to see the imported dataset.', 'ogdch' ), esc_url( admin_url( 'post.php?post=' . esc_attr( $dataset_id ) . '&action=edit' ) ) );
 					// @codingStandardsIgnoreEnd
-				echo '</div>';
+					echo '</div>';
+				}
 			}
 		} ?>
 		<div class="wrap">
