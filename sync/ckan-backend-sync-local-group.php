@@ -20,20 +20,8 @@ class Ckan_Backend_Sync_Local_Group extends Ckan_Backend_Sync_Abstract {
 		$titles       = Ckan_Backend_Helper::prepare_multilingual_field( $post->ID, $this->field_prefix . 'title' );
 		$descriptions = Ckan_Backend_Helper::prepare_multilingual_field( $post->ID, $this->field_prefix . 'description' );
 
-		// Gernerate slug of group. If no title is entered use an uniqid
-		if ( Ckan_Backend_Helper::get_value_for_metafield( $post->ID, $this->field_prefix . 'title_en' ) !== '' ) {
-			$slug = Ckan_Backend_Helper::get_value_for_metafield( $post->ID, $this->field_prefix . 'title_en' );
-		} else {
-			$slug = $post->post_title;
-
-			if ( '' === $slug ) {
-				$slug = uniqid();
-			}
-		}
-		$slug = sanitize_title_with_dashes( $slug );
-
 		$data = array(
-			'name'        => $slug,
+			'name'        => sanitize_title_with_dashes( $post->post_title ),
 			'title'       => $titles,
 			'description' => $descriptions,
 			'image_url'   => Ckan_Backend_Helper::get_value_for_metafield( $post->ID, $this->field_prefix . 'image' ),

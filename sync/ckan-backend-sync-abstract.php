@@ -75,6 +75,12 @@ abstract class Ckan_Backend_Sync_Abstract {
 			return;
 		}
 
+		// Check if the post title is set -> otherwise do not sync to CKAN
+		if( '' === $post->post_title ) {
+			$this->store_errors_in_notices_option( array( __( 'CKAN Sync aborted! Please provide a title for this post.', 'ogdch' ) ) );
+			return;
+		}
+
 		// If action is trash -> set CKAN dataset to deleted
 		if ( isset( $_GET ) && ( 'trash' === $_GET['action'] ) ) {
 			$success = $this->delete_action( $post );

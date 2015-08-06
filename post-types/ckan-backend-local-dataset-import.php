@@ -208,7 +208,7 @@ class Ckan_Backend_Local_Dataset_Import {
 
 		$dataset_args = array(
 			'ID'            => $dataset_id,
-			'post_title'    => $dataset->get_title( 'en' ),
+			'post_title'    => $dataset->get_main_title(),
 			'tags_input'    => $dataset->get_keywords(),
 			'post_date'     => date( 'Y-m-d H:i:s', strtotime( $dataset->get_issued() ) ),
 			// We also have to set post_date_gmt to get post_status update to work correctly
@@ -240,7 +240,7 @@ class Ckan_Backend_Local_Dataset_Import {
 	 */
 	protected function insert( $dataset ) {
 		$dataset_args = array(
-			'post_title'   => $dataset->get_title( 'en' ),
+			'post_title'   => $dataset->get_main_title(),
 			'post_status'  => ( ( strtotime( $dataset->get_issued() ) > time() ) ? 'future' : 'publish' ),
 			'post_date'    => date( 'Y-m-d H:i:s', strtotime( $dataset->get_issued() ) ),
 			'post_type'    => Ckan_Backend_Local_Dataset::POST_TYPE,

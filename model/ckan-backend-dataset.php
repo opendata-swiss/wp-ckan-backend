@@ -168,6 +168,22 @@ class Ckan_Backend_Dataset_Model {
 	}
 
 	/**
+	 * Returns first filled title for dataset
+	 *
+	 * @return string
+	 */
+	public function get_main_title() {
+		global $language_priority;
+		foreach ( $language_priority as $lang ) {
+			if ( '' !== $this->get_title( $lang ) ) {
+				return $this->get_title( $lang );
+			}
+		}
+
+		return '';
+	}
+
+	/**
 	 * Returns Description in given language
 	 *
 	 * @param string $lang Language.
