@@ -200,4 +200,20 @@ class Ckan_Backend_Helper {
 	public static function starts_with( $haystack, $needle ) {
 		return '' === $needle || strrpos( $haystack, $needle, -strlen( $haystack ) ) !== false;
 	}
+
+	/**
+	 * Returns metafield value from $_POST if available. Otherwise returns value from database.
+	 *
+	 * @param int    $post_id ID of current post.
+	 * @param string $field_name Name of metafield.
+	 *
+	 * @return mixed
+	 */
+	public static function get_value_for_metafield( $post_id, $field_name ){
+		if( isset( $_POST[$field_name] ) ) {
+			return $_POST[$field_name];
+		} else {
+			return get_post_meta( $post_id, $field_name, true );
+		}
+	}
 }

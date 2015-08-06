@@ -589,7 +589,7 @@ class Ckan_Backend_Dataset_Model {
 			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'identifier'        => $this->get_identifier(),
 			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'issued'            => $this->get_issued(),
 			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'modified'          => $this->get_modified(),
-			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'publisher'          => $this->get_publisher(),
+			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'publisher'         => $this->get_publisher(),
 			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'themes'            => $this->get_themes(),
 			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'keywords'          => $this->get_keywords(),
 			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'landing_page'      => $this->get_landing_page(),
