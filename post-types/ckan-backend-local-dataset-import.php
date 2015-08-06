@@ -80,20 +80,33 @@ class Ckan_Backend_Local_Dataset_Import {
 				}
 			}
 		} ?>
-		<div class="wrap">
-			<h2><?php esc_html_e( __( 'Import CKAN Dataset', 'ogdch' ) ); ?></h2>
+		<div class="wrap import_ckan_dataset">
+			<h2><?php echo esc_html( get_admin_page_title() ); ?></h2>
 
 			<form enctype="multipart/form-data" action="" method="POST">
 				<input type="hidden" name="<?php esc_attr_e( $import_submit_hidden_field_name ); ?>" value="Y">
 
-				<p><?php esc_html_e( __( 'File:', 'ogdch' ) ); ?>
-					<input type="file" name="<?php esc_attr_e( $file_field_name ); ?>" value="" size="20">
-				</p>
-				<hr/>
+				<div class="postbox">
+					<div class="inside">
+						<table class="form-table">
+							<tbody>
+							<th scope="row">
+								<label for="import_file"><?php esc_html_e( __( 'DCAT-AP File:', 'ogdch' ) ); ?></label>
+							</th>
 
-				<p class="submit">
-					<input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e( 'Import' ) ?>"/>
-				</p>
+							<td>
+								<input type="file" id="import_file" name="<?php esc_attr_e( $file_field_name ); ?>" />
+								<br />
+								<span class="description"><?php esc_html_e( __( 'File has to be in DACT-AP Switzerland format.', 'ogdch' ) ); ?></span>
+							</td>
+							</tbody>
+						</table>
+
+						<p class="submit">
+							<input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e( 'Import' ) ?>"/>
+						</p>
+					</div>
+				</div>
 			</form>
 		</div>
 
