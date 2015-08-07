@@ -85,6 +85,8 @@ class Ckan_Backend_Local_Dataset_Import {
 
 			<form enctype="multipart/form-data" action="" method="POST">
 				<input type="hidden" name="<?php esc_attr_e( $import_submit_hidden_field_name ); ?>" value="Y">
+				<?php // Field shows that the metadata is not yet saved in database -> get values from $_POST array ?>
+				<input type="hidden" id="metadata_not_in_db" name="metadata_not_in_db" value="1" />
 
 				<div class="postbox">
 					<div class="inside">

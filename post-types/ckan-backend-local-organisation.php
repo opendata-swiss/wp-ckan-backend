@@ -21,8 +21,19 @@ class Ckan_Backend_Local_Organisation {
 		$this->register_post_type();
 		add_action( 'cmb2_init', array( $this, 'define_fields' ) );
 
+		// render additional field after main cmb2 form is rendered
+		add_action( 'cmb2_after_post_form_' . self::POST_TYPE . '-box', array( $this, 'render_addition_fields' ) );
+
 		// initialize local organisation sync
 		new Ckan_Backend_Sync_Local_Organisation( self::POST_TYPE, self::FIELD_PREFIX );
+	}
+
+	/**
+	 * Renders additional fields which aren't saved in database.
+	 */
+	public function render_addition_fields() {
+		// Field shows that the metadata is not yet saved in database -> get values from $_POST array
+		echo '<input type="hidden" id="metadata_not_in_db" name="metadata_not_in_db" value="1" />';
 	}
 
 	/**

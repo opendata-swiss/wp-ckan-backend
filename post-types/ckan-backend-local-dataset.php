@@ -21,8 +21,19 @@ class Ckan_Backend_Local_Dataset {
 		$this->register_post_type();
 		add_action( 'cmb2_init', array( $this, 'define_fields' ) );
 
+		// render additional field after main cmb2 form is rendered
+		add_action( 'cmb2_after_post_form_' . self::POST_TYPE . '-box', array( $this, 'render_addition_fields' ) );
+
 		// initialize local dataset sync
 		new Ckan_Backend_Sync_Local_Dataset( self::POST_TYPE, self::FIELD_PREFIX );
+	}
+
+	/**
+	 * Renders additional fields which aren't saved in database.
+	 */
+	public function render_addition_fields() {
+		// Field shows that the metadata is not yet saved in database -> get values from $_POST array
+		echo '<input type="hidden" id="metadata_not_in_db" name="metadata_not_in_db" value="1" />';
 	}
 
 	/**
@@ -47,7 +58,7 @@ class Ckan_Backend_Local_Dataset {
 		$value = get_post_meta( $post_id, self::FIELD_PREFIX . 'disabled', true );
 		if ( 'on' === $value ) {
 			// @codingStandardsIgnoreStart
-			echo '<div class="error"><p>' . __( 'This dataset is disabled. Please contact an adimistrator if this seems to be wrong.', 'ogdch' ) . '</p></div>';
+			echo '<div class="error"><p>' . __( 'This dataset is disabled and will not be visible in CKAN.', 'ogdch' ) . '</p></div>';
 			// @codingStandardsIgnoreEnd
 		}
 	}
