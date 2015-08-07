@@ -18,7 +18,7 @@ class Ckan_Backend_Sync_Local_Organisation extends Ckan_Backend_Sync_Abstract {
 	 */
 	protected function after_delete_action( $post ) {
 		// Select related datasets.
-		$args = array(
+		$args                  = array(
 			// @codingStandardsIgnoreStart
 			'meta_key'       => Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'organisation',
 			'meta_value'     => $post->name,
@@ -49,7 +49,7 @@ class Ckan_Backend_Sync_Local_Organisation extends Ckan_Backend_Sync_Abstract {
 	 */
 	protected function get_ckan_data( $post ) {
 		$load_from_post = false;
-		if( isset( $_POST['metadata_not_in_db'] ) && $_POST['metadata_not_in_db'] == true ) {
+		if ( isset( $_POST['metadata_not_in_db'] ) && true === (bool) $_POST['metadata_not_in_db'] ) {
 			$load_from_post = true;
 		}
 		$titles       = Ckan_Backend_Helper::prepare_multilingual_field( $post->ID, $this->field_prefix . 'title', $load_from_post );

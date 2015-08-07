@@ -18,7 +18,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	 */
 	protected function get_ckan_data( $post ) {
 		$load_from_post = false;
-		if( isset( $_POST['metadata_not_in_db'] ) && $_POST['metadata_not_in_db'] == true ) {
+		if ( isset( $_POST['metadata_not_in_db'] ) && true === (bool) $_POST['metadata_not_in_db'] ) {
 			$load_from_post = true;
 		}
 		$resources    = $this->prepare_resources( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'distributions', $load_from_post ) );
