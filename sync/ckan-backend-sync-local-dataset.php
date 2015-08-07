@@ -39,6 +39,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 			'maintainer_email' => $contact_points[0]['email'],
 			'notes'            => $descriptions,
 			'state'            => 'active',
+			'private'          => true,
 			'resources'        => $resources,
 			'groups'           => $groups,
 			'owner_org'        => Ckan_Backend_Helper::get_value_for_metafield( $post->ID, $this->field_prefix . 'publisher' ),
@@ -51,6 +52,9 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		}
 		if ( Ckan_Backend_Helper::get_value_for_metafield( $post->ID, $this->field_prefix . 'disabled' ) === 'on' ) {
 			$data['state'] = 'deleted';
+		}
+		if ( $post->post_status === 'publish' ) {
+			$data['private'] = false;
 		}
 
 		return $data;

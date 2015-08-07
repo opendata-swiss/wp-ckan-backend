@@ -41,7 +41,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 	/**
 	 * The constructor of the class.
 	 *
-	 * @param string $post_type    The post type.
+	 * @param string $post_type The post type.
 	 * @param string $field_prefix The field prefix.
 	 */
 	public function __construct( $post_type, $field_prefix ) {
@@ -65,7 +65,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 	 * This action gets called when a CKAN post-type is saved, changed, trashed or deleted.
 	 *
 	 * @param integer $post_id The ID of the post to sync.
-	 * @param object  $post    The wordpress post.
+	 * @param object  $post The wordpress post.
 	 *
 	 * @return bool|void
 	 */
@@ -99,19 +99,8 @@ abstract class Ckan_Backend_Sync_Abstract {
 				return;
 			}
 
-			if ( $post->post_status === 'publish' ) {
-				$data = $this->get_ckan_data( $post );
-				// If data to send holds CKAN id -> do update in CKAN
-				if ( isset( $data['id'] ) ) {
-					$success = $this->update_action( $post, $data );
-				} else {
-					// Insert new dataset
-					$success = $this->insert_action( $post, $data );
-				}
-			} else {
-				// if post gets unpublished -> set CKAN dataset to deleted
-				$success = $this->delete_action( $post );
-			}
+			$data    = $this->get_ckan_data( $post );
+			$success = $this->upsert_action( $post, $data );
 		}
 
 		return $success;
@@ -192,41 +181,24 @@ abstract class Ckan_Backend_Sync_Abstract {
 	abstract protected function get_ckan_data( $post );
 
 	/**
-	 * Gets called when a CKAN data is updated.
-	 * Sends updated data to CKAN.
+	 * Gets called when a CKAN data is inserted or updated.
+	 * Sends inserted/updated data to CKAN.
 	 *
-	 * @param object $post The post from WordPress which is updated.
-	 * @param array  $data The updated data to send.
+	 * @param object $post The post from WordPress which is inserted/updated.
+	 * @param array  $data The inserted/updated data to send.
 	 *
-	 * @return bool True if data was successfully updated in CKAN
+	 * @return bool True if data was successfully inserted/updated in CKAN
 	 */
-	protected function update_action( $post, $data ) {
-		$endpoint = CKAN_API_ENDPOINT . 'action/' . $this->api_type . '_patch';
-		$data     = wp_json_encode( $data );
-
-		$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
-		$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
-		$this->store_errors_in_notices_option( $errors );
-		if ( count( $errors ) === 0 ) {
-			return $this->update_ckan_data( $post, $response['result'] );
+	protected function upsert_action( $post, $data ) {
+		// If data to send holds CKAN id -> do update in CKAN
+		if ( isset( $data['id'] ) ) {
+			$endpoint = CKAN_API_ENDPOINT . 'action/' . $this->api_type . '_patch';
 		} else {
-			return false;
+			// Insert new dataset
+			$endpoint = CKAN_API_ENDPOINT . 'action/' . $this->api_type . '_create';
 		}
-	}
 
-	/**
-	 * Gets called when a CKAN data is inserted.
-	 * Sends inserted data to CKAN.
-	 *
-	 * @param object $post The post from WordPress which is inserted.
-	 * @param array  $data The inserted data to send.
-	 *
-	 * @return bool True if data was successfully inserted in CKAN
-	 */
-	protected function insert_action( $post, $data ) {
-		$endpoint = CKAN_API_ENDPOINT . 'action/' . $this->api_type . '_create';
 		$data     = wp_json_encode( $data );
-
 		$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
 		$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
 		$this->store_errors_in_notices_option( $errors );
