@@ -16,7 +16,7 @@ class Ckan_Backend_Sync_Local_Organisation extends Ckan_Backend_Sync_Abstract {
 	 *
 	 * @return void
 	 */
-	protected function after_delete_action( $post ) {
+	protected function after_trash_action( $post ) {
 		// Select related datasets.
 		$args                  = array(
 			// @codingStandardsIgnoreStart

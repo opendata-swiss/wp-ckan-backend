@@ -26,7 +26,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 	 * Mapping WordPress -> CKAN
 	 * @var array
 	 */
-	private $type_api_mapping = array(
+	private $api_type_mapping = array(
 		'ckan-local-dataset' => 'package',
 		'ckan-local-org'     => 'organization',
 		'ckan-local-group'   => 'group',
@@ -48,8 +48,8 @@ abstract class Ckan_Backend_Sync_Abstract {
 		$this->post_type    = $post_type;
 		$this->field_prefix = $field_prefix;
 
-		if ( array_key_exists( $post_type, $this->type_api_mapping ) ) {
-			$this->api_type = $this->type_api_mapping[ $post_type ];
+		if ( array_key_exists( $post_type, $this->api_type_mapping ) ) {
+			$this->api_type = $this->api_type_mapping[ $post_type ];
 		} else {
 			return false;
 		}
@@ -89,7 +89,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 
 		// If action is trash -> set CKAN dataset to deleted
 		if ( isset( $_GET ) && ( 'trash' === $_GET['action'] ) ) {
-			$success = $this->delete_action( $post );
+			$success = $this->trash_action( $post );
 		} // If action is untrash -> set CKAN dataset to active
 		elseif ( isset( $_GET ) && 'unstrash' === $_GET['action'] ) {
 			$success = $this->untrash_action( $post );
@@ -143,7 +143,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 	 *
 	 * @return bool True when CKAN request was successful.
 	 */
-	protected function delete_action( $post ) {
+	protected function trash_action( $post ) {
 		$ckan_id = get_post_meta( $post->ID, $this->field_prefix . 'ckan_id', true );
 
 		// If no CKAN id is defined don't send request a to CKAN
@@ -161,7 +161,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 		$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
 		$this->store_errors_in_notices_option( $errors );
 
-		$this->after_delete_action( $post );
+		$this->after_trash_action( $post );
 
 		// Return true if there were no errors
 		return count( $errors ) === 0;
@@ -172,7 +172,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 	 *
 	 * @param object $post The post from WordPress which is deleted.
 	 */
-	protected function after_delete_action( $post ) {
+	protected function after_trash_action( $post ) {
 		return;
 	}
 
