@@ -102,6 +102,8 @@ class Ckan_Backend_Local_Dataset_Import {
 							</tbody>
 						</table>
 
+						<hr />
+
 						<p class="submit">
 							<input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e( 'Import' ) ?>"/>
 						</p>
