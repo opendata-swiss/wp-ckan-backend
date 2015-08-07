@@ -98,10 +98,10 @@ class Ckan_Backend_Local_Group {
 		foreach ( $language_priority as $lang ) {
 			$cmb->add_field( array(
 				'name'       => __( 'Title', 'ogdch' ) . ' (' . strtoupper( $lang ) . ')',
-				'id'         => self::FIELD_PREFIX . 'name_' . $lang,
+				'id'         => self::FIELD_PREFIX . 'title_' . $lang,
 				'type'       => 'text',
 				'attributes' => array(
-					'placeholder' => __( 'e.g. Awesome dataset', 'ogdch' ),
+					'placeholder' => __( 'e.g. Awesome group', 'ogdch' ),
 				),
 			) );
 		}
@@ -136,7 +136,7 @@ class Ckan_Backend_Local_Group {
 			'type'    => 'file',
 		) );
 
-		$cmb_side = new_cmb2_box( array(
+		$cmb_side_ckan = new_cmb2_box( array(
 			'id'           => self::POST_TYPE . '-sidebox',
 			'title'        => __( 'CKAN Data', 'ogdch' ),
 			'object_types' => array( self::POST_TYPE ),
@@ -145,23 +145,23 @@ class Ckan_Backend_Local_Group {
 			'show_names'   => true,
 		) );
 
-		/* CKAN Ref ID (If Set.. update.. set on first save) */
-		$cmb_side->add_field( array(
-			'name'       => __( 'Reference ID', 'ogdch' ),
-			'id'         => self::FIELD_PREFIX . 'reference',
+		/* Ckan id (If Set -> update. Set on first save) */
+		$cmb_side_ckan->add_field( array(
+			'name'       => __( 'CKAN ID', 'ogdch' ),
+			'id'         => self::FIELD_PREFIX . 'ckan_id',
 			'type'       => 'text',
 			'attributes' => array(
 				'readonly' => 'readonly',
 			),
 		) );
 
-		/* Permalink */
-		$cmb_side->add_field( array(
-			'name'       => __( 'Name (Slug)', 'ogdch' ),
-			'id'         => self::FIELD_PREFIX . 'name',
+		/* Ckan name */
+		$cmb_side_ckan->add_field( array(
+			'name'       => __( 'CKAN Name (Slug)', 'ogdch' ),
+			'id'         => self::FIELD_PREFIX . 'ckan_name',
 			'type'       => 'text',
 			'attributes' => array(
-				'readonly'    => 'readonly',
+				'readonly' => 'readonly',
 			),
 		) );
 	}

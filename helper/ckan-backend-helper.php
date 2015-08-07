@@ -198,6 +198,41 @@ class Ckan_Backend_Helper {
 	 * @return bool
 	 */
 	public static function starts_with( $haystack, $needle ) {
-		return '' === $needle || strrpos( $haystack, $needle, -strlen( $haystack ) ) !== false;
+		return '' === $needle || strrpos( $haystack, $needle, - strlen( $haystack ) ) !== false;
+	}
+
+	/**
+	 * Returns metafield value from $_POST if available. Otherwise returns value from database.
+	 *
+	 * @param int    $post_id ID of current post.
+	 * @param string $field_name Name of metafield.
+	 *
+	 * @return mixed
+	 */
+	public static function get_value_for_metafield( $post_id, $field_name ) {
+		if ( isset( $_POST[ $field_name ] ) ) {
+			return $_POST[ $field_name ];
+		} else {
+			return get_post_meta( $post_id, $field_name, true );
+		}
+	}
+
+	/**
+	 * Returns a CKAN friendly array for multilingual fields
+	 *
+	 * @param int    $post_id ID of current post.
+	 * @param string $field_name Name of the field.
+	 *
+	 * @return array
+	 */
+	public static function prepare_multilingual_field( $post_id, $field_name ) {
+		global $language_priority;
+
+		$multilingual_field = array();
+		foreach ( $language_priority as $lang ) {
+			$multilingual_field[ $lang ] = self::get_value_for_metafield( $post_id, $field_name . '_' . $lang );
+		}
+
+		return $multilingual_field;
 	}
 }

@@ -89,11 +89,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		 * @return void
 		 */
 		public function activate() {
-			// Add all new capabilities of plugin to administrator role (save in database).
-			$new_capabilities = array(
-				'disable_datasets'
-			);
-
+			// Add all capabilities of plugin to administrator role (save in database).
 			$admin_role = get_role( 'administrator' );
 			if ( is_object( $admin_role ) ) {
 				$admin_role->add_cap( 'edit_datasets' );
@@ -107,10 +103,6 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 				$admin_role->add_cap( 'edit_private_datasets' );
 				$admin_role->add_cap( 'edit_published_datasets' );
 				$admin_role->add_cap( 'create_datasets' );
-
-				foreach ( $new_capabilities as $cap ) {
-					$admin_role->add_cap( $cap );
-				}
 			}
 		}
 

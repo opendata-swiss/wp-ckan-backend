@@ -75,6 +75,13 @@ abstract class Ckan_Backend_Sync_Abstract {
 			return;
 		}
 
+		// Check if the post title is set -> otherwise do not sync to CKAN
+		if ( '' === $post->post_title ) {
+			$this->store_errors_in_notices_option( array( __( 'CKAN Sync aborted! Please provide a title for this post.', 'ogdch' ) ) );
+
+			return;
+		}
+
 		// If action is trash -> set CKAN dataset to deleted
 		if ( isset( $_GET ) && ( 'trash' === $_GET['action'] ) ) {
 			$success = $this->delete_action( $post );
@@ -94,7 +101,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 
 			if ( $post->post_status === 'publish' ) {
 				$data = $this->get_ckan_data( $post );
-				// If post data holds reference id -> do update in CKAN
+				// If data to send holds CKAN id -> do update in CKAN
 				if ( isset( $data['id'] ) ) {
 					$success = $this->update_action( $post, $data );
 				} else {
@@ -119,15 +126,15 @@ abstract class Ckan_Backend_Sync_Abstract {
 	 * @return bool True when CKAN request was successful.
 	 */
 	protected function untrash_action( $post ) {
-		$ckan_ref = get_post_meta( $post->ID, $this->field_prefix . 'reference', true );
+		$ckan_id = get_post_meta( $post->ID, $this->field_prefix . 'ckan_id', true );
 
-		// If no CKAN reference id is defined don't send request a to CKAN
-		if ( '' === $ckan_ref ) {
+		// If no CKAN id is defined don't send request a to CKAN
+		if ( '' === $ckan_id ) {
 			return true;
 		}
 
 		$data = array(
-			'id'    => $ckan_ref,
+			'id'    => $ckan_id,
 			'state' => 'active',
 		);
 
@@ -143,16 +150,16 @@ abstract class Ckan_Backend_Sync_Abstract {
 	 * @return bool True when CKAN request was successful.
 	 */
 	protected function delete_action( $post ) {
-		$ckan_ref = get_post_meta( $post->ID, $this->field_prefix . 'reference', true );
+		$ckan_id = get_post_meta( $post->ID, $this->field_prefix . 'ckan_id', true );
 
-		// If no CKAN reference id is defined don't send request a to CKAN
-		if ( '' === $ckan_ref ) {
+		// If no CKAN id is defined don't send request a to CKAN
+		if ( '' === $ckan_id ) {
 			return true;
 		}
 
 		$endpoint = CKAN_API_ENDPOINT . 'action/' . $this->api_type . '_delete';
 		$data     = array(
-			'id' => $ckan_ref,
+			'id' => $ckan_id,
 		);
 		$data     = wp_json_encode( $data );
 
@@ -209,7 +216,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 
 	/**
 	 * Gets called when a CKAN data is inserted.
-	 * Sends inserted data to CKAN and updates reference id and name (slug) from CKAN.
+	 * Sends inserted data to CKAN.
 	 *
 	 * @param object $post The post from WordPress which is inserted.
 	 * @param array  $data The inserted data to send.
@@ -231,7 +238,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 	}
 
 	/**
-	 * Updateds CKAN data in WordPress dataset
+	 * Updates CKAN data in WordPress dataset
 	 *
 	 * @param object $post The post from WordPress which is inserted.
 	 * @param array  $result Result from the CKAN api request.
@@ -240,11 +247,11 @@ abstract class Ckan_Backend_Sync_Abstract {
 	 */
 	protected function update_ckan_data( $post, $result ) {
 		if ( isset( $result['id'] ) && '' !== $result['id'] ) {
-			// Set reference id from CKAN and add it to $_POST because the real meta save will follow after this action
-			update_post_meta( $post->ID, $this->field_prefix . 'reference', $result['id'] );
-			update_post_meta( $post->ID, $this->field_prefix . 'name', $result['name'] );
-			$_POST[ $this->field_prefix . 'reference' ] = $result['id'];
-			$_POST[ $this->field_prefix . 'name' ]      = $result['name'];
+			// Set ckan_id and ckan_name from CKAN and add it to $_POST because the real meta save will follow after this action
+			update_post_meta( $post->ID, $this->field_prefix . 'ckan_id', $result['id'] );
+			update_post_meta( $post->ID, $this->field_prefix . 'ckan_name', $result['name'] );
+			$_POST[ $this->field_prefix . 'ckan_id' ]   = $result['id'];
+			$_POST[ $this->field_prefix . 'ckan_name' ] = $result['name'];
 
 			return true;
 		}

@@ -17,23 +17,11 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	 * @return array $data Data to send
 	 */
 	protected function get_ckan_data( $post ) {
-		$resources    = $this->prepare_resources( $_POST[ $this->field_prefix . 'distributions' ] );
-		$groups       = $this->prepare_selected_groups( $_POST[ $this->field_prefix . 'themes' ] );
+		$resources    = $this->prepare_resources( Ckan_Backend_Helper::get_value_for_metafield( $post->ID, $this->field_prefix . 'distributions' ) );
+		$groups       = $this->prepare_selected_groups( Ckan_Backend_Helper::get_value_for_metafield( $post->ID, $this->field_prefix . 'themes' ) );
 		$tags         = $this->prepare_tags( wp_get_object_terms( $post->ID, 'post_tag' ) );
-		$titles       = $this->prepare_multilingual_field( $_POST, $this->field_prefix . 'title' );
-		$descriptions = $this->prepare_multilingual_field( $_POST, $this->field_prefix . 'description' );
-
-		// Generate slug of dataset. If no title is entered use an uniqid
-		if ( $_POST[ $this->field_prefix . 'title_en' ] !== '' ) {
-			$slug = $_POST[ $this->field_prefix . 'title_en' ];
-		} else {
-			$slug = $post->post_title;
-
-			if ( '' === $slug ) {
-				$slug = uniqid();
-			}
-		}
-		$slug = sanitize_title_with_dashes( $slug );
+		$titles       = Ckan_Backend_Helper::prepare_multilingual_field( $post->ID, $this->field_prefix . 'title' );
+		$descriptions = Ckan_Backend_Helper::prepare_multilingual_field( $post->ID, $this->field_prefix . 'description' );
 
 		/**
 		 * TODO
@@ -42,28 +30,26 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		 * - if distribution[download_urls] not exists use distribution[download_url]
 		 */
 
+		$contact_points = Ckan_Backend_Helper::get_value_for_metafield( $post->ID, $this->field_prefix . 'contact_points' );
+
 		$data = array(
-			'name'             => $slug,
+			'name'             => sanitize_title_with_dashes( $post->post_title ),
 			'title'            => $titles,
-			'maintainer'       => $_POST[ $this->field_prefix . 'contact_points' ][0]['name'],
-			'maintainer_email' => $_POST[ $this->field_prefix . 'contact_points' ][0]['email'],
+			'maintainer'       => $contact_points[0]['name'],
+			'maintainer_email' => $contact_points[0]['email'],
 			'notes'            => $descriptions,
 			'state'            => 'active',
 			'resources'        => $resources,
 			'groups'           => $groups,
-			'owner_org'        => $_POST[ $this->field_prefix . 'publisher' ],
+			'owner_org'        => Ckan_Backend_Helper::get_value_for_metafield( $post->ID, $this->field_prefix . 'publisher' ),
 			'tags'             => $tags,
 		);
 
-		if ( isset( $_POST[ $this->field_prefix . 'reference' ] ) && $_POST[ $this->field_prefix . 'reference' ] !== '' ) {
-			$data['id'] = $_POST[ $this->field_prefix . 'reference' ];
+		$ckan_id = get_post_meta( $post->ID, $this->field_prefix . 'ckan_id', true );
+		if ( '' !== $ckan_id ) {
+			$data['id'] = $ckan_id;
 		}
-		// Check if user is allowed to disable datasets -> otherwise reset value
-		if ( ! current_user_can( 'disable_datasets' ) ) {
-			$disable_value                             = get_post_meta( $post->ID, $_POST[ $this->field_prefix . 'disabled' ], true );
-			$_POST[ $this->field_prefix . 'disabled' ] = $disable_value;
-		}
-		if ( isset( $_POST[ $this->field_prefix . 'disabled' ] ) && $_POST[ $this->field_prefix . 'disabled' ] === 'on' ) {
+		if ( Ckan_Backend_Helper::get_value_for_metafield( $post->ID, $this->field_prefix . 'disabled' ) === 'on' ) {
 			$data['state'] = 'deleted';
 		}
 
@@ -78,13 +64,22 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	 * @return array CKAN friendly resources
 	 */
 	protected function prepare_resources( $resources ) {
+		global $language_priority;
 		$ckan_resources = array();
 
 		// Check if resources are added. If yes generate CKAN friendly array.
 		if ( '' !== $resources[0]['download_url'] ) {
 			foreach ( $resources as $resource ) {
-				$titles           = $this->prepare_multilingual_field( $resource, 'title' );
-				$descriptions     = $this->prepare_multilingual_field( $resource, 'description' );
+
+				$titles = array();
+				foreach ( $language_priority as $lang ) {
+					$titles[ $lang ] = $resource[ 'title_' . $lang ];
+				}
+				$descriptions = array();
+				foreach ( $language_priority as $lang ) {
+					$descriptions[ $lang ] = $resource[ 'description_' . $lang ];
+				}
+
 				$ckan_resources[] = array(
 					'url'         => $resource['download_url'],
 					'name'        => $titles,
@@ -134,24 +129,5 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		}
 
 		return $ckan_tags;
-	}
-
-	/**
-	 * Returns a CKAN friendly array for multilingual fields
-	 *
-	 * @param array  $base_array Array with the raw values. Format: array( 'field_de', 'field_en', ... ).
-	 * @param string $field_name Name of the field.
-	 *
-	 * @return array
-	 */
-	protected function prepare_multilingual_field( $base_array, $field_name ) {
-		global $language_priority;
-
-		$multilingual_field = array();
-		foreach ( $language_priority as $lang ) {
-			$multilingual_field[ $lang ] = $base_array[ $field_name . '_' . $lang ];
-		}
-
-		return $multilingual_field;
 	}
 }

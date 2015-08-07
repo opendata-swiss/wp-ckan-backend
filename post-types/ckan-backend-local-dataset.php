@@ -473,18 +473,12 @@ class Ckan_Backend_Local_Dataset {
 			'show_names'   => true,
 		) );
 
-		$disabled_checkbox_args = array(
+		$cmb_side_disabled->add_field( array(
 			'desc'       => __( 'Disable Dataset', 'ogdch' ),
 			'id'         => self::FIELD_PREFIX . 'disabled',
 			'type'       => 'checkbox',
 			'before_row' => array( $this, 'show_message_if_disabled' ),
-		);
-		if ( ! current_user_can( 'disable_datasets' ) ) {
-			$disabled_checkbox_args['attributes'] = array(
-				'disabled' => 'disabled',
-			);
-		}
-		$cmb_side_disabled->add_field( $disabled_checkbox_args );
+		) );
 
 		/* CMB Sidebox for CKAN data */
 		$cmb_side_ckan = new_cmb2_box( array(
@@ -496,20 +490,20 @@ class Ckan_Backend_Local_Dataset {
 			'show_names'   => true,
 		) );
 
-		/* CKAN Ref ID (If Set.. update.. set on first save) */
+		/* Ckan id (If Set -> update. Set on first save) */
 		$cmb_side_ckan->add_field( array(
-			'name'       => __( 'Reference ID', 'ogdch' ),
-			'id'         => self::FIELD_PREFIX . 'reference',
+			'name'       => __( 'CKAN ID', 'ogdch' ),
+			'id'         => self::FIELD_PREFIX . 'ckan_id',
 			'type'       => 'text',
 			'attributes' => array(
 				'readonly' => 'readonly',
 			),
 		) );
 
-		/* Permalink */
+		/* Ckan name */
 		$cmb_side_ckan->add_field( array(
-			'name'       => __( 'Name (Slug)', 'ogdch' ),
-			'id'         => self::FIELD_PREFIX . 'name',
+			'name'       => __( 'CKAN Name (Slug)', 'ogdch' ),
+			'id'         => self::FIELD_PREFIX . 'ckan_name',
 			'type'       => 'text',
 			'attributes' => array(
 				'readonly' => 'readonly',
