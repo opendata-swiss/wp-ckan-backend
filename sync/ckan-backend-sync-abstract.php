@@ -132,7 +132,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 			'state' => 'active',
 		);
 
-		return $this->update_action( $post, $data );
+		return $this->upsert_action( $post, $data );
 	}
 
 	/**
