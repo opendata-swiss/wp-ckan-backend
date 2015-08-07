@@ -473,18 +473,12 @@ class Ckan_Backend_Local_Dataset {
 			'show_names'   => true,
 		) );
 
-		$disabled_checkbox_args = array(
+		$cmb_side_disabled->add_field( array(
 			'desc'       => __( 'Disable Dataset', 'ogdch' ),
 			'id'         => self::FIELD_PREFIX . 'disabled',
 			'type'       => 'checkbox',
 			'before_row' => array( $this, 'show_message_if_disabled' ),
-		);
-		if ( ! current_user_can( 'disable_datasets' ) ) {
-			$disabled_checkbox_args['attributes'] = array(
-				'disabled' => 'disabled',
-			);
-		}
-		$cmb_side_disabled->add_field( $disabled_checkbox_args );
+		) );
 
 		/* CMB Sidebox for CKAN data */
 		$cmb_side_ckan = new_cmb2_box( array(

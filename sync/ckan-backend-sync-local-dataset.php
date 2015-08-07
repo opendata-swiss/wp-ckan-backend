@@ -49,12 +49,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		if ( '' !== $ckan_id ) {
 			$data['id'] = $ckan_id;
 		}
-		// Check if user is allowed to disable datasets -> otherwise reset value
-		if ( ! current_user_can( 'disable_datasets' ) ) {
-			$disable_value                             = get_post_meta( $post->ID, $this->field_prefix . 'disabled', true );
-			$_POST[ $this->field_prefix . 'disabled' ] = $disable_value;
-		}
-		if ( isset( $_POST[ $this->field_prefix . 'disabled' ] ) && $_POST[ $this->field_prefix . 'disabled' ] === 'on' ) {
+		if ( Ckan_Backend_Helper::get_value_for_metafield( $post->ID, $this->field_prefix . 'disabled' ) === 'on' ) {
 			$data['state'] = 'deleted';
 		}
 
