@@ -19,6 +19,12 @@ class Ckan_Backend_Local_Dataset {
 	 */
 	public function __construct() {
 		$this->register_post_type();
+
+		// add backend list columns
+		add_filter( 'manage_' . self::POST_TYPE . '_posts_columns', array( $this, 'add_columns' ) );
+		add_action( 'manage_' . self::POST_TYPE . '_posts_custom_column', array( $this, 'add_columns_data' ), 10, 2 );
+
+		// define backend fields
 		add_action( 'cmb2_init', array( $this, 'define_fields' ) );
 
 		// render additional field after main cmb2 form is rendered
@@ -26,6 +32,38 @@ class Ckan_Backend_Local_Dataset {
 
 		// initialize local dataset sync
 		new Ckan_Backend_Sync_Local_Dataset( self::POST_TYPE, self::FIELD_PREFIX );
+	}
+
+	/**
+	 * Adds custom columns to backend list
+	 *
+	 * @param array $columns Array with all current columns.
+	 *
+	 * @return array
+	 */
+	public function add_columns( $columns ) {
+		$new_columns = array(
+			self::FIELD_PREFIX . 'publisher' => __( 'Publisher', 'ogdch' ),
+		);
+
+		return array_merge( $columns, $new_columns );
+	}
+
+	/**
+	 * Prints data for custom columns
+	 *
+	 * @param string $column Name of custom column.
+	 * @param int    $post_id Id of current post.
+	 */
+	public function add_columns_data( $column, $post_id ) {
+		switch ( $column ) {
+			case self::FIELD_PREFIX . 'publisher' :
+				$organisation_id = get_post_meta( $post_id, $column, true );
+				if( '' !== $organisation_id ) {
+					echo Ckan_Backend_Helper::get_organisation_title( $organisation_id );
+				}
+				break;
+		}
 	}
 
 	/**
@@ -41,7 +79,7 @@ class Ckan_Backend_Local_Dataset {
 	 *
 	 * This function is a callback function for CMB2
 	 *
-	 * @param array  $field_args Array of field arguments.
+	 * @param array $field_args Array of field arguments.
 	 * @param object $field CMB field.
 	 *
 	 * @return void

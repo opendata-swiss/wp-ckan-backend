@@ -120,6 +120,33 @@ class Ckan_Backend_Helper {
 	}
 
 	/**
+	 * Returns title of given CKAN organisation.
+	 *
+	 * @return string
+	 */
+	public static function get_organisation_title( $id ) {
+		if ( false === ( $organisation_title = get_transient( 'organisation_title_' . $id ) ) ) {
+			$endpoint = CKAN_API_ENDPOINT . 'action/organization_show';
+			$data     = array(
+				'id'               => $id,
+				'include_datasets' => false,
+			);
+			$data     = wp_json_encode( $data );
+
+			$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
+			$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
+			self::print_error_messages( $errors );
+			$organisation_title = $response['result']['title'];
+
+			// save organisation title in transient
+			set_transient( 'organisation_title_' . $id, $organisation_title, 1 * HOUR_IN_SECONDS );
+		}
+
+
+		return $organisation_title;
+	}
+
+	/**
 	 * Checks if the group exsits.
 	 *
 	 * @param string $name The name of the group.
