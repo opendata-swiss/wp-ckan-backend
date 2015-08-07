@@ -26,7 +26,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 	 * Mapping WordPress -> CKAN
 	 * @var array
 	 */
-	private $type_api_mapping = array(
+	private $api_type_mapping = array(
 		'ckan-local-dataset' => 'package',
 		'ckan-local-org'     => 'organization',
 		'ckan-local-group'   => 'group',
@@ -41,15 +41,15 @@ abstract class Ckan_Backend_Sync_Abstract {
 	/**
 	 * The constructor of the class.
 	 *
-	 * @param string $post_type    The post type.
+	 * @param string $post_type The post type.
 	 * @param string $field_prefix The field prefix.
 	 */
 	public function __construct( $post_type, $field_prefix ) {
 		$this->post_type    = $post_type;
 		$this->field_prefix = $field_prefix;
 
-		if ( array_key_exists( $post_type, $this->type_api_mapping ) ) {
-			$this->api_type = $this->type_api_mapping[ $post_type ];
+		if ( array_key_exists( $post_type, $this->api_type_mapping ) ) {
+			$this->api_type = $this->api_type_mapping[ $post_type ];
 		} else {
 			return false;
 		}
@@ -65,13 +65,18 @@ abstract class Ckan_Backend_Sync_Abstract {
 	 * This action gets called when a CKAN post-type is saved, changed, trashed or deleted.
 	 *
 	 * @param integer $post_id The ID of the post to sync.
-	 * @param object  $post    The wordpress post.
+	 * @param object  $post The wordpress post.
 	 *
 	 * @return bool|void
 	 */
 	public function do_sync( $post_id, $post ) {
 		// Exit if WP is doing an auto-save
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+			return;
+		}
+
+		// Exit if WP is saving an auto-draft post (on add new action)
+		if ( 'auto-draft' === $post->post_status ) {
 			return;
 		}
 
@@ -84,7 +89,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 
 		// If action is trash -> set CKAN dataset to deleted
 		if ( isset( $_GET ) && ( 'trash' === $_GET['action'] ) ) {
-			$success = $this->delete_action( $post );
+			$success = $this->trash_action( $post );
 		} // If action is untrash -> set CKAN dataset to active
 		elseif ( isset( $_GET ) && 'unstrash' === $_GET['action'] ) {
 			$success = $this->untrash_action( $post );
@@ -99,19 +104,8 @@ abstract class Ckan_Backend_Sync_Abstract {
 				return;
 			}
 
-			if ( $post->post_status === 'publish' ) {
-				$data = $this->get_ckan_data( $post );
-				// If data to send holds CKAN id -> do update in CKAN
-				if ( isset( $data['id'] ) ) {
-					$success = $this->update_action( $post, $data );
-				} else {
-					// Insert new dataset
-					$success = $this->insert_action( $post, $data );
-				}
-			} else {
-				// if post gets unpublished -> set CKAN dataset to deleted
-				$success = $this->delete_action( $post );
-			}
+			$data    = $this->get_ckan_data( $post );
+			$success = $this->upsert_action( $post, $data );
 		}
 
 		return $success;
@@ -138,7 +132,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 			'state' => 'active',
 		);
 
-		return $this->update_action( $post, $data );
+		return $this->upsert_action( $post, $data );
 	}
 
 	/**
@@ -149,7 +143,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 	 *
 	 * @return bool True when CKAN request was successful.
 	 */
-	protected function delete_action( $post ) {
+	protected function trash_action( $post ) {
 		$ckan_id = get_post_meta( $post->ID, $this->field_prefix . 'ckan_id', true );
 
 		// If no CKAN id is defined don't send request a to CKAN
@@ -167,7 +161,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 		$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
 		$this->store_errors_in_notices_option( $errors );
 
-		$this->after_delete_action( $post );
+		$this->after_trash_action( $post );
 
 		// Return true if there were no errors
 		return count( $errors ) === 0;
@@ -178,7 +172,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 	 *
 	 * @param object $post The post from WordPress which is deleted.
 	 */
-	protected function after_delete_action( $post ) {
+	protected function after_trash_action( $post ) {
 		return;
 	}
 
@@ -192,41 +186,24 @@ abstract class Ckan_Backend_Sync_Abstract {
 	abstract protected function get_ckan_data( $post );
 
 	/**
-	 * Gets called when a CKAN data is updated.
-	 * Sends updated data to CKAN.
+	 * Gets called when a CKAN data is inserted or updated.
+	 * Sends inserted/updated data to CKAN.
 	 *
-	 * @param object $post The post from WordPress which is updated.
-	 * @param array  $data The updated data to send.
+	 * @param object $post The post from WordPress which is inserted/updated.
+	 * @param array  $data The inserted/updated data to send.
 	 *
-	 * @return bool True if data was successfully updated in CKAN
+	 * @return bool True if data was successfully inserted/updated in CKAN
 	 */
-	protected function update_action( $post, $data ) {
-		$endpoint = CKAN_API_ENDPOINT . 'action/' . $this->api_type . '_patch';
-		$data     = wp_json_encode( $data );
-
-		$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
-		$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
-		$this->store_errors_in_notices_option( $errors );
-		if ( count( $errors ) === 0 ) {
-			return $this->update_ckan_data( $post, $response['result'] );
+	protected function upsert_action( $post, $data ) {
+		// If data to send holds CKAN id -> do update in CKAN
+		if ( isset( $data['id'] ) ) {
+			$endpoint = CKAN_API_ENDPOINT . 'action/' . $this->api_type . '_patch';
 		} else {
-			return false;
+			// Insert new dataset
+			$endpoint = CKAN_API_ENDPOINT . 'action/' . $this->api_type . '_create';
 		}
-	}
 
-	/**
-	 * Gets called when a CKAN data is inserted.
-	 * Sends inserted data to CKAN.
-	 *
-	 * @param object $post The post from WordPress which is inserted.
-	 * @param array  $data The inserted data to send.
-	 *
-	 * @return bool True if data was successfully inserted in CKAN
-	 */
-	protected function insert_action( $post, $data ) {
-		$endpoint = CKAN_API_ENDPOINT . 'action/' . $this->api_type . '_create';
 		$data     = wp_json_encode( $data );
-
 		$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
 		$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
 		$this->store_errors_in_notices_option( $errors );

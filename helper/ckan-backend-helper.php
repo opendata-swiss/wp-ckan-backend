@@ -206,11 +206,12 @@ class Ckan_Backend_Helper {
 	 *
 	 * @param int    $post_id ID of current post.
 	 * @param string $field_name Name of metafield.
+	 * @param bool   $load_from_post If true loads value from $_POST array.
 	 *
 	 * @return mixed
 	 */
-	public static function get_value_for_metafield( $post_id, $field_name ) {
-		if ( isset( $_POST[ $field_name ] ) ) {
+	public static function get_metafield_value( $post_id, $field_name, $load_from_post ) {
+		if ( $load_from_post ) {
 			return $_POST[ $field_name ];
 		} else {
 			return get_post_meta( $post_id, $field_name, true );
@@ -222,15 +223,16 @@ class Ckan_Backend_Helper {
 	 *
 	 * @param int    $post_id ID of current post.
 	 * @param string $field_name Name of the field.
+	 * @param bool   $load_from_post If true loads value from $_POST array.
 	 *
 	 * @return array
 	 */
-	public static function prepare_multilingual_field( $post_id, $field_name ) {
+	public static function prepare_multilingual_field( $post_id, $field_name, $load_from_post ) {
 		global $language_priority;
 
 		$multilingual_field = array();
 		foreach ( $language_priority as $lang ) {
-			$multilingual_field[ $lang ] = self::get_value_for_metafield( $post_id, $field_name . '_' . $lang );
+			$multilingual_field[ $lang ] = self::get_metafield_value( $post_id, $field_name . '_' . $lang, $load_from_post );
 		}
 
 		return $multilingual_field;

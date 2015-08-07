@@ -7,4 +7,8 @@
   color: #444;
   font-style: normal; }
 
+.post-type-ckan-local-group #minor-publishing,
+.post-type-ckan-local-org #minor-publishing {
+  display: none; }
+
 /*# sourceMappingURL=base.css.map */

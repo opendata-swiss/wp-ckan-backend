@@ -16,9 +16,9 @@ class Ckan_Backend_Sync_Local_Organisation extends Ckan_Backend_Sync_Abstract {
 	 *
 	 * @return void
 	 */
-	protected function after_delete_action( $post ) {
+	protected function after_trash_action( $post ) {
 		// Select related datasets.
-		$args = array(
+		$args                  = array(
 			// @codingStandardsIgnoreStart
 			'meta_key'       => Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'organisation',
 			'meta_value'     => $post->name,
@@ -48,19 +48,23 @@ class Ckan_Backend_Sync_Local_Organisation extends Ckan_Backend_Sync_Abstract {
 	 * @return array $data Updated data to send
 	 */
 	protected function get_ckan_data( $post ) {
-		$titles       = Ckan_Backend_Helper::prepare_multilingual_field( $post->ID, $this->field_prefix . 'title' );
-		$descriptions = Ckan_Backend_Helper::prepare_multilingual_field( $post->ID, $this->field_prefix . 'description' );
+		$load_from_post = false;
+		if ( isset( $_POST['metadata_not_in_db'] ) && true === (bool) $_POST['metadata_not_in_db'] ) {
+			$load_from_post = true;
+		}
+		$titles       = Ckan_Backend_Helper::prepare_multilingual_field( $post->ID, $this->field_prefix . 'title', $load_from_post );
+		$descriptions = Ckan_Backend_Helper::prepare_multilingual_field( $post->ID, $this->field_prefix . 'description', $load_from_post );
 
 		$data = array(
 			'name'        => sanitize_title_with_dashes( $post->post_title ),
 			'title'       => $titles,
 			'description' => $descriptions,
-			'image_url'   => Ckan_Backend_Helper::get_value_for_metafield( $post->ID, $this->field_prefix . 'image' ),
+			'image_url'   => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'image', $load_from_post ),
 			'state'       => 'active',
 		);
 
-		if ( Ckan_Backend_Helper::get_value_for_metafield( $post->ID, $this->field_prefix . 'parent' ) !== '' ) {
-			$data['groups'] = array( array( 'name' => Ckan_Backend_Helper::get_value_for_metafield( $post->ID, $this->field_prefix . 'parent' ) ) );
+		if ( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'parent', $load_from_post ) !== '' ) {
+			$data['groups'] = array( array( 'name' => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'parent', $load_from_post ) ) );
 		} else {
 			$data['groups'] = array();
 		}

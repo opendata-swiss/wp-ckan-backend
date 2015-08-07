@@ -72,11 +72,11 @@ class Ckan_Backend_Local_Dataset_Import {
 			} else {
 				if ( $dataset_id > 0 ) {
 					echo '<div class="updated">';
-					echo '<p><strong>' . esc_html( __( 'Import successful', 'ogdch' ) ) . '</strong></p>';
+					echo '<p><strong>' . esc_html( __( 'Import successful', 'ogdch' ) ) . '</strong></p><p>';
 					// @codingStandardsIgnoreStart
 					printf( __( 'Click <a href="%s">here</a> to see the imported dataset.', 'ogdch' ), esc_url( admin_url( 'post.php?post=' . esc_attr( $dataset_id ) . '&action=edit' ) ) );
 					// @codingStandardsIgnoreEnd
-					echo '</div>';
+					echo '</p></div>';
 				}
 			}
 		} ?>
@@ -85,20 +85,24 @@ class Ckan_Backend_Local_Dataset_Import {
 
 			<form enctype="multipart/form-data" action="" method="POST">
 				<input type="hidden" name="<?php esc_attr_e( $import_submit_hidden_field_name ); ?>" value="Y">
+				<?php // Field shows that the metadata is not yet saved in database -> get values from $_POST array ?>
+				<input type="hidden" id="metadata_not_in_db" name="metadata_not_in_db" value="1" />
 
 				<div class="postbox">
 					<div class="inside">
 						<table class="form-table">
 							<tbody>
-							<th scope="row">
-								<label for="import_file"><?php esc_html_e( __( 'DCAT-AP File:', 'ogdch' ) ); ?></label>
-							</th>
+								<tr>
+									<th scope="row">
+										<label for="import_file"><?php esc_html_e( __( 'DCAT-AP File:', 'ogdch' ) ); ?></label>
+									</th>
 
-							<td>
-								<input type="file" id="import_file" name="<?php esc_attr_e( $file_field_name ); ?>"/>
-								<br/>
-								<span class="description"><?php esc_html_e( __( 'File has to be in DACT-AP Switzerland format.', 'ogdch' ) ); ?></span>
-							</td>
+									<td>
+										<input type="file" id="import_file" name="<?php esc_attr_e( $file_field_name ); ?>"/>
+										<br/>
+										<span class="description"><?php esc_html_e( __( 'File has to be in DACT-AP Switzerland format.', 'ogdch' ) ); ?></span>
+									</td>
+								</tr>
 							</tbody>
 						</table>
 

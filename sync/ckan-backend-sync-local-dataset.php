@@ -17,11 +17,15 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	 * @return array $data Data to send
 	 */
 	protected function get_ckan_data( $post ) {
-		$resources    = $this->prepare_resources( Ckan_Backend_Helper::get_value_for_metafield( $post->ID, $this->field_prefix . 'distributions' ) );
-		$groups       = $this->prepare_selected_groups( Ckan_Backend_Helper::get_value_for_metafield( $post->ID, $this->field_prefix . 'themes' ) );
+		$load_from_post = false;
+		if ( isset( $_POST['metadata_not_in_db'] ) && true === (bool) $_POST['metadata_not_in_db'] ) {
+			$load_from_post = true;
+		}
+		$resources    = $this->prepare_resources( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'distributions', $load_from_post ) );
+		$groups       = $this->prepare_selected_groups( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'themes', $load_from_post ) );
 		$tags         = $this->prepare_tags( wp_get_object_terms( $post->ID, 'post_tag' ) );
-		$titles       = Ckan_Backend_Helper::prepare_multilingual_field( $post->ID, $this->field_prefix . 'title' );
-		$descriptions = Ckan_Backend_Helper::prepare_multilingual_field( $post->ID, $this->field_prefix . 'description' );
+		$titles       = Ckan_Backend_Helper::prepare_multilingual_field( $post->ID, $this->field_prefix . 'title', $load_from_post );
+		$descriptions = Ckan_Backend_Helper::prepare_multilingual_field( $post->ID, $this->field_prefix . 'description', $load_from_post );
 
 		/**
 		 * TODO
@@ -30,7 +34,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		 * - if distribution[download_urls] not exists use distribution[download_url]
 		 */
 
-		$contact_points = Ckan_Backend_Helper::get_value_for_metafield( $post->ID, $this->field_prefix . 'contact_points' );
+		$contact_points = Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'contact_points', $load_from_post );
 
 		$data = array(
 			'name'             => sanitize_title_with_dashes( $post->post_title ),
@@ -39,9 +43,10 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 			'maintainer_email' => $contact_points[0]['email'],
 			'notes'            => $descriptions,
 			'state'            => 'active',
+			'private'          => true,
 			'resources'        => $resources,
 			'groups'           => $groups,
-			'owner_org'        => Ckan_Backend_Helper::get_value_for_metafield( $post->ID, $this->field_prefix . 'publisher' ),
+			'owner_org'        => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'publisher', $load_from_post ),
 			'tags'             => $tags,
 		);
 
@@ -49,8 +54,11 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		if ( '' !== $ckan_id ) {
 			$data['id'] = $ckan_id;
 		}
-		if ( Ckan_Backend_Helper::get_value_for_metafield( $post->ID, $this->field_prefix . 'disabled' ) === 'on' ) {
+		if ( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'disabled', $load_from_post ) === 'on' ) {
 			$data['state'] = 'deleted';
+		}
+		if ( $post->post_status === 'publish' ) {
+			$data['private'] = false;
 		}
 
 		return $data;
@@ -115,7 +123,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	/**
 	 * Create CKAN friendly array of all tags
 	 *
-	 * @param string $tags Comma-seperated tags.
+	 * @param array $tags WordPress tags.
 	 *
 	 * @return array
 	 */
