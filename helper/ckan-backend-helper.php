@@ -101,19 +101,25 @@ class Ckan_Backend_Helper {
 			return false;
 		}
 
-		$options  = array();
-		$endpoint = CKAN_API_ENDPOINT . 'action/' . $type . '_list';
-		$data     = array(
-			'all_fields' => true,
-		);
-		$data     = wp_json_encode( $data );
+		$transient_name = Ckan_Backend::$plugin_slug . '_' . $type . '_options';
+		if ( false === ( $options = get_transient( $transient_name ) ) ) {
+			$options  = array();
+			$endpoint = CKAN_API_ENDPOINT . 'action/' . $type . '_list';
+			$data     = array(
+				'all_fields' => true,
+			);
+			$data     = wp_json_encode( $data );
 
-		$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
-		$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
-		self::print_error_messages( $errors );
+			$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
+			$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
+			self::print_error_messages( $errors );
 
-		foreach ( $response['result'] as $instance ) {
-			$options[ $instance['name'] ] = $instance['title'];
+			foreach ( $response['result'] as $instance ) {
+				$options[ $instance['name'] ] = $instance['title'];
+			}
+
+			// save result in transient
+			set_transient( $transient_name, $options, 1 * HOUR_IN_SECONDS );
 		}
 
 		return $options;
@@ -125,7 +131,8 @@ class Ckan_Backend_Helper {
 	 * @return string
 	 */
 	public static function get_organisation_title( $id ) {
-		if ( false === ( $organisation_title = get_transient( 'organisation_title_' . $id ) ) ) {
+		$transient_name = Ckan_Backend::$plugin_slug . '_organisation_title_' . $id;
+		if ( false === ( $organisation_title = get_transient( $transient_name ) ) ) {
 			$endpoint = CKAN_API_ENDPOINT . 'action/organization_show';
 			$data     = array(
 				'id'               => $id,
@@ -138,10 +145,9 @@ class Ckan_Backend_Helper {
 			self::print_error_messages( $errors );
 			$organisation_title = $response['result']['title'];
 
-			// save organisation title in transient
-			set_transient( 'organisation_title_' . $id, $organisation_title, 1 * HOUR_IN_SECONDS );
+			// save result in transient
+			set_transient( $transient_name, $organisation_title, 1 * HOUR_IN_SECONDS );
 		}
-
 
 		return $organisation_title;
 	}
@@ -187,15 +193,22 @@ class Ckan_Backend_Helper {
 			return false;
 		}
 
-		$endpoint = CKAN_API_ENDPOINT . 'action/' . $type . '_show';
-		$data     = array(
-			'id' => $name,
-		);
-		$data     = wp_json_encode( $data );
-		$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
-		$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
+		$transient_name = Ckan_Backend::$plugin_slug . '_' . $type . '_' . $name . '_exists';
+		if ( false === ( $object_exists = get_transient( $transient_name ) ) ) {
+			$endpoint      = CKAN_API_ENDPOINT . 'action/' . $type . '_show';
+			$data          = array(
+				'id' => $name,
+			);
+			$data          = wp_json_encode( $data );
+			$response      = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
+			$errors        = Ckan_Backend_Helper::check_response_for_errors( $response );
+			$object_exists = count( $errors ) === 0;
 
-		return count( $errors ) === 0;
+			// save result in transient
+			set_transient( $transient_name, $object_exists, 1 * HOUR_IN_SECONDS );
+		}
+
+		return $object_exists;
 	}
 
 	/**
@@ -231,9 +244,9 @@ class Ckan_Backend_Helper {
 	/**
 	 * Returns metafield value from $_POST if available. Otherwise returns value from database.
 	 *
-	 * @param int    $post_id ID of current post.
+	 * @param int $post_id ID of current post.
 	 * @param string $field_name Name of metafield.
-	 * @param bool   $load_from_post If true loads value from $_POST array.
+	 * @param bool $load_from_post If true loads value from $_POST array.
 	 *
 	 * @return mixed
 	 */
@@ -248,9 +261,9 @@ class Ckan_Backend_Helper {
 	/**
 	 * Returns a CKAN friendly array for multilingual fields
 	 *
-	 * @param int    $post_id ID of current post.
+	 * @param int $post_id ID of current post.
 	 * @param string $field_name Name of the field.
-	 * @param bool   $load_from_post If true loads value from $_POST array.
+	 * @param bool $load_from_post If true loads value from $_POST array.
 	 *
 	 * @return array
 	 */
