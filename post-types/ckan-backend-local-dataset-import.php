@@ -64,7 +64,7 @@ class Ckan_Backend_Local_Dataset_Import {
 			$notices = get_option( Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'notices' );
 			delete_option( Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'notices' );
 
-			if( ! empty( $notices ) ) {
+			if ( ! empty( $notices ) ) {
 				// print available notices
 				foreach ( $notices as $key => $m ) {
 					echo '<div class="error"><p>' . esc_html( $m ) . '</p></div>';
@@ -95,14 +95,14 @@ class Ckan_Backend_Local_Dataset_Import {
 							</th>
 
 							<td>
-								<input type="file" id="import_file" name="<?php esc_attr_e( $file_field_name ); ?>" />
-								<br />
+								<input type="file" id="import_file" name="<?php esc_attr_e( $file_field_name ); ?>"/>
+								<br/>
 								<span class="description"><?php esc_html_e( __( 'File has to be in DACT-AP Switzerland format.', 'ogdch' ) ); ?></span>
 							</td>
 							</tbody>
 						</table>
 
-						<hr />
+						<hr/>
 
 						<p class="submit">
 							<input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e( 'Import' ) ?>"/>
@@ -225,12 +225,12 @@ class Ckan_Backend_Local_Dataset_Import {
 	/**
 	 * Updates an existing dataset
 	 *
-	 * @param int                        $dataset_id ID of dataset to update.
+	 * @param int $dataset_id ID of dataset to update.
 	 * @param Ckan_Backend_Dataset_Model $dataset Dataset instance with values.
 	 */
 	protected function update( $dataset_id, $dataset ) {
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'disabled' ]  = get_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'disabled', true );
-		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'ckan_id' ] = get_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'ckan_id', true );
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'disabled' ] = get_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'disabled', true );
+		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'ckan_id' ]  = get_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'ckan_id', true );
 
 		$dataset_args = array(
 			'ID'            => $dataset_id,
@@ -466,7 +466,7 @@ class Ckan_Backend_Local_Dataset_Import {
 	 * Returns a single xml element from a given xpath
 	 *
 	 * @param SimpleXMLElement $xml XML content from file.
-	 * @param String           $xpath Xpath for query.
+	 * @param String $xpath Xpath for query.
 	 *
 	 * @return SimpleXMLElement|bool
 	 */

@@ -76,8 +76,9 @@ abstract class Ckan_Backend_Sync_Abstract {
 		}
 
 		// Check if the post title is set -> otherwise do not sync to CKAN
-		if( '' === $post->post_title ) {
+		if ( '' === $post->post_title ) {
 			$this->store_errors_in_notices_option( array( __( 'CKAN Sync aborted! Please provide a title for this post.', 'ogdch' ) ) );
+
 			return;
 		}
 
@@ -249,8 +250,8 @@ abstract class Ckan_Backend_Sync_Abstract {
 			// Set ckan_id and ckan_name from CKAN and add it to $_POST because the real meta save will follow after this action
 			update_post_meta( $post->ID, $this->field_prefix . 'ckan_id', $result['id'] );
 			update_post_meta( $post->ID, $this->field_prefix . 'ckan_name', $result['name'] );
-			$_POST[ $this->field_prefix . 'ckan_id' ] = $result['id'];
-			$_POST[ $this->field_prefix . 'ckan_name' ]      = $result['name'];
+			$_POST[ $this->field_prefix . 'ckan_id' ]   = $result['id'];
+			$_POST[ $this->field_prefix . 'ckan_name' ] = $result['name'];
 
 			return true;
 		}
