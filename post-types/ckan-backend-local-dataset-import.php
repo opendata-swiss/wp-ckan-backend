@@ -92,15 +92,17 @@ class Ckan_Backend_Local_Dataset_Import {
 					<div class="inside">
 						<table class="form-table">
 							<tbody>
-							<th scope="row">
-								<label for="import_file"><?php esc_html_e( __( 'DCAT-AP File:', 'ogdch' ) ); ?></label>
-							</th>
+								<tr>
+									<th scope="row">
+										<label for="import_file"><?php esc_html_e( __( 'DCAT-AP File:', 'ogdch' ) ); ?></label>
+									</th>
 
-							<td>
-								<input type="file" id="import_file" name="<?php esc_attr_e( $file_field_name ); ?>"/>
-								<br/>
-								<span class="description"><?php esc_html_e( __( 'File has to be in DACT-AP Switzerland format.', 'ogdch' ) ); ?></span>
-							</td>
+									<td>
+										<input type="file" id="import_file" name="<?php esc_attr_e( $file_field_name ); ?>"/>
+										<br/>
+										<span class="description"><?php esc_html_e( __( 'File has to be in DACT-AP Switzerland format.', 'ogdch' ) ); ?></span>
+									</td>
+								</tr>
 							</tbody>
 						</table>
 
