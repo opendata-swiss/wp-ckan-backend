@@ -75,6 +75,11 @@ abstract class Ckan_Backend_Sync_Abstract {
 			return;
 		}
 
+		// Exit if WP is saving an auto-draft post (on add new action)
+		if ( 'auto-draft' === $post->post_status ) {
+			return;
+		}
+
 		// Check if the post title is set -> otherwise do not sync to CKAN
 		if ( '' === $post->post_title ) {
 			$this->store_errors_in_notices_option( array( __( 'CKAN Sync aborted! Please provide a title for this post.', 'ogdch' ) ) );
