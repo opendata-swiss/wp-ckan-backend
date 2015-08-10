@@ -151,7 +151,7 @@ class Ckan_Backend_Helper {
 			set_transient( $transient_name, $organisation_title, 1 * HOUR_IN_SECONDS );
 		}
 
-		return $organisation_title;
+		return self::get_localized_text( $organisation_title );
 	}
 
 	/**
@@ -278,5 +278,22 @@ class Ckan_Backend_Helper {
 		}
 
 		return $multilingual_field;
+	}
+
+	/**
+	 * Extracts localized text from given CKAN JSON.
+	 *
+	 * @param string $all_languages JSON from CKAN with all languages in it.
+	 *
+	 * @return string
+	 */
+	public static function get_localized_text( $all_languages ) {
+		$all_languages = json_decode( $all_languages, true );
+		$current_language = get_locale();
+		$localized_text   = $all_languages[ substr( $current_language, 0, 2 ) ];
+		if ( '' === $localized_text ) {
+			$localized_text = $all_languages['en'];
+		}
+		return $localized_text;
 	}
 }
