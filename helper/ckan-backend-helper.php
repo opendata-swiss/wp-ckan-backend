@@ -131,7 +131,7 @@ class Ckan_Backend_Helper {
 	 * @return string
 	 */
 	public static function get_organisation_title( $id ) {
-		$transient_name = Ckan_Backend::$plugin_slug . '_organisation_title_' . $id;
+		$transient_name = Ckan_Backend::$plugin_slug . '_organization_title_' . $id;
 		if ( false === ( $organisation_title = get_transient( $transient_name ) ) ) {
 			$endpoint = CKAN_API_ENDPOINT . 'action/organization_show';
 			$data     = array(

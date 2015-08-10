@@ -76,4 +76,16 @@ class Ckan_Backend_Sync_Local_Organisation extends Ckan_Backend_Sync_Abstract {
 
 		return $data;
 	}
+
+	/**
+	 * Hook for after-sync action.
+	 *
+	 * @param object $post The post from WordPress.
+	 */
+	protected function after_sync_action( $post ) {
+		// Deletes all transients for this post-type instance.
+		delete_transient( Ckan_Backend::$plugin_slug . '_organization_options' );
+		delete_transient( Ckan_Backend::$plugin_slug . '_organization_' . sanitize_title_with_dashes( $post->post_title ) . '_exists' );
+		delete_transient( Ckan_Backend::$plugin_slug . '_organization_title_' . $post->ID );
+	}
 }
