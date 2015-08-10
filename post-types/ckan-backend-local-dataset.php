@@ -59,8 +59,8 @@ class Ckan_Backend_Local_Dataset {
 		switch ( $column ) {
 			case self::FIELD_PREFIX . 'publisher' :
 				$organisation_id = get_post_meta( $post_id, $column, true );
-				if( '' !== $organisation_id ) {
-					echo Ckan_Backend_Helper::get_organisation_title( $organisation_id );
+				if ( '' !== $organisation_id ) {
+					echo esc_attr( Ckan_Backend_Helper::get_organisation_title( $organisation_id ) );
 				}
 				break;
 		}
@@ -79,7 +79,7 @@ class Ckan_Backend_Local_Dataset {
 	 *
 	 * This function is a callback function for CMB2
 	 *
-	 * @param array $field_args Array of field arguments.
+	 * @param array  $field_args Array of field arguments.
 	 * @param object $field CMB field.
 	 *
 	 * @return void

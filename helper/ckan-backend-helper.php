@@ -128,6 +128,8 @@ class Ckan_Backend_Helper {
 	/**
 	 * Returns title of given CKAN organisation.
 	 *
+	 * @param string $id Id of organisation.
+	 *
 	 * @return string
 	 */
 	public static function get_organisation_title( $id ) {
@@ -244,9 +246,9 @@ class Ckan_Backend_Helper {
 	/**
 	 * Returns metafield value from $_POST if available. Otherwise returns value from database.
 	 *
-	 * @param int $post_id ID of current post.
+	 * @param int    $post_id ID of current post.
 	 * @param string $field_name Name of metafield.
-	 * @param bool $load_from_post If true loads value from $_POST array.
+	 * @param bool   $load_from_post If true loads value from $_POST array.
 	 *
 	 * @return mixed
 	 */
@@ -261,9 +263,9 @@ class Ckan_Backend_Helper {
 	/**
 	 * Returns a CKAN friendly array for multilingual fields
 	 *
-	 * @param int $post_id ID of current post.
+	 * @param int    $post_id ID of current post.
 	 * @param string $field_name Name of the field.
-	 * @param bool $load_from_post If true loads value from $_POST array.
+	 * @param bool   $load_from_post If true loads value from $_POST array.
 	 *
 	 * @return array
 	 */
