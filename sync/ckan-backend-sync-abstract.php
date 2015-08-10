@@ -108,6 +108,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 			$success = $this->upsert_action( $post, $data );
 		}
 
+		// TODO update dataset after group or organisation slug has changed
 		$this->after_sync_action( $post );
 
 		return $success;
