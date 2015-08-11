@@ -115,7 +115,7 @@ class Ckan_Backend_Helper {
 			self::print_error_messages( $errors );
 
 			foreach ( $response['result'] as $instance ) {
-				$options[ $instance['name'] ] = $instance['title'];
+				$options[ $instance['name'] ] = self::get_localized_text( $instance['title'] );
 			}
 
 			// save result in transient
