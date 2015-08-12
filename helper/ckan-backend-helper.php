@@ -292,13 +292,13 @@ class Ckan_Backend_Helper {
 	 * @return string
 	 */
 	public static function get_localized_text( $all_languages ) {
-		/*$all_languages = json_decode( $all_languages, true );
+		$all_languages = json_decode( $all_languages, true );
 		$current_language = get_locale();
 		$localized_text   = $all_languages[ substr( $current_language, 0, 2 ) ];
 		if ( '' === $localized_text ) {
 			$localized_text = $all_languages['en'];
 		}
-		return $localized_text;*/
+		return $localized_text;
 		return $all_languages;
 	}
 }
