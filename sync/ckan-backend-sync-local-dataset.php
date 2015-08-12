@@ -21,33 +21,38 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		if ( isset( $_POST['metadata_not_in_db'] ) && true === (bool) $_POST['metadata_not_in_db'] ) {
 			$load_from_post = true;
 		}
-		$resources    = $this->prepare_resources( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'distributions', $load_from_post ) );
-		$groups       = $this->prepare_selected_groups( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'themes', $load_from_post ) );
-		$tags         = $this->prepare_tags( wp_get_object_terms( $post->ID, 'post_tag' ) );
-		$titles       = Ckan_Backend_Helper::prepare_multilingual_field( $post->ID, $this->field_prefix . 'title', $load_from_post );
-		$descriptions = Ckan_Backend_Helper::prepare_multilingual_field( $post->ID, $this->field_prefix . 'description', $load_from_post );
-
-		/**
-		 * TODO
-		 * - calculate languages from all distribution[languages]
-		 * - if distribution[access_urls] not exists use distribution[access_url]
-		 * - if distribution[download_urls] not exists use distribution[download_url]
-		 */
-
+		$resources      = $this->prepare_resources( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'distributions', $load_from_post ) );
+		$groups         = $this->prepare_selected_groups( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'themes', $load_from_post ) );
+		$tags           = $this->prepare_tags( wp_get_object_terms( $post->ID, 'post_tag' ) );
+		$titles         = Ckan_Backend_Helper::prepare_multilingual_field( $post->ID, $this->field_prefix . 'title', $load_from_post );
+		$descriptions   = Ckan_Backend_Helper::prepare_multilingual_field( $post->ID, $this->field_prefix . 'description', $load_from_post );
+		$languages      = $this->gather_languages( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'distributions', $load_from_post ) );
+		$issued         = $this->prepare_date( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'issued', $load_from_post ) );
+		$modified       = $this->prepare_date( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'modified', $load_from_post ) );
 		$contact_points = Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'contact_points', $load_from_post );
 
 		$data = array(
-			'name'             => sanitize_title_with_dashes( $post->post_title ),
-			'title'            => $titles,
-			'maintainer'       => $contact_points[0]['name'],
-			'maintainer_email' => $contact_points[0]['email'],
-			'notes'            => $descriptions,
-			'state'            => 'active',
-			'private'          => true,
-			'resources'        => $resources,
-			'groups'           => $groups,
-			'owner_org'        => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'publisher', $load_from_post ),
-			'tags'             => $tags,
+			'name'                => sanitize_title_with_dashes( $post->post_title ),
+			'title'               => $titles,
+			'identifier'          => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'identifier', $load_from_post ),
+			'notes'               => $descriptions['de'], // TODO send multilingual description
+			'issued'              => $issued,
+			'modified'            => $modified,
+			'owner_org'           => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'publisher', $load_from_post ),
+			'contact_point'       => $contact_points[0]['name'] . ' (' . $contact_points[0]['email'] . ')',
+			'language'            => $languages,
+			'relation'            => '', // TODO
+			'tags'                => $tags,
+			'url'                 => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'landing_page', $load_from_post ),
+			'spatial'             => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'spatial', $load_from_post ),
+			'coverage'            => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'coverage', $load_from_post ),
+			'accrual_periodicity' => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'accrual_periodicity', $load_from_post ),
+			'temporal'            => '', // TODO
+			'see_also'            => '', // TODO
+			'state'               => 'active',
+			'private'             => true,
+			'resources'           => $resources,
+			'groups'              => $groups,
 		);
 
 		// do not change ckan name if there is already one in the database
@@ -83,7 +88,6 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		// Check if resources are added. If yes generate CKAN friendly array.
 		if ( '' !== $resources[0]['download_url'] ) {
 			foreach ( $resources as $resource ) {
-
 				$titles = array();
 				foreach ( $language_priority as $lang ) {
 					$titles[ $lang ] = $resource[ 'title_' . $lang ];
@@ -92,11 +96,24 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 				foreach ( $language_priority as $lang ) {
 					$descriptions[ $lang ] = $resource[ 'description_' . $lang ];
 				}
+				$issued   = $this->prepare_date( $resource['issued'] );
+				$modified = $this->prepare_date( $resource['modified'] );
 
 				$ckan_resources[] = array(
-					'url'         => $resource['download_url'],
-					'name'        => $titles,
-					'description' => $descriptions,
+					'identifier'   => $resource['identifier'],
+					'title'        => $titles,
+					'notes'        => $descriptions,
+					'issued'       => $issued,
+					'modified'     => $modified,
+					'languages'    => $resource['languages'],
+					'url'          => $resource['access_url'],
+					'download_url' => $resource['download_url'],
+					'rights'       => '', // TODO
+					'license'      => '', // TODO
+					'byte_size'    => $resource['byte_size'],
+					'media_type'   => $resource['media_type'],
+					'format'       => $resource['format'],
+					'coverage'     => $resource['coverage'],
 				);
 			}
 		}
@@ -142,5 +159,40 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		}
 
 		return $ckan_tags;
+	}
+
+	/**
+	 * Gathers languages from all distributions and return them in an array.
+	 *
+	 * @param array $resources All distributions of the dataset.
+	 *
+	 * @return array
+	 */
+	protected function gather_languages( $resources ) {
+		$languages = array();
+
+		// Check if resources are added. If yes generate CKAN friendly array.
+		if ( '' !== $resources[0]['download_url'] ) {
+			foreach ( $resources as $resource ) {
+				$languages = array_merge( $languages, $resource['languages'] );
+			}
+		}
+
+		return $languages;
+	}
+
+	/**
+	 * Creates a CKAN friendly date and returns it.
+	 *
+	 * @param array|string $datetime Datetime field as array or string.
+	 *
+	 * @return string
+	 */
+	protected function prepare_date( $datetime ) {
+		if ( is_array( $datetime ) && array_key_exists( 'date', $datetime ) ) {
+			$datetime = $datetime['date'];
+		}
+
+		return date( 'Y-m-d', strtotime( $datetime ) );
 	}
 }
