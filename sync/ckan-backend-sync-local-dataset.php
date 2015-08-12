@@ -105,7 +105,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 					'notes'        => $descriptions['de'], // TODO send multilingual description,
 					//'issued'       => $issued, // TODO
 					//'modified'     => $modified, // TODO
-					'languages'    => $resource['languages'],
+					'language'     => $resource['languages'],
 					'url'          => $resource['access_url'],
 					'download_url' => $resource['download_url'],
 					'rights'       => '', // TODO
