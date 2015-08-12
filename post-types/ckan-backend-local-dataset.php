@@ -337,8 +337,8 @@ class Ckan_Backend_Local_Dataset {
 		) );
 
 		$cmb->add_field( array(
-			'name' => __( 'Accrual Periodicy', 'ogdch' ),
-			'id'   => self::FIELD_PREFIX . 'accrual_periodicy',
+			'name' => __( 'Accrual Periodicity', 'ogdch' ),
+			'id'   => self::FIELD_PREFIX . 'accrual_periodicity',
 			'type' => 'text',
 		) );
 
@@ -445,7 +445,7 @@ class Ckan_Backend_Local_Dataset {
 			'type'    => 'radio',
 			'options' => array(
 				'reference_required'     => __( 'Required', 'ogdch' ),
-				'reference_not-required' => __( 'Nor required', 'ogdch' ),
+				'reference_not-required' => __( 'Not required', 'ogdch' ),
 			),
 		) );
 
