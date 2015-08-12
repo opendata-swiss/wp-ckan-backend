@@ -116,7 +116,7 @@ class Ckan_Backend_Helper {
 			$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
 			self::print_error_messages( $errors );
 
-			if( is_array( $response['result'] )) {
+			if ( is_array( $response['result'] ) ) {
 				foreach ( $response['result'] as $instance ) {
 					$options[ $instance['name'] ] = self::get_localized_text( $instance['title'] );
 				}
