@@ -77,7 +77,25 @@ class Ckan_Backend_Local_Group {
 			'has_archive'         => false,
 			'exclude_from_search' => false,
 			'publicly_queryable'  => false,
-			'capability_type'     => 'page',
+			'map_meta_cap'        => true,
+			'capability_type'     => 'dataset',
+			'capabilities'        => array(
+				'edit_posts'             => 'edit_datasets',
+				'edit_others_posts'      => 'edit_others_datasets',
+				'publish_posts'          => 'publish_datasets',
+				'read_private_posts'     => 'read_private_datasets',
+				'delete_posts'           => 'delete_datasets',
+				'delete_private_posts'   => 'delete_private_datasets',
+				'delete_published_posts' => 'delete_published_datasets',
+				'delete_others_posts'    => 'delete_others_datasets',
+				'edit_private_posts'     => 'edit_private_datasets',
+				'edit_published_posts'   => 'edit_published_datasets',
+				'create_posts'           => 'create_datasets',
+				// Meta capabilites assigned by WordPress. Do not give to any role.
+				'edit_post'              => 'edit_dataset',
+				'read_post'              => 'read_dataset',
+				'delete_post'            => 'delete_dataset',
+			),
 		);
 		register_post_type( self::POST_TYPE, $args );
 	}
