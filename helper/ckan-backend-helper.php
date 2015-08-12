@@ -57,6 +57,8 @@ class Ckan_Backend_Helper {
 				$errors[] = $response['error']['name'][0];
 			} else if ( isset( $response['error'] ) && isset( $response['error']['id'] ) && is_array( $response['error']['id'] ) ) {
 				$errors[] = $response['error']['id'][0];
+			} else if ( isset( $response['error'] ) && isset( $response['error']['__type'] ) ) {
+				$errors[] = $response['error']['__type'];
 			} else {
 				$errors[] = 'API responded with unknown error.';
 			}
@@ -114,8 +116,10 @@ class Ckan_Backend_Helper {
 			$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
 			self::print_error_messages( $errors );
 
-			foreach ( $response['result'] as $instance ) {
-				$options[ $instance['name'] ] = self::get_localized_text( $instance['title'] );
+			if( is_array( $response['result'] )) {
+				foreach ( $response['result'] as $instance ) {
+					$options[ $instance['name'] ] = self::get_localized_text( $instance['title'] );
+				}
 			}
 
 			// save result in transient
@@ -288,12 +292,13 @@ class Ckan_Backend_Helper {
 	 * @return string
 	 */
 	public static function get_localized_text( $all_languages ) {
-		$all_languages = json_decode( $all_languages, true );
+		/*$all_languages = json_decode( $all_languages, true );
 		$current_language = get_locale();
 		$localized_text   = $all_languages[ substr( $current_language, 0, 2 ) ];
 		if ( '' === $localized_text ) {
 			$localized_text = $all_languages['en'];
 		}
-		return $localized_text;
+		return $localized_text;*/
+		return $all_languages;
 	}
 }
