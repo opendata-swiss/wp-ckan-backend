@@ -109,7 +109,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 					'url'          => $resource['access_url'],
 					'download_url' => $resource['download_url'],
 					'rights'       => '', // TODO
-					'license'      => '', // TODO
+					'license'      => '',
 					'byte_size'    => $resource['byte_size'],
 					'media_type'   => $resource['media_type'],
 					'format'       => $resource['format'],
