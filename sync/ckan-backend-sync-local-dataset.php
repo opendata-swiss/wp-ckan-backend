@@ -35,11 +35,11 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 			'name'                => sanitize_title_with_dashes( $post->post_title ),
 			'title'               => $titles,
 			'identifier'          => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'identifier', $load_from_post ),
-			'notes'               => $descriptions['de'], // TODO send multilingual description
+			'notes'               => $descriptions,
 			'issued'              => $issued,
 			'modified'            => $modified,
 			'owner_org'           => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'publisher', $load_from_post ),
-			'contact_point'       => $contact_points[0]['name'] . ' (' . $contact_points[0]['email'] . ')',
+			'contact_point'       => $contact_points[0]['name'] . ' (' . $contact_points[0]['email'] . ')', // TODO
 			'language'            => $languages,
 			'relation'            => '', // TODO
 			'tags'                => $tags,
@@ -49,10 +49,10 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 			'accrual_periodicity' => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'accrual_periodicity', $load_from_post ),
 			'temporal'            => '', // TODO
 			'see_also'            => '', // TODO
-			'state'               => 'active',
-			'private'             => true,
 			'resources'           => $resources,
 			'groups'              => $groups,
+			'state'               => 'active',
+			'private'             => true,
 		);
 
 		// do not change ckan name if there is already one in the database
@@ -102,7 +102,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 				$ckan_resources[] = array(
 					'identifier'   => $resource['identifier'],
 					'title'        => $titles,
-					'notes'        => $descriptions['de'], // TODO send multilingual description,
+					'notes'        => $descriptions,
 					//'issued'       => $issued, // TODO
 					//'modified'     => $modified, // TODO
 					'language'     => $resource['languages'],
