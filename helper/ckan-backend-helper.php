@@ -119,6 +119,9 @@ class Ckan_Backend_Helper {
 			if ( is_array( $response['result'] ) ) {
 				foreach ( $response['result'] as $instance ) {
 					$options[ $instance['name'] ] = self::get_localized_text( $instance['title'] );
+					if( 'organization' === $type ) { // TODO remove this condition when organization multilingual bug is fixed
+						$options[ $instance['name'] ] = $instance['name'];
+					}
 				}
 			}
 
@@ -150,6 +153,7 @@ class Ckan_Backend_Helper {
 			$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
 			self::print_error_messages( $errors );
 			$organisation_title = $response['result']['title'];
+			$organisation_title = $response['result']['name']; // TODO remove this line when organisation multilingual bug is fixed
 
 			// save result in transient
 			set_transient( $transient_name, $organisation_title, 1 * HOUR_IN_SECONDS );
@@ -299,7 +303,6 @@ class Ckan_Backend_Helper {
 		if ( empty( $localized_text ) ) {
 			$localized_text = $all_languages_array['en'];
 		}
-		// TODO remove this workaround when multilingual issue with organisations is fixed
 		if ( empty( $localized_text ) ) {
 			return $all_languages;
 		}
