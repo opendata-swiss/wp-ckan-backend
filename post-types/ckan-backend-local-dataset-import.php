@@ -86,7 +86,7 @@ class Ckan_Backend_Local_Dataset_Import {
 			<form enctype="multipart/form-data" action="" method="POST">
 				<input type="hidden" name="<?php esc_attr_e( $import_submit_hidden_field_name ); ?>" value="Y">
 				<?php // Field shows that the metadata is not yet saved in database -> get values from $_POST array ?>
-				<input type="hidden" id="metadata_not_in_db" name="metadata_not_in_db" value="1" />
+				<input type="hidden" id="metadata_not_in_db" name="metadata_not_in_db" value="1"/>
 
 				<div class="postbox">
 					<div class="inside">
@@ -323,8 +323,8 @@ class Ckan_Backend_Local_Dataset_Import {
 			$dataset->add_keyword( (string) $keyword );
 		}
 		$dataset->set_landing_page( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dcat:landingPage' ) );
-		$spatial_element    = $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:spatial' );
-		if( is_object( $spatial_element ) ) {
+		$spatial_element = $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:spatial' );
+		if ( is_object( $spatial_element ) ) {
 			$spatial_attributes = $spatial_element->attributes( 'rdf', true );
 			$dataset->set_spatial( (string) $spatial_attributes['resource'] );
 		}
@@ -333,8 +333,8 @@ class Ckan_Backend_Local_Dataset_Import {
 		foreach ( $temporals as $temporal_xml ) {
 			$dataset->add_temporal( $this->get_temporal_object( $temporal_xml ) );
 		}
-		$accrual_periodicity_element    = $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:accrualPeriodicity' );
-		if( is_object( $accrual_periodicity_element ) ) {
+		$accrual_periodicity_element = $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:accrualPeriodicity' );
+		if ( is_object( $accrual_periodicity_element ) ) {
 			$accrual_periodicity_attributes = $accrual_periodicity_element->attributes( 'rdf', true );
 			$dataset->set_accrual_periodicity( (string) $accrual_periodicity_attributes['resource'] );
 		}
@@ -361,8 +361,8 @@ class Ckan_Backend_Local_Dataset_Import {
 	protected function get_contact_point_object( $xml ) {
 		$contact_point = new Ckan_Backend_ContactPoint_Model();
 		$contact_point->set_name( (string) $this->get_single_element_from_xpath( $xml, 'vcard:fn' ) );
-		$contact_point_email_element    = $this->get_single_element_from_xpath( $xml, 'vcard:hasEmail' );
-		if( is_object( $contact_point_email_element ) ) {
+		$contact_point_email_element = $this->get_single_element_from_xpath( $xml, 'vcard:hasEmail' );
+		if ( is_object( $contact_point_email_element ) ) {
 			$contact_point_email_attributes = $contact_point_email_element->attributes( 'rdf', true );
 			$contact_point_email            = str_replace( 'mailto:', '', (string) $contact_point_email_attributes['resource'] );
 			$contact_point->set_email( $contact_point_email );
@@ -380,7 +380,7 @@ class Ckan_Backend_Local_Dataset_Import {
 	 */
 	protected function get_relation_object( $xml ) {
 		$relation = new Ckan_Backend_Relation_Model();
-		if( is_object( $xml ) ) {
+		if ( is_object( $xml ) ) {
 			$relation_attributes = $xml->attributes( 'rdf', true );
 			$relation->set_url( (string) $relation_attributes['about'] );
 		}
@@ -412,8 +412,8 @@ class Ckan_Backend_Local_Dataset_Import {
 	 * @return Ckan_Backend_SeeAlso_Model
 	 */
 	protected function get_see_also_object( $xml ) {
-		$see_also            = new Ckan_Backend_SeeAlso_Model();
-		if( is_object( $xml ) ) {
+		$see_also = new Ckan_Backend_SeeAlso_Model();
+		if ( is_object( $xml ) ) {
 			$see_also_attributes = $xml->attributes( 'rdf', true );
 			$see_also->set_url( (string) $see_also_attributes['about'] );
 		}
