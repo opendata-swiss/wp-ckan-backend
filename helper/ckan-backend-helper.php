@@ -58,7 +58,13 @@ class Ckan_Backend_Helper {
 			} else if ( isset( $response['error'] ) && isset( $response['error']['id'] ) && is_array( $response['error']['id'] ) ) {
 				$errors[] = $response['error']['id'][0];
 			} else if ( isset( $response['error'] ) && isset( $response['error']['__type'] ) ) {
-				$errors[] = $response['error']['__type'];
+				$error = $response['error']['__type'];
+				foreach( $response['error'] as $field => $messages ) {
+					if( '__type' !== $field ) {
+						$error .= '<br />[' . $field . '] ' . implode( ', ', $messages );
+					}
+				}
+				$errors[] = $error;
 			} else {
 				$errors[] = 'API responded with unknown error.';
 			}
@@ -232,7 +238,9 @@ class Ckan_Backend_Helper {
 		//print the message
 		if ( is_array( $errors ) && count( $errors ) > 0 ) {
 			foreach ( $errors as $key => $m ) {
-				echo '<div class="error"><p>' . esc_html( $m ) . '</p></div>';
+				// @codingStandardsIgnoreStart
+				echo '<div class="error"><p>' . $m . '</p></div>';
+				// @codingStandardsIgnoreEnd
 			}
 		}
 

@@ -312,7 +312,9 @@ abstract class Ckan_Backend_Sync_Abstract {
 		}
 		//print the message
 		foreach ( $notices as $key => $m ) {
-			echo '<div class="error"><p>' . esc_html( $m ) . '</p></div>';
+			// @codingStandardsIgnoreStart
+			echo '<div class="error"><p>' . $m . '</p></div>';
+			// @codingStandardsIgnoreEnd
 		}
 
 		return delete_option( $this->field_prefix . 'notices' );
