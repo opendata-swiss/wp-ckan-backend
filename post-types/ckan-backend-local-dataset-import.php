@@ -60,6 +60,13 @@ class Ckan_Backend_Local_Dataset_Import {
 				$dataset_id = $this->handle_file_import( $_FILES[ $file_field_name ] );
 			}
 
+			if ( is_wp_error( $dataset_id ) ) {
+				echo '<div class="error"><p>';
+				echo esc_attr( $dataset_id->get_error_message() );
+				echo '</p></div>';
+				$dataset_id = 0;
+			}
+
 			// check for notices
 			$notices = get_option( Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'notices' );
 			delete_option( Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'notices' );
@@ -74,7 +81,11 @@ class Ckan_Backend_Local_Dataset_Import {
 					echo '<div class="updated">';
 					echo '<p><strong>' . esc_html( __( 'Import successful', 'ogdch' ) ) . '</strong></p><p>';
 					// @codingStandardsIgnoreStart
-					printf( __( 'Click <a href="%s">here</a> to see the imported dataset.', 'ogdch' ), esc_url( admin_url( 'post.php?post=' . esc_attr( $dataset_id ) . '&action=edit' ) ) );
+					printf(
+						__( 'You can edit it here: <a href="%s">%s</a>.', 'ogdch' ),
+						esc_url( admin_url( 'post.php?post=' . esc_attr( $dataset_id ) . '&action=edit' ) ),
+						esc_attr( get_the_title( $dataset_id ) )
+					);
 					// @codingStandardsIgnoreEnd
 					echo '</p></div>';
 				}
@@ -85,8 +96,8 @@ class Ckan_Backend_Local_Dataset_Import {
 
 			<form enctype="multipart/form-data" action="" method="POST">
 				<input type="hidden" name="<?php esc_attr_e( $import_submit_hidden_field_name ); ?>" value="Y">
-				<?php // Field shows that the metadata is not yet saved in database -> get values from $_POST array ?>
-				<input type="hidden" id="metadata_not_in_db" name="metadata_not_in_db" value="1" />
+				<?php // Field shows that the metadata is not yet saved in database when save_post hook is called -> get values from $_POST array ?>
+				<input type="hidden" id="metadata_not_in_db" name="metadata_not_in_db" value="1"/>
 
 				<div class="postbox">
 					<div class="inside">
@@ -176,6 +187,11 @@ class Ckan_Backend_Local_Dataset_Import {
 	public function import_dataset( $xml ) {
 		$dataset = $this->get_dataset_object( $xml );
 
+		// if there was an error in the xml document
+		if ( false === $dataset ) {
+			return false;
+		}
+
 		foreach ( $dataset->get_themes() as $group ) {
 			if ( ! Ckan_Backend_Helper::group_exists( $group ) ) {
 				echo '<div class="error"><p>';
@@ -204,15 +220,18 @@ class Ckan_Backend_Local_Dataset_Import {
 		// simulate $_POST data to make post_save hook work correctly
 		$_POST = array_merge( $_POST, $dataset->to_array() );
 
-		$dataset_search_args = array(
-			// @codingStandardsIgnoreStart
-			'meta_key'    => Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'identifier',
-			'meta_value'  => $dataset->get_identifier(),
-			// @codingStandardsIgnoreEnd
-			'post_type'   => Ckan_Backend_Local_Dataset::POST_TYPE,
-			'post_status' => 'any',
-		);
-		$datasets            = get_posts( $dataset_search_args );
+		$datasets = array();
+		if ( '' !== $dataset->get_identifier() ) {
+			$dataset_search_args = array(
+				// @codingStandardsIgnoreStart
+				'meta_key'    => Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'identifier',
+				'meta_value'  => $dataset->get_identifier(),
+				// @codingStandardsIgnoreEnd
+				'post_type'   => Ckan_Backend_Local_Dataset::POST_TYPE,
+				'post_status' => 'any',
+			);
+			$datasets            = get_posts( $dataset_search_args );
+		}
 
 		if ( count( $datasets ) > 0 ) {
 			// Dataset already exists -> update
@@ -237,21 +256,24 @@ class Ckan_Backend_Local_Dataset_Import {
 		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'ckan_id' ]  = get_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'ckan_id', true );
 
 		$dataset_args = array(
-			'ID'            => $dataset_id,
-			'post_title'    => $dataset->get_main_title(),
-			'tags_input'    => $dataset->get_keywords(),
-			'post_date'     => date( 'Y-m-d H:i:s', strtotime( $dataset->get_issued() ) ),
-			// We also have to set post_date_gmt to get post_status update to work correctly
-			'post_date_gmt' => gmdate( 'Y-m-d H:i:s', strtotime( $dataset->get_issued() ) ),
+			'ID'         => $dataset_id,
+			'post_title' => $dataset->get_main_title(),
+			'tags_input' => $dataset->get_keywords(),
 		);
+
+		if ( '' !== $dataset->get_issued() ) {
+			$dataset_args['post_date'] = date( 'Y-m-d H:i:s', $dataset->get_issued() );
+			// We also have to set post_date_gmt to get post_status update to work correctly
+			$dataset_args['post_date_gmt'] = gmdate( 'Y-m-d H:i:s', $dataset->get_issued() );
+		}
 		// set post status to future if needed
-		if ( strtotime( $dataset->get_issued() ) > time() ) {
+		if ( $dataset->get_issued() > time() ) {
 			if ( get_post_status( $dataset_id ) === 'publish' ) {
 				$dataset_args['post_status'] = 'future';
 			}
 		} else {
 			if ( get_post_status( $dataset_id ) === 'future' ) {
-				$dataset_args['post_status'] = 'publish';
+				$dataset_args['post_status'] = 'draft';
 			}
 		}
 
@@ -271,12 +293,17 @@ class Ckan_Backend_Local_Dataset_Import {
 	protected function insert( $dataset ) {
 		$dataset_args = array(
 			'post_title'   => $dataset->get_main_title(),
-			'post_status'  => ( ( strtotime( $dataset->get_issued() ) > time() ) ? 'future' : 'publish' ),
-			'post_date'    => date( 'Y-m-d H:i:s', strtotime( $dataset->get_issued() ) ),
+			'post_status'  => ( ( $dataset->get_issued() > time() ) ? 'future' : 'draft' ),
 			'post_type'    => Ckan_Backend_Local_Dataset::POST_TYPE,
 			'post_excerpt' => '',
 			'tags_input'   => $dataset->get_keywords(),
 		);
+
+		if ( '' !== $dataset->get_issued() ) {
+			$dataset_args['post_date'] = date( 'Y-m-d H:i:s', $dataset->get_issued() );
+		} else {
+			$dataset_args['post_date'] = date( 'Y-m-d H:i:s' );
+		}
 
 		$dataset_id = wp_insert_post( $dataset_args );
 		foreach ( $dataset->to_array() as $field => $value ) {
@@ -295,6 +322,7 @@ class Ckan_Backend_Local_Dataset_Import {
 	 */
 	protected function get_dataset_object( $xml ) {
 		global $language_priority;
+		$has_error = false;
 
 		$dataset = new Ckan_Backend_Dataset_Model();
 		$dataset->set_identifier( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:identifier' ) );
@@ -302,10 +330,21 @@ class Ckan_Backend_Local_Dataset_Import {
 			$dataset->set_title( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:title[@xml:lang="' . $lang . '"]' ), $lang );
 			$dataset->set_description( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:description[@xml:lang="' . $lang . '"]' ), $lang );
 		}
-		$dataset->set_issued( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:issued' ) );
-		$dataset->set_modified( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:modified' ) );
+		if ( '' === $dataset->get_main_title() ) {
+			$this->store_error_in_notices_option( __( 'Please provide a title in at least one language for the dataset (eg. <dct:title xml:lang="en">My Dataset</dct:title>)', 'ogdch' ) );
+			$has_error = true;
+		}
+		$issued = strtotime( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:issued' ) );
+		$dataset->set_issued( $issued );
+		$modified = strtotime( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:modified' ) );
+		$dataset->set_modified( $modified );
 
-		$dataset->set_publisher( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:publisher' ) );
+		$publisher = (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:publisher' );
+		if ( '' === $publisher ) {
+			$this->store_error_in_notices_option( __( 'Please provide a publisher (eg. <dct:publisher>swisstopo</dct:publisher>)', 'ogdch' ) );
+			$has_error = true;
+		}
+		$dataset->set_publisher( $publisher );
 		$contact_points = $xml->xpath( '//dcat:Dataset/dcat:contactPoint/vcard:Organization' );
 		foreach ( $contact_points as $contact_point_xml ) {
 			$dataset->add_contact_point( $this->get_contact_point_object( $contact_point_xml ) );
@@ -323,17 +362,21 @@ class Ckan_Backend_Local_Dataset_Import {
 			$dataset->add_keyword( (string) $keyword );
 		}
 		$dataset->set_landing_page( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dcat:landingPage' ) );
-		$spatial_element    = $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:spatial' );
-		$spatial_attributes = $spatial_element->attributes( 'rdf', true );
-		$dataset->set_spatial( (string) $spatial_attributes['resource'] );
+		$spatial_element = $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:spatial' );
+		if ( is_object( $spatial_element ) ) {
+			$spatial_attributes = $spatial_element->attributes( 'rdf', true );
+			$dataset->set_spatial( (string) $spatial_attributes['resource'] );
+		}
 		$dataset->set_coverage( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:coverage' ) );
 		$temporals = $xml->xpath( '//dcat:Dataset/dct:temporal/dct:PeriodOfTime' );
 		foreach ( $temporals as $temporal_xml ) {
 			$dataset->add_temporal( $this->get_temporal_object( $temporal_xml ) );
 		}
-		$accrual_periodicity_element    = $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:accrualPeriodicity' );
-		$accrual_periodicity_attributes = $accrual_periodicity_element->attributes( 'rdf', true );
-		$dataset->set_accrual_periodicity( (string) $accrual_periodicity_attributes['resource'] );
+		$accrual_periodicity_element = $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:accrualPeriodicity' );
+		if ( is_object( $accrual_periodicity_element ) ) {
+			$accrual_periodicity_attributes = $accrual_periodicity_element->attributes( 'rdf', true );
+			$dataset->set_accrual_periodicity( (string) $accrual_periodicity_attributes['resource'] );
+		}
 		$see_alsos = $xml->xpath( '//dcat:Dataset/rdfs:seeAlso/rdf:Description' );
 		foreach ( $see_alsos as $see_also_xml ) {
 			$dataset->add_see_also( $this->get_see_also_object( $see_also_xml ) );
@@ -342,6 +385,10 @@ class Ckan_Backend_Local_Dataset_Import {
 		$distributions = $xml->xpath( '//dcat:Dataset/dcat:distribution' );
 		foreach ( $distributions as $distribution_xml ) {
 			$dataset->add_distribution( $this->get_distribution_object( $distribution_xml ) );
+		}
+
+		if ( $has_error ) {
+			return false;
 		}
 
 		return $dataset;
@@ -357,10 +404,12 @@ class Ckan_Backend_Local_Dataset_Import {
 	protected function get_contact_point_object( $xml ) {
 		$contact_point = new Ckan_Backend_ContactPoint_Model();
 		$contact_point->set_name( (string) $this->get_single_element_from_xpath( $xml, 'vcard:fn' ) );
-		$contact_point_email_element    = $this->get_single_element_from_xpath( $xml, 'vcard:hasEmail' );
-		$contact_point_email_attributes = $contact_point_email_element->attributes( 'rdf', true );
-		$contact_point_email            = str_replace( 'mailto:', '', (string) $contact_point_email_attributes['resource'] );
-		$contact_point->set_email( $contact_point_email );
+		$contact_point_email_element = $this->get_single_element_from_xpath( $xml, 'vcard:hasEmail' );
+		if ( is_object( $contact_point_email_element ) ) {
+			$contact_point_email_attributes = $contact_point_email_element->attributes( 'rdf', true );
+			$contact_point_email            = str_replace( 'mailto:', '', (string) $contact_point_email_attributes['resource'] );
+			$contact_point->set_email( $contact_point_email );
+		}
 
 		return $contact_point;
 	}
@@ -373,9 +422,11 @@ class Ckan_Backend_Local_Dataset_Import {
 	 * @return Ckan_Backend_Relation_Model
 	 */
 	protected function get_relation_object( $xml ) {
-		$relation            = new Ckan_Backend_Relation_Model();
-		$relation_attributes = $xml->attributes( 'rdf', true );
-		$relation->set_url( (string) $relation_attributes['about'] );
+		$relation = new Ckan_Backend_Relation_Model();
+		if ( is_object( $xml ) ) {
+			$relation_attributes = $xml->attributes( 'rdf', true );
+			$relation->set_url( (string) $relation_attributes['about'] );
+		}
 		$relation->set_label( (string) $this->get_single_element_from_xpath( $xml, 'rdfs:label' ) );
 
 		return $relation;
@@ -389,9 +440,11 @@ class Ckan_Backend_Local_Dataset_Import {
 	 * @return Ckan_Backend_Temporal_Model
 	 */
 	protected function get_temporal_object( $xml ) {
-		$temporal = new Ckan_Backend_Temporal_Model();
-		$temporal->set_start_date( (string) $this->get_single_element_from_xpath( $xml, 'schema:startDate' ) );
-		$temporal->set_end_date( (string) $this->get_single_element_from_xpath( $xml, 'schema:endDate' ) );
+		$temporal   = new Ckan_Backend_Temporal_Model();
+		$start_date = strtotime( (string) $this->get_single_element_from_xpath( $xml, 'schema:startDate' ) );
+		$temporal->set_start_date( $start_date );
+		$end_date = strtotime( (string) $this->get_single_element_from_xpath( $xml, 'schema:endDate' ) );
+		$temporal->set_end_date( $end_date );
 
 		return $temporal;
 	}
@@ -404,9 +457,11 @@ class Ckan_Backend_Local_Dataset_Import {
 	 * @return Ckan_Backend_SeeAlso_Model
 	 */
 	protected function get_see_also_object( $xml ) {
-		$see_also            = new Ckan_Backend_SeeAlso_Model();
-		$relation_attributes = $xml->attributes( 'rdf', true );
-		$see_also->set_url( (string) $relation_attributes['about'] );
+		$see_also = new Ckan_Backend_SeeAlso_Model();
+		if ( is_object( $xml ) ) {
+			$see_also_attributes = $xml->attributes( 'rdf', true );
+			$see_also->set_url( (string) $see_also_attributes['about'] );
+		}
 		$see_also->set_format( (string) $this->get_single_element_from_xpath( $xml, 'dc:format' ) );
 
 		return $see_also;
@@ -432,8 +487,11 @@ class Ckan_Backend_Local_Dataset_Import {
 		foreach ( $languages as $language ) {
 			$distribution->add_language( (string) $language );
 		}
-		$distribution->set_issued( (string) $this->get_single_element_from_xpath( $xml, 'dct:issued' ) );
-		$distribution->set_modified( (string) $this->get_single_element_from_xpath( $xml, 'dct:modified' ) );
+
+		$issued = strtotime( (string) $this->get_single_element_from_xpath( $xml, 'dct:issued' ) );
+		$distribution->set_issued( $issued );
+		$modified = strtotime( (string) $this->get_single_element_from_xpath( $xml, 'dct:modified' ) );
+		$distribution->set_modified( $modified );
 		$access_urls = $xml->xpath( 'dcat:accessURL' );
 		foreach ( $access_urls as $access_url ) {
 			$distribution->add_access_url( (string) $access_url );
@@ -481,5 +539,20 @@ class Ckan_Backend_Local_Dataset_Import {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Stores error message in option to print them out after redirect of save action
+	 *
+	 * @param string $m Error message.
+	 *
+	 * @return bool True if error message was stored successfully.
+	 */
+	protected function store_error_in_notices_option( $m ) {
+		// store error notice in option array
+		$notices   = get_option( Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'notices' );
+		$notices[] = $m;
+
+		return update_option( Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'notices', $notices );
 	}
 }

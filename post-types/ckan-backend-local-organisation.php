@@ -77,7 +77,25 @@ class Ckan_Backend_Local_Organisation {
 			'has_archive'         => false,
 			'exclude_from_search' => false,
 			'publicly_queryable'  => false,
-			'capability_type'     => 'page',
+			'map_meta_cap'        => true,
+			'capability_type'     => 'dataset',
+			'capabilities'        => array(
+				'edit_posts'             => 'edit_organisations',
+				'edit_others_posts'      => 'edit_others_organisations',
+				'publish_posts'          => 'publish_organisations',
+				'read_private_posts'     => 'read_private_organisations',
+				'delete_posts'           => 'delete_organisations',
+				'delete_private_posts'   => 'delete_private_organisations',
+				'delete_published_posts' => 'delete_published_organisations',
+				'delete_others_posts'    => 'delete_others_organisations',
+				'edit_private_posts'     => 'edit_private_organisations',
+				'edit_published_posts'   => 'edit_published_organisations',
+				'create_posts'           => 'create_organisations',
+				// Meta capabilites assigned by WordPress. Do not give to any role.
+				'edit_post'              => 'edit_organisation',
+				'read_post'              => 'read_organisation',
+				'delete_post'            => 'delete_organisation',
+			),
 		);
 		register_post_type( self::POST_TYPE, $args );
 	}

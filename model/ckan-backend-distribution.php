@@ -38,18 +38,18 @@ class Ckan_Backend_Distribution_Model {
 	protected $languages = array();
 
 	/**
-	 * Issued
+	 * Issued timestamp
 	 *
-	 * @var string
+	 * @var int
 	 */
-	protected $issued = '';
+	protected $issued = 0;
 
 	/**
-	 * Modified
+	 * Modified timestamp
 	 *
-	 * @var string
+	 * @var int
 	 */
-	protected $modified = '';
+	protected $modified = 0;
 
 	/**
 	 * All Access URLs
@@ -211,36 +211,36 @@ class Ckan_Backend_Distribution_Model {
 	}
 
 	/**
-	 * Returns issued
+	 * Returns issued timestamp
 	 *
-	 * @return string
+	 * @return int
 	 */
 	public function get_issued() {
 		return $this->issued;
 	}
 
 	/**
-	 * Sets issued
+	 * Sets issued timestamp
 	 *
-	 * @param string $issued Issued.
+	 * @param int $issued Issued.
 	 */
 	public function set_issued( $issued ) {
 		$this->issued = $issued;
 	}
 
 	/**
-	 * Returns modified
+	 * Returns modified timestamp
 	 *
-	 * @return string
+	 * @return int
 	 */
 	public function get_modified() {
 		return $this->modified;
 	}
 
 	/**
-	 * Sets modified
+	 * Sets modified timestamp
 	 *
-	 * @param string $modified Modified.
+	 * @param int $modified Modified.
 	 */
 	public function set_modified( $modified ) {
 		$this->modified = $modified;

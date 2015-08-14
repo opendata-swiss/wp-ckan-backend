@@ -77,7 +77,25 @@ class Ckan_Backend_Local_Group {
 			'has_archive'         => false,
 			'exclude_from_search' => false,
 			'publicly_queryable'  => false,
-			'capability_type'     => 'page',
+			'map_meta_cap'        => true,
+			'capability_type'     => 'dataset',
+			'capabilities'        => array(
+				'edit_posts'             => 'edit_groups',
+				'edit_others_posts'      => 'edit_others_groups',
+				'publish_posts'          => 'publish_groups',
+				'read_private_posts'     => 'read_private_groups',
+				'delete_posts'           => 'delete_groups',
+				'delete_private_posts'   => 'delete_private_groups',
+				'delete_published_posts' => 'delete_published_groups',
+				'delete_others_posts'    => 'delete_others_groups',
+				'edit_private_posts'     => 'edit_private_groups',
+				'edit_published_posts'   => 'edit_published_groups',
+				'create_posts'           => 'create_groups',
+				// Meta capabilites assigned by WordPress. Do not give to any role.
+				'edit_post'              => 'edit_group',
+				'read_post'              => 'read_group',
+				'delete_post'            => 'delete_group',
+			),
 		);
 		register_post_type( self::POST_TYPE, $args );
 	}

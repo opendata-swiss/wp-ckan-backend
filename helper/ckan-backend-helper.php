@@ -57,6 +57,14 @@ class Ckan_Backend_Helper {
 				$errors[] = $response['error']['name'][0];
 			} else if ( isset( $response['error'] ) && isset( $response['error']['id'] ) && is_array( $response['error']['id'] ) ) {
 				$errors[] = $response['error']['id'][0];
+			} else if ( isset( $response['error'] ) && isset( $response['error']['__type'] ) ) {
+				$error = $response['error']['__type'];
+				foreach ( $response['error'] as $field => $messages ) {
+					if ( '__type' !== $field ) {
+						$error .= '<br />[' . $field . '] ' . implode( ', ', $messages );
+					}
+				}
+				$errors[] = $error;
 			} else {
 				$errors[] = 'API responded with unknown error.';
 			}
@@ -114,8 +122,13 @@ class Ckan_Backend_Helper {
 			$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
 			self::print_error_messages( $errors );
 
-			foreach ( $response['result'] as $instance ) {
-				$options[ $instance['name'] ] = $instance['title'];
+			if ( is_array( $response['result'] ) ) {
+				foreach ( $response['result'] as $instance ) {
+					$options[ $instance['name'] ] = self::get_localized_text( $instance['title'] );
+					if ( 'organization' === $type ) { // TODO remove this condition when organization multilingual bug is fixed
+						$options[ $instance['name'] ] = $instance['name'];
+					}
+				}
 			}
 
 			// save result in transient
@@ -128,16 +141,19 @@ class Ckan_Backend_Helper {
 	/**
 	 * Returns title of given CKAN organisation.
 	 *
-	 * @param string $id Id of organisation.
+	 * @param string $name Name (slug) of organisation.
 	 *
 	 * @return string
 	 */
-	public static function get_organisation_title( $id ) {
-		$transient_name = Ckan_Backend::$plugin_slug . '_organization_title_' . $id;
+	public static function get_organisation_title( $name ) {
+		if ( '' === $name ) {
+			return '';
+		}
+		$transient_name = Ckan_Backend::$plugin_slug . '_organization_title_' . $name;
 		if ( false === ( $organisation_title = get_transient( $transient_name ) ) ) {
 			$endpoint = CKAN_API_ENDPOINT . 'action/organization_show';
 			$data     = array(
-				'id'               => $id,
+				'id'               => $name,
 				'include_datasets' => false,
 			);
 			$data     = wp_json_encode( $data );
@@ -146,12 +162,13 @@ class Ckan_Backend_Helper {
 			$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
 			self::print_error_messages( $errors );
 			$organisation_title = $response['result']['title'];
+			$organisation_title = $response['result']['name']; // TODO remove this line when organisation multilingual bug is fixed
 
 			// save result in transient
 			set_transient( $transient_name, $organisation_title, 1 * HOUR_IN_SECONDS );
 		}
 
-		return $organisation_title;
+		return self::get_localized_text( $organisation_title );
 	}
 
 	/**
@@ -180,7 +197,7 @@ class Ckan_Backend_Helper {
 	 * Check if the object exists
 	 *
 	 * @param string $type Name of a CKAN type.
-	 * @param string $name Name of the object.
+	 * @param string $name Name (slug) of the CKAN entity.
 	 *
 	 * @return bool
 	 */
@@ -192,6 +209,9 @@ class Ckan_Backend_Helper {
 		if ( ! in_array( $type, $available_types ) ) {
 			self::print_error_messages( array( 'Type not available!' ) );
 
+			return false;
+		}
+		if ( '' === $name ) {
 			return false;
 		}
 
@@ -224,7 +244,9 @@ class Ckan_Backend_Helper {
 		//print the message
 		if ( is_array( $errors ) && count( $errors ) > 0 ) {
 			foreach ( $errors as $key => $m ) {
-				echo '<div class="error"><p>' . esc_html( $m ) . '</p></div>';
+				// @codingStandardsIgnoreStart
+				echo '<div class="error"><p>' . $m . '</p></div>';
+				// @codingStandardsIgnoreEnd
 			}
 		}
 
@@ -278,5 +300,27 @@ class Ckan_Backend_Helper {
 		}
 
 		return $multilingual_field;
+	}
+
+	/**
+	 * Extracts localized text from given CKAN JSON.
+	 *
+	 * @param string $all_languages JSON from CKAN with all languages in it.
+	 *
+	 * @return string
+	 */
+	public static function get_localized_text( $all_languages ) {
+		$all_languages_array = json_decode( $all_languages, true );
+
+		$current_language = get_locale();
+		$localized_text   = $all_languages_array[ substr( $current_language, 0, 2 ) ];
+		if ( empty( $localized_text ) ) {
+			$localized_text = $all_languages_array['en'];
+		}
+		if ( empty( $localized_text ) ) {
+			return $all_languages;
+		}
+
+		return $localized_text;
 	}
 }

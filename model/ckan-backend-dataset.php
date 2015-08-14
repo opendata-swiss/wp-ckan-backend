@@ -31,18 +31,18 @@ class Ckan_Backend_Dataset_Model {
 	protected $description = array();
 
 	/**
-	 * Issued
+	 * Issued timestamp
 	 *
-	 * @var string
+	 * @var int
 	 */
-	protected $issued = '';
+	protected $issued = 0;
 
 	/**
-	 * Modified
+	 * Modified timestamp
 	 *
-	 * @var string
+	 * @var int
 	 */
-	protected $modified = '';
+	protected $modified = 0;
 
 	/**
 	 * Publisher
@@ -205,36 +205,36 @@ class Ckan_Backend_Dataset_Model {
 	}
 
 	/**
-	 * Returns Issued
+	 * Returns Issued timestamp
 	 *
-	 * @return string
+	 * @return int
 	 */
 	public function get_issued() {
 		return $this->issued;
 	}
 
 	/**
-	 * Sets Issued
+	 * Sets Issued timestamp
 	 *
-	 * @param string $issued Issued.
+	 * @param int $issued Issued.
 	 */
 	public function set_issued( $issued ) {
 		$this->issued = $issued;
 	}
 
 	/**
-	 * Returns Modified
+	 * Returns Modified timestamp
 	 *
-	 * @return string
+	 * @return int
 	 */
 	public function get_modified() {
 		return $this->modified;
 	}
 
 	/**
-	 * Sets modified
+	 * Sets modified timestamp
 	 *
-	 * @param string $modified Modified.
+	 * @param int $modified Modified.
 	 */
 	public function set_modified( $modified ) {
 		$this->modified = $modified;
@@ -602,16 +602,16 @@ class Ckan_Backend_Dataset_Model {
 		global $language_priority;
 
 		$dataset = array(
-			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'identifier'        => $this->get_identifier(),
-			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'issued'            => $this->get_issued(),
-			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'modified'          => $this->get_modified(),
-			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'publisher'         => $this->get_publisher(),
-			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'themes'            => $this->get_themes(),
-			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'keywords'          => $this->get_keywords(),
-			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'landing_page'      => $this->get_landing_page(),
-			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'spatial'           => $this->get_spatial(),
-			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'coverage'          => $this->get_coverage(),
-			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'accrual_periodicy' => $this->get_accrual_periodicity(),
+			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'identifier'          => $this->get_identifier(),
+			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'issued'              => $this->get_issued(),
+			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'modified'            => $this->get_modified(),
+			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'publisher'           => $this->get_publisher(),
+			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'themes'              => $this->get_themes(),
+			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'keywords'            => $this->get_keywords(),
+			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'landing_page'        => $this->get_landing_page(),
+			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'spatial'             => $this->get_spatial(),
+			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'coverage'            => $this->get_coverage(),
+			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'accrual_periodicity' => $this->get_accrual_periodicity(),
 		);
 
 		foreach ( $language_priority as $lang ) {

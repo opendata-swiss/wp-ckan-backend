@@ -221,15 +221,15 @@ class Ckan_Backend_Local_Dataset {
 		$cmb->add_field( array(
 			'name' => __( 'Issued', 'ogdch' ),
 			'id'   => self::FIELD_PREFIX . 'issued',
-			'desc' => __( 'Date and time when dataset was issued.', 'ogdch' ),
-			'type' => 'text_datetime_timestamp',
+			'desc' => __( 'Date when dataset was issued.', 'ogdch' ),
+			'type' => 'text_date_timestamp',
 		) );
 
 		$cmb->add_field( array(
 			'name' => __( 'Modified', 'ogdch' ),
 			'id'   => self::FIELD_PREFIX . 'modified',
-			'desc' => __( 'Date and time when dataset was last modified.', 'ogdch' ),
-			'type' => 'text_datetime_timestamp',
+			'desc' => __( 'Date when dataset was last modified.', 'ogdch' ),
+			'type' => 'text_date_timestamp',
 		) );
 
 		/* Publisher */
@@ -337,8 +337,8 @@ class Ckan_Backend_Local_Dataset {
 		) );
 
 		$cmb->add_field( array(
-			'name' => __( 'Accrual Periodicy', 'ogdch' ),
-			'id'   => self::FIELD_PREFIX . 'accrual_periodicy',
+			'name' => __( 'Accrual Periodicity', 'ogdch' ),
+			'id'   => self::FIELD_PREFIX . 'accrual_periodicity',
 			'type' => 'text',
 		) );
 
@@ -428,15 +428,15 @@ class Ckan_Backend_Local_Dataset {
 		$cmb->add_group_field( $distributions_group, array(
 			'name' => __( 'Issued', 'ogdch' ),
 			'id'   => 'issued',
-			'desc' => __( 'Date and time when dataset was issued.', 'ogdch' ),
-			'type' => 'text_datetime_timestamp',
+			'desc' => __( 'Date when dataset was issued.', 'ogdch' ),
+			'type' => 'text_date_timestamp',
 		) );
 
 		$cmb->add_group_field( $distributions_group, array(
 			'name' => __( 'Modified', 'ogdch' ),
 			'id'   => 'modified',
-			'desc' => __( 'Date and time when dataset was last modified.', 'ogdch' ),
-			'type' => 'text_datetime_timestamp',
+			'desc' => __( 'Date when dataset was last modified.', 'ogdch' ),
+			'type' => 'text_date_timestamp',
 		) );
 
 		$cmb->add_group_field( $distributions_group, array(
@@ -445,7 +445,7 @@ class Ckan_Backend_Local_Dataset {
 			'type'    => 'radio',
 			'options' => array(
 				'reference_required'     => __( 'Required', 'ogdch' ),
-				'reference_not-required' => __( 'Nor required', 'ogdch' ),
+				'reference_not-required' => __( 'Not required', 'ogdch' ),
 			),
 		) );
 

@@ -10,50 +10,50 @@
  */
 class Ckan_Backend_Temporal_Model {
 	/**
-	 * Start date
+	 * Start date timestamp
 	 *
-	 * @var string
+	 * @var int
 	 */
-	protected $start_date = '';
+	protected $start_date = 0;
 
 	/**
-	 * End date
+	 * End date timestamp
 	 *
-	 * @var string
+	 * @var int
 	 */
-	protected $end_date = '';
+	protected $end_date = 0;
 
 	/**
-	 * Returns start date
+	 * Returns start date timestamp
 	 *
-	 * @return string
+	 * @return int
 	 */
 	public function get_start_date() {
 		return $this->start_date;
 	}
 
 	/**
-	 * Sets start date
+	 * Sets start date timestamp
 	 *
-	 * @param string $start_date Start date.
+	 * @param int $start_date Start date.
 	 */
 	public function set_start_date($start_date) {
 		$this->start_date = $start_date;
 	}
 
 	/**
-	 * Returns end date
+	 * Returns end date timestamp
 	 *
-	 * @return string
+	 * @return int
 	 */
 	public function get_end_date() {
 		return $this->end_date;
 	}
 
 	/**
-	 * Sets end date
+	 * Sets end date timestamp
 	 *
-	 * @param string $end_date End date.
+	 * @param int $end_date End date.
 	 */
 	public function set_end_date($end_date) {
 		$this->end_date = $end_date;
