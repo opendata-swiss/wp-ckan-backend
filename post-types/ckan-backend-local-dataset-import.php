@@ -60,7 +60,7 @@ class Ckan_Backend_Local_Dataset_Import {
 				$dataset_id = $this->handle_file_import( $_FILES[ $file_field_name ] );
 			}
 
-			if( is_wp_error( $dataset_id ) ) {
+			if ( is_wp_error( $dataset_id ) ) {
 				echo '<div class="error"><p>';
 				echo esc_attr( $dataset_id->get_error_message() );
 				echo '</p></div>';
@@ -188,7 +188,7 @@ class Ckan_Backend_Local_Dataset_Import {
 		$dataset = $this->get_dataset_object( $xml );
 
 		// if there was an error in the xml document
-		if( false ===  $dataset ) {
+		if ( false === $dataset ) {
 			return false;
 		}
 
@@ -221,7 +221,7 @@ class Ckan_Backend_Local_Dataset_Import {
 		$_POST = array_merge( $_POST, $dataset->to_array() );
 
 		$datasets = array();
-		if( '' !== $dataset->get_identifier() ) {
+		if ( '' !== $dataset->get_identifier() ) {
 			$dataset_search_args = array(
 				// @codingStandardsIgnoreStart
 				'meta_key'    => Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'identifier',
@@ -256,12 +256,12 @@ class Ckan_Backend_Local_Dataset_Import {
 		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'ckan_id' ]  = get_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'ckan_id', true );
 
 		$dataset_args = array(
-			'ID'            => $dataset_id,
-			'post_title'    => $dataset->get_main_title(),
-			'tags_input'    => $dataset->get_keywords(),
+			'ID'         => $dataset_id,
+			'post_title' => $dataset->get_main_title(),
+			'tags_input' => $dataset->get_keywords(),
 		);
 
-		if( '' !== $dataset->get_issued() ) {
+		if ( '' !== $dataset->get_issued() ) {
 			$dataset_args['post_date'] = date( 'Y-m-d H:i:s', $dataset->get_issued() );
 			// We also have to set post_date_gmt to get post_status update to work correctly
 			$dataset_args['post_date_gmt'] = gmdate( 'Y-m-d H:i:s', $dataset->get_issued() );
@@ -299,7 +299,7 @@ class Ckan_Backend_Local_Dataset_Import {
 			'tags_input'   => $dataset->get_keywords(),
 		);
 
-		if( '' !== $dataset->get_issued() ) {
+		if ( '' !== $dataset->get_issued() ) {
 			$dataset_args['post_date'] = date( 'Y-m-d H:i:s', $dataset->get_issued() );
 		} else {
 			$dataset_args['post_date'] = date( 'Y-m-d H:i:s' );
@@ -330,7 +330,7 @@ class Ckan_Backend_Local_Dataset_Import {
 			$dataset->set_title( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:title[@xml:lang="' . $lang . '"]' ), $lang );
 			$dataset->set_description( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:description[@xml:lang="' . $lang . '"]' ), $lang );
 		}
-		if( '' === $dataset->get_main_title() ) {
+		if ( '' === $dataset->get_main_title() ) {
 			$this->store_error_in_notices_option( __( 'Please provide a title in at least one language for the dataset (eg. <dct:title xml:lang="en">My Dataset</dct:title>)', 'ogdch' ) );
 			$has_error = true;
 		}
@@ -340,7 +340,7 @@ class Ckan_Backend_Local_Dataset_Import {
 		$dataset->set_modified( $modified );
 
 		$publisher = (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:publisher' );
-		if( '' === $publisher ) {
+		if ( '' === $publisher ) {
 			$this->store_error_in_notices_option( __( 'Please provide a publisher (eg. <dct:publisher>swisstopo</dct:publisher>)', 'ogdch' ) );
 			$has_error = true;
 		}
@@ -387,7 +387,7 @@ class Ckan_Backend_Local_Dataset_Import {
 			$dataset->add_distribution( $this->get_distribution_object( $distribution_xml ) );
 		}
 
-		if( $has_error ) {
+		if ( $has_error ) {
 			return false;
 		}
 
@@ -440,7 +440,7 @@ class Ckan_Backend_Local_Dataset_Import {
 	 * @return Ckan_Backend_Temporal_Model
 	 */
 	protected function get_temporal_object( $xml ) {
-		$temporal = new Ckan_Backend_Temporal_Model();
+		$temporal   = new Ckan_Backend_Temporal_Model();
 		$start_date = strtotime( (string) $this->get_single_element_from_xpath( $xml, 'schema:startDate' ) );
 		$temporal->set_start_date( $start_date );
 		$end_date = strtotime( (string) $this->get_single_element_from_xpath( $xml, 'schema:endDate' ) );
@@ -528,7 +528,7 @@ class Ckan_Backend_Local_Dataset_Import {
 	 * Returns a single xml element from a given xpath
 	 *
 	 * @param SimpleXMLElement $xml XML content from file.
-	 * @param String           $xpath Xpath for query.
+	 * @param String $xpath Xpath for query.
 	 *
 	 * @return SimpleXMLElement|bool
 	 */
@@ -543,7 +543,7 @@ class Ckan_Backend_Local_Dataset_Import {
 
 	protected function store_error_in_notices_option( $m ) {
 		// store error notice in option array
-		$notices = get_option( Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'notices' );
+		$notices   = get_option( Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'notices' );
 		$notices[] = $m;
 
 		return update_option( Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'notices', $notices );
