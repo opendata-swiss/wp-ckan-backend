@@ -81,7 +81,11 @@ class Ckan_Backend_Local_Dataset_Import {
 					echo '<div class="updated">';
 					echo '<p><strong>' . esc_html( __( 'Import successful', 'ogdch' ) ) . '</strong></p><p>';
 					// @codingStandardsIgnoreStart
-					printf( __( 'Click <a href="%s">here</a> to see the imported dataset.', 'ogdch' ), esc_url( admin_url( 'post.php?post=' . esc_attr( $dataset_id ) . '&action=edit' ) ) );
+					printf(
+						__( 'You can edit it here: <a href="%s">%s</a>.', 'ogdch' ),
+						esc_url( admin_url( 'post.php?post=' . esc_attr( $dataset_id ) . '&action=edit' ) ),
+						esc_attr( get_the_title( $dataset_id ) )
+					);
 					// @codingStandardsIgnoreEnd
 					echo '</p></div>';
 				}
@@ -92,7 +96,7 @@ class Ckan_Backend_Local_Dataset_Import {
 
 			<form enctype="multipart/form-data" action="" method="POST">
 				<input type="hidden" name="<?php esc_attr_e( $import_submit_hidden_field_name ); ?>" value="Y">
-				<?php // Field shows that the metadata is not yet saved in database -> get values from $_POST array ?>
+				<?php // Field shows that the metadata is not yet saved in database when save_post hook is called -> get values from $_POST array ?>
 				<input type="hidden" id="metadata_not_in_db" name="metadata_not_in_db" value="1"/>
 
 				<div class="postbox">
