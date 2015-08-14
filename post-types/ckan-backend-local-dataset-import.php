@@ -60,6 +60,13 @@ class Ckan_Backend_Local_Dataset_Import {
 				$dataset_id = $this->handle_file_import( $_FILES[ $file_field_name ] );
 			}
 
+			if( is_wp_error( $dataset_id ) ) {
+				echo '<div class="error"><p>';
+				echo esc_attr( $dataset_id->get_error_message() );
+				echo '</p></div>';
+				$dataset_id = 0;
+			}
+
 			// check for notices
 			$notices = get_option( Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'notices' );
 			delete_option( Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'notices' );
@@ -176,6 +183,11 @@ class Ckan_Backend_Local_Dataset_Import {
 	public function import_dataset( $xml ) {
 		$dataset = $this->get_dataset_object( $xml );
 
+		// if there was an error in the xml document
+		if( false ===  $dataset ) {
+			return false;
+		}
+
 		foreach ( $dataset->get_themes() as $group ) {
 			if ( ! Ckan_Backend_Helper::group_exists( $group ) ) {
 				echo '<div class="error"><p>';
@@ -204,15 +216,18 @@ class Ckan_Backend_Local_Dataset_Import {
 		// simulate $_POST data to make post_save hook work correctly
 		$_POST = array_merge( $_POST, $dataset->to_array() );
 
-		$dataset_search_args = array(
-			// @codingStandardsIgnoreStart
-			'meta_key'    => Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'identifier',
-			'meta_value'  => $dataset->get_identifier(),
-			// @codingStandardsIgnoreEnd
-			'post_type'   => Ckan_Backend_Local_Dataset::POST_TYPE,
-			'post_status' => 'any',
-		);
-		$datasets            = get_posts( $dataset_search_args );
+		$datasets = array();
+		if( '' !== $dataset->get_identifier() ) {
+			$dataset_search_args = array(
+				// @codingStandardsIgnoreStart
+				'meta_key'    => Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'identifier',
+				'meta_value'  => $dataset->get_identifier(),
+				// @codingStandardsIgnoreEnd
+				'post_type'   => Ckan_Backend_Local_Dataset::POST_TYPE,
+				'post_status' => 'any',
+			);
+			$datasets            = get_posts( $dataset_search_args );
+		}
 
 		if ( count( $datasets ) > 0 ) {
 			// Dataset already exists -> update
@@ -295,12 +310,17 @@ class Ckan_Backend_Local_Dataset_Import {
 	 */
 	protected function get_dataset_object( $xml ) {
 		global $language_priority;
+		$has_error = false;
 
 		$dataset = new Ckan_Backend_Dataset_Model();
 		$dataset->set_identifier( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:identifier' ) );
 		foreach ( $language_priority as $lang ) {
 			$dataset->set_title( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:title[@xml:lang="' . $lang . '"]' ), $lang );
 			$dataset->set_description( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:description[@xml:lang="' . $lang . '"]' ), $lang );
+		}
+		if( '' === $dataset->get_main_title() ) {
+			$this->store_error_in_notices_option( __( 'Please provide a title in at least one language for the dataset (eg. <dct:title xml:lang="en">My Dataset</dct:title>)', 'ogdch' ) );
+			$has_error = true;
 		}
 		$dataset->set_issued( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:issued' ) );
 		$dataset->set_modified( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:modified' ) );
@@ -346,6 +366,10 @@ class Ckan_Backend_Local_Dataset_Import {
 		$distributions = $xml->xpath( '//dcat:Dataset/dcat:distribution' );
 		foreach ( $distributions as $distribution_xml ) {
 			$dataset->add_distribution( $this->get_distribution_object( $distribution_xml ) );
+		}
+
+		if( $has_error ) {
+			return false;
 		}
 
 		return $dataset;
@@ -491,5 +515,13 @@ class Ckan_Backend_Local_Dataset_Import {
 		}
 
 		return false;
+	}
+
+	protected function store_error_in_notices_option( $m ) {
+		// store error notice in option array
+		$notices = get_option( Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'notices' );
+		$notices[] = $m;
+
+		return update_option( Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'notices', $notices );
 	}
 }
