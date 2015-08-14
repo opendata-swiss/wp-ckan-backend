@@ -141,16 +141,19 @@ class Ckan_Backend_Helper {
 	/**
 	 * Returns title of given CKAN organisation.
 	 *
-	 * @param string $id Id of organisation.
+	 * @param string $name Name (slug) of organisation.
 	 *
 	 * @return string
 	 */
-	public static function get_organisation_title( $id ) {
-		$transient_name = Ckan_Backend::$plugin_slug . '_organization_title_' . $id;
+	public static function get_organisation_title( $name ) {
+		if( '' === $name ) {
+			return '';
+		}
+		$transient_name = Ckan_Backend::$plugin_slug . '_organization_title_' . $name;
 		if ( false === ( $organisation_title = get_transient( $transient_name ) ) ) {
 			$endpoint = CKAN_API_ENDPOINT . 'action/organization_show';
 			$data     = array(
-				'id'               => $id,
+				'id'               => $name,
 				'include_datasets' => false,
 			);
 			$data     = wp_json_encode( $data );
@@ -194,7 +197,7 @@ class Ckan_Backend_Helper {
 	 * Check if the object exists
 	 *
 	 * @param string $type Name of a CKAN type.
-	 * @param string $name Name of the object.
+	 * @param string $name Name (slug) of the CKAN entity.
 	 *
 	 * @return bool
 	 */
@@ -206,6 +209,9 @@ class Ckan_Backend_Helper {
 		if ( ! in_array( $type, $available_types ) ) {
 			self::print_error_messages( array( 'Type not available!' ) );
 
+			return false;
+		}
+		if( '' === $name ) {
 			return false;
 		}
 
