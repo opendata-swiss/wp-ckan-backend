@@ -101,22 +101,57 @@ class Ckan_Backend_Helper {
 			return false;
 		}
 
-		$options  = array();
-		$endpoint = CKAN_API_ENDPOINT . 'action/' . $type . '_list';
-		$data     = array(
-			'all_fields' => true,
-		);
-		$data     = wp_json_encode( $data );
+		$transient_name = Ckan_Backend::$plugin_slug . '_' . $type . '_options';
+		if ( false === ( $options = get_transient( $transient_name ) ) ) {
+			$options  = array();
+			$endpoint = CKAN_API_ENDPOINT . 'action/' . $type . '_list';
+			$data     = array(
+				'all_fields' => true,
+			);
+			$data     = wp_json_encode( $data );
 
-		$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
-		$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
-		self::print_error_messages( $errors );
+			$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
+			$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
+			self::print_error_messages( $errors );
 
-		foreach ( $response['result'] as $instance ) {
-			$options[ $instance['name'] ] = $instance['title'];
+			foreach ( $response['result'] as $instance ) {
+				$options[ $instance['name'] ] = $instance['title'];
+			}
+
+			// save result in transient
+			set_transient( $transient_name, $options, 1 * HOUR_IN_SECONDS );
 		}
 
 		return $options;
+	}
+
+	/**
+	 * Returns title of given CKAN organisation.
+	 *
+	 * @param string $id Id of organisation.
+	 *
+	 * @return string
+	 */
+	public static function get_organisation_title( $id ) {
+		$transient_name = Ckan_Backend::$plugin_slug . '_organization_title_' . $id;
+		if ( false === ( $organisation_title = get_transient( $transient_name ) ) ) {
+			$endpoint = CKAN_API_ENDPOINT . 'action/organization_show';
+			$data     = array(
+				'id'               => $id,
+				'include_datasets' => false,
+			);
+			$data     = wp_json_encode( $data );
+
+			$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
+			$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
+			self::print_error_messages( $errors );
+			$organisation_title = $response['result']['title'];
+
+			// save result in transient
+			set_transient( $transient_name, $organisation_title, 1 * HOUR_IN_SECONDS );
+		}
+
+		return $organisation_title;
 	}
 
 	/**
@@ -160,15 +195,22 @@ class Ckan_Backend_Helper {
 			return false;
 		}
 
-		$endpoint = CKAN_API_ENDPOINT . 'action/' . $type . '_show';
-		$data     = array(
-			'id' => $name,
-		);
-		$data     = wp_json_encode( $data );
-		$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
-		$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
+		$transient_name = Ckan_Backend::$plugin_slug . '_' . $type . '_' . $name . '_exists';
+		if ( false === ( $object_exists = get_transient( $transient_name ) ) ) {
+			$endpoint      = CKAN_API_ENDPOINT . 'action/' . $type . '_show';
+			$data          = array(
+				'id' => $name,
+			);
+			$data          = wp_json_encode( $data );
+			$response      = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
+			$errors        = Ckan_Backend_Helper::check_response_for_errors( $response );
+			$object_exists = count( $errors ) === 0;
 
-		return count( $errors ) === 0;
+			// save result in transient
+			set_transient( $transient_name, $object_exists, 1 * HOUR_IN_SECONDS );
+		}
+
+		return $object_exists;
 	}
 
 	/**

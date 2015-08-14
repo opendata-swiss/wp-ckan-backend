@@ -108,6 +108,9 @@ abstract class Ckan_Backend_Sync_Abstract {
 			$success = $this->upsert_action( $post, $data );
 		}
 
+		// TODO update dataset after group or organisation slug has changed
+		$this->after_sync_action( $post );
+
 		return $success;
 	}
 
@@ -173,6 +176,15 @@ abstract class Ckan_Backend_Sync_Abstract {
 	 * @param object $post The post from WordPress which is deleted.
 	 */
 	protected function after_trash_action( $post ) {
+		return;
+	}
+
+	/**
+	 * Possibility for specific sync classes to do additional actions after sync action is done
+	 *
+	 * @param object $post The post from WordPress.
+	 */
+	protected function after_sync_action( $post ) {
 		return;
 	}
 

@@ -32,11 +32,27 @@ class Ckan_Backend_Sync_Local_Group extends Ckan_Backend_Sync_Abstract {
 			'state'       => 'active',
 		);
 
+		// do not change ckan name if there is already one in the database
+		$ckan_name = get_post_meta( $post->ID, $this->field_prefix . 'ckan_name', true );
+		if ( '' !== $ckan_name ) {
+			$data['name'] = $ckan_name;
+		}
 		$ckan_id = get_post_meta( $post->ID, $this->field_prefix . 'ckan_id', true );
 		if ( '' !== $ckan_id ) {
 			$data['id'] = $ckan_id;
 		}
 
 		return $data;
+	}
+
+	/**
+	 * Hook for after-sync action.
+	 *
+	 * @param object $post The post from WordPress.
+	 */
+	protected function after_sync_action( $post ) {
+		// Deletes all transients for this post-type instance.
+		delete_transient( Ckan_Backend::$plugin_slug . '_group_options' );
+		delete_transient( Ckan_Backend::$plugin_slug . '_group_' . sanitize_title_with_dashes( $post->post_title ) . '_exists' );
 	}
 }

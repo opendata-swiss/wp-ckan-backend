@@ -22,13 +22,13 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		 * Slug of this plugin.
 		 * @var string
 		 */
-		public $plugin_slug = 'ckan-backend';
+		public static $plugin_slug = 'ckan-backend';
 
 		/**
 		 * Version number of this plugin.
 		 * @var string
 		 */
-		public $version = '1.0.0';
+		public static $version = '1.0.0';
 
 		/**
 		 * Single instance of the Ckan_Backend object

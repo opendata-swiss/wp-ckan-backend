@@ -19,6 +19,12 @@ class Ckan_Backend_Local_Dataset {
 	 */
 	public function __construct() {
 		$this->register_post_type();
+
+		// add backend list columns
+		add_filter( 'manage_' . self::POST_TYPE . '_posts_columns', array( $this, 'add_columns' ) );
+		add_action( 'manage_' . self::POST_TYPE . '_posts_custom_column', array( $this, 'add_columns_data' ), 10, 2 );
+
+		// define backend fields
 		add_action( 'cmb2_init', array( $this, 'define_fields' ) );
 
 		// render additional field after main cmb2 form is rendered
@@ -26,6 +32,38 @@ class Ckan_Backend_Local_Dataset {
 
 		// initialize local dataset sync
 		new Ckan_Backend_Sync_Local_Dataset( self::POST_TYPE, self::FIELD_PREFIX );
+	}
+
+	/**
+	 * Adds custom columns to backend list
+	 *
+	 * @param array $columns Array with all current columns.
+	 *
+	 * @return array
+	 */
+	public function add_columns( $columns ) {
+		$new_columns = array(
+			self::FIELD_PREFIX . 'publisher' => __( 'Publisher', 'ogdch' ),
+		);
+
+		return array_merge( $columns, $new_columns );
+	}
+
+	/**
+	 * Prints data for custom columns
+	 *
+	 * @param string $column Name of custom column.
+	 * @param int    $post_id Id of current post.
+	 */
+	public function add_columns_data( $column, $post_id ) {
+		switch ( $column ) {
+			case self::FIELD_PREFIX . 'publisher' :
+				$organisation_id = get_post_meta( $post_id, $column, true );
+				if ( '' !== $organisation_id ) {
+					echo esc_attr( Ckan_Backend_Helper::get_organisation_title( $organisation_id ) );
+				}
+				break;
+		}
 	}
 
 	/**
@@ -70,19 +108,19 @@ class Ckan_Backend_Local_Dataset {
 	 */
 	public function register_post_type() {
 		$labels = array(
-			'name'               => __( 'CKAN local Datasets', 'ogdch' ),
-			'singular_name'      => __( 'CKAN local Dataset', 'ogdch' ),
-			'menu_name'          => __( 'CKAN local Data', 'ogdch' ),
-			'name_admin_bar'     => __( 'CKAN local Data', 'ogdch' ),
-			'parent_item_colon'  => __( 'Parent Dataset:', 'ogdch' ),
-			'all_items'          => __( 'All local Datasets', 'ogdch' ),
-			'add_new_item'       => __( 'Add New Dataset', 'ogdch' ),
+			'name'               => __( 'CKAN Datasets', 'ogdch' ),
+			'singular_name'      => __( 'CKAN Dataset', 'ogdch' ),
+			'menu_name'          => __( 'CKAN Dataset', 'ogdch' ),
+			'name_admin_bar'     => __( 'CKAN Dataset', 'ogdch' ),
+			'parent_item_colon'  => __( 'Parent CKAN Dataset:', 'ogdch' ),
+			'all_items'          => __( 'All CKAN Datasets', 'ogdch' ),
+			'add_new_item'       => __( 'Add New CKAN Dataset', 'ogdch' ),
 			'add_new'            => __( 'Add New', 'ogdch' ),
-			'new_item'           => __( 'New local Dataset', 'ogdch' ),
-			'edit_item'          => __( 'Edit local Dataset', 'ogdch' ),
-			'update_item'        => __( 'Update local Dataset', 'ogdch' ),
-			'view_item'          => __( 'View Dataset', 'ogdch' ),
-			'search_items'       => __( 'Search Dataset', 'ogdch' ),
+			'new_item'           => __( 'New CKAN Dataset', 'ogdch' ),
+			'edit_item'          => __( 'Edit CKAN Dataset', 'ogdch' ),
+			'update_item'        => __( 'Update CKAN Dataset', 'ogdch' ),
+			'view_item'          => __( 'View CKAN Dataset', 'ogdch' ),
+			'search_items'       => __( 'Search CKAN Datasets', 'ogdch' ),
 			'not_found'          => __( 'Not found', 'ogdch' ),
 			'not_found_in_trash' => __( 'Not found in Trash', 'ogdch' ),
 		);
