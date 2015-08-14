@@ -528,7 +528,7 @@ class Ckan_Backend_Local_Dataset_Import {
 	 * Returns a single xml element from a given xpath
 	 *
 	 * @param SimpleXMLElement $xml XML content from file.
-	 * @param String $xpath Xpath for query.
+	 * @param String           $xpath Xpath for query.
 	 *
 	 * @return SimpleXMLElement|bool
 	 */
@@ -541,6 +541,13 @@ class Ckan_Backend_Local_Dataset_Import {
 		return false;
 	}
 
+	/**
+	 * Stores error message in option to print them out after redirect of save action
+	 *
+	 * @param string $m Error message.
+	 *
+	 * @return bool True if error message was stored successfully.
+	 */
 	protected function store_error_in_notices_option( $m ) {
 		// store error notice in option array
 		$notices   = get_option( Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'notices' );

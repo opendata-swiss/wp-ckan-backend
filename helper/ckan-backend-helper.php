@@ -59,8 +59,8 @@ class Ckan_Backend_Helper {
 				$errors[] = $response['error']['id'][0];
 			} else if ( isset( $response['error'] ) && isset( $response['error']['__type'] ) ) {
 				$error = $response['error']['__type'];
-				foreach( $response['error'] as $field => $messages ) {
-					if( '__type' !== $field ) {
+				foreach ( $response['error'] as $field => $messages ) {
+					if ( '__type' !== $field ) {
 						$error .= '<br />[' . $field . '] ' . implode( ', ', $messages );
 					}
 				}
@@ -125,7 +125,7 @@ class Ckan_Backend_Helper {
 			if ( is_array( $response['result'] ) ) {
 				foreach ( $response['result'] as $instance ) {
 					$options[ $instance['name'] ] = self::get_localized_text( $instance['title'] );
-					if( 'organization' === $type ) { // TODO remove this condition when organization multilingual bug is fixed
+					if ( 'organization' === $type ) { // TODO remove this condition when organization multilingual bug is fixed
 						$options[ $instance['name'] ] = $instance['name'];
 					}
 				}
@@ -146,7 +146,7 @@ class Ckan_Backend_Helper {
 	 * @return string
 	 */
 	public static function get_organisation_title( $name ) {
-		if( '' === $name ) {
+		if ( '' === $name ) {
 			return '';
 		}
 		$transient_name = Ckan_Backend::$plugin_slug . '_organization_title_' . $name;
@@ -211,7 +211,7 @@ class Ckan_Backend_Helper {
 
 			return false;
 		}
-		if( '' === $name ) {
+		if ( '' === $name ) {
 			return false;
 		}
 
