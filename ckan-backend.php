@@ -89,20 +89,27 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		 * @return void
 		 */
 		public function activate() {
-			// Add all capabilities of plugin to administrator role (save in database).
+			$post_types = array(
+				'datasets',
+				'groups',
+				'organsations',
+			);
+			// Add all capabilities of plugin to administrator role (save in database) to make them visible in backend.
 			$admin_role = get_role( 'administrator' );
 			if ( is_object( $admin_role ) ) {
-				$admin_role->add_cap( 'edit_datasets' );
-				$admin_role->add_cap( 'edit_others_datasets' );
-				$admin_role->add_cap( 'publish_datasets' );
-				$admin_role->add_cap( 'read_private_datasets' );
-				$admin_role->add_cap( 'delete_datasets' );
-				$admin_role->add_cap( 'delete_private_datasets' );
-				$admin_role->add_cap( 'delete_published_datasets' );
-				$admin_role->add_cap( 'delete_others_datasets' );
-				$admin_role->add_cap( 'edit_private_datasets' );
-				$admin_role->add_cap( 'edit_published_datasets' );
-				$admin_role->add_cap( 'create_datasets' );
+				foreach( $post_types as $post_type ) {
+					$admin_role->add_cap( 'edit_' . $post_type );
+					$admin_role->add_cap( 'edit_others_' . $post_type );
+					$admin_role->add_cap( 'publish_' . $post_type );
+					$admin_role->add_cap( 'read_private_' . $post_type );
+					$admin_role->add_cap( 'delete_' . $post_type );
+					$admin_role->add_cap( 'delete_private_' . $post_type );
+					$admin_role->add_cap( 'delete_published_' . $post_type );
+					$admin_role->add_cap( 'delete_others_' . $post_type );
+					$admin_role->add_cap( 'edit_private_' . $post_type );
+					$admin_role->add_cap( 'edit_published_' . $post_type );
+					$admin_role->add_cap( 'create_' . $post_type );
+				}
 			}
 		}
 
