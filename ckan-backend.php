@@ -107,7 +107,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 					<td>
 						<select name="<?php echo esc_attr( $organisation_field_name ); ?>" id="<?php echo esc_attr( $organisation_field_name ); ?>">
 							<?php
-							echo '<option value="">' . esc_attr_e( '- Please choose -', 'ogdch' ) . '</option>';
+							echo '<option value="">' . esc_attr( '- Please choose -', 'ogdch' ) . '</option>';
 							$organisation_options = Ckan_Backend_Helper::get_organisation_form_field_options();
 							foreach ( $organisation_options as $value => $title ) {
 								echo '<option value="' . esc_attr( $value ) . '"';
