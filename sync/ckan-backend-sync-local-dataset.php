@@ -32,7 +32,6 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		$contact_points = Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'contact_points', $load_from_post );
 
 		$data = array(
-			'name'                => sanitize_title_with_dashes( $post->post_title ),
 			'title'               => $titles,
 			'identifier'          => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'identifier', $load_from_post ),
 			'notes'               => $descriptions,
@@ -55,11 +54,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 			'private'             => true,
 		);
 
-		// do not change ckan name if there is already one in the database
-		$ckan_name = get_post_meta( $post->ID, $this->field_prefix . 'ckan_name', true );
-		if ( '' !== $ckan_name ) {
-			$data['name'] = $ckan_name;
-		}
+		// set ckan id if its available in database
 		$ckan_id = get_post_meta( $post->ID, $this->field_prefix . 'ckan_id', true );
 		if ( '' !== $ckan_id ) {
 			$data['id'] = $ckan_id;

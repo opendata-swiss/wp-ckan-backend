@@ -56,7 +56,6 @@ class Ckan_Backend_Sync_Local_Organisation extends Ckan_Backend_Sync_Abstract {
 		$descriptions = Ckan_Backend_Helper::prepare_multilingual_field( $post->ID, $this->field_prefix . 'description', $load_from_post );
 
 		$data = array(
-			'name'        => sanitize_title_with_dashes( $post->post_title ),
 			'title'       => $titles,
 			'description' => $descriptions,
 			'image_url'   => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'image', $load_from_post ),
@@ -69,11 +68,7 @@ class Ckan_Backend_Sync_Local_Organisation extends Ckan_Backend_Sync_Abstract {
 			$data['groups'] = array();
 		}
 
-		// do not change ckan name if there is already one in the database
-		$ckan_name = get_post_meta( $post->ID, $this->field_prefix . 'ckan_name', true );
-		if ( '' !== $ckan_name ) {
-			$data['name'] = $ckan_name;
-		}
+		// set ckan id if its available in database
 		$ckan_id = get_post_meta( $post->ID, $this->field_prefix . 'ckan_id', true );
 		if ( '' !== $ckan_id ) {
 			$data['id'] = $ckan_id;

@@ -211,7 +211,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 		if ( isset( $data['id'] ) ) {
 			$endpoint = CKAN_API_ENDPOINT . 'action/' . $this->api_type . '_patch';
 		} else {
-			$data['name'] = $this->generate_unique_name( $data['name'] );
+			$data['name'] = $this->generate_unique_name( sanitize_title_with_dashes( $post->post_title ) );
 
 			// Insert new dataset
 			$endpoint = CKAN_API_ENDPOINT . 'action/' . $this->api_type . '_create';
