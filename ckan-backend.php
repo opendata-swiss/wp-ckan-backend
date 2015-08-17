@@ -96,7 +96,10 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		 * @param object $user User which is edited. Not available in 'user_new_form' action.
 		 */
 		public function add_custom_user_profile_fields( $user = null ) {
-			// TODO do not show field is user can't manage_options
+			if ( ! current_user_can( 'edit_user_organisation' ) ) {
+				return false;
+			}
+
 			$organisation_field_name = self::$plugin_slug . '_organisation';
 			?>
 			<h3>Organisation</h3>
@@ -135,7 +138,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		 * @return bool|int
 		 */
 		public function save_custom_user_profile_fields( $user_id ) {
-			if ( ! current_user_can( 'manage_options' ) ) {
+			if ( ! current_user_can( 'edit_user_organisation' ) ) {
 				return false;
 			}
 
@@ -169,6 +172,8 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 					$admin_role->add_cap( 'edit_published_' . $post_type );
 					$admin_role->add_cap( 'create_' . $post_type );
 				}
+
+				$admin_role->add_cap( 'edit_user_organisation' );
 			}
 		}
 
