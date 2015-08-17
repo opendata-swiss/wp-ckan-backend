@@ -125,9 +125,6 @@ class Ckan_Backend_Helper {
 				if ( is_array( $response['result'] ) ) {
 					foreach ( $response['result'] as $instance ) {
 						$options[ $instance['name'] ] = self::get_localized_text( $instance['title'] );
-						if ( 'organization' === $type ) { // TODO remove this condition when organization multilingual bug is fixed
-							$options[ $instance['name'] ] = $instance['name'];
-						}
 					}
 				}
 
@@ -166,7 +163,6 @@ class Ckan_Backend_Helper {
 
 			if( 0 === count( $errors ) ) {
 				$organisation_title = $response['result']['title'];
-				$organisation_title = $response['result']['name']; // TODO remove this line when organisation multilingual bug is fixed
 
 				// save result in transient
 				set_transient( $transient_name, $organisation_title, 1 * HOUR_IN_SECONDS );
@@ -317,15 +313,18 @@ class Ckan_Backend_Helper {
 	 * @return string
 	 */
 	public static function get_localized_text( $all_languages ) {
-		$all_languages_array = json_decode( $all_languages, true );
+		$org_languages = $all_languages;
+		if( ! is_array( $all_languages ) ) {
+			$all_languages = json_decode( $all_languages, true );
+		}
 
 		$current_language = get_locale();
-		$localized_text   = $all_languages_array[ substr( $current_language, 0, 2 ) ];
+		$localized_text   = $all_languages[ substr( $current_language, 0, 2 ) ];
 		if ( empty( $localized_text ) ) {
-			$localized_text = $all_languages_array['en'];
+			$localized_text = $all_languages['en'];
 		}
 		if ( empty( $localized_text ) ) {
-			return $all_languages;
+			return $org_languages;
 		}
 
 		return $localized_text;
