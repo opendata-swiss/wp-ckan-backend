@@ -120,8 +120,8 @@ class Ckan_Backend_Helper {
 			$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
 			$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
 
-			if( 0 === count( $errors ) ) {
-				$options  = array();
+			if ( 0 === count( $errors ) ) {
+				$options = array();
 				if ( is_array( $response['result'] ) ) {
 					foreach ( $response['result'] as $instance ) {
 						$options[ $instance['name'] ] = self::get_localized_text( $instance['title'] );
@@ -161,7 +161,7 @@ class Ckan_Backend_Helper {
 			$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
 			$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
 
-			if( 0 === count( $errors ) ) {
+			if ( 0 === count( $errors ) ) {
 				$organisation_title = $response['result']['title'];
 
 				// save result in transient
@@ -314,7 +314,7 @@ class Ckan_Backend_Helper {
 	 */
 	public static function get_localized_text( $all_languages ) {
 		$org_languages = $all_languages;
-		if( ! is_array( $all_languages ) ) {
+		if ( ! is_array( $all_languages ) ) {
 			$all_languages = json_decode( $all_languages, true );
 		}
 
