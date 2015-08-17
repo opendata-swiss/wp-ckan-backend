@@ -45,8 +45,8 @@ class Ckan_Backend_Local_Group {
 		$labels = array(
 			'name'               => __( 'CKAN Groups', 'ogdch' ),
 			'singular_name'      => __( 'CKAN Group', 'ogdch' ),
-			'menu_name'          => __( 'CKAN Group', 'ogdch' ),
-			'name_admin_bar'     => __( 'CKAN Group', 'ogdch' ),
+			'menu_name'          => __( 'CKAN Groups', 'ogdch' ),
+			'name_admin_bar'     => __( 'CKAN Groups', 'ogdch' ),
 			'parent_item_colon'  => __( 'Parent CKAN Group:', 'ogdch' ),
 			'all_items'          => __( 'All CKAN Groups', 'ogdch' ),
 			'add_new_item'       => __( 'Add New CKAN Group', 'ogdch' ),

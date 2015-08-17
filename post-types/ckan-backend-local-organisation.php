@@ -45,8 +45,8 @@ class Ckan_Backend_Local_Organisation {
 		$labels = array(
 			'name'               => __( 'CKAN Organisations', 'ogdch' ),
 			'singular_name'      => __( 'CKAN Organisation', 'ogdch' ),
-			'menu_name'          => __( 'CKAN Organisation', 'ogdch' ),
-			'name_admin_bar'     => __( 'CKAN Organisation', 'ogdch' ),
+			'menu_name'          => __( 'CKAN Organisations', 'ogdch' ),
+			'name_admin_bar'     => __( 'CKAN Organisations', 'ogdch' ),
 			'parent_item_colon'  => __( 'Parent CKAN Organisation:', 'ogdch' ),
 			'all_items'          => __( 'All CKAN Organisations', 'ogdch' ),
 			'add_new_item'       => __( 'Add New CKAN Organisation', 'ogdch' ),

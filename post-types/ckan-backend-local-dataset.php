@@ -110,8 +110,8 @@ class Ckan_Backend_Local_Dataset {
 		$labels = array(
 			'name'               => __( 'CKAN Datasets', 'ogdch' ),
 			'singular_name'      => __( 'CKAN Dataset', 'ogdch' ),
-			'menu_name'          => __( 'CKAN Dataset', 'ogdch' ),
-			'name_admin_bar'     => __( 'CKAN Dataset', 'ogdch' ),
+			'menu_name'          => __( 'CKAN Datasets', 'ogdch' ),
+			'name_admin_bar'     => __( 'CKAN Datasets', 'ogdch' ),
 			'parent_item_colon'  => __( 'Parent CKAN Dataset:', 'ogdch' ),
 			'all_items'          => __( 'All CKAN Datasets', 'ogdch' ),
 			'add_new_item'       => __( 'Add New CKAN Dataset', 'ogdch' ),
