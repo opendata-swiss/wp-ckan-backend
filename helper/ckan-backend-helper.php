@@ -111,7 +111,6 @@ class Ckan_Backend_Helper {
 
 		$transient_name = Ckan_Backend::$plugin_slug . '_' . $type . '_options';
 		if ( false === ( $options = get_transient( $transient_name ) ) ) {
-			$options  = array();
 			$endpoint = CKAN_API_ENDPOINT . 'action/' . $type . '_list';
 			$data     = array(
 				'all_fields' => true,
@@ -120,19 +119,23 @@ class Ckan_Backend_Helper {
 
 			$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
 			$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
-			self::print_error_messages( $errors );
 
-			if ( is_array( $response['result'] ) ) {
-				foreach ( $response['result'] as $instance ) {
-					$options[ $instance['name'] ] = self::get_localized_text( $instance['title'] );
-					if ( 'organization' === $type ) { // TODO remove this condition when organization multilingual bug is fixed
-						$options[ $instance['name'] ] = $instance['name'];
+			if( 0 === count( $errors ) ) {
+				$options  = array();
+				if ( is_array( $response['result'] ) ) {
+					foreach ( $response['result'] as $instance ) {
+						$options[ $instance['name'] ] = self::get_localized_text( $instance['title'] );
+						if ( 'organization' === $type ) { // TODO remove this condition when organization multilingual bug is fixed
+							$options[ $instance['name'] ] = $instance['name'];
+						}
 					}
 				}
-			}
 
-			// save result in transient
-			set_transient( $transient_name, $options, 1 * HOUR_IN_SECONDS );
+				// save result in transient
+				set_transient( $transient_name, $options, 1 * HOUR_IN_SECONDS );
+			} else {
+				self::print_error_messages( $errors );
+			}
 		}
 
 		return $options;
@@ -160,12 +163,16 @@ class Ckan_Backend_Helper {
 
 			$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
 			$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
-			self::print_error_messages( $errors );
-			$organisation_title = $response['result']['title'];
-			$organisation_title = $response['result']['name']; // TODO remove this line when organisation multilingual bug is fixed
 
-			// save result in transient
-			set_transient( $transient_name, $organisation_title, 1 * HOUR_IN_SECONDS );
+			if( 0 === count( $errors ) ) {
+				$organisation_title = $response['result']['title'];
+				$organisation_title = $response['result']['name']; // TODO remove this line when organisation multilingual bug is fixed
+
+				// save result in transient
+				set_transient( $transient_name, $organisation_title, 1 * HOUR_IN_SECONDS );
+			} else {
+				self::print_error_messages( $errors );
+			}
 		}
 
 		return self::get_localized_text( $organisation_title );
