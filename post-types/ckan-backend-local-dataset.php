@@ -144,7 +144,7 @@ class Ckan_Backend_Local_Dataset {
 			'exclude_from_search' => false,
 			'publicly_queryable'  => false,
 			'map_meta_cap'        => true,
-			'capability_type'     => 'dataset',
+			'capability_type'     => array( 'dataset', 'datasets' ),
 			'capabilities'        => array(
 				'edit_posts'             => 'edit_datasets',
 				'edit_others_posts'      => 'edit_others_datasets',
