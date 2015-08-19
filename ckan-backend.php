@@ -61,9 +61,11 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			add_action( 'edit_user_profile', array( $this, 'add_custom_user_profile_fields' ) );
 			add_action( 'user_new_form', array( $this, 'add_custom_user_profile_fields' ) );
 			// save custom user profile fields
+			add_filter( 'user_profile_update_errors', array( $this, 'validate_user_fields' ), 10, 1 );
+			add_action( 'registration_errors', array( $this, 'validate_user_fields' ), 10, 1 );
 			add_action( 'user_register', array( $this, 'save_custom_user_profile_fields' ), 10, 1 );
-			add_action( 'profile_update', array( $this, 'save_custom_user_profile_fields' ), 10, 1 );
-			register_activation_hook( __FILE__, array( $this, 'activate' ) );
+			add_action( 'edit_user_profile_update', array( $this, 'save_custom_user_profile_fields' ), 10, 1 );
+			add_action( 'personal_options_update', array( $this, 'save_custom_user_profile_fields' ), 10, 1 );
 		}
 
 		/**
@@ -105,10 +107,13 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			<h3>Organisation</h3>
 
 			<table class="form-table">
-				<tr>
-					<th><label for="<?php echo esc_attr( $organisation_field_name ); ?>">Organisation</label></th>
+				<tr class="form-field form-required">
+					<th scope="row">
+						<label for="<?php echo esc_attr( $organisation_field_name ); ?>">Organisation</label>
+						<span class="description">(required)</span>
+					</th>
 					<td>
-						<select name="<?php echo esc_attr( $organisation_field_name ); ?>" id="<?php echo esc_attr( $organisation_field_name ); ?>">
+						<select name="<?php echo esc_attr( $organisation_field_name ); ?>" id="<?php echo esc_attr( $organisation_field_name ); ?>" aria-required="true">
 							<?php
 							echo '<option value="">' . esc_attr( '- Please choose -', 'ogdch' ) . '</option>';
 							$organisation_options = Ckan_Backend_Helper::get_organisation_form_field_options();
@@ -130,6 +135,16 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			<?php
 		}
 
+		public function validate_user_fields( $errors ) {
+			if ( ! current_user_can( 'edit_user_organisation' ) ) {
+				return false;
+			}
+
+			if( ! isset( $_POST[ self::$plugin_slug . '_organisation' ] ) || '' === $_POST[ self::$plugin_slug . '_organisation' ] ) {
+				$errors->add( 'organisation_required', __( 'Please choose an organisation for this user.' ) );
+			}
+		}
+
 		/**
 		 * Saves all custom user profile fields
 		 *
@@ -143,38 +158,6 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			}
 
 			return update_user_meta( $user_id, self::$plugin_slug . '_organisation', $_POST[ self::$plugin_slug . '_organisation' ] );
-		}
-
-		/**
-		 * Activate the plugin.
-		 *
-		 * @return void
-		 */
-		public function activate() {
-			$post_types = array(
-				'datasets',
-				'groups',
-				'organisations',
-			);
-			// Add all capabilities of plugin to administrator role (save in database) to make them visible in backend.
-			$admin_role = get_role( 'administrator' );
-			if ( is_object( $admin_role ) ) {
-				foreach ( $post_types as $post_type ) {
-					$admin_role->add_cap( 'edit_' . $post_type );
-					$admin_role->add_cap( 'edit_others_' . $post_type );
-					$admin_role->add_cap( 'publish_' . $post_type );
-					$admin_role->add_cap( 'read_private_' . $post_type );
-					$admin_role->add_cap( 'delete_' . $post_type );
-					$admin_role->add_cap( 'delete_private_' . $post_type );
-					$admin_role->add_cap( 'delete_published_' . $post_type );
-					$admin_role->add_cap( 'delete_others_' . $post_type );
-					$admin_role->add_cap( 'edit_private_' . $post_type );
-					$admin_role->add_cap( 'edit_published_' . $post_type );
-					$admin_role->add_cap( 'create_' . $post_type );
-				}
-
-				$admin_role->add_cap( 'edit_user_organisation' );
-			}
 		}
 
 		/**
