@@ -30,8 +30,79 @@ class Ckan_Backend_Local_Dataset {
 		// render additional field after main cmb2 form is rendered
 		add_action( 'cmb2_after_post_form_' . self::POST_TYPE . '-box', array( $this, 'render_addition_fields' ) );
 
+		// add custom CMB2 field type dataset_identifier
+		add_action( 'cmb2_render_dataset_identifier', array( $this, 'cmb2_render_callback_dataset_identifier'), 10, 5 );
+
 		// initialize local dataset sync
 		new Ckan_Backend_Sync_Local_Dataset( self::POST_TYPE, self::FIELD_PREFIX );
+	}
+
+	/**
+	 * Renders CMB2 field of type dataset_identifier
+	 *
+	 * @param CMB2_Field $field              The passed in `CMB2_Field` object
+	 * @param mixed      $escaped_value      The value of this field escaped.
+	 *                                       It defaults to `sanitize_text_field`.
+	 *                                       If you need the unescaped value, you can access it
+	 *                                       via `$field->value()`
+	 * @param int        $object_id          The ID of the current object
+	 * @param string     $object_type        The type of object you are working with.
+	 *                                       Most commonly, `post` (this applies to all post-types),
+	 *                                       but could also be `comment`, `user` or `options-page`.
+	 * @param CMB2_Types $field_type_object  This `CMB2_Types` object
+	 */
+	public function cmb2_render_callback_dataset_identifier( $field, $escaped_value, $object_id, $object_type, $field_type_object ) {
+		$escaped_value = wp_parse_args( $escaped_value, array(
+			'original_identifier' => '',
+			'organisation'        => '',
+		) );
+		if( '' === $escaped_value['organisation'] ) {
+			$escaped_value['organisation'] = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
+		}
+		?>
+		<div>
+			<?php echo $field_type_object->input( array(
+				'name'  => $field_type_object->_name( '[original_identifier]' ),
+				'id'    => $field_type_object->_id( '_original_identifier' ),
+				'value' => $escaped_value['original_identifier'],
+				'desc'  => '',
+				'class' => 'cmb2-text-small',
+			) ); ?>
+			<span>@</span>
+			<?php
+			if( current_user_can( 'create_organisations' ) ) {
+				echo $field_type_object->select( array(
+					'name'    => $field_type_object->_name( '[organisation]' ),
+					'id'      => $field_type_object->_id( '_organisation' ),
+					'options' => $this->cmb2_get_organisation_options( $escaped_value['organisation'] ),
+					'desc'    => '',
+				) );
+			} else {
+				echo $field_type_object->input( array(
+					'name'  => $field_type_object->_name( '[organisation]' ),
+					'id'    => $field_type_object->_id( '_organisation' ),
+					'value' => $escaped_value['organisation'],
+					'desc'  => '',
+					'type' => 'hidden',
+					'class' => false,
+				) );
+				echo $escaped_value['organisation'];
+			}
+			?>
+		</div>
+		<?php
+		echo $field_type_object->_desc( true );
+	}
+
+	public function cmb2_get_organisation_options( $value = false ) {
+		$organisation_list = Ckan_Backend_Helper::get_organisation_form_field_options();
+
+		$organisation_options = '';
+		foreach ( $organisation_list as $key => $title ) {
+			$organisation_options .= '<option value="'. $key .'" '. selected( $value, $key, false ) .'>'. $title .'</option>';
+		}
+
+		return $organisation_options;
 	}
 
 	/**
@@ -204,12 +275,19 @@ class Ckan_Backend_Local_Dataset {
 
 			/* Description */
 			$cmb->add_field( array(
-				'name'       => 'Description (' . strtoupper( $lang ) . ')',
+				'name'       => __( 'Description', 'ogdch' ) . ' (' . strtoupper( $lang ) . ')',
 				'id'         => self::FIELD_PREFIX . 'description_' . $lang,
 				'type'       => 'textarea',
 				'attributes' => array( 'rows' => 3 ),
 			) );
 		}
+
+		/* Identifier */
+		$cmb->add_field( array(
+			'name'                 => __( 'Dataset Identifier', 'ogdch' ),
+			'id'                   => self::FIELD_PREFIX . 'dataset_identifier',
+			'type'                 => 'dataset_identifier',
+		) );
 
 		/* Dates */
 		$cmb->add_field( array(
