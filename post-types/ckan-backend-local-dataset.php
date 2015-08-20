@@ -31,7 +31,8 @@ class Ckan_Backend_Local_Dataset {
 		add_action( 'cmb2_after_post_form_' . self::POST_TYPE . '-box', array( $this, 'render_addition_fields' ) );
 
 		// add custom CMB2 field type dataset_identifier
-		add_action( 'cmb2_render_dataset_identifier', array( $this, 'cmb2_render_callback_dataset_identifier'), 10, 5 );
+		add_action( 'cmb2_render_dataset_identifier', array( $this, 'cmb2_render_callback_dataset_identifier' ), 10, 5 );
+		add_filter( 'cmb2_sanitize_dataset_identifier', array( $this, 'cmb2_sanitize_dataset_identifier_callback' ), 10, 2 );
 
 		// initialize local dataset sync
 		new Ckan_Backend_Sync_Local_Dataset( self::POST_TYPE, self::FIELD_PREFIX );
@@ -52,19 +53,18 @@ class Ckan_Backend_Local_Dataset {
 	 * @param CMB2_Types $field_type_object  This `CMB2_Types` object
 	 */
 	public function cmb2_render_callback_dataset_identifier( $field, $escaped_value, $object_id, $object_type, $field_type_object ) {
-		$escaped_value = wp_parse_args( $escaped_value, array(
-			'original_identifier' => '',
-			'organisation'        => '',
-		) );
-		if( '' === $escaped_value['organisation'] ) {
-			$escaped_value['organisation'] = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
+		$original_identifier = substr( $escaped_value, 0, strrpos( $escaped_value, '@' ) );
+		$organisation = substr( strrchr( $escaped_value, '@' ), 1 );
+
+		if( empty( $organisation ) ) {
+			$organisation = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
 		}
 		?>
 		<div>
 			<?php echo $field_type_object->input( array(
 				'name'  => $field_type_object->_name( '[original_identifier]' ),
 				'id'    => $field_type_object->_id( '_original_identifier' ),
-				'value' => $escaped_value['original_identifier'],
+				'value' => $original_identifier,
 				'desc'  => '',
 				'class' => 'cmb2-text-small',
 			) ); ?>
@@ -74,19 +74,19 @@ class Ckan_Backend_Local_Dataset {
 				echo $field_type_object->select( array(
 					'name'    => $field_type_object->_name( '[organisation]' ),
 					'id'      => $field_type_object->_id( '_organisation' ),
-					'options' => $this->cmb2_get_organisation_options( $escaped_value['organisation'] ),
+					'options' => $this->cmb2_get_organisation_options( $organisation ),
 					'desc'    => '',
 				) );
 			} else {
 				echo $field_type_object->input( array(
 					'name'  => $field_type_object->_name( '[organisation]' ),
 					'id'    => $field_type_object->_id( '_organisation' ),
-					'value' => $escaped_value['organisation'],
+					'value' => $organisation,
 					'desc'  => '',
 					'type' => 'hidden',
 					'class' => false,
 				) );
-				echo $escaped_value['organisation'];
+				echo $organisation;
 			}
 			?>
 		</div>
@@ -94,10 +94,24 @@ class Ckan_Backend_Local_Dataset {
 		echo $field_type_object->_desc( true );
 	}
 
+	/**
+	 * Sanitizes dataset identifier field before saving it to database.
+	 * Generates identifier in this format: <original_id>@<organisation_id>
+	 *
+	 * @param string $override_value Sanitization override value to return.
+	 * @param string $value          The actual field value.
+	 *
+	 * @return string
+	 */
+	public function cmb2_sanitize_dataset_identifier_callback( $override_value, $value ) {
+		return $value['original_identifier'] . '@' . $value['organisation'];
+	}
+
 	public function cmb2_get_organisation_options( $value = false ) {
 		$organisation_list = Ckan_Backend_Helper::get_organisation_form_field_options();
 
 		$organisation_options = '';
+		$organisation_options .= '<option value="">' . esc_attr( '- Please choose -', 'ogdch' ) . '</option>';
 		foreach ( $organisation_list as $key => $title ) {
 			$organisation_options .= '<option value="'. $key .'" '. selected( $value, $key, false ) .'>'. $title .'</option>';
 		}
@@ -285,7 +299,7 @@ class Ckan_Backend_Local_Dataset {
 		/* Identifier */
 		$cmb->add_field( array(
 			'name'                 => __( 'Dataset Identifier', 'ogdch' ),
-			'id'                   => self::FIELD_PREFIX . 'dataset_identifier',
+			'id'                   => self::FIELD_PREFIX . 'identifier',
 			'type'                 => 'dataset_identifier',
 		) );
 
@@ -635,22 +649,6 @@ class Ckan_Backend_Local_Dataset {
 			'attributes' => array(
 				'readonly' => 'readonly',
 			),
-		) );
-
-		/* CMB Sidebox for other data */
-		$cmb_side_other = new_cmb2_box( array(
-			'id'           => self::POST_TYPE . '-sidebox-other',
-			'title'        => __( 'Other Data', 'ogdch' ),
-			'object_types' => array( self::POST_TYPE ),
-			'context'      => 'side',
-			'priority'     => 'low',
-			'show_names'   => true,
-		) );
-
-		$cmb_side_other->add_field( array(
-			'name' => __( 'Identifier', 'ogdch' ),
-			'id'   => self::FIELD_PREFIX . 'identifier',
-			'type' => 'text',
 		) );
 
 	}
