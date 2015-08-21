@@ -318,12 +318,26 @@ class Ckan_Backend_Local_Dataset {
 			'id'   => 'publisher_title',
 		) );
 
-		$cmb->add_field( array(
-			'name'             => __( 'Publisher', 'ogdch' ),
-			'id'               => self::FIELD_PREFIX . 'publisher',
-			'type'             => 'select',
-			'show_option_none' => __( 'Not defined', 'ogdch' ),
-			'options'          => array( 'Ckan_Backend_Helper', 'get_organisation_form_field_options' ),
+		$publishers_group = $cmb->add_field( array(
+			'id'      => self::FIELD_PREFIX . 'publishers',
+			'type'    => 'group',
+			'options' => array(
+				'group_title'   => __( 'Publisher {#}', 'ogdch' ),
+				'add_button'    => __( 'Add another Publisher', 'ogdch' ),
+				'remove_button' => __( 'Remove Publisher', 'ogdch' ),
+			),
+		) );
+
+		$cmb->add_group_field( $publishers_group, array(
+			'name' => __( 'Label', 'ogdch' ),
+			'id'   => 'label',
+			'type' => 'text',
+		) );
+
+		$cmb->add_group_field( $publishers_group, array(
+			'name' => __( 'TERMDAT Reference', 'ogdch' ),
+			'id'   => 'termdat_reference',
+			'type' => 'text',
 		) );
 
 		$contact_points_group = $cmb->add_field( array(

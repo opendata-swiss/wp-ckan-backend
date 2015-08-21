@@ -364,8 +364,11 @@ class Ckan_Backend_Local_Dataset_Import {
 		$dataset->set_issued( $issued );
 		$modified = strtotime( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:modified' ) );
 		$dataset->set_modified( $modified );
-		$dataset->set_publisher( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:publisher' ) );
-		$contact_points = $xml->xpath( '//dcat:Dataset/dcat:contactPoint/vcard:Organization' );
+		$publishers = $xml->xpath( '//dcat:Dataset/dct:publisher' );
+		foreach ( $publishers as $publisher_xml ) {
+			$dataset->add_publisher( $this->get_publisher_object( $publisher_xml ) );
+		}
+		$contact_points = $xml->xpath( '//dcat:Dataset/dcat:contactPoint/*' );
 		foreach ( $contact_points as $contact_point_xml ) {
 			$dataset->add_contact_point( $this->get_contact_point_object( $contact_point_xml ) );
 		}
@@ -412,6 +415,26 @@ class Ckan_Backend_Local_Dataset_Import {
 		}
 
 		return $dataset;
+	}
+
+	/**
+	 * Returns a Publisher object from given xml
+	 *
+	 * @param SimpleXMLElement $xml XML content from file.
+	 *
+	 * @return Ckan_Backend_Publisher_Model
+	 */
+	protected function get_publisher_object( $xml ) {
+		$publisher = new Ckan_Backend_Publisher_Model();
+		$publisher_description_element = $this->get_single_element_from_xpath( $xml, 'rdf:Description' );
+		if ( is_object( $publisher_description_element ) ) {
+			$publisher_description_attributes = $publisher_description_element->attributes( 'rdf', true );
+			$publisher_termdat_reference      = (string) $publisher_description_attributes['about'];
+			$publisher->set_termdat_reference( $publisher_termdat_reference );
+		}
+		$publisher->set_label( (string) $this->get_single_element_from_xpath( $publisher_description_element, 'rdfs:label' ) );
+
+		return $publisher;
 	}
 
 	/**
