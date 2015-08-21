@@ -207,17 +207,13 @@ class Ckan_Backend_Local_Dataset_Import {
 		$splitted_identifier = $dataset->get_splitted_identifier();
 		// Check if original_identifier is set
 		if ( empty( $splitted_identifier['original_identifier'] ) ) {
-			echo '<div class="error"><p>';
-			esc_attr_e( 'The original identifier of your dataset is missing. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[organisation_id]</dct:identifier>. Import aborted.', 'ogdch' );
-			echo '</p></div>';
+			$this->store_error_in_notices_option( __( 'The original identifier of your dataset is missing. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[organisation_id]</dct:identifier>. Import aborted.', 'ogdch' ) );
 
 			return false;
 		}
 		// Check if organisation is set
 		if ( empty( $splitted_identifier['organisation'] ) ) {
-			echo '<div class="error"><p>';
-			esc_attr_e( 'The organisation id is missing in the identifier. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[organisation_id]</dct:identifier>. Import aborted.', 'ogdch' );
-			echo '</p></div>';
+			$this->store_error_in_notices_option( __( 'The organisation id is missing in the identifier. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[organisation_id]</dct:identifier>. Import aborted.', 'ogdch' ) );
 
 			return false;
 		}
@@ -225,19 +221,15 @@ class Ckan_Backend_Local_Dataset_Import {
 		if ( ! current_user_can( 'create_organisations' ) ) {
 			$user_organisation = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
 			if ( $user_organisation !== $splitted_identifier['organisation'] ) {
-				echo '<div class="error"><p>';
-				esc_attr_e( 'You are not allowed to add a dataset for another organistaion. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[your_organisation_id]</dct:identifier>. Import aborted.', 'ogdch' );
-				echo '</p></div>';
+				$this->store_error_in_notices_option( __( 'You are not allowed to add a dataset for another organistaion. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[your_organisation_id]</dct:identifier>. Import aborted.', 'ogdch' ) );
+
+				return false;
 			}
 		}
 
 		// Check if organisation exists in CKAN
 		if ( ! Ckan_Backend_Helper::organisation_exists( $splitted_identifier['organisation'] ) ) {
-			echo '<div class="error"><p>';
-			// @codingStandardsIgnoreStart
-			printf( __( 'Organisation %1$s does not exist! Import aborted.', 'ogdch' ), $splitted_identifier['organisation'] );
-			// @codingStandardsIgnoreEnd
-			echo '</p></div>';
+			$this->store_error_in_notices_option( __( 'Organisation does not exist! Import aborted.', 'ogdch' ) );
 
 			return false;
 		}
