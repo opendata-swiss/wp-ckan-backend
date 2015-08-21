@@ -45,8 +45,8 @@ class Ckan_Backend_Local_Organisation {
 		$labels = array(
 			'name'               => __( 'CKAN Organisations', 'ogdch' ),
 			'singular_name'      => __( 'CKAN Organisation', 'ogdch' ),
-			'menu_name'          => __( 'CKAN Organisation', 'ogdch' ),
-			'name_admin_bar'     => __( 'CKAN Organisation', 'ogdch' ),
+			'menu_name'          => __( 'CKAN Organisations', 'ogdch' ),
+			'name_admin_bar'     => __( 'CKAN Organisations', 'ogdch' ),
 			'parent_item_colon'  => __( 'Parent CKAN Organisation:', 'ogdch' ),
 			'all_items'          => __( 'All CKAN Organisations', 'ogdch' ),
 			'add_new_item'       => __( 'Add New CKAN Organisation', 'ogdch' ),
@@ -78,7 +78,7 @@ class Ckan_Backend_Local_Organisation {
 			'exclude_from_search' => false,
 			'publicly_queryable'  => false,
 			'map_meta_cap'        => true,
-			'capability_type'     => 'dataset',
+			'capability_type'     => array( 'organisation', 'organisations' ),
 			'capabilities'        => array(
 				'edit_posts'             => 'edit_organisations',
 				'edit_others_posts'      => 'edit_others_organisations',
@@ -152,20 +152,22 @@ class Ckan_Backend_Local_Organisation {
 			) );
 		}
 
-		/* Parent */
-		$cmb->add_field( array(
-			'name' => __( 'Parent Organisation', 'ogdch' ),
-			'type' => 'title',
-			'id'   => 'parent_title',
-		) );
+		if ( current_user_can( 'create_organisations' ) ) {
+			/* Parent */
+			$cmb->add_field( array(
+				'name' => __( 'Parent Organisation', 'ogdch' ),
+				'type' => 'title',
+				'id'   => 'parent_title',
+			) );
 
-		$cmb->add_field( array(
-			'name'             => __( 'Parent', 'ogdch' ),
-			'id'               => self::FIELD_PREFIX . 'parent',
-			'type'             => 'select',
-			'show_option_none' => __( 'None - top level', 'ogdch' ),
-			'options'          => array( $this, 'get_parent_options' ),
-		) );
+			$cmb->add_field( array(
+				'name'             => __( 'Parent', 'ogdch' ),
+				'id'               => self::FIELD_PREFIX . 'parent',
+				'type'             => 'select',
+				'show_option_none' => __( 'None - top level', 'ogdch' ),
+				'options'          => array( $this, 'get_parent_options' ),
+			) );
+		}
 
 		/* Image */
 		$cmb->add_field( array(

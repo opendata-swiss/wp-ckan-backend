@@ -45,8 +45,8 @@ class Ckan_Backend_Local_Group {
 		$labels = array(
 			'name'               => __( 'CKAN Groups', 'ogdch' ),
 			'singular_name'      => __( 'CKAN Group', 'ogdch' ),
-			'menu_name'          => __( 'CKAN Group', 'ogdch' ),
-			'name_admin_bar'     => __( 'CKAN Group', 'ogdch' ),
+			'menu_name'          => __( 'CKAN Groups', 'ogdch' ),
+			'name_admin_bar'     => __( 'CKAN Groups', 'ogdch' ),
 			'parent_item_colon'  => __( 'Parent CKAN Group:', 'ogdch' ),
 			'all_items'          => __( 'All CKAN Groups', 'ogdch' ),
 			'add_new_item'       => __( 'Add New CKAN Group', 'ogdch' ),
@@ -78,7 +78,7 @@ class Ckan_Backend_Local_Group {
 			'exclude_from_search' => false,
 			'publicly_queryable'  => false,
 			'map_meta_cap'        => true,
-			'capability_type'     => 'dataset',
+			'capability_type'     => array( 'group', 'groups' ),
 			'capabilities'        => array(
 				'edit_posts'             => 'edit_groups',
 				'edit_others_posts'      => 'edit_others_groups',

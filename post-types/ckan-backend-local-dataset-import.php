@@ -33,7 +33,7 @@ class Ckan_Backend_Local_Dataset_Import {
 			'edit.php?post_type=' . Ckan_Backend_Local_Dataset::POST_TYPE,
 			__( 'Import CKAN Dataset', 'ogdch' ),
 			__( 'Import', 'ogdch' ),
-			'manage_options',
+			'create_datasets',
 			$this->menu_slug,
 			array( $this, 'import_page_callback' )
 		);
@@ -204,36 +204,50 @@ class Ckan_Backend_Local_Dataset_Import {
 			}
 		}
 
-		$publisher = $dataset->get_publisher();
-		if ( $dataset->get_publisher() !== '' ) {
-			if ( ! Ckan_Backend_Helper::organisation_exists( $publisher ) ) {
-				echo '<div class="error"><p>';
-				// @codingStandardsIgnoreStart
-				printf( __( 'Organisation %1$s does not exist! Import aborted.', 'ogdch' ), $publisher );
-				// @codingStandardsIgnoreEnd
-				echo '</p></div>';
+		$splitted_identifier = $dataset->get_splitted_identifier();
+		// Check if original_identifier is set
+		if ( empty( $splitted_identifier['original_identifier'] ) ) {
+			$this->store_error_in_notices_option( __( 'The original identifier of your dataset is missing. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[organisation_id]</dct:identifier>. Import aborted.', 'ogdch' ) );
+
+			return false;
+		}
+		// Check if organisation is set
+		if ( empty( $splitted_identifier['organisation'] ) ) {
+			$this->store_error_in_notices_option( __( 'The organisation id is missing in the identifier. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[organisation_id]</dct:identifier>. Import aborted.', 'ogdch' ) );
+
+			return false;
+		}
+		// If user isn't allowed to create datasets for another organisation -> check if he has provided his own organisation
+		if ( ! current_user_can( 'create_organisations' ) ) {
+			$user_organisation = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
+			if ( $user_organisation !== $splitted_identifier['organisation'] ) {
+				$this->store_error_in_notices_option( __( 'You are not allowed to add a dataset for another organistaion. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[your_organisation_id]</dct:identifier>. Import aborted.', 'ogdch' ) );
 
 				return false;
 			}
 		}
 
+		// Check if organisation exists in CKAN
+		if ( ! Ckan_Backend_Helper::organisation_exists( $splitted_identifier['organisation'] ) ) {
+			$this->store_error_in_notices_option( __( 'Organisation does not exist! Import aborted.', 'ogdch' ) );
+
+			return false;
+		}
+
 		// simulate $_POST data to make post_save hook work correctly
 		$_POST = array_merge( $_POST, $dataset->to_array() );
 
-		$datasets = array();
-		if ( '' !== $dataset->get_identifier() ) {
-			$dataset_search_args = array(
-				// @codingStandardsIgnoreStart
-				'meta_key'    => Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'identifier',
-				'meta_value'  => $dataset->get_identifier(),
-				// @codingStandardsIgnoreEnd
-				'post_type'   => Ckan_Backend_Local_Dataset::POST_TYPE,
-				'post_status' => 'any',
-			);
-			$datasets            = get_posts( $dataset_search_args );
-		}
+		$dataset_search_args = array(
+			// @codingStandardsIgnoreStart
+			'meta_key'    => Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'identifier',
+			'meta_value'  => maybe_serialize( $dataset->get_splitted_identifier() ),
+			// @codingStandardsIgnoreEnd
+			'post_type'   => Ckan_Backend_Local_Dataset::POST_TYPE,
+			'post_status' => 'any',
+		);
+		$datasets            = get_posts( $dataset_search_args );
 
-		if ( count( $datasets ) > 0 ) {
+		if ( is_array( $datasets ) && count( $datasets ) > 0 ) {
 			// Dataset already exists -> update
 			$dataset_id = $datasets[0]->ID;
 			$this->update( $dataset_id, $dataset );
@@ -326,6 +340,10 @@ class Ckan_Backend_Local_Dataset_Import {
 
 		$dataset = new Ckan_Backend_Dataset_Model();
 		$dataset->set_identifier( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:identifier' ) );
+		if ( '' === $dataset->get_identifier() ) {
+			$this->store_error_in_notices_option( __( 'Please provide an identifier for the dataset (eg. <dct:title xml:lang="en">My Dataset</dct:title>)', 'ogdch' ) );
+			$has_error = true;
+		}
 		foreach ( $language_priority as $lang ) {
 			$dataset->set_title( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:title[@xml:lang="' . $lang . '"]' ), $lang );
 			$dataset->set_description( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:description[@xml:lang="' . $lang . '"]' ), $lang );
@@ -338,14 +356,11 @@ class Ckan_Backend_Local_Dataset_Import {
 		$dataset->set_issued( $issued );
 		$modified = strtotime( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:modified' ) );
 		$dataset->set_modified( $modified );
-
-		$publisher = (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:publisher' );
-		if ( '' === $publisher ) {
-			$this->store_error_in_notices_option( __( 'Please provide a publisher (eg. <dct:publisher>swisstopo</dct:publisher>)', 'ogdch' ) );
-			$has_error = true;
+		$publishers = $xml->xpath( '//dcat:Dataset/dct:publisher' );
+		foreach ( $publishers as $publisher_xml ) {
+			$dataset->add_publisher( $this->get_publisher_object( $publisher_xml ) );
 		}
-		$dataset->set_publisher( $publisher );
-		$contact_points = $xml->xpath( '//dcat:Dataset/dcat:contactPoint/vcard:Organization' );
+		$contact_points = $xml->xpath( '//dcat:Dataset/dcat:contactPoint/*' );
 		foreach ( $contact_points as $contact_point_xml ) {
 			$dataset->add_contact_point( $this->get_contact_point_object( $contact_point_xml ) );
 		}
@@ -392,6 +407,26 @@ class Ckan_Backend_Local_Dataset_Import {
 		}
 
 		return $dataset;
+	}
+
+	/**
+	 * Returns a Publisher object from given xml
+	 *
+	 * @param SimpleXMLElement $xml XML content from file.
+	 *
+	 * @return Ckan_Backend_Publisher_Model
+	 */
+	protected function get_publisher_object( $xml ) {
+		$publisher                     = new Ckan_Backend_Publisher_Model();
+		$publisher_description_element = $this->get_single_element_from_xpath( $xml, 'rdf:Description' );
+		if ( is_object( $publisher_description_element ) ) {
+			$publisher_description_attributes = $publisher_description_element->attributes( 'rdf', true );
+			$publisher_termdat_reference      = (string) $publisher_description_attributes['about'];
+			$publisher->set_termdat_reference( $publisher_termdat_reference );
+		}
+		$publisher->set_label( (string) $this->get_single_element_from_xpath( $publisher_description_element, 'rdfs:label' ) );
+
+		return $publisher;
 	}
 
 	/**

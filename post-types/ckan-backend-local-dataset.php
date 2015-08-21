@@ -30,8 +30,85 @@ class Ckan_Backend_Local_Dataset {
 		// render additional field after main cmb2 form is rendered
 		add_action( 'cmb2_after_post_form_' . self::POST_TYPE . '-box', array( $this, 'render_addition_fields' ) );
 
+		// add custom CMB2 field type dataset_identifier
+		add_action( 'cmb2_render_dataset_identifier', array( $this, 'cmb2_render_callback_dataset_identifier' ), 10, 5 );
+		add_filter( 'cmb2_sanitize_dataset_identifier', array( $this, 'cmb2_sanitize_dataset_identifier_callback' ), 10, 2 );
+
 		// initialize local dataset sync
 		new Ckan_Backend_Sync_Local_Dataset( self::POST_TYPE, self::FIELD_PREFIX );
+	}
+
+	/**
+	 * Renders CMB2 field of type dataset_identifier
+	 *
+	 * @param CMB2_Field $field The passed in `CMB2_Field` object.
+	 * @param mixed      $escaped_value The value of this field escaped. It defaults to `sanitize_text_field`.
+	 * @param int        $object_id The ID of the current object.
+	 * @param string     $object_type The type of object you are working with.
+	 * @param CMB2_Types $field_type_object This `CMB2_Types` object.
+	 */
+	public function cmb2_render_callback_dataset_identifier( $field, $escaped_value, $object_id, $object_type, $field_type_object ) {
+		$original_identifier = $escaped_value['original_identifier'];
+		$organisation        = $escaped_value['organisation'];
+
+		if ( empty( $organisation ) ) {
+			$organisation = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
+		}
+		?>
+		<div>
+			<?php
+			// @codingStandardsIgnoreStart
+			echo $field_type_object->input( array(
+				'name'  => $field_type_object->_name( '[original_identifier]' ),
+				'id'    => $field_type_object->_id( '_original_identifier' ),
+				'value' => $original_identifier,
+				'desc'  => '',
+				'class' => 'cmb2-text-small',
+			) ); ?>
+			<span>@</span>
+			<?php
+			if ( current_user_can( 'create_organisations' ) ) {
+				echo $field_type_object->select( array(
+					'name'    => $field_type_object->_name( '[organisation]' ),
+					'id'      => $field_type_object->_id( '_organisation' ),
+					'options' => $this->cmb2_get_organisation_options( $organisation ),
+					'desc'    => '',
+				) );
+			} else {
+				echo $field_type_object->input( array(
+					'name'  => $field_type_object->_name( '[organisation]' ),
+					'id'    => $field_type_object->_id( '_organisation' ),
+					'value' => $organisation,
+					'desc'  => '',
+					'type'  => 'hidden',
+					'class' => false,
+				) );
+				echo $organisation;
+			}
+			// @codingStandardsIgnoreEnd
+			?>
+		</div>
+		<?php
+		echo esc_attr( $field_type_object->_desc( true ) );
+	}
+
+	/**
+	 * Creates organisation options for selectbox
+	 *
+	 * @param bool $value Current field value.
+	 *
+	 * @return string
+	 */
+	public function cmb2_get_organisation_options( $value = false ) {
+		$organisation_list = Ckan_Backend_Helper::get_organisation_form_field_options();
+
+		$organisation_options = '';
+		$organisation_options .= '<option value="">' . esc_attr__( '- Please choose -', 'ogdch' ) . '</option>';
+		foreach ( $organisation_list as $key => $title ) {
+			$organisation_options .= '<option value="' . $key . '" ' . selected( $value, $key, false ) . '>' . $title . '</option>';
+		}
+
+		return $organisation_options;
 	}
 
 	/**
@@ -43,7 +120,7 @@ class Ckan_Backend_Local_Dataset {
 	 */
 	public function add_columns( $columns ) {
 		$new_columns = array(
-			self::FIELD_PREFIX . 'publisher' => __( 'Publisher', 'ogdch' ),
+			self::FIELD_PREFIX . 'identifier' => __( 'Organisation', 'ogdch' ),
 		);
 
 		return array_merge( $columns, $new_columns );
@@ -56,12 +133,16 @@ class Ckan_Backend_Local_Dataset {
 	 * @param int    $post_id Id of current post.
 	 */
 	public function add_columns_data( $column, $post_id ) {
+
 		switch ( $column ) {
-			case self::FIELD_PREFIX . 'publisher' :
-				$organisation_id = get_post_meta( $post_id, $column, true );
-				if ( '' !== $organisation_id ) {
-					echo esc_attr( Ckan_Backend_Helper::get_organisation_title( $organisation_id ) );
-				}
+			case self::FIELD_PREFIX . 'identifier' :
+				$identifier = get_post_meta( $post_id, $column, true );
+				/* // TODO load readable organisation name from CKAN
+				$organisation = Ckan_Backend_Helper::extract_organisation_from_identifier( $identifier['organisation'] );
+				if ( ! empty( $organisation ) ) {
+					echo esc_attr( Ckan_Backend_Helper::get_organisation_title( $organisation ) );
+				}*/
+				echo esc_attr( $identifier['organisation'] );
 				break;
 		}
 	}
@@ -110,8 +191,8 @@ class Ckan_Backend_Local_Dataset {
 		$labels = array(
 			'name'               => __( 'CKAN Datasets', 'ogdch' ),
 			'singular_name'      => __( 'CKAN Dataset', 'ogdch' ),
-			'menu_name'          => __( 'CKAN Dataset', 'ogdch' ),
-			'name_admin_bar'     => __( 'CKAN Dataset', 'ogdch' ),
+			'menu_name'          => __( 'CKAN Datasets', 'ogdch' ),
+			'name_admin_bar'     => __( 'CKAN Datasets', 'ogdch' ),
 			'parent_item_colon'  => __( 'Parent CKAN Dataset:', 'ogdch' ),
 			'all_items'          => __( 'All CKAN Datasets', 'ogdch' ),
 			'add_new_item'       => __( 'Add New CKAN Dataset', 'ogdch' ),
@@ -144,7 +225,7 @@ class Ckan_Backend_Local_Dataset {
 			'exclude_from_search' => false,
 			'publicly_queryable'  => false,
 			'map_meta_cap'        => true,
-			'capability_type'     => 'dataset',
+			'capability_type'     => array( 'dataset', 'datasets' ),
 			'capabilities'        => array(
 				'edit_posts'             => 'edit_datasets',
 				'edit_others_posts'      => 'edit_others_datasets',
@@ -204,12 +285,19 @@ class Ckan_Backend_Local_Dataset {
 
 			/* Description */
 			$cmb->add_field( array(
-				'name'       => 'Description (' . strtoupper( $lang ) . ')',
+				'name'       => __( 'Description', 'ogdch' ) . ' (' . strtoupper( $lang ) . ')',
 				'id'         => self::FIELD_PREFIX . 'description_' . $lang,
 				'type'       => 'textarea',
 				'attributes' => array( 'rows' => 3 ),
 			) );
 		}
+
+		/* Identifier */
+		$cmb->add_field( array(
+			'name' => __( 'Dataset Identifier', 'ogdch' ),
+			'id'   => self::FIELD_PREFIX . 'identifier',
+			'type' => 'dataset_identifier',
+		) );
 
 		/* Dates */
 		$cmb->add_field( array(
@@ -239,12 +327,26 @@ class Ckan_Backend_Local_Dataset {
 			'id'   => 'publisher_title',
 		) );
 
-		$cmb->add_field( array(
-			'name'             => __( 'Publisher', 'ogdch' ),
-			'id'               => self::FIELD_PREFIX . 'publisher',
-			'type'             => 'select',
-			'show_option_none' => __( 'Not defined', 'ogdch' ),
-			'options'          => array( 'Ckan_Backend_Helper', 'get_organisation_form_field_options' ),
+		$publishers_group = $cmb->add_field( array(
+			'id'      => self::FIELD_PREFIX . 'publishers',
+			'type'    => 'group',
+			'options' => array(
+				'group_title'   => __( 'Publisher {#}', 'ogdch' ),
+				'add_button'    => __( 'Add another Publisher', 'ogdch' ),
+				'remove_button' => __( 'Remove Publisher', 'ogdch' ),
+			),
+		) );
+
+		$cmb->add_group_field( $publishers_group, array(
+			'name' => __( 'Label', 'ogdch' ),
+			'id'   => 'label',
+			'type' => 'text',
+		) );
+
+		$cmb->add_group_field( $publishers_group, array(
+			'name' => __( 'TERMDAT Reference', 'ogdch' ),
+			'id'   => 'termdat_reference',
+			'type' => 'text',
 		) );
 
 		$contact_points_group = $cmb->add_field( array(
@@ -557,22 +659,6 @@ class Ckan_Backend_Local_Dataset {
 			'attributes' => array(
 				'readonly' => 'readonly',
 			),
-		) );
-
-		/* CMB Sidebox for other data */
-		$cmb_side_other = new_cmb2_box( array(
-			'id'           => self::POST_TYPE . '-sidebox-other',
-			'title'        => __( 'Other Data', 'ogdch' ),
-			'object_types' => array( self::POST_TYPE ),
-			'context'      => 'side',
-			'priority'     => 'low',
-			'show_names'   => true,
-		) );
-
-		$cmb_side_other->add_field( array(
-			'name' => __( 'Identifier', 'ogdch' ),
-			'id'   => self::FIELD_PREFIX . 'identifier',
-			'type' => 'text',
 		) );
 
 	}

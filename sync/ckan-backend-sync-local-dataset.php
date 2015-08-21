@@ -29,17 +29,16 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		$languages      = $this->gather_languages( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'distributions', $load_from_post ) );
 		$issued         = $this->prepare_date( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'issued', $load_from_post ) );
 		$modified       = $this->prepare_date( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'modified', $load_from_post ) );
-		$contact_points = Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'contact_points', $load_from_post );
+		$identifier     = Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'identifier', $load_from_post );
 
 		$data = array(
-			'name'                => sanitize_title_with_dashes( $post->post_title ),
 			'title'               => $titles,
-			'identifier'          => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'identifier', $load_from_post ),
+			'identifier'          => $identifier['original_identifier'] . '@' . $identifier['organisation'],
 			'notes'               => $descriptions,
 			'issued'              => $issued,
 			'modified'            => $modified,
-			'owner_org'           => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'publisher', $load_from_post ),
-			'contact_point'       => $contact_points[0]['name'] . ' (' . $contact_points[0]['email'] . ')', // TODO
+			'publishers'          => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'publishers', $load_from_post ), // TODO
+			'contact_points'      => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'contact_points', $load_from_post ), // TODO
 			'language'            => $languages,
 			'relation'            => '', // TODO
 			'tags'                => $tags,
@@ -55,11 +54,12 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 			'private'             => true,
 		);
 
-		// do not change ckan name if there is already one in the database
-		$ckan_name = get_post_meta( $post->ID, $this->field_prefix . 'ckan_name', true );
-		if ( '' !== $ckan_name ) {
-			$data['name'] = $ckan_name;
+		$organisation   = $identifier['organisation'];
+		if ( ! empty( $organisation ) ) {
+			$data['owner_org'] = $organisation;
 		}
+
+		// set ckan id if its available in database
 		$ckan_id = get_post_meta( $post->ID, $this->field_prefix . 'ckan_id', true );
 		if ( '' !== $ckan_id ) {
 			$data['id'] = $ckan_id;

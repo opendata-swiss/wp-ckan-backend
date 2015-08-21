@@ -45,11 +45,11 @@ class Ckan_Backend_Dataset_Model {
 	protected $modified = 0;
 
 	/**
-	 * Publisher
+	 * Publishers
 	 *
-	 * @var string
+	 * @var Ckan_Backend_Publisher_Model[]
 	 */
-	protected $publisher = '';
+	protected $publishers = array();
 
 	/**
 	 * Contact Points
@@ -241,21 +241,44 @@ class Ckan_Backend_Dataset_Model {
 	}
 
 	/**
-	 * Returns publisher
+	 * Adds a Publisher
 	 *
-	 * @return string
+	 * @param Ckan_Backend_Publisher_Model $publisher Publisher to add.
+	 *
+	 * @return bool|WP_Error
 	 */
-	public function get_publisher() {
-		return $this->publisher;
+	public function add_publisher( $publisher ) {
+		if ( ! $publisher instanceof Ckan_Backend_Publisher_Model ) {
+			return new WP_Error( 'wrong_type', 'Publisher has to be a Ckan_Backend_Publisher_Model type' );
+		}
+		$this->publishers[ spl_object_hash( $publisher ) ] = $publisher;
+
+		return true;
 	}
 
 	/**
-	 * Sets publisher
+	 * Removes Publisher
 	 *
-	 * @param string $publisher Publisher.
+	 * @param Ckan_Backend_Publisher_Model $publisher Publisher to remove.
+	 *
+	 * @return bool|WP_Error
 	 */
-	public function set_publisher( $publisher ) {
-		$this->publisher = $publisher;
+	public function remove_publisher( $publisher ) {
+		if ( ! $publisher instanceof Ckan_Backend_ContactPoint_Model ) {
+			return new WP_Error( 'wrong_type', 'Publisher has to be a Ckan_Backend_Publisher_Model type' );
+		}
+		unset( $this->publishers[ spl_object_hash( $publisher ) ] );
+
+		return true;
+	}
+
+	/**
+	 * Returns all Publishers
+	 *
+	 * @return Ckan_Backend_Publisher_Model[]
+	 */
+	public function get_publishers() {
+		return $this->publishers;
 	}
 
 	/**
@@ -602,10 +625,9 @@ class Ckan_Backend_Dataset_Model {
 		global $language_priority;
 
 		$dataset = array(
-			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'identifier'          => $this->get_identifier(),
+			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'identifier'          => $this->get_splitted_identifier(),
 			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'issued'              => $this->get_issued(),
 			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'modified'            => $this->get_modified(),
-			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'publisher'           => $this->get_publisher(),
 			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'themes'              => $this->get_themes(),
 			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'keywords'            => $this->get_keywords(),
 			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'landing_page'        => $this->get_landing_page(),
@@ -619,6 +641,9 @@ class Ckan_Backend_Dataset_Model {
 			$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'description_' . $lang ] = $this->get_description( $lang );
 		}
 
+		foreach ( $this->get_publishers() as $publisher ) {
+			$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'publishers' ][] = $publisher->to_array();
+		}
 		foreach ( $this->get_contact_points() as $contact_point ) {
 			$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'contact_points' ][] = $contact_point->to_array();
 		}
@@ -636,5 +661,17 @@ class Ckan_Backend_Dataset_Model {
 		}
 
 		return $dataset;
+	}
+
+	/**
+	 * Splits identifier and returns it as array in the following form: array( 'original_identifier' => 123, 'organisation' => XYZ )
+	 *
+	 * @return array
+	 */
+	public function get_splitted_identifier() {
+		return array(
+			'original_identifier' => Ckan_Backend_Helper::extract_original_id_from_identifier( $this->get_identifier() ),
+			'organisation'        => Ckan_Backend_Helper::extract_organisation_from_identifier( $this->get_identifier() ),
+		);
 	}
 }

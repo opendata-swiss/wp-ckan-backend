@@ -61,9 +61,38 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			add_action( 'edit_user_profile', array( $this, 'add_custom_user_profile_fields' ) );
 			add_action( 'user_new_form', array( $this, 'add_custom_user_profile_fields' ) );
 			// save custom user profile fields
+			add_filter( 'user_profile_update_errors', array( $this, 'validate_user_fields' ), 10, 1 );
+			add_action( 'registration_errors', array( $this, 'validate_user_fields' ), 10, 1 );
 			add_action( 'user_register', array( $this, 'save_custom_user_profile_fields' ), 10, 1 );
-			add_action( 'profile_update', array( $this, 'save_custom_user_profile_fields' ), 10, 1 );
-			register_activation_hook( __FILE__, array( $this, 'activate' ) );
+			add_action( 'edit_user_profile_update', array( $this, 'save_custom_user_profile_fields' ), 10, 1 );
+			add_action( 'personal_options_update', array( $this, 'save_custom_user_profile_fields' ), 10, 1 );
+
+			// show only own organisation to non admin users
+			add_filter( 'parse_query', array( $this, 'show_own_organisation_only' ) );
+		}
+
+		/**
+		 * Just show organisation which user is assigned
+		 *
+		 * @param WP_Query $query Current query.
+		 */
+		public function show_own_organisation_only( $query ) {
+			$q_vars = &$query->query_vars;
+			if ( isset( $q_vars['post_type'] ) && Ckan_Backend_Local_Organisation::POST_TYPE !== $q_vars['post_type'] ) {
+				return;
+			}
+
+			global $pagenow;
+			if ( 'edit.php' === $pagenow ) {
+				if ( ! current_user_can( 'create_organisations' ) ) {
+					// just show organisation which user is assigned
+					$user_organisation    = get_the_author_meta( self::$plugin_slug . '_organisation', wp_get_current_user()->ID );
+					// @codingStandardsIgnoreStart
+					$q_vars['meta_key']   = Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'ckan_name';
+					$q_vars['meta_value'] = $user_organisation;
+					// @codingStandardsIgnoreEnd
+				}
+			}
 		}
 
 		/**
@@ -96,18 +125,24 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		 * @param object $user User which is edited. Not available in 'user_new_form' action.
 		 */
 		public function add_custom_user_profile_fields( $user = null ) {
-			// TODO do not show field is user can't manage_options
+			if ( ! current_user_can( 'edit_user_organisation' ) ) {
+				return;
+			}
+
 			$organisation_field_name = self::$plugin_slug . '_organisation';
 			?>
 			<h3>Organisation</h3>
 
 			<table class="form-table">
-				<tr>
-					<th><label for="<?php echo esc_attr( $organisation_field_name ); ?>">Organisation</label></th>
+				<tr class="form-field form-required">
+					<th scope="row">
+						<label for="<?php echo esc_attr( $organisation_field_name ); ?>">Organisation</label>
+						<span class="description">(required)</span>
+					</th>
 					<td>
-						<select name="<?php echo esc_attr( $organisation_field_name ); ?>" id="<?php echo esc_attr( $organisation_field_name ); ?>">
+						<select name="<?php echo esc_attr( $organisation_field_name ); ?>" id="<?php echo esc_attr( $organisation_field_name ); ?>" aria-required="true">
 							<?php
-							echo '<option value="">' . esc_attr_e( '- Please choose -', 'ogdch' ) . '</option>';
+							echo '<option value="">' . esc_attr( '- Please choose -', 'ogdch' ) . '</option>';
 							$organisation_options = Ckan_Backend_Helper::get_organisation_form_field_options();
 							foreach ( $organisation_options as $value => $title ) {
 								echo '<option value="' . esc_attr( $value ) . '"';
@@ -128,48 +163,31 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		}
 
 		/**
-		 * Saves all custom user profile fields
+		 * Validates fields on user profile save
 		 *
-		 * @param int $user_id ID of user being saved.
-		 *
-		 * @return bool|int
+		 * @param WP_Error $errors Error object where possible errors can be added.
 		 */
-		public function save_custom_user_profile_fields( $user_id ) {
-			if ( ! current_user_can( 'manage_options' ) ) {
-				return false;
+		public function validate_user_fields( $errors ) {
+			if ( ! current_user_can( 'edit_user_organisation' ) ) {
+				return;
 			}
 
-			return update_user_meta( $user_id, self::$plugin_slug . '_organisation', $_POST[ self::$plugin_slug . '_organisation' ] );
+			if ( ! isset( $_POST[ self::$plugin_slug . '_organisation' ] ) || '' === $_POST[ self::$plugin_slug . '_organisation' ] ) {
+				$errors->add( 'organisation_required', __( 'Please choose an organisation for this user.' ) );
+			}
 		}
 
 		/**
-		 * Activate the plugin.
+		 * Saves all custom user profile fields
 		 *
-		 * @return void
+		 * @param int $user_id ID of user being saved.
 		 */
-		public function activate() {
-			$post_types = array(
-				'datasets',
-				'groups',
-				'organisations',
-			);
-			// Add all capabilities of plugin to administrator role (save in database) to make them visible in backend.
-			$admin_role = get_role( 'administrator' );
-			if ( is_object( $admin_role ) ) {
-				foreach ( $post_types as $post_type ) {
-					$admin_role->add_cap( 'edit_' . $post_type );
-					$admin_role->add_cap( 'edit_others_' . $post_type );
-					$admin_role->add_cap( 'publish_' . $post_type );
-					$admin_role->add_cap( 'read_private_' . $post_type );
-					$admin_role->add_cap( 'delete_' . $post_type );
-					$admin_role->add_cap( 'delete_private_' . $post_type );
-					$admin_role->add_cap( 'delete_published_' . $post_type );
-					$admin_role->add_cap( 'delete_others_' . $post_type );
-					$admin_role->add_cap( 'edit_private_' . $post_type );
-					$admin_role->add_cap( 'edit_published_' . $post_type );
-					$admin_role->add_cap( 'create_' . $post_type );
-				}
+		public function save_custom_user_profile_fields( $user_id ) {
+			if ( ! current_user_can( 'edit_user_organisation' ) ) {
+				return;
 			}
+
+			update_user_meta( $user_id, self::$plugin_slug . '_organisation', $_POST[ self::$plugin_slug . '_organisation' ] );
 		}
 
 		/**
@@ -181,6 +199,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			require_once plugin_dir_path( __FILE__ ) . 'helper/ckan-backend-helper.php';
 			require_once plugin_dir_path( __FILE__ ) . 'model/ckan-backend-contact-point.php';
 			require_once plugin_dir_path( __FILE__ ) . 'model/ckan-backend-distribution.php';
+			require_once plugin_dir_path( __FILE__ ) . 'model/ckan-backend-publisher.php';
 			require_once plugin_dir_path( __FILE__ ) . 'model/ckan-backend-relation.php';
 			require_once plugin_dir_path( __FILE__ ) . 'model/ckan-backend-see-also.php';
 			require_once plugin_dir_path( __FILE__ ) . 'model/ckan-backend-temporal.php';
