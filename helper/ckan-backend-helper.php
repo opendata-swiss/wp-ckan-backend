@@ -333,7 +333,7 @@ class Ckan_Backend_Helper {
 	/**
 	 * Returns Organisation ID extracted from given identifier
 	 *
-	 * @param string $identifier Identifier in following format: <original_id>@<organisation_id>
+	 * @param string $identifier Identifier in following format: <original_id>@<organisation_id>.
 	 *
 	 * @return string
 	 */
@@ -344,7 +344,7 @@ class Ckan_Backend_Helper {
 	/**
 	 * Returns Original ID extracted from given identifier
 	 *
-	 * @param string $identifier Identifier in following format: <original_id>@<organisation_id>
+	 * @param string $identifier Identifier in following format: <original_id>@<organisation_id>.
 	 *
 	 * @return string
 	 */

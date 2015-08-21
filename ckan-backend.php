@@ -78,17 +78,19 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		 */
 		public function show_own_organisation_only( $query ) {
 			$q_vars = &$query->query_vars;
-			if( isset( $q_vars['post_type'] ) && $q_vars['post_type'] !== Ckan_Backend_Local_Organisation::POST_TYPE ) {
+			if ( isset( $q_vars['post_type'] ) && Ckan_Backend_Local_Organisation::POST_TYPE !== $q_vars['post_type'] ) {
 				return;
 			}
 
 			global $pagenow;
-			if ( $pagenow === 'edit.php' ) {
-				if( ! current_user_can( 'create_organisations' ) ) {
+			if ( 'edit.php' === $pagenow ) {
+				if ( ! current_user_can( 'create_organisations' ) ) {
 					// just show organisation which user is assigned
-					$user_organisation = get_the_author_meta( self::$plugin_slug . '_organisation', wp_get_current_user()->ID );
-					$q_vars['meta_key'] = Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'ckan_name';
+					$user_organisation    = get_the_author_meta( self::$plugin_slug . '_organisation', wp_get_current_user()->ID );
+					// @codingStandardsIgnoreStart
+					$q_vars['meta_key']   = Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'ckan_name';
 					$q_vars['meta_value'] = $user_organisation;
+					// @codingStandardsIgnoreEnd
 				}
 			}
 		}
@@ -170,7 +172,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 				return;
 			}
 
-			if( ! isset( $_POST[ self::$plugin_slug . '_organisation' ] ) || '' === $_POST[ self::$plugin_slug . '_organisation' ] ) {
+			if ( ! isset( $_POST[ self::$plugin_slug . '_organisation' ] ) || '' === $_POST[ self::$plugin_slug . '_organisation' ] ) {
 				$errors->add( 'organisation_required', __( 'Please choose an organisation for this user.' ) );
 			}
 		}

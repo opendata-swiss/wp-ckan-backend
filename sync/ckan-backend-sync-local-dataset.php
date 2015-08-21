@@ -29,7 +29,6 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		$languages      = $this->gather_languages( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'distributions', $load_from_post ) );
 		$issued         = $this->prepare_date( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'issued', $load_from_post ) );
 		$modified       = $this->prepare_date( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'modified', $load_from_post ) );
-		$contact_points = Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'contact_points', $load_from_post );
 		$identifier     = Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'identifier', $load_from_post );
 
 		$data = array(
@@ -38,7 +37,8 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 			'notes'               => $descriptions,
 			'issued'              => $issued,
 			'modified'            => $modified,
-			'contact_point'       => $contact_points[0]['name'] . ' (' . $contact_points[0]['email'] . ')', // TODO
+			'publishers'          => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'publishers', $load_from_post ), // TODO
+			'contact_points'      => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'contact_points', $load_from_post ), // TODO
 			'language'            => $languages,
 			'relation'            => '', // TODO
 			'tags'                => $tags,
@@ -55,7 +55,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		);
 
 		$organisation   = $identifier['organisation'];
-		if( ! empty( $organisation ) ) {
+		if ( ! empty( $organisation ) ) {
 			$data['owner_org'] = $organisation;
 		}
 

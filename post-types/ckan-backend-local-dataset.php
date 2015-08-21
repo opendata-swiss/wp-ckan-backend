@@ -41,27 +41,24 @@ class Ckan_Backend_Local_Dataset {
 	/**
 	 * Renders CMB2 field of type dataset_identifier
 	 *
-	 * @param CMB2_Field $field              The passed in `CMB2_Field` object
-	 * @param mixed      $escaped_value      The value of this field escaped.
-	 *                                       It defaults to `sanitize_text_field`.
-	 *                                       If you need the unescaped value, you can access it
-	 *                                       via `$field->value()`
-	 * @param int        $object_id          The ID of the current object
-	 * @param string     $object_type        The type of object you are working with.
-	 *                                       Most commonly, `post` (this applies to all post-types),
-	 *                                       but could also be `comment`, `user` or `options-page`.
-	 * @param CMB2_Types $field_type_object  This `CMB2_Types` object
+	 * @param CMB2_Field $field The passed in `CMB2_Field` object.
+	 * @param mixed      $escaped_value The value of this field escaped. It defaults to `sanitize_text_field`.
+	 * @param int        $object_id The ID of the current object.
+	 * @param string     $object_type The type of object you are working with.
+	 * @param CMB2_Types $field_type_object This `CMB2_Types` object.
 	 */
 	public function cmb2_render_callback_dataset_identifier( $field, $escaped_value, $object_id, $object_type, $field_type_object ) {
 		$original_identifier = $escaped_value['original_identifier'];
-		$organisation = $escaped_value['organisation'];
+		$organisation        = $escaped_value['organisation'];
 
-		if( empty( $organisation ) ) {
+		if ( empty( $organisation ) ) {
 			$organisation = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
 		}
 		?>
 		<div>
-			<?php echo $field_type_object->input( array(
+			<?php
+			// @codingStandardsIgnoreStart
+			echo $field_type_object->input( array(
 				'name'  => $field_type_object->_name( '[original_identifier]' ),
 				'id'    => $field_type_object->_id( '_original_identifier' ),
 				'value' => $original_identifier,
@@ -70,7 +67,7 @@ class Ckan_Backend_Local_Dataset {
 			) ); ?>
 			<span>@</span>
 			<?php
-			if( current_user_can( 'create_organisations' ) ) {
+			if ( current_user_can( 'create_organisations' ) ) {
 				echo $field_type_object->select( array(
 					'name'    => $field_type_object->_name( '[organisation]' ),
 					'id'      => $field_type_object->_id( '_organisation' ),
@@ -83,24 +80,32 @@ class Ckan_Backend_Local_Dataset {
 					'id'    => $field_type_object->_id( '_organisation' ),
 					'value' => $organisation,
 					'desc'  => '',
-					'type' => 'hidden',
+					'type'  => 'hidden',
 					'class' => false,
 				) );
 				echo $organisation;
 			}
+			// @codingStandardsIgnoreEnd
 			?>
 		</div>
 		<?php
-		echo $field_type_object->_desc( true );
+		echo esc_attr( $field_type_object->_desc( true ) );
 	}
 
+	/**
+	 * Creates organisation options for selectbox
+	 *
+	 * @param bool $value Current field value.
+	 *
+	 * @return string
+	 */
 	public function cmb2_get_organisation_options( $value = false ) {
 		$organisation_list = Ckan_Backend_Helper::get_organisation_form_field_options();
 
 		$organisation_options = '';
-		$organisation_options .= '<option value="">' . esc_attr( '- Please choose -', 'ogdch' ) . '</option>';
+		$organisation_options .= '<option value="">' . esc_attr__( '- Please choose -', 'ogdch' ) . '</option>';
 		foreach ( $organisation_list as $key => $title ) {
-			$organisation_options .= '<option value="'. $key .'" '. selected( $value, $key, false ) .'>'. $title .'</option>';
+			$organisation_options .= '<option value="' . $key . '" ' . selected( $value, $key, false ) . '>' . $title . '</option>';
 		}
 
 		return $organisation_options;
@@ -285,9 +290,9 @@ class Ckan_Backend_Local_Dataset {
 
 		/* Identifier */
 		$cmb->add_field( array(
-			'name'                 => __( 'Dataset Identifier', 'ogdch' ),
-			'id'                   => self::FIELD_PREFIX . 'identifier',
-			'type'                 => 'dataset_identifier',
+			'name' => __( 'Dataset Identifier', 'ogdch' ),
+			'id'   => self::FIELD_PREFIX . 'identifier',
+			'type' => 'dataset_identifier',
 		) );
 
 		/* Dates */

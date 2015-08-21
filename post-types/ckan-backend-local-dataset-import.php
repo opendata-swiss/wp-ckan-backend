@@ -206,7 +206,7 @@ class Ckan_Backend_Local_Dataset_Import {
 
 		$splitted_identifier = $dataset->get_splitted_identifier();
 		// Check if original_identifier is set
-		if ( empty ( $splitted_identifier['original_identifier'] ) ) {
+		if ( empty( $splitted_identifier['original_identifier'] ) ) {
 			echo '<div class="error"><p>';
 			esc_attr_e( 'The original identifier of your dataset is missing. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[organisation_id]</dct:identifier>. Import aborted.', 'ogdch' );
 			echo '</p></div>';
@@ -214,7 +214,7 @@ class Ckan_Backend_Local_Dataset_Import {
 			return false;
 		}
 		// Check if organisation is set
-		if ( empty ( $splitted_identifier['organisation'] ) ) {
+		if ( empty( $splitted_identifier['organisation'] ) ) {
 			echo '<div class="error"><p>';
 			esc_attr_e( 'The organisation id is missing in the identifier. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[organisation_id]</dct:identifier>. Import aborted.', 'ogdch' );
 			echo '</p></div>';
@@ -224,7 +224,7 @@ class Ckan_Backend_Local_Dataset_Import {
 		// If user isn't allowed to create datasets for another organisation -> check if he has provided his own organisation
 		if ( ! current_user_can( 'create_organisations' ) ) {
 			$user_organisation = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
-			if( $user_organisation !== $splitted_identifier['organisation'] ) {
+			if ( $user_organisation !== $splitted_identifier['organisation'] ) {
 				echo '<div class="error"><p>';
 				esc_attr_e( 'You are not allowed to add a dataset for another organistaion. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[your_organisation_id]</dct:identifier>. Import aborted.', 'ogdch' );
 				echo '</p></div>';
@@ -425,7 +425,7 @@ class Ckan_Backend_Local_Dataset_Import {
 	 * @return Ckan_Backend_Publisher_Model
 	 */
 	protected function get_publisher_object( $xml ) {
-		$publisher = new Ckan_Backend_Publisher_Model();
+		$publisher                     = new Ckan_Backend_Publisher_Model();
 		$publisher_description_element = $this->get_single_element_from_xpath( $xml, 'rdf:Description' );
 		if ( is_object( $publisher_description_element ) ) {
 			$publisher_description_attributes = $publisher_description_element->attributes( 'rdf', true );
