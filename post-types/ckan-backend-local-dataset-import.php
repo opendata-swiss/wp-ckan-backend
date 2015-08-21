@@ -33,7 +33,7 @@ class Ckan_Backend_Local_Dataset_Import {
 			'edit.php?post_type=' . Ckan_Backend_Local_Dataset::POST_TYPE,
 			__( 'Import CKAN Dataset', 'ogdch' ),
 			__( 'Import', 'ogdch' ),
-			'manage_options',
+			'create_datasets',
 			$this->menu_slug,
 			array( $this, 'import_page_callback' )
 		);
