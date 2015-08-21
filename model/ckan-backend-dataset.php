@@ -602,7 +602,7 @@ class Ckan_Backend_Dataset_Model {
 		global $language_priority;
 
 		$dataset = array(
-			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'identifier'          => $this->get_identifier(),
+			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'identifier'          => $this->get_splitted_identifier(),
 			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'issued'              => $this->get_issued(),
 			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'modified'            => $this->get_modified(),
 			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'publisher'           => $this->get_publisher(),
@@ -636,5 +636,17 @@ class Ckan_Backend_Dataset_Model {
 		}
 
 		return $dataset;
+	}
+
+	/**
+	 * Splits identifier and returns it as array in the following form: array( 'original_identifier' => 123, 'organisation' => XYZ )
+	 *
+	 * @return array
+	 */
+	public function get_splitted_identifier() {
+		return array(
+			'original_identifier' => Ckan_Backend_Helper::extract_original_id_from_identifier( $this->get_identifier() ),
+			'organisation'        => Ckan_Backend_Helper::extract_organisation_from_identifier( $this->get_identifier() ),
+		);
 	}
 }

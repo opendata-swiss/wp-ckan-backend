@@ -34,7 +34,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 
 		$data = array(
 			'title'               => $titles,
-			'identifier'          => $identifier,
+			'identifier'          => $identifier['original_identifier'] . '@' . $identifier['organisation'],
 			'notes'               => $descriptions,
 			'issued'              => $issued,
 			'modified'            => $modified,
