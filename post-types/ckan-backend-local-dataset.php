@@ -53,8 +53,8 @@ class Ckan_Backend_Local_Dataset {
 	 * @param CMB2_Types $field_type_object  This `CMB2_Types` object
 	 */
 	public function cmb2_render_callback_dataset_identifier( $field, $escaped_value, $object_id, $object_type, $field_type_object ) {
-		$original_identifier = substr( $escaped_value, 0, strrpos( $escaped_value, '@' ) );
-		$organisation = substr( strrchr( $escaped_value, '@' ), 1 );
+		$original_identifier = $escaped_value['original_identifier'];
+		$organisation = $escaped_value['organisation'];
 
 		if( empty( $organisation ) ) {
 			$organisation = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
@@ -92,19 +92,6 @@ class Ckan_Backend_Local_Dataset {
 		</div>
 		<?php
 		echo $field_type_object->_desc( true );
-	}
-
-	/**
-	 * Sanitizes dataset identifier field before saving it to database.
-	 * Generates identifier in this format: <original_id>@<organisation_id>
-	 *
-	 * @param string $override_value Sanitization override value to return.
-	 * @param string $value          The actual field value.
-	 *
-	 * @return string
-	 */
-	public function cmb2_sanitize_dataset_identifier_callback( $override_value, $value ) {
-		return $value['original_identifier'] . '@' . $value['organisation'];
 	}
 
 	public function cmb2_get_organisation_options( $value = false ) {
