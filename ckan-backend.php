@@ -66,6 +66,31 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			add_action( 'user_register', array( $this, 'save_custom_user_profile_fields' ), 10, 1 );
 			add_action( 'edit_user_profile_update', array( $this, 'save_custom_user_profile_fields' ), 10, 1 );
 			add_action( 'personal_options_update', array( $this, 'save_custom_user_profile_fields' ), 10, 1 );
+
+			// show only own organisation to non admin users
+			add_filter( 'parse_query', array( $this, 'show_own_organisation_only' ) );
+		}
+
+		/**
+		 * Just show organisation which user is assigned
+		 *
+		 * @param WP_Query $query Current query.
+		 */
+		public function show_own_organisation_only( $query ) {
+			$q_vars = &$query->query_vars;
+			if( isset( $q_vars['post_type'] ) && $q_vars['post_type'] !== Ckan_Backend_Local_Organisation::POST_TYPE ) {
+				return;
+			}
+
+			global $pagenow;
+			if ( $pagenow === 'edit.php' ) {
+				if( ! current_user_can( 'create_organisations' ) ) {
+					// just show organisation which user is assigned
+					$user_organisation = get_the_author_meta( self::$plugin_slug . '_organisation', wp_get_current_user()->ID );
+					$q_vars['meta_key'] = Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'ckan_name';
+					$q_vars['meta_value'] = $user_organisation;
+				}
+			}
 		}
 
 		/**
@@ -99,7 +124,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		 */
 		public function add_custom_user_profile_fields( $user = null ) {
 			if ( ! current_user_can( 'edit_user_organisation' ) ) {
-				return false;
+				return;
 			}
 
 			$organisation_field_name = self::$plugin_slug . '_organisation';
@@ -135,9 +160,14 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			<?php
 		}
 
+		/**
+		 * Validates fields on user profile save
+		 *
+		 * @param WP_Error $errors Error object where possible errors can be added.
+		 */
 		public function validate_user_fields( $errors ) {
 			if ( ! current_user_can( 'edit_user_organisation' ) ) {
-				return false;
+				return;
 			}
 
 			if( ! isset( $_POST[ self::$plugin_slug . '_organisation' ] ) || '' === $_POST[ self::$plugin_slug . '_organisation' ] ) {
@@ -149,15 +179,13 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		 * Saves all custom user profile fields
 		 *
 		 * @param int $user_id ID of user being saved.
-		 *
-		 * @return bool|int
 		 */
 		public function save_custom_user_profile_fields( $user_id ) {
 			if ( ! current_user_can( 'edit_user_organisation' ) ) {
-				return false;
+				return;
 			}
 
-			return update_user_meta( $user_id, self::$plugin_slug . '_organisation', $_POST[ self::$plugin_slug . '_organisation' ] );
+			update_user_meta( $user_id, self::$plugin_slug . '_organisation', $_POST[ self::$plugin_slug . '_organisation' ] );
 		}
 
 		/**
@@ -169,6 +197,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			require_once plugin_dir_path( __FILE__ ) . 'helper/ckan-backend-helper.php';
 			require_once plugin_dir_path( __FILE__ ) . 'model/ckan-backend-contact-point.php';
 			require_once plugin_dir_path( __FILE__ ) . 'model/ckan-backend-distribution.php';
+			require_once plugin_dir_path( __FILE__ ) . 'model/ckan-backend-publisher.php';
 			require_once plugin_dir_path( __FILE__ ) . 'model/ckan-backend-relation.php';
 			require_once plugin_dir_path( __FILE__ ) . 'model/ckan-backend-see-also.php';
 			require_once plugin_dir_path( __FILE__ ) . 'model/ckan-backend-temporal.php';
