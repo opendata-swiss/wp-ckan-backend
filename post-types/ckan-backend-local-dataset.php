@@ -120,7 +120,7 @@ class Ckan_Backend_Local_Dataset {
 	 */
 	public function add_columns( $columns ) {
 		$new_columns = array(
-			self::FIELD_PREFIX . 'publisher' => __( 'Publisher', 'ogdch' ),
+			self::FIELD_PREFIX . 'identifier' => __( 'Organisation', 'ogdch' ),
 		);
 
 		return array_merge( $columns, $new_columns );
@@ -133,12 +133,16 @@ class Ckan_Backend_Local_Dataset {
 	 * @param int    $post_id Id of current post.
 	 */
 	public function add_columns_data( $column, $post_id ) {
+
 		switch ( $column ) {
-			case self::FIELD_PREFIX . 'publisher' :
-				$organisation_id = get_post_meta( $post_id, $column, true );
-				if ( '' !== $organisation_id ) {
-					echo esc_attr( Ckan_Backend_Helper::get_organisation_title( $organisation_id ) );
-				}
+			case self::FIELD_PREFIX . 'identifier' :
+				$identifier = get_post_meta( $post_id, $column, true );
+				/* // TODO load readable organisation name from CKAN
+				$organisation = Ckan_Backend_Helper::extract_organisation_from_identifier( $identifier['organisation'] );
+				if ( ! empty( $organisation ) ) {
+					echo esc_attr( Ckan_Backend_Helper::get_organisation_title( $organisation ) );
+				}*/
+				echo esc_attr( $identifier['organisation'] );
 				break;
 		}
 	}
