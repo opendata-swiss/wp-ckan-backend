@@ -11,10 +11,11 @@
 class Ckan_Backend_Dataset_Model {
 	/**
 	 * Identifier
+	 * Format: array( 'original_identifier' = '123', 'organisation' = 'ABC' );
 	 *
-	 * @var string
+	 * @var array
 	 */
-	protected $identifier = '';
+	protected $identifier = array();
 
 	/**
 	 * Title in all languages
@@ -117,7 +118,7 @@ class Ckan_Backend_Dataset_Model {
 	/**
 	 * See Alsos
 	 *
-	 * @var Ckan_Backend_SeeAlso_Model[]
+	 * @var array
 	 */
 	protected $see_alsos = array();
 
@@ -131,16 +132,16 @@ class Ckan_Backend_Dataset_Model {
 	/**
 	 * Returns Identifier
 	 *
-	 * @return string
+	 * @return array
 	 */
 	public function get_identifier() {
 		return $this->identifier;
 	}
 
 	/**
-	 * Sets Identifier
+	 * Sets Identifier. Format: array( 'original_identifier' = '123', 'organisation' = 'ABC' );
 	 *
-	 * @param string $identifier identifier.
+	 * @param array $identifier identifier.
 	 */
 	public function set_identifier( $identifier ) {
 		$this->identifier = $identifier;
@@ -535,44 +536,32 @@ class Ckan_Backend_Dataset_Model {
 	}
 
 	/**
-	 * Adds SeeAlso
+	 * Returns all see alsos
 	 *
-	 * @param Ckan_Backend_SeeAlso_Model $see_also SeeAlso to add.
-	 *
-	 * @return bool|WP_Error
-	 */
-	public function add_see_also( $see_also ) {
-		if ( ! $see_also instanceof Ckan_Backend_SeeAlso_Model ) {
-			return new WP_Error( 'wrong_type', 'Relation has to be a Ckan_Backend_SeeAlso_Model type' );
-		}
-		$this->see_alsos[ spl_object_hash( $see_also ) ] = $see_also;
-
-		return true;
-	}
-
-	/**
-	 * Removes SeeAlso
-	 *
-	 * @param Ckan_Backend_SeeAlso_Model $see_also SeeAlso to remove.
-	 *
-	 * @return bool|WP_Error
-	 */
-	public function remove_see_also( $see_also ) {
-		if ( ! $see_also instanceof Ckan_Backend_SeeAlso_Model ) {
-			return new WP_Error( 'wrong_type', 'Relation has to be a Ckan_Backend_SeeAlso_Model type' );
-		}
-		unset( $this->see_alsos[ spl_object_hash( $see_also ) ] );
-
-		return true;
-	}
-
-	/**
-	 * Returns all SeeAlsos
-	 *
-	 * @return Ckan_Backend_SeeAlso_Model[]
+	 * @return string[]
 	 */
 	public function get_see_alsos() {
 		return $this->see_alsos;
+	}
+
+	/**
+	 * Adds see also
+	 *
+	 * @param string $see_also See also to add.
+	 */
+	public function add_see_also( $see_also ) {
+		$this->see_alsos[] = $see_also;
+	}
+
+	/**
+	 * Removes see also
+	 *
+	 * @param string $see_also See also to remove.
+	 */
+	public function remove_see_also( $see_also ) {
+		if ( ( $key = array_search( $see_also, $this->get_see_alsos() ) ) !== false ) {
+			unset( $this->see_alsos[ $key ] );
+		}
 	}
 
 	/**
@@ -625,7 +614,7 @@ class Ckan_Backend_Dataset_Model {
 		global $language_priority;
 
 		$dataset = array(
-			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'identifier'          => $this->get_splitted_identifier(),
+			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'identifier'          => $this->get_identifier(),
 			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'issued'              => $this->get_issued(),
 			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'modified'            => $this->get_modified(),
 			Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'themes'              => $this->get_themes(),
@@ -654,24 +643,12 @@ class Ckan_Backend_Dataset_Model {
 			$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'temporals' ][] = $temporal->to_array();
 		}
 		foreach ( $this->get_see_alsos() as $see_also ) {
-			$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'see_alsos' ][] = $see_also->to_array();
+			$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'see_alsos' ][] = array( 'dataset_identifier' => $see_also );
 		}
 		foreach ( $this->get_distributions() as $distribution ) {
 			$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'distributions' ][] = $distribution->to_array();
 		}
 
 		return $dataset;
-	}
-
-	/**
-	 * Splits identifier and returns it as array in the following form: array( 'original_identifier' => 123, 'organisation' => XYZ )
-	 *
-	 * @return array
-	 */
-	public function get_splitted_identifier() {
-		return array(
-			'original_identifier' => Ckan_Backend_Helper::extract_original_id_from_identifier( $this->get_identifier() ),
-			'organisation'        => Ckan_Backend_Helper::extract_organisation_from_identifier( $this->get_identifier() ),
-		);
 	}
 }
