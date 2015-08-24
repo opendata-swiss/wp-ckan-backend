@@ -300,7 +300,6 @@ class Ckan_Backend_Local_Dataset_Import {
 	 */
 	protected function get_dataset_object( $xml ) {
 		global $language_priority;
-		$has_error = false;
 
 		try {
 			$dataset = new Ckan_Backend_Dataset_Model();
@@ -308,17 +307,13 @@ class Ckan_Backend_Local_Dataset_Import {
 			if( '' === $identifier ) {
 				throw new Exception( __( 'Please provide an identifier for the dataset (eg. <dct:title xml:lang="en">My Dataset</dct:title>)', 'ogdch' ) );
 			}
-			$original_identifier = Ckan_Backend_Helper::extract_original_id_from_identifier( $identifier );
-			if ( empty( $original_identifier ) ) {
+			$splitted_identifier = $this->split_identifier( $identifier );
+			if ( empty( $splitted_identifier['original_identifier'] ) ) {
 				throw new Exception( __( 'The original identifier of your dataset is missing. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[organisation_id]</dct:identifier>. Import aborted.', 'ogdch' ) );
 			}
 
-			$organisation = Ckan_Backend_Helper::extract_organisation_from_identifier( $identifier );
-			$this->validate_organisation( $organisation );
-			$dataset->set_identifier( array(
-				'original_identifier' => $original_identifier,
-				'organisation'        => $organisation,
-			) );
+			$this->validate_organisation( $splitted_identifier['organisation'] );
+			$dataset->set_identifier( $splitted_identifier );
 			foreach ( $language_priority as $lang ) {
 				$dataset->set_title( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:title[@xml:lang="' . $lang . '"]' ), $lang );
 				$dataset->set_description( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:description[@xml:lang="' . $lang . '"]' ), $lang );
@@ -356,21 +351,13 @@ class Ckan_Backend_Local_Dataset_Import {
 				$dataset->add_keyword( (string) $keyword );
 			}
 			$dataset->set_landing_page( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dcat:landingPage' ) );
-			$spatial_element = $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:spatial' );
-			if ( is_object( $spatial_element ) ) {
-				$spatial_attributes = $spatial_element->attributes( 'rdf', true );
-				$dataset->set_spatial( (string) $spatial_attributes['resource'] );
-			}
+			$dataset->set_spatial( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:spatial/@rdf:resource' ) );
 			$dataset->set_coverage( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:coverage' ) );
 			$temporals = $xml->xpath( '//dcat:Dataset/dct:temporal/dct:PeriodOfTime' );
 			foreach ( $temporals as $temporal_xml ) {
 				$dataset->add_temporal( $this->get_temporal_object( $temporal_xml ) );
 			}
-			$accrual_periodicity_element = $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:accrualPeriodicity' );
-			if ( is_object( $accrual_periodicity_element ) ) {
-				$accrual_periodicity_attributes = $accrual_periodicity_element->attributes( 'rdf', true );
-				$dataset->set_accrual_periodicity( (string) $accrual_periodicity_attributes['resource'] );
-			}
+			$dataset->set_accrual_periodicity( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:accrualPeriodicity/@rdf:resource' ) );
 			$see_alsos = $xml->xpath( '//dcat:Dataset/rdfs:seeAlso' );
 			foreach ( $see_alsos as $see_also ) {
 				$dataset->add_see_also( (string) $see_also );
@@ -426,13 +413,8 @@ class Ckan_Backend_Local_Dataset_Import {
 	 */
 	protected function get_publisher_object( $xml ) {
 		$publisher                     = new Ckan_Backend_Publisher_Model();
-		$publisher_description_element = $this->get_single_element_from_xpath( $xml, 'rdf:Description' );
-		if ( is_object( $publisher_description_element ) ) {
-			$publisher_description_attributes = $publisher_description_element->attributes( 'rdf', true );
-			$publisher_termdat_reference      = (string) $publisher_description_attributes['about'];
-			$publisher->set_termdat_reference( $publisher_termdat_reference );
-		}
-		$publisher->set_label( (string) $this->get_single_element_from_xpath( $publisher_description_element, 'rdfs:label' ) );
+		$publisher->set_termdat_reference( (string) $this->get_single_element_from_xpath( $xml, 'rdf:Description/@rdf:about' ) );
+		$publisher->set_label( (string) $this->get_single_element_from_xpath( $xml, 'rdf:Description/rdfs:label' ) );
 
 		return $publisher;
 	}
@@ -447,12 +429,8 @@ class Ckan_Backend_Local_Dataset_Import {
 	protected function get_contact_point_object( $xml ) {
 		$contact_point = new Ckan_Backend_ContactPoint_Model();
 		$contact_point->set_name( (string) $this->get_single_element_from_xpath( $xml, 'vcard:fn' ) );
-		$contact_point_email_element = $this->get_single_element_from_xpath( $xml, 'vcard:hasEmail' );
-		if ( is_object( $contact_point_email_element ) ) {
-			$contact_point_email_attributes = $contact_point_email_element->attributes( 'rdf', true );
-			$contact_point_email            = str_replace( 'mailto:', '', (string) $contact_point_email_attributes['resource'] );
-			$contact_point->set_email( $contact_point_email );
-		}
+		$contact_point_email = $this->get_single_element_from_xpath( $xml, 'vcard:hasEmail/@rdf:resource' );
+		$contact_point->set_email( str_replace( 'mailto:', '', (string) $contact_point_email ) );
 
 		return $contact_point;
 	}
@@ -466,10 +444,7 @@ class Ckan_Backend_Local_Dataset_Import {
 	 */
 	protected function get_relation_object( $xml ) {
 		$relation = new Ckan_Backend_Relation_Model();
-		if ( is_object( $xml ) ) {
-			$relation_attributes = $xml->attributes( 'rdf', true );
-			$relation->set_url( (string) $relation_attributes['about'] );
-		}
+		$relation->set_url( (string) $this->get_single_element_from_xpath( $xml, '@rdf:about' ) );
 		$relation->set_label( (string) $this->get_single_element_from_xpath( $xml, 'rdfs:label' ) );
 
 		return $relation;
@@ -589,6 +564,7 @@ class Ckan_Backend_Local_Dataset_Import {
 	 * @throws Exception when group doesn't exist
 	 */
 	public function get_theme_name( $theme_uri ) {
+		// TODO save result to transient (@odi)
 		$group_search_args = array(
 			// @codingStandardsIgnoreStart
 			'meta_key'    => Ckan_Backend_Local_Group::FIELD_PREFIX . 'rdf_uri',
@@ -600,11 +576,27 @@ class Ckan_Backend_Local_Dataset_Import {
 		if( is_array( $groups ) && count( $groups ) > 0 ) {
 			$theme_name = get_post_meta( $groups[0]->ID, Ckan_Backend_Local_Group::FIELD_PREFIX . 'ckan_name', true );
 			if ( empty ( $theme_name ) || ! Ckan_Backend_Helper::group_exists( $theme_name ) ) {
-				throw new Exception( __( sprintf( __( 'Group %1$s does not exist! Import aborted.', 'ogdch' ), $theme_name ) ) );
+				throw new Exception( __( sprintf( __( 'Group %1$s does not exist! Import aborted.', 'ogdch' ), $theme_uri ) ) );
 			}
 			return $theme_name;
 		} else {
 			throw new Exception( sprintf( __( 'Group %1$s does not exist! Import aborted.', 'ogdch' ), $theme_uri ) );
 		}
+	}
+
+	/**
+	 * Returns Original Identifiert and Organisation ID extracted from given identifier
+	 *
+	 * @param string $identifier Identifier in following format: <original_id>@<organisation_id>.
+	 *
+	 * @return array Format: array( 'original_identifier' = '123', 'organisation' = 'ABC' );
+	 */
+	public function split_identifier( $identifier ) {
+		$splitted_identifier = array(
+			'original_identifier' => substr( $identifier, 0, strrpos( $identifier, '@' ) ),
+			'organisation'        => substr( strrchr( $identifier, '@' ), 1 ),
+		);
+
+		return $splitted_identifier;
 	}
 }
