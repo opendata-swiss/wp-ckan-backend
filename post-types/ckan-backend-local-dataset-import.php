@@ -92,7 +92,7 @@ class Ckan_Backend_Local_Dataset_Import {
 			}
 		} ?>
 		<div class="wrap import_ckan_dataset">
-			<h2><?php echo esc_html( get_admin_page_title() ); ?></h2>
+			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
 
 			<form enctype="multipart/form-data" action="" method="POST">
 				<input type="hidden" name="<?php esc_attr_e( $import_submit_hidden_field_name ); ?>" value="Y">
