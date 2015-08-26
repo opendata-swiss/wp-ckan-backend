@@ -81,18 +81,17 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		 * @return array
 		 */
 		public function allow_edit_own_organisation( $allcaps, $cap, $args ) {
-			//print_r($args);
 			$requested_cap = $args[0];
 			$required_cap  = $cap[0];
-
-			// Bail out if we're not asking about a post:
-			if ( 'edit_post' != $requested_cap ) {
-				return $allcaps;
-			}
 
 			// Bail out users who are already allowed to edit other datasets / organisations)
 			if ( isset( $allcaps['edit_others_organisations'] ) || isset( $allcaps['edit_others_datasets'] ) ) {
 				return $allcaps;
+			}
+
+			// TODO on save there is a call without a post id. Why?
+			if ( in_array( $requested_cap, array( 'edit_others_datasets', 'edit_others_organization' ) ) && empty( $args[2] ) ) {
+				$allcaps[ $requested_cap ] = true;
 			}
 
 			// Load the post data:
