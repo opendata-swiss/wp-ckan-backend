@@ -67,32 +67,57 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			add_action( 'edit_user_profile_update', array( $this, 'save_custom_user_profile_fields' ), 10, 1 );
 			add_action( 'personal_options_update', array( $this, 'save_custom_user_profile_fields' ), 10, 1 );
 
-			// show only own organisation to non admin users
-			add_filter( 'parse_query', array( $this, 'show_own_organisation_only' ) );
+			// Allow users to edit all entities of their organisation (override edit_others_entities capability)
+			add_filter( 'user_has_cap', array( $this, 'allow_edit_own_organisation' ), 10, 3 );
 		}
 
 		/**
-		 * Just show organisation which user is assigned
+		 * Allow users to edit all entities of their organisation (override edit_others_entities capability)
 		 *
-		 * @param WP_Query $query Current query.
+		 * @param array $allcaps All the capabilities of the user
+		 * @param array $cap [0] Required capability
+		 * @param array $args [0] Requested capability, [1] User ID, [2] Associated object ID
+		 *
+		 * @return array
 		 */
-		public function show_own_organisation_only( $query ) {
-			$q_vars = &$query->query_vars;
-			if ( isset( $q_vars['post_type'] ) && Ckan_Backend_Local_Organisation::POST_TYPE !== $q_vars['post_type'] ) {
-				return;
+		public function allow_edit_own_organisation( $allcaps, $cap, $args ) {
+			//print_r($args);
+			$requested_cap = $args[0];
+			$required_cap  = $cap[0];
+
+			// Bail out if we're not asking about a post:
+			if ( 'edit_post' != $requested_cap ) {
+				return $allcaps;
 			}
 
-			global $pagenow;
-			if ( 'edit.php' === $pagenow ) {
-				if ( ! current_user_can( 'create_organisations' ) ) {
-					// just show organisation which user is assigned
-					$user_organisation    = get_the_author_meta( self::$plugin_slug . '_organisation', wp_get_current_user()->ID );
-					// @codingStandardsIgnoreStart
-					$q_vars['meta_key']   = Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'ckan_name';
-					$q_vars['meta_value'] = $user_organisation;
-					// @codingStandardsIgnoreEnd
+			// Bail out users who are already allowed to edit other datasets / organisations)
+			if ( isset( $allcaps['edit_others_organisations'] ) || isset( $allcaps['edit_others_datasets'] ) ) {
+				return $allcaps;
+			}
+
+			// Load the post data:
+			if ( $required_cap === 'edit_others_organisations' ) {
+				$current_user_id   = $args[1];
+				$post_id           = $args[2];
+				$organisation      = get_post_meta( $post_id, Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'ckan_name', true );
+				$user_organisation = get_the_author_meta( self::$plugin_slug . '_organisation', $current_user_id );
+				// if the assigned organisation matches the organisation of the current entity
+				if ( $organisation === $user_organisation ) {
+					$allcaps[ $required_cap ] = true;
 				}
 			}
+
+			if ( $required_cap === 'edit_others_datasets' ) {
+				$current_user_id   = $args[1];
+				$post_id           = $args[2];
+				$identifier        = get_post_meta( $post_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'identifier', true );
+				$user_organisation = get_the_author_meta( self::$plugin_slug . '_organisation', $current_user_id );
+				if ( $identifier['organisation'] === $user_organisation ) {
+					$allcaps[ $required_cap ] = true;
+				}
+			}
+
+			return $allcaps;
 		}
 
 		/**
@@ -140,7 +165,8 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 						<span class="description">(required)</span>
 					</th>
 					<td>
-						<select name="<?php echo esc_attr( $organisation_field_name ); ?>" id="<?php echo esc_attr( $organisation_field_name ); ?>" aria-required="true">
+						<select name="<?php echo esc_attr( $organisation_field_name ); ?>"
+						        id="<?php echo esc_attr( $organisation_field_name ); ?>" aria-required="true">
 							<?php
 							echo '<option value="">' . esc_attr( '- Please choose -', 'ogdch' ) . '</option>';
 							$organisation_options = Ckan_Backend_Helper::get_organisation_form_field_options();
