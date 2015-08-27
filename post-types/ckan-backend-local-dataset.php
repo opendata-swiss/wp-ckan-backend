@@ -477,9 +477,9 @@ class Ckan_Backend_Local_Dataset {
 		) );
 
 		$cmb->add_group_field( $see_alsos_group, array(
-			'name' => __( 'URL', 'ogdch' ),
-			'id'   => 'url',
-			'type' => 'text_url',
+			'name' => __( 'Dataset Identifier', 'ogdch' ),
+			'id'   => 'dataset_identifier',
+			'type' => 'text',
 		) );
 
 		/* Resources */

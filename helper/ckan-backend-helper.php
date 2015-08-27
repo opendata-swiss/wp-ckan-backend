@@ -329,26 +329,4 @@ class Ckan_Backend_Helper {
 
 		return $localized_text;
 	}
-
-	/**
-	 * Returns Organisation ID extracted from given identifier
-	 *
-	 * @param string $identifier Identifier in following format: <original_id>@<organisation_id>.
-	 *
-	 * @return string
-	 */
-	public static function extract_organisation_from_identifier( $identifier ) {
-		return substr( strrchr( $identifier, '@' ), 1 );
-	}
-
-	/**
-	 * Returns Original ID extracted from given identifier
-	 *
-	 * @param string $identifier Identifier in following format: <original_id>@<organisation_id>.
-	 *
-	 * @return string
-	 */
-	public static function extract_original_id_from_identifier( $identifier ) {
-		return substr( $identifier, 0, strrpos( $identifier, '@' ) );
-	}
 }

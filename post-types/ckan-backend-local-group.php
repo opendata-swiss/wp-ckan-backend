@@ -193,5 +193,22 @@ class Ckan_Backend_Local_Group {
 				'readonly' => 'readonly',
 			),
 		) );
+
+		/* CMB Sidebox for RDF Reference */
+		$cmb_side_ckan = new_cmb2_box( array(
+			'id'           => self::POST_TYPE . '-sidebox-rdf',
+			'title'        => __( 'RDF Reference', 'ogdch' ),
+			'object_types' => array( self::POST_TYPE ),
+			'context'      => 'side',
+			'priority'     => 'low',
+			'show_names'   => true,
+		) );
+
+		/* RDF URI */
+		$cmb_side_ckan->add_field( array(
+			'name'       => __( 'RDF URI', 'ogdch' ),
+			'id'         => self::FIELD_PREFIX . 'rdf_uri',
+			'type'       => 'text',
+		) );
 	}
 }
