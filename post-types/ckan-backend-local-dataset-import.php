@@ -297,6 +297,8 @@ class Ckan_Backend_Local_Dataset_Import {
 	 * @param SimpleXMLElement $xml XML content from file.
 	 *
 	 * @return Ckan_Backend_Dataset_Model
+	 *
+	 * @throws Exception If there are validation errors.
 	 */
 	protected function get_dataset_object( $xml ) {
 		global $language_priority;
@@ -304,7 +306,7 @@ class Ckan_Backend_Local_Dataset_Import {
 		try {
 			$dataset = new Ckan_Backend_Dataset_Model();
 			$identifier = (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:identifier' );
-			if( '' === $identifier ) {
+			if ( '' === $identifier ) {
 				throw new Exception( __( 'Please provide an identifier for the dataset (eg. <dct:title xml:lang="en">My Dataset</dct:title>)', 'ogdch' ) );
 			}
 			$splitted_identifier = $this->split_identifier( $identifier );
@@ -319,6 +321,7 @@ class Ckan_Backend_Local_Dataset_Import {
 				$dataset->set_description( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:description[@xml:lang="' . $lang . '"]' ), $lang );
 			}
 			if ( '' === $dataset->get_main_title() ) {
+				//TODO: throw custom exception
 				throw new Exception( 'Please provide a title in at least one language for the dataset (eg. <dct:title xml:lang="en">My Dataset</dct:title>)' );
 			}
 			$issued = strtotime( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:issued' ) );
@@ -369,7 +372,7 @@ class Ckan_Backend_Local_Dataset_Import {
 			}
 
 			return $dataset;
-		} catch(Exception $e) {
+		} catch (Exception $e) {
 			$this->store_error_in_notices_option( $e->getMessage() );
 			return false;
 		}
@@ -382,7 +385,7 @@ class Ckan_Backend_Local_Dataset_Import {
 	 * @param string $organisation Organisation to validate.
 	 *
 	 * @return bool
-	 * @throws Exception
+	 * @throws Exception If there are validation errors.
 	 */
 	protected function validate_organisation( $organisation ) {
 		// Check if organisation is set
@@ -559,9 +562,11 @@ class Ckan_Backend_Local_Dataset_Import {
 	/**
 	 * Transforms theme uris to names
 	 *
-	 * @return string
+	 * @param string $theme_uri The theme URI from the RDF.
 	 *
-	 * @throws Exception when group doesn't exist
+	 * @return Name of the theme (group)
+	 *
+	 * @throws Exception If group doesn't exist.
 	 */
 	public function get_theme_name( $theme_uri ) {
 		// TODO save result to transient (@odi)
@@ -573,9 +578,9 @@ class Ckan_Backend_Local_Dataset_Import {
 			'post_type'   => Ckan_Backend_Local_Group::POST_TYPE,
 		);
 		$groups            = get_posts( $group_search_args );
-		if( is_array( $groups ) && count( $groups ) > 0 ) {
+		if ( is_array( $groups ) && count( $groups ) > 0 ) {
 			$theme_name = get_post_meta( $groups[0]->ID, Ckan_Backend_Local_Group::FIELD_PREFIX . 'ckan_name', true );
-			if ( empty ( $theme_name ) || ! Ckan_Backend_Helper::group_exists( $theme_name ) ) {
+			if ( empty( $theme_name ) || ! Ckan_Backend_Helper::group_exists( $theme_name ) ) {
 				throw new Exception( __( sprintf( __( 'Group %1$s does not exist! Import aborted.', 'ogdch' ), $theme_uri ) ) );
 			}
 			return $theme_name;

@@ -74,9 +74,9 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		/**
 		 * Allow users to edit all entities of their organisation (override edit_others_entities capability)
 		 *
-		 * @param array $allcaps All the capabilities of the user
-		 * @param array $cap [0] Required capability
-		 * @param array $args [0] Requested capability, [1] User ID, [2] Associated object ID
+		 * @param array $allcaps All the capabilities of the user.
+		 * @param array $cap [0] Required capability.
+		 * @param array $args [0] Requested capability, [1] User ID, [2] Associated object ID.
 		 *
 		 * @return array
 		 */
@@ -95,7 +95,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			}
 
 			// Load the post data:
-			if ( $required_cap === 'edit_others_organisations' ) {
+			if ( 'edit_others_organisations' === $required_cap ) {
 				$current_user_id   = $args[1];
 				$post_id           = $args[2];
 				$organisation      = get_post_meta( $post_id, Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'ckan_name', true );
@@ -106,7 +106,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 				}
 			}
 
-			if ( $required_cap === 'edit_others_datasets' ) {
+			if ( 'edit_others_datasets' === $required_cap ) {
 				$current_user_id   = $args[1];
 				$post_id           = $args[2];
 				$identifier        = get_post_meta( $post_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'identifier', true );
