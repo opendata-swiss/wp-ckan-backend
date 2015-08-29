@@ -90,11 +90,10 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			}
 
 			// TODO on save there is a call without a post id. Why?
-			if ( in_array( $requested_cap, array( 'edit_others_datasets', 'edit_others_organization' ) ) && empty( $args[2] ) ) {
+			if ( in_array( $requested_cap, array( 'edit_others_datasets', 'edit_others_organisations' ) ) && empty( $args[2] ) ) {
 				$allcaps[ $requested_cap ] = true;
 			}
 
-			// Load the post data:
 			if ( 'edit_others_organisations' === $required_cap ) {
 				$current_user_id   = $args[1];
 				$post_id           = $args[2];
