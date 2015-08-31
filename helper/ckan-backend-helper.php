@@ -313,6 +313,7 @@ class Ckan_Backend_Helper {
 	 * @return string
 	 */
 	public static function get_localized_text( $all_languages ) {
+		global $language_priority;
 		$org_languages = $all_languages;
 		if ( ! is_array( $all_languages ) ) {
 			$all_languages = json_decode( $all_languages, true );
@@ -321,7 +322,12 @@ class Ckan_Backend_Helper {
 		$current_language = get_locale();
 		$localized_text   = $all_languages[ substr( $current_language, 0, 2 ) ];
 		if ( empty( $localized_text ) ) {
-			$localized_text = $all_languages['en'];
+			foreach ( $language_priority as $lang ) {
+				if ( '' !== $all_languages[ $lang ] ) {
+					$localized_text = $all_languages[ $lang ];
+					break;
+				}
+			}
 		}
 		if ( empty( $localized_text ) ) {
 			return $org_languages;

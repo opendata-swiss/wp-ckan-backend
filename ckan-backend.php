@@ -126,6 +126,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		public function bootstrap() {
 			$this->load_dependencies();
 
+			new Ckan_Backend_Frequency();
 			new Ckan_Backend_Local_Dataset();
 			new Ckan_Backend_Local_Group();
 			new Ckan_Backend_Local_Organisation();
@@ -227,6 +228,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			require_once plugin_dir_path( __FILE__ ) . 'model/ckan-backend-relation.php';
 			require_once plugin_dir_path( __FILE__ ) . 'model/ckan-backend-temporal.php';
 			require_once plugin_dir_path( __FILE__ ) . 'model/ckan-backend-dataset.php';
+			require_once plugin_dir_path( __FILE__ ) . 'taxonomies/ckan-backend-frequency.php';
 			require_once plugin_dir_path( __FILE__ ) . 'post-types/ckan-backend-local-dataset.php';
 			require_once plugin_dir_path( __FILE__ ) . 'post-types/ckan-backend-local-group.php';
 			require_once plugin_dir_path( __FILE__ ) . 'post-types/ckan-backend-local-organisation.php';

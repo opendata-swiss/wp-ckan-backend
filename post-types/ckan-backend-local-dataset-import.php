@@ -569,24 +569,30 @@ class Ckan_Backend_Local_Dataset_Import {
 	 * @throws Exception If group doesn't exist.
 	 */
 	public function get_theme_name( $theme_uri ) {
-		// TODO save result to transient (@odi)
-		$group_search_args = array(
-			// @codingStandardsIgnoreStart
-			'meta_key'    => Ckan_Backend_Local_Group::FIELD_PREFIX . 'rdf_uri',
-			'meta_value'  => $theme_uri,
-			// @codingStandardsIgnoreEnd
-			'post_type'   => Ckan_Backend_Local_Group::POST_TYPE,
-		);
-		$groups            = get_posts( $group_search_args );
-		if ( is_array( $groups ) && count( $groups ) > 0 ) {
-			$theme_name = get_post_meta( $groups[0]->ID, Ckan_Backend_Local_Group::FIELD_PREFIX . 'ckan_name', true );
-			if ( empty( $theme_name ) || ! Ckan_Backend_Helper::group_exists( $theme_name ) ) {
-				throw new Exception( __( sprintf( __( 'Group %1$s does not exist! Import aborted.', 'ogdch' ), $theme_uri ) ) );
+		$transient_name = Ckan_Backend::$plugin_slug . '_' . sanitize_title_with_dashes( $theme_uri );
+		if ( false === ( $theme_name = get_transient( $transient_name ) ) ) {
+			$group_search_args = array(
+				// @codingStandardsIgnoreStart
+				'meta_key'   => Ckan_Backend_Local_Group::FIELD_PREFIX . 'rdf_uri',
+				'meta_value' => $theme_uri,
+				// @codingStandardsIgnoreEnd
+				'post_type'  => Ckan_Backend_Local_Group::POST_TYPE,
+			);
+			$groups            = get_posts( $group_search_args );
+			if ( is_array( $groups ) && count( $groups ) > 0 ) {
+				$theme_name = get_post_meta( $groups[0]->ID, Ckan_Backend_Local_Group::FIELD_PREFIX . 'ckan_name', true );
+				if ( empty( $theme_name ) || ! Ckan_Backend_Helper::group_exists( $theme_name ) ) {
+					throw new Exception( __( sprintf( __( 'Group %1$s does not exist! Import aborted.', 'ogdch' ), $theme_uri ) ) );
+				}
+
+				// save result in transient
+				set_transient( $transient_name, $theme_name, 1 * HOUR_IN_SECONDS );
+			} else {
+				throw new Exception( sprintf( __( 'Group %1$s does not exist! Import aborted.', 'ogdch' ), $theme_uri ) );
 			}
-			return $theme_name;
-		} else {
-			throw new Exception( sprintf( __( 'Group %1$s does not exist! Import aborted.', 'ogdch' ), $theme_uri ) );
 		}
+
+		return $theme_name;
 	}
 
 	/**
