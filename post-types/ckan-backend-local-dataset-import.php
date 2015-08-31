@@ -392,8 +392,8 @@ class Ckan_Backend_Local_Dataset_Import {
 		if ( empty( $organisation ) ) {
 			throw new Exception( __( 'The organisation id is missing in the identifier. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[organisation_id]</dct:identifier>. Import aborted.', 'ogdch' ) );
 		}
-		// If user isn't allowed to create datasets for another organisation -> check if he has provided his own organisation
-		if ( ! current_user_can( 'create_organisations' ) ) {
+		// If user isn't allowed to edit_others_organisations for another organisation -> check if he has provided his own organisation
+		if ( ! current_user_can( 'edit_others_organisations' ) ) {
 			$user_organisation = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
 			if ( $user_organisation !== $organisation ) {
 				throw new Exception( __( 'You are not allowed to add a dataset for another organistaion. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[your_organisation_id]</dct:identifier>. Import aborted.', 'ogdch' ) );
