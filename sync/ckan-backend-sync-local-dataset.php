@@ -86,7 +86,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		$ckan_resources = array();
 
 		// Check if resources are added. If yes generate CKAN friendly array.
-		if ( '' !== $resources[0]['download_url'] ) {
+		if ( '' !== $resources[0]['access_url'] ) {
 			foreach ( $resources as $resource ) {
 				$titles = array();
 				foreach ( $language_priority as $lang ) {
