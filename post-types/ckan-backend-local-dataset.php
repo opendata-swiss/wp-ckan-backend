@@ -32,7 +32,6 @@ class Ckan_Backend_Local_Dataset {
 
 		// add custom CMB2 field type dataset_identifier
 		add_action( 'cmb2_render_dataset_identifier', array( $this, 'cmb2_render_callback_dataset_identifier' ), 10, 5 );
-		add_filter( 'cmb2_sanitize_dataset_identifier', array( $this, 'cmb2_sanitize_dataset_identifier_callback' ), 10, 2 );
 
 		// initialize local dataset sync
 		new Ckan_Backend_Sync_Local_Dataset( self::POST_TYPE, self::FIELD_PREFIX );
@@ -63,7 +62,6 @@ class Ckan_Backend_Local_Dataset {
 				'id'    => $field_type_object->_id( '_original_identifier' ),
 				'value' => $original_identifier,
 				'desc'  => '',
-				'class' => 'cmb2-text-small',
 			) ); ?>
 			<span>@</span>
 			<?php
@@ -265,6 +263,13 @@ class Ckan_Backend_Local_Dataset {
 			'show_names'   => true,
 		) );
 
+		/* Identifier */
+		$cmb->add_field( array(
+			'name' => __( 'Dataset Identifier', 'ogdch' ),
+			'id'   => self::FIELD_PREFIX . 'identifier',
+			'type' => 'dataset_identifier',
+		) );
+
 		/* Title */
 		$cmb->add_field( array(
 			'name' => __( 'Dataset Information', 'ogdch' ),
@@ -291,13 +296,6 @@ class Ckan_Backend_Local_Dataset {
 				'attributes' => array( 'rows' => 3 ),
 			) );
 		}
-
-		/* Identifier */
-		$cmb->add_field( array(
-			'name' => __( 'Dataset Identifier', 'ogdch' ),
-			'id'   => self::FIELD_PREFIX . 'identifier',
-			'type' => 'dataset_identifier',
-		) );
 
 		/* Dates */
 		$cmb->add_field( array(
