@@ -268,6 +268,9 @@ class Ckan_Backend_Local_Dataset {
 			'name' => __( 'Dataset Identifier', 'ogdch' ),
 			'id'   => self::FIELD_PREFIX . 'identifier',
 			'type' => 'dataset_identifier',
+			'attributes'  => array(
+				'required' => 'required',
+			),
 		) );
 
 		/* Title */
