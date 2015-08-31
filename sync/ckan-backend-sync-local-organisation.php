@@ -62,8 +62,8 @@ class Ckan_Backend_Sync_Local_Organisation extends Ckan_Backend_Sync_Abstract {
 			'state'       => 'active',
 		);
 
-		// only users with create_organisations capability can assign parent organisations
-		if ( current_user_can( 'create_organisations' ) ) {
+		// only users with edit_others_organisations capability can assign parent organisations
+		if ( current_user_can( 'edit_others_organisations' ) ) {
 			if ( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'parent', $load_from_post ) !== '' ) {
 				$data['groups'] = array( array( 'name' => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'parent', $load_from_post ) ) );
 			} else {
