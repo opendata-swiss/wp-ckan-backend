@@ -49,5 +49,6 @@ class Ckan_Backend_Sync_Local_Group extends Ckan_Backend_Sync_Abstract {
 		// Deletes all transients for this post-type instance.
 		delete_transient( Ckan_Backend::$plugin_slug . '_group_options' );
 		delete_transient( Ckan_Backend::$plugin_slug . '_group_' . sanitize_title_with_dashes( $post->post_title ) . '_exists' );
+		delete_transient( Ckan_Backend::$plugin_slug . '_' . sanitize_title_with_dashes( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'rdf_uri', false ) ) );
 	}
 }
