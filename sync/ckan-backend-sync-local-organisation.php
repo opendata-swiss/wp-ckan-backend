@@ -56,10 +56,11 @@ class Ckan_Backend_Sync_Local_Organisation extends Ckan_Backend_Sync_Abstract {
 		$descriptions = Ckan_Backend_Helper::prepare_multilingual_field( $post->ID, $this->field_prefix . 'description', $load_from_post );
 
 		$data = array(
-			'title'       => $titles,
-			'description' => $descriptions,
-			'image_url'   => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'image', $load_from_post ),
-			'state'       => 'active',
+			'title'        => $titles,
+			'display_name' => $titles,
+			'description'  => $descriptions,
+			'image_url'    => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'image', $load_from_post ),
+			'state'        => 'active',
 		);
 
 		// only users with edit_others_organisations capability can assign parent organisations
