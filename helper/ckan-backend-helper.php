@@ -128,6 +128,9 @@ class Ckan_Backend_Helper {
 					}
 				}
 
+				// sort by title
+				asort( $options, SORT_NATURAL );
+
 				// save result in transient
 				set_transient( $transient_name, $options, 1 * HOUR_IN_SECONDS );
 			} else {
