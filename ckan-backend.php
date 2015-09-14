@@ -126,7 +126,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		public function bootstrap() {
 			$this->load_dependencies();
 
-			new Ckan_Backend_Frequency();
+			Ckan_Backend_Frequency::init();
 			new Ckan_Backend_Local_Dataset();
 			new Ckan_Backend_Local_Group();
 			new Ckan_Backend_Local_Organisation();
@@ -164,8 +164,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 						<span class="description">(required)</span>
 					</th>
 					<td>
-						<select name="<?php echo esc_attr( $organisation_field_name ); ?>"
-						        id="<?php echo esc_attr( $organisation_field_name ); ?>" aria-required="true">
+						<select name="<?php echo esc_attr( $organisation_field_name ); ?>" id="<?php echo esc_attr( $organisation_field_name ); ?>" aria-required="true">
 							<?php
 							echo '<option value="">' . esc_attr( '- Please choose -', 'ogdch' ) . '</option>';
 							$organisation_options = Ckan_Backend_Helper::get_organisation_form_field_options();
