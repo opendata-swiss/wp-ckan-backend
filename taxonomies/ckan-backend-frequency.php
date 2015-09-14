@@ -10,6 +10,11 @@
  */
 class Ckan_Backend_Frequency {
 
+	/**
+	 * Frequencies
+	 *
+	 * @var array
+	 */
 	public static $frequencies = array();
 
 	/**
