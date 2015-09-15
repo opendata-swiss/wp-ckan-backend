@@ -440,9 +440,11 @@ class Ckan_Backend_Local_Dataset {
 		) );
 
 		$cmb->add_field( array(
-			'name' => __( 'Accrual Periodicity', 'ogdch' ),
-			'id'   => self::FIELD_PREFIX . 'accrual_periodicity',
-			'type' => 'text',
+			'name'             => __( 'Accrual Periodicity', 'ogdch' ),
+			'id'               => self::FIELD_PREFIX . 'accrual_periodicity',
+			'type'             => 'select',
+			'show_option_none' => false,
+			'options'          => Ckan_Backend_Frequency::$frequencies,
 		) );
 
 		$temporals_group = $cmb->add_field( array(
