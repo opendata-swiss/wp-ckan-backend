@@ -69,6 +69,9 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 
 			// Allow users to edit all entities of their organisation (override edit_others_entities capability)
 			add_filter( 'user_has_cap', array( $this, 'allow_edit_own_organisation' ), 10, 3 );
+
+			// Disallow non-administrators to edit users from other organisation
+			add_filter( 'user_has_cap', array( $this, 'allow_edit_users_of_same_organisation' ), 10, 3 );
 		}
 
 		/**
@@ -112,6 +115,37 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 				$user_organisation = get_the_author_meta( self::$plugin_slug . '_organisation', $current_user_id );
 				if ( $identifier['organisation'] === $user_organisation ) {
 					$allcaps[ $required_cap ] = true;
+				}
+			}
+
+			return $allcaps;
+		}
+
+		/**
+		 * Disallow non-administrators to edit users from other organisation
+		 *
+		 * @param array $allcaps All the capabilities of the user.
+		 * @param array $cap [0] Required capability.
+		 * @param array $args [0] Requested capability, [1] User ID, [2] Associated object ID.
+		 *
+		 * @return array
+		 */
+		public function allow_edit_users_of_same_organisation( $allcaps, $cap, $args ) {
+			$required_cap  = $cap[0];
+
+			if ( 'edit_users' !== $required_cap ) {
+				return $allcaps;
+			}
+			$current_user_id = $args[1];
+			$user_info       = get_userdata( $current_user_id );
+
+			if ( !in_array( 'administrator', $user_info->roles ) ) {
+				$other_user_id           = $args[2];
+				$user_organisation       = get_the_author_meta( self::$plugin_slug . '_organisation', $current_user_id );
+				$other_user_organisation = get_user_meta( $other_user_id, self::$plugin_slug . '_organisation', true );
+				if ( $user_organisation !== $other_user_organisation ) {
+					// remove edit_users capability
+					$allcaps[ $required_cap ] = false;
 				}
 			}
 
@@ -164,7 +198,8 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 						<span class="description">(required)</span>
 					</th>
 					<td>
-						<select name="<?php echo esc_attr( $organisation_field_name ); ?>" id="<?php echo esc_attr( $organisation_field_name ); ?>" aria-required="true">
+						<select name="<?php echo esc_attr( $organisation_field_name ); ?>"
+						        id="<?php echo esc_attr( $organisation_field_name ); ?>" aria-required="true">
 							<?php
 							echo '<option value="">' . esc_attr( '- Please choose -', 'ogdch' ) . '</option>';
 							$organisation_options = Ckan_Backend_Helper::get_organisation_form_field_options();
