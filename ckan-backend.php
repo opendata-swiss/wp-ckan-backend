@@ -72,6 +72,8 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 
 			// Disallow non-administrators to edit users from other organisation
 			add_filter( 'user_has_cap', array( $this, 'allow_edit_users_of_same_organisation' ), 10, 3 );
+			// Disable admin role for non-admin users
+			add_filter( 'editable_roles', array( $this, 'disable_admin_role' ) );
 		}
 
 		/**
@@ -141,15 +143,37 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 
 			if ( !in_array( 'administrator', $user_info->roles ) ) {
 				$other_user_id           = $args[2];
-				$user_organisation       = get_the_author_meta( self::$plugin_slug . '_organisation', $current_user_id );
-				$other_user_organisation = get_user_meta( $other_user_id, self::$plugin_slug . '_organisation', true );
-				if ( $user_organisation !== $other_user_organisation ) {
-					// remove edit_users capability
-					$allcaps[ $required_cap ] = false;
+
+				if( !empty( $other_user_id ) ) {
+					$user_organisation       = get_the_author_meta( self::$plugin_slug . '_organisation', $current_user_id );
+					$other_user_organisation = get_user_meta( $other_user_id, self::$plugin_slug . '_organisation', true );
+					if ( $user_organisation !== $other_user_organisation ) {
+						// remove edit_users capability if other user isn't in same organisation
+						$allcaps[ $required_cap ] = false;
+					}
 				}
 			}
 
 			return $allcaps;
+		}
+
+		/**
+		 * Disable admin role for non-admin users
+		 *
+		 * @param array $roles Available roles.
+		 *
+		 * @return array
+		 */
+		public function disable_admin_role( $roles ) {
+			$user_info = get_userdata( get_current_user_id() );
+
+			if ( !in_array( 'administrator', $user_info->roles ) ) {
+				if ( isset( $roles['administrator'] ) ) {
+					unset( $roles['administrator'] );
+				}
+			}
+
+			return $roles;
 		}
 
 		/**
