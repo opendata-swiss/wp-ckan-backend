@@ -545,33 +545,24 @@ class Ckan_Backend_Local_Dataset {
 		) );
 
 		$cmb->add_group_field( $distributions_group, array(
-			'name'    => __( 'Reference', 'ogdch' ),
-			'id'      => 'right_reference',
-			'type'    => 'radio',
-			'options' => array(
-				'reference_required'     => __( 'Required', 'ogdch' ),
-				'reference_not-required' => __( 'Not required', 'ogdch' ),
-			),
-		) );
-
-		$cmb->add_group_field( $distributions_group, array(
-			'name'    => __( 'Non-commercial usage', 'ogdch' ),
-			'id'      => 'right_non_commercial',
-			'type'    => 'radio',
-			'options' => array(
-				'non-commercial_allowed'     => __( 'Allowed', 'ogdch' ),
-				'non-commercial_not-allowed' => __( 'Not allowed', 'ogdch' ),
-			),
-		) );
-
-		$cmb->add_group_field( $distributions_group, array(
-			'name'    => __( 'Commercial usage', 'ogdch' ),
-			'id'      => 'right_commercial',
-			'type'    => 'radio',
-			'options' => array(
-				'commercial_allowed'            => __( 'Allowed', 'ogdch' ),
-				'commercial_not-allowed'        => __( 'Not allowed', 'ogdch' ),
-				'commercial_with-approval-only' => __( 'With approval only', 'ogdch' ),
+			'name'             => __( 'Rights', 'ogdch' ),
+			'id'               => 'rights',
+			'desc'             => 'All rights marked with an asterisk (*) will be published on this portal',
+			'type'             => 'select',
+			'show_option_none' => false,
+			'options'          => array(
+				'NonCommercialAllowed-CommercialAllowed-ReferenceNotRequired'           => __( '* Non-commercial Allowed / Commercial Allowed / Reference Not Required', 'ogdch' ),
+				'NonCommercialAllowed-CommercialAllowed-ReferenceRequired'              => __( '* Non-commercial Allowed / Commercial Allowed / Reference Required', 'ogdch' ),
+				'NonCommercialAllowed-CommercialWithPermission-ReferenceNotRequired'    => __( '* Non-commercial Allowed / Commercial With Permission Allowed / Reference Not Required', 'ogdch' ),
+				'NonCommercialAllowed-CommercialWithPermission-ReferenceRequired'       => __( '* Non-commercial Allowed / Commercial With Permission Allowed / Reference Required', 'ogdch' ),
+				'NonCommercialAllowed-CommercialNotAllowed-ReferenceNotRequired'        => __( 'Non-commercial Allowed / Commercial Not Allowed / Reference Not Required', 'ogdch' ),
+				'NonCommercialAllowed-CommercialNotAllowed-ReferenceRequired'           => __( 'Non-commercial Allowed / Commercial Not Allowed / Reference Required', 'ogdch' ),
+				'NonCommercialNotAllowed-CommercialNotAllowed-ReferenceNotRequired'     => __( 'Non-commercial Not Allowed / Commercial Not Allowed / Reference Not Required', 'ogdch' ),
+				'NonCommercialNotAllowed-CommercialNotAllowed-ReferenceRequired'        => __( 'Non-commercial Not Allowed / Commercial Not Allowed / Reference Required', 'ogdch' ),
+				'NonCommercialNotAllowed-CommercialAllowed-ReferenceNotRequired'        => __( 'Non-commercial Not Allowed / Commercial Allowed / Reference Not Required', 'ogdch' ),
+				'NonCommercialNotAllowed-CommercialAllowed-ReferenceRequired'           => __( 'Non-commercial Not Allowed / Commercial Allowed / Reference Required', 'ogdch' ),
+				'NonCommercialNotAllowed-CommercialWithPermission-ReferenceNotRequired' => __( 'Non-commercial Not Allowed / Commercial With Permission Allowed / Reference Not Required', 'ogdch' ),
+				'NonCommercialNotAllowed-CommercialWithPermission-ReferenceRequired'    => __( 'Non-commercial Not Allowed / Commercial With Permission Allowed / Reference Required', 'ogdch' ),
 			),
 		) );
 
