@@ -74,6 +74,10 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			add_filter( 'user_has_cap', array( $this, 'allow_edit_users_of_same_organisation' ), 10, 3 );
 			// Disable admin role for non-admin users
 			add_filter( 'editable_roles', array( $this, 'disable_admin_role' ) );
+
+			// Add organisation to user list
+			add_filter('manage_users_columns', array( $this, 'add_user_organisation_column' ) );
+			add_filter('manage_users_custom_column', array( $this, 'manage_user_organisation_column' ), 10, 3);
 		}
 
 		/**
@@ -271,6 +275,38 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			}
 
 			update_user_meta( $user_id, self::$plugin_slug . '_organisation', $_POST[ self::$plugin_slug . '_organisation' ] );
+		}
+
+		/**
+		 * Add organisation column to user list
+		 *
+		 * @param array $columns Array with all current columns.
+		 *
+		 * @return array
+		 */
+		public function add_user_organisation_column( $columns ) {
+			$new_columns = array(
+				'user_organisation' => __( 'Organisation', 'ogdch' ),
+			);
+
+			return array_merge( $columns, $new_columns );
+		}
+
+		/**
+		 * Returns data for organisation column
+		 *
+		 * @param string $output      Custom column output. Default empty.
+		 * @param string $column_name Column name.
+		 * @param int    $user_id     ID of the currently-listed user.
+		 *
+		 * @return mixed
+		 */
+		public function manage_user_organisation_column( $output = '', $column_name, $user_id ) {
+			if( $column_name == 'user_organisation' ) {
+				$user_organisation = get_user_meta( $user_id, self::$plugin_slug . '_organisation', true );
+				// TODO use readable organisation name instead of slug
+				return $user_organisation;
+			}
 		}
 
 		/**

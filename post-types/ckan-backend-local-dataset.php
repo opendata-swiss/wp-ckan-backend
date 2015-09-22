@@ -135,11 +135,7 @@ class Ckan_Backend_Local_Dataset {
 		switch ( $column ) {
 			case self::FIELD_PREFIX . 'identifier' :
 				$identifier = get_post_meta( $post_id, $column, true );
-				/* // TODO load readable organisation name from CKAN
-				$organisation = Ckan_Backend_Helper::extract_organisation_from_identifier( $identifier['organisation'] );
-				if ( ! empty( $organisation ) ) {
-					echo esc_attr( Ckan_Backend_Helper::get_organisation_title( $organisation ) );
-				}*/
+				// TODO use readable organisation name instead of slug
 				echo esc_attr( $identifier['organisation'] );
 				break;
 		}
