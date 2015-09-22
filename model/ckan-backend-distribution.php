@@ -273,7 +273,7 @@ class Ckan_Backend_Distribution_Model {
 	/**
 	 * Sets rights
 	 *
-	 * @param string $rights Rights
+	 * @param string $rights Rights.
 	 */
 	public function set_rights( $rights ) {
 		$this->rights = $rights;

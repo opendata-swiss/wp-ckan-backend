@@ -133,7 +133,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		 * @return array
 		 */
 		public function allow_edit_users_of_same_organisation( $allcaps, $cap, $args ) {
-			$required_cap  = $cap[0];
+			$required_cap = $cap[0];
 
 			if ( 'edit_users' !== $required_cap ) {
 				return $allcaps;
@@ -141,10 +141,10 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			$current_user_id = $args[1];
 			$user_info       = get_userdata( $current_user_id );
 
-			if ( !in_array( 'administrator', $user_info->roles ) ) {
-				$other_user_id           = $args[2];
+			if ( ! in_array( 'administrator', $user_info->roles ) ) {
+				$other_user_id = $args[2];
 
-				if( !empty( $other_user_id ) ) {
+				if ( ! empty( $other_user_id ) ) {
 					$user_organisation       = get_the_author_meta( self::$plugin_slug . '_organisation', $current_user_id );
 					$other_user_organisation = get_user_meta( $other_user_id, self::$plugin_slug . '_organisation', true );
 					if ( $user_organisation !== $other_user_organisation ) {
@@ -167,7 +167,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		public function disable_admin_role( $roles ) {
 			$user_info = get_userdata( get_current_user_id() );
 
-			if ( !in_array( 'administrator', $user_info->roles ) ) {
+			if ( ! in_array( 'administrator', $user_info->roles ) ) {
 				if ( isset( $roles['administrator'] ) ) {
 					unset( $roles['administrator'] );
 				}
