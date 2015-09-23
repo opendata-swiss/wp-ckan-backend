@@ -59,25 +59,11 @@ class Ckan_Backend_Distribution_Model {
 	protected $access_urls = array();
 
 	/**
-	 * Right reference
+	 * Rights
 	 *
 	 * @var string
 	 */
-	protected $right_reference = '';
-
-	/**
-	 * Right non-commercial
-	 *
-	 * @var string
-	 */
-	protected $right_non_commercial = '';
-
-	/**
-	 * Right commercial
-	 *
-	 * @var string
-	 */
-	protected $right_commercial = '';
+	protected $rights = '';
 
 	/**
 	 * License
@@ -276,57 +262,21 @@ class Ckan_Backend_Distribution_Model {
 	}
 
 	/**
-	 * Returns right reference
+	 * Returns rights
 	 *
 	 * @return string
 	 */
-	public function get_right_reference() {
-		return $this->right_reference;
+	public function get_rights() {
+		return $this->rights;
 	}
 
 	/**
-	 * Sets right reference
+	 * Sets rights
 	 *
-	 * @param string $right_reference Right reference.
+	 * @param string $rights Rights.
 	 */
-	public function set_right_reference( $right_reference ) {
-		$this->right_reference = $right_reference;
-	}
-
-	/**
-	 * Returns right non commercial
-	 *
-	 * @return string
-	 */
-	public function get_right_non_commercial() {
-		return $this->right_non_commercial;
-	}
-
-	/**
-	 * Sets right non commercial
-	 *
-	 * @param string $right_non_commercial Right non commercial.
-	 */
-	public function set_right_non_commercial( $right_non_commercial ) {
-		$this->right_non_commercial = $right_non_commercial;
-	}
-
-	/**
-	 * Returns right commercial
-	 *
-	 * @return string
-	 */
-	public function get_right_commercial() {
-		return $this->right_commercial;
-	}
-
-	/**
-	 * Sets right commercial
-	 *
-	 * @param string $right_commercial Right commercial.
-	 */
-	public function set_right_commercial( $right_commercial ) {
-		$this->right_commercial = $right_commercial;
+	public function set_rights( $rights ) {
+		$this->rights = $rights;
 	}
 
 	/**
@@ -463,9 +413,7 @@ class Ckan_Backend_Distribution_Model {
 			'modified'             => $this->get_modified(),
 			'access_urls'          => $this->get_access_urls(),
 			'download_urls'        => $this->get_download_urls(),
-			'right_reference'      => $this->get_right_reference(),
-			'right_non_commercial' => $this->get_right_non_commercial(),
-			'right_commercial'     => $this->get_right_commercial(),
+			'rights'               => $this->get_rights(),
 			'license'              => $this->get_license(),
 			'byte_size'            => $this->get_byte_size(),
 			'media_type'           => $this->get_media_type(),

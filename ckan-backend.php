@@ -69,6 +69,20 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 
 			// Allow users to edit all entities of their organisation (override edit_others_entities capability)
 			add_filter( 'user_has_cap', array( $this, 'allow_edit_own_organisation' ), 10, 3 );
+
+			// Disallow non-administrators to edit users from other organisation
+			add_filter( 'user_has_cap', array( $this, 'allow_edit_users_of_same_organisation' ), 10, 3 );
+			// Disable admin role for non-admin users
+			add_filter( 'editable_roles', array( $this, 'disable_admin_role' ) );
+
+			// Add organisation to user list
+			add_filter( 'manage_users_columns', array( $this, 'add_user_organisation_column' ) );
+			add_filter( 'manage_users_custom_column', array( $this, 'manage_user_organisation_column' ), 10, 3 );
+
+			// TODO implement
+			// Add organisation filter dropdown to user admin list
+			/*add_filter( 'pre_user_query', array( $this, 'add_user_organisation_filter' ) );
+			add_filter( 'parse_query', array( $this, 'filter_user_organisation' ) );*/
 		}
 
 		/**
@@ -119,6 +133,59 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		}
 
 		/**
+		 * Disallow non-administrators to edit users from other organisation
+		 *
+		 * @param array $allcaps All the capabilities of the user.
+		 * @param array $cap [0] Required capability.
+		 * @param array $args [0] Requested capability, [1] User ID, [2] Associated object ID.
+		 *
+		 * @return array
+		 */
+		public function allow_edit_users_of_same_organisation( $allcaps, $cap, $args ) {
+			$required_cap = $cap[0];
+
+			if ( 'edit_users' !== $required_cap ) {
+				return $allcaps;
+			}
+			$current_user_id = $args[1];
+			$user_info       = get_userdata( $current_user_id );
+
+			if ( ! in_array( 'administrator', $user_info->roles ) ) {
+				$other_user_id = $args[2];
+
+				if ( ! empty( $other_user_id ) ) {
+					$user_organisation       = get_the_author_meta( self::$plugin_slug . '_organisation', $current_user_id );
+					$other_user_organisation = get_user_meta( $other_user_id, self::$plugin_slug . '_organisation', true );
+					if ( $user_organisation !== $other_user_organisation ) {
+						// remove edit_users capability if other user isn't in same organisation
+						$allcaps[ $required_cap ] = false;
+					}
+				}
+			}
+
+			return $allcaps;
+		}
+
+		/**
+		 * Disable admin role for non-admin users
+		 *
+		 * @param array $roles Available roles.
+		 *
+		 * @return array
+		 */
+		public function disable_admin_role( $roles ) {
+			$user_info = get_userdata( get_current_user_id() );
+
+			if ( ! in_array( 'administrator', $user_info->roles ) ) {
+				if ( isset( $roles['administrator'] ) ) {
+					unset( $roles['administrator'] );
+				}
+			}
+
+			return $roles;
+		}
+
+		/**
 		 * Bootstrap all post types.
 		 *
 		 * @return void
@@ -164,7 +231,8 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 						<span class="description">(required)</span>
 					</th>
 					<td>
-						<select name="<?php echo esc_attr( $organisation_field_name ); ?>" id="<?php echo esc_attr( $organisation_field_name ); ?>" aria-required="true">
+						<select name="<?php echo esc_attr( $organisation_field_name ); ?>"
+						        id="<?php echo esc_attr( $organisation_field_name ); ?>" aria-required="true">
 							<?php
 							echo '<option value="">' . esc_attr( '- Please choose -', 'ogdch' ) . '</option>';
 							$organisation_options = Ckan_Backend_Helper::get_organisation_form_field_options();
@@ -212,6 +280,39 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			}
 
 			update_user_meta( $user_id, self::$plugin_slug . '_organisation', $_POST[ self::$plugin_slug . '_organisation' ] );
+		}
+
+		/**
+		 * Add organisation column to user list
+		 *
+		 * @param array $columns Array with all current columns.
+		 *
+		 * @return array
+		 */
+		public function add_user_organisation_column( $columns ) {
+			$new_columns = array(
+				'user_organisation' => __( 'Organisation', 'ogdch' ),
+			);
+
+			return array_merge( $columns, $new_columns );
+		}
+
+		/**
+		 * Returns data for organisation column
+		 *
+		 * @param string $output Custom column output. Default empty.
+		 * @param string $column_name Column name.
+		 * @param int    $user_id ID of the currently-listed user.
+		 *
+		 * @return mixed
+		 */
+		public function manage_user_organisation_column( $output = '', $column_name, $user_id ) {
+			if ( 'user_organisation' === $column_name ) {
+				$user_organisation = get_user_meta( $user_id, self::$plugin_slug . '_organisation', true );
+
+				// TODO use readable organisation name instead of slug
+				return $user_organisation;
+			}
 		}
 
 		/**
