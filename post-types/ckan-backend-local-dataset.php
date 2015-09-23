@@ -24,6 +24,10 @@ class Ckan_Backend_Local_Dataset {
 		add_filter( 'manage_' . self::POST_TYPE . '_posts_columns', array( $this, 'add_columns' ) );
 		add_action( 'manage_' . self::POST_TYPE . '_posts_custom_column', array( $this, 'add_columns_data' ), 10, 2 );
 
+		// create organisation filter dropdown
+		add_action( 'restrict_manage_posts', array( $this, 'add_organisation_filter' ) );
+		add_action( 'pre_get_posts', array( $this, 'filter_posts_by_organisation' ) );
+
 		// define backend fields
 		add_action( 'cmb2_init', array( $this, 'define_fields' ) );
 
@@ -138,6 +142,88 @@ class Ckan_Backend_Local_Dataset {
 				// TODO use readable organisation name instead of slug
 				echo esc_attr( $identifier['organisation'] );
 				break;
+		}
+	}
+
+	/**
+	 * Adds organisation filter to admin list
+	 */
+	function add_organisation_filter() {
+		global $post_type;
+
+		if ( self::POST_TYPE === $post_type ){
+			$args = array(
+				'posts_per_page'   => -1,
+				'post_type'        => Ckan_Backend_Local_Organisation::POST_TYPE,
+				'post_status'      => 'any',
+			);
+			$organisations = get_posts( $args );
+			?>
+			<select name="organisation_filter">
+				<option value=""><?php _e('Choose organisation', 'ogdch'); ?></option>
+				<?php
+				$current_user = wp_get_current_user();
+				$current_user_is_admin = in_array('administrator', $current_user->roles);
+				$organisation_filter = '';
+				if( isset( $_GET['organisation_filter'] ) ) {
+					$organisation_filter = sanitize_text_field( $_GET['organisation_filter'] );
+				} elseif( ! $current_user_is_admin ) {
+					// set filter on first page load if user is not an administrator
+					$organisation_filter = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', $current_user->ID );
+				}
+
+				foreach ($organisations as $organisation) {
+					printf
+					(
+						'<option value="%s"%s>%s</option>',
+						$organisation->post_name,
+						($organisation->post_name === $organisation_filter) ? ' selected="selected"' : '',
+						$organisation->post_name
+					);
+				}
+				?>
+			</select>
+			<?php
+		}
+	}
+
+	/**
+	 * Applies organisation filter
+	 *
+	 * @param  WP_Query $query The current query.
+	 */
+	public function filter_posts_by_organisation( $query ) {
+		global $post_type, $pagenow;
+
+		if (
+			// Only filter when were on the edit page of ckan-local-datasets
+			self::POST_TYPE === $post_type &&
+			$pagenow === 'edit.php' &&
+			is_admin() &&
+			// Only filter when ckan-local-datasets are queried
+			! empty( $query->query_vars['post_type'] ) &&
+			$query->query_vars['post_type'] === self::POST_TYPE
+
+		) {
+			$current_user = wp_get_current_user();
+			$current_user_is_admin = in_array('administrator', $current_user->roles);
+			$organisation_filter = '';
+			if( isset( $_GET['organisation_filter'] ) ) {
+				$organisation_filter = sanitize_text_field( $_GET['organisation_filter'] );
+			} elseif( ! $current_user_is_admin ) {
+				// set filter on first page load if user is not an administrator
+				$organisation_filter = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', $current_user->ID );
+			}
+
+			if( ! empty( $organisation_filter ) ) {
+				$query->query_vars['meta_query'] = array(
+					array(
+						'key'     => self::FIELD_PREFIX . 'identifier',
+						'value'   => maybe_serialize( strval( $organisation_filter ) ),
+						'compare' => 'LIKE',
+					)
+				);
+			}
 		}
 	}
 
