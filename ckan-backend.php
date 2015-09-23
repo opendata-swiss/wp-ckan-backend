@@ -76,8 +76,13 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			add_filter( 'editable_roles', array( $this, 'disable_admin_role' ) );
 
 			// Add organisation to user list
-			add_filter('manage_users_columns', array( $this, 'add_user_organisation_column' ) );
-			add_filter('manage_users_custom_column', array( $this, 'manage_user_organisation_column' ), 10, 3);
+			add_filter( 'manage_users_columns', array( $this, 'add_user_organisation_column' ) );
+			add_filter( 'manage_users_custom_column', array( $this, 'manage_user_organisation_column' ), 10, 3 );
+
+			// TODO implement
+			// Add organisation filter dropdown to user admin list
+			/*add_filter( 'pre_user_query', array( $this, 'add_user_organisation_filter' ) );
+			add_filter( 'parse_query', array( $this, 'filter_user_organisation' ) );*/
 		}
 
 		/**
@@ -295,15 +300,16 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		/**
 		 * Returns data for organisation column
 		 *
-		 * @param string $output      Custom column output. Default empty.
+		 * @param string $output Custom column output. Default empty.
 		 * @param string $column_name Column name.
-		 * @param int    $user_id     ID of the currently-listed user.
+		 * @param int    $user_id ID of the currently-listed user.
 		 *
 		 * @return mixed
 		 */
 		public function manage_user_organisation_column( $output = '', $column_name, $user_id ) {
-			if( $column_name == 'user_organisation' ) {
+			if ( 'user_organisation' === $column_name ) {
 				$user_organisation = get_user_meta( $user_id, self::$plugin_slug . '_organisation', true );
+
 				// TODO use readable organisation name instead of slug
 				return $user_organisation;
 			}

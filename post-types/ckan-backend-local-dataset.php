@@ -151,34 +151,33 @@ class Ckan_Backend_Local_Dataset {
 	function add_organisation_filter() {
 		global $post_type;
 
-		if ( self::POST_TYPE === $post_type ){
-			$args = array(
-				'posts_per_page'   => -1,
-				'post_type'        => Ckan_Backend_Local_Organisation::POST_TYPE,
-				'post_status'      => 'any',
+		if ( self::POST_TYPE === $post_type ) {
+			$args          = array(
+				'posts_per_page' => - 1,
+				'post_type'      => Ckan_Backend_Local_Organisation::POST_TYPE,
+				'post_status'    => 'any',
 			);
 			$organisations = get_posts( $args );
 			?>
 			<select name="organisation_filter">
-				<option value=""><?php _e('Choose organisation', 'ogdch'); ?></option>
+				<option value=""><?php esc_attr__( 'Choose organisation', 'ogdch' ); ?></option>
 				<?php
-				$current_user = wp_get_current_user();
-				$current_user_is_admin = in_array('administrator', $current_user->roles);
-				$organisation_filter = '';
-				if( isset( $_GET['organisation_filter'] ) ) {
+				$current_user          = wp_get_current_user();
+				$current_user_is_admin = in_array( 'administrator', $current_user->roles );
+				$organisation_filter   = '';
+				if ( isset( $_GET['organisation_filter'] ) ) {
 					$organisation_filter = sanitize_text_field( $_GET['organisation_filter'] );
-				} elseif( ! $current_user_is_admin ) {
+				} elseif ( ! $current_user_is_admin ) {
 					// set filter on first page load if user is not an administrator
 					$organisation_filter = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', $current_user->ID );
 				}
 
-				foreach ($organisations as $organisation) {
-					printf
-					(
+				foreach ( $organisations as $organisation ) {
+					printf(
 						'<option value="%s"%s>%s</option>',
-						$organisation->post_name,
-						($organisation->post_name === $organisation_filter) ? ' selected="selected"' : '',
-						$organisation->post_name
+						esc_attr( $organisation->post_name ),
+						esc_attr( ( $organisation->post_name === $organisation_filter ) ? ' selected="selected"' : '' ),
+						esc_attr( $organisation->post_name )
 					);
 				}
 				?>
@@ -198,24 +197,25 @@ class Ckan_Backend_Local_Dataset {
 		if (
 			// Only filter when were on the edit page of ckan-local-datasets
 			self::POST_TYPE === $post_type &&
-			$pagenow === 'edit.php' &&
+			'edit.php' === $pagenow &&
 			is_admin() &&
 			// Only filter when ckan-local-datasets are queried
 			! empty( $query->query_vars['post_type'] ) &&
 			$query->query_vars['post_type'] === self::POST_TYPE
 
 		) {
-			$current_user = wp_get_current_user();
-			$current_user_is_admin = in_array('administrator', $current_user->roles);
-			$organisation_filter = '';
-			if( isset( $_GET['organisation_filter'] ) ) {
+			$current_user          = wp_get_current_user();
+			$current_user_is_admin = in_array( 'administrator', $current_user->roles );
+			$organisation_filter   = '';
+			if ( isset( $_GET['organisation_filter'] ) ) {
 				$organisation_filter = sanitize_text_field( $_GET['organisation_filter'] );
-			} elseif( ! $current_user_is_admin ) {
+			} elseif ( ! $current_user_is_admin ) {
 				// set filter on first page load if user is not an administrator
 				$organisation_filter = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', $current_user->ID );
 			}
 
-			if( ! empty( $organisation_filter ) ) {
+			if ( ! empty( $organisation_filter ) ) {
+				// @codingStandardsIgnoreStart
 				$query->query_vars['meta_query'] = array(
 					array(
 						'key'     => self::FIELD_PREFIX . 'identifier',
@@ -223,6 +223,7 @@ class Ckan_Backend_Local_Dataset {
 						'compare' => 'LIKE',
 					)
 				);
+				// @codingStandardsIgnoreEnd
 			}
 		}
 	}
@@ -347,10 +348,10 @@ class Ckan_Backend_Local_Dataset {
 
 		/* Identifier */
 		$cmb->add_field( array(
-			'name' => __( 'Dataset Identifier', 'ogdch' ),
-			'id'   => self::FIELD_PREFIX . 'identifier',
-			'type' => 'dataset_identifier',
-			'attributes'  => array(
+			'name'       => __( 'Dataset Identifier', 'ogdch' ),
+			'id'         => self::FIELD_PREFIX . 'identifier',
+			'type'       => 'dataset_identifier',
+			'attributes' => array(
 				'required' => 'required',
 			),
 		) );
