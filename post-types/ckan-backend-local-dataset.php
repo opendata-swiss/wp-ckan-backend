@@ -160,7 +160,7 @@ class Ckan_Backend_Local_Dataset {
 			$organisations = get_posts( $args );
 			?>
 			<select name="organisation_filter">
-				<option value=""><?php esc_attr__( 'Choose organisation', 'ogdch' ); ?></option>
+				<option value=""><?php esc_attr_e( 'All organisations', 'ogdch' ); ?></option>
 				<?php
 				$current_user          = wp_get_current_user();
 				$current_user_is_admin = in_array( 'administrator', $current_user->roles );
