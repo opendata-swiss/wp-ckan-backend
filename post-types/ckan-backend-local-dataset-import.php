@@ -64,7 +64,7 @@ class Ckan_Backend_Local_Dataset_Import {
 				echo esc_attr( $imported_datasets->get_error_message() );
 				echo '</p></div>';
 			} else {
-				foreach( $imported_datasets as $dataset_id ) {
+				foreach ( $imported_datasets as $dataset_id ) {
 					if ( is_wp_error( $dataset_id ) ) {
 						echo '<div class="error"><p>';
 						echo esc_attr( $dataset_id->get_error_message() );
@@ -181,10 +181,17 @@ class Ckan_Backend_Local_Dataset_Import {
 		return $this->import_datasets( $xml );
 	}
 
+	/**
+	 * Imports multiple datasets from xml
+	 *
+	 * @param SimpleXMLElement $xml The XML to be imported.
+	 *
+	 * @return bool|int|WP_Error
+	 */
 	public function import_datasets( $xml ) {
 		$imported_datasets = array();
 		$datasets = $xml->xpath( '//dcat:Catalog/dcat:Dataset' );
-		foreach( $datasets as $dataset ) {
+		foreach ( $datasets as $dataset ) {
 			$imported_datasets[] = $this->import_dataset( $dataset );
 		}
 		return $imported_datasets;
