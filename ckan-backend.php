@@ -291,7 +291,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		 */
 		public function add_user_organisation_column( $columns ) {
 			$new_columns = array(
-				'user_organisation' => __( 'Organisation', 'ogdch' ),
+				'user_organisation' => __( 'Organization', 'ogdch' ),
 			);
 
 			return array_merge( $columns, $new_columns );

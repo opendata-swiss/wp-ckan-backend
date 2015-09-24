@@ -43,19 +43,19 @@ class Ckan_Backend_Local_Organisation {
 	 */
 	public function register_post_type() {
 		$labels = array(
-			'name'               => __( 'CKAN Organisations', 'ogdch' ),
-			'singular_name'      => __( 'CKAN Organisation', 'ogdch' ),
-			'menu_name'          => __( 'CKAN Organisations', 'ogdch' ),
-			'name_admin_bar'     => __( 'CKAN Organisations', 'ogdch' ),
-			'parent_item_colon'  => __( 'Parent CKAN Organisation:', 'ogdch' ),
-			'all_items'          => __( 'All CKAN Organisations', 'ogdch' ),
-			'add_new_item'       => __( 'Add New CKAN Organisation', 'ogdch' ),
+			'name'               => __( 'Organizations', 'ogdch' ),
+			'singular_name'      => __( 'Organization', 'ogdch' ),
+			'menu_name'          => __( 'Organizations', 'ogdch' ),
+			'name_admin_bar'     => __( 'Organizations', 'ogdch' ),
+			'parent_item_colon'  => __( 'Parent Organization:', 'ogdch' ),
+			'all_items'          => __( 'All Organizations', 'ogdch' ),
+			'add_new_item'       => __( 'Add New Organization', 'ogdch' ),
 			'add_new'            => __( 'Add New', 'ogdch' ),
-			'new_item'           => __( 'New CKAN Organisation', 'ogdch' ),
-			'edit_item'          => __( 'Edit CKAN Organisation', 'ogdch' ),
-			'update_item'        => __( 'Update CKAN Organisation', 'ogdch' ),
-			'view_item'          => __( 'View CKAN Organisation', 'ogdch' ),
-			'search_items'       => __( 'Search CKAN Organisations', 'ogdch' ),
+			'new_item'           => __( 'New Organization', 'ogdch' ),
+			'edit_item'          => __( 'Edit Organization', 'ogdch' ),
+			'update_item'        => __( 'Update Organization', 'ogdch' ),
+			'view_item'          => __( 'View Organization', 'ogdch' ),
+			'search_items'       => __( 'Search Organizations', 'ogdch' ),
 			'not_found'          => __( 'Not found', 'ogdch' ),
 			'not_found_in_trash' => __( 'Not found in Trash', 'ogdch' ),
 		);
@@ -110,7 +110,7 @@ class Ckan_Backend_Local_Organisation {
 
 		$cmb = new_cmb2_box( array(
 			'id'           => self::POST_TYPE . '-box',
-			'title'        => __( 'Organisation Data', 'ogdch' ),
+			'title'        => __( 'Organization Data', 'ogdch' ),
 			'object_types' => array( self::POST_TYPE ),
 			'context'      => 'normal',
 			'priority'     => 'high',
@@ -119,7 +119,7 @@ class Ckan_Backend_Local_Organisation {
 
 		/* Title */
 		$cmb->add_field( array(
-			'name' => __( 'Organisation Title', 'ogdch' ),
+			'name' => __( 'Organization Title', 'ogdch' ),
 			'type' => 'title',
 			'id'   => 'title_title',
 		) );
@@ -137,7 +137,7 @@ class Ckan_Backend_Local_Organisation {
 
 		/* Description */
 		$cmb->add_field( array(
-			'name' => __( 'Organisation Description', 'ogdch' ),
+			'name' => __( 'Organization Description', 'ogdch' ),
 			'type' => 'title',
 			'id'   => 'description_title',
 			'desc' => __( 'Markdown Syntax can be used to format the description.', 'ogdch' ),
@@ -171,7 +171,7 @@ class Ckan_Backend_Local_Organisation {
 
 		/* Image */
 		$cmb->add_field( array(
-			'name' => __( 'Organisation Image', 'ogdch' ),
+			'name' => __( 'Organization Image', 'ogdch' ),
 			'type' => 'title',
 			'id'   => 'image_title',
 		) );
