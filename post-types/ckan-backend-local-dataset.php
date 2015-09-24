@@ -122,7 +122,7 @@ class Ckan_Backend_Local_Dataset {
 	 */
 	public function add_columns( $columns ) {
 		$new_columns = array(
-			self::FIELD_PREFIX . 'identifier' => __( 'Organisation', 'ogdch' ),
+			self::FIELD_PREFIX . 'identifier' => __( 'Organization', 'ogdch' ),
 		);
 
 		return array_merge( $columns, $new_columns );
@@ -258,7 +258,7 @@ class Ckan_Backend_Local_Dataset {
 		$value = get_post_meta( $post_id, self::FIELD_PREFIX . 'disabled', true );
 		if ( 'on' === $value ) {
 			// @codingStandardsIgnoreStart
-			echo '<div class="error"><p>' . __( 'This dataset is disabled and will not be visible in CKAN.', 'ogdch' ) . '</p></div>';
+			echo '<div class="error"><p>' . __( 'This dataset is disabled and will not be published on the website.', 'ogdch' ) . '</p></div>';
 			// @codingStandardsIgnoreEnd
 		}
 	}
@@ -270,19 +270,19 @@ class Ckan_Backend_Local_Dataset {
 	 */
 	public function register_post_type() {
 		$labels = array(
-			'name'               => __( 'CKAN Datasets', 'ogdch' ),
-			'singular_name'      => __( 'CKAN Dataset', 'ogdch' ),
-			'menu_name'          => __( 'CKAN Datasets', 'ogdch' ),
-			'name_admin_bar'     => __( 'CKAN Datasets', 'ogdch' ),
-			'parent_item_colon'  => __( 'Parent CKAN Dataset:', 'ogdch' ),
-			'all_items'          => __( 'All CKAN Datasets', 'ogdch' ),
-			'add_new_item'       => __( 'Add New CKAN Dataset', 'ogdch' ),
+			'name'               => __( 'Datasets', 'ogdch' ),
+			'singular_name'      => __( 'Dataset', 'ogdch' ),
+			'menu_name'          => __( 'Datasets', 'ogdch' ),
+			'name_admin_bar'     => __( 'Datasets', 'ogdch' ),
+			'parent_item_colon'  => __( 'Parent Dataset:', 'ogdch' ),
+			'all_items'          => __( 'All Datasets', 'ogdch' ),
+			'add_new_item'       => __( 'Add New Dataset', 'ogdch' ),
 			'add_new'            => __( 'Add New', 'ogdch' ),
-			'new_item'           => __( 'New CKAN Dataset', 'ogdch' ),
-			'edit_item'          => __( 'Edit CKAN Dataset', 'ogdch' ),
-			'update_item'        => __( 'Update CKAN Dataset', 'ogdch' ),
-			'view_item'          => __( 'View CKAN Dataset', 'ogdch' ),
-			'search_items'       => __( 'Search CKAN Datasets', 'ogdch' ),
+			'new_item'           => __( 'New Dataset', 'ogdch' ),
+			'edit_item'          => __( 'Edit Dataset', 'ogdch' ),
+			'update_item'        => __( 'Update Dataset', 'ogdch' ),
+			'view_item'          => __( 'View Dataset', 'ogdch' ),
+			'search_items'       => __( 'Search Datasets', 'ogdch' ),
 			'not_found'          => __( 'Not found', 'ogdch' ),
 			'not_found_in_trash' => __( 'Not found in Trash', 'ogdch' ),
 		);

@@ -401,7 +401,7 @@ class Ckan_Backend_Local_Dataset_Import {
 		}
 		// Check if organisation exists in CKAN
 		if ( ! Ckan_Backend_Helper::organisation_exists( $organisation ) ) {
-			throw new Exception( sprintf( __( 'Organisation %1$s does not exist! Import aborted.', 'ogdch' ), $organisation ) );
+			throw new Exception( sprintf( __( 'Organization %1$s does not exist! Import aborted.', 'ogdch' ), $organisation ) );
 		}
 
 		return true;
