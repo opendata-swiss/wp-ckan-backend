@@ -200,7 +200,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		 *
 		 * @param WP_Query $query The current query.
 		 */
-		function filter_user_organisation( $query ){
+		function filter_user_organisation( $query ) {
 			global $pagenow;
 			if ( is_admin() && 'users.php' === $pagenow ) {
 				$current_user          = wp_get_current_user();
@@ -215,9 +215,11 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 
 				if ( ! empty( $organisation_filter ) ) {
 					global $wpdb;
+					// @codingStandardsIgnoreStart
 					$query->query_from .= " INNER JOIN {$wpdb->usermeta} ON " .
 					                      "{$wpdb->users}.ID={$wpdb->usermeta}.user_id AND " .
 					                      "{$wpdb->usermeta}.meta_key='" . Ckan_Backend::$plugin_slug . '_organisation' . "' AND {$wpdb->usermeta}.meta_value = '{$organisation_filter}' ";
+					// @codingStandardsIgnoreEnd
 				}
 			}
 		}
