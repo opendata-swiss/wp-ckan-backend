@@ -20,11 +20,11 @@ class Ckan_Backend_Local_Dataset {
 	public function __construct() {
 		$this->register_post_type();
 
-		// add backend list columns
-		add_filter( 'manage_' . self::POST_TYPE . '_posts_columns', array( $this, 'add_columns' ) );
-		add_action( 'manage_' . self::POST_TYPE . '_posts_custom_column', array( $this, 'add_columns_data' ), 10, 2 );
+		// add organisation column to admin list
+		add_filter( 'manage_' . self::POST_TYPE . '_posts_columns', array( $this, 'add_organisation_column' ) );
+		add_action( 'manage_' . self::POST_TYPE . '_posts_custom_column', array( $this, 'add_organisation_column_data' ), 10, 2 );
 
-		// create organisation filter dropdown
+		// create organisation filter dropdown to admin list
 		add_action( 'restrict_manage_posts', array( $this, 'add_organisation_filter' ) );
 		add_action( 'pre_get_posts', array( $this, 'filter_posts_by_organisation' ) );
 
@@ -114,13 +114,13 @@ class Ckan_Backend_Local_Dataset {
 	}
 
 	/**
-	 * Adds custom columns to backend list
+	 * Adds organisation column to admin list
 	 *
 	 * @param array $columns Array with all current columns.
 	 *
 	 * @return array
 	 */
-	public function add_columns( $columns ) {
+	public function add_organisation_column( $columns ) {
 		$new_columns = array(
 			self::FIELD_PREFIX . 'identifier' => __( 'Organization', 'ogdch' ),
 		);
@@ -129,12 +129,12 @@ class Ckan_Backend_Local_Dataset {
 	}
 
 	/**
-	 * Prints data for custom columns
+	 * Prints data to organisation column
 	 *
 	 * @param string $column Name of custom column.
 	 * @param int    $post_id Id of current post.
 	 */
-	public function add_columns_data( $column, $post_id ) {
+	public function add_organisation_column_data( $column, $post_id ) {
 
 		switch ( $column ) {
 			case self::FIELD_PREFIX . 'identifier' :
