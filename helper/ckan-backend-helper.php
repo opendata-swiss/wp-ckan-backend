@@ -178,6 +178,39 @@ class Ckan_Backend_Helper {
 	}
 
 	/**
+	 * Returns title of given CKAN dataset.
+	 *
+	 * @param string $name Name (slug) of dataset.
+	 *
+	 * @return string
+	 */
+	public static function get_dataset_title( $name ) {
+		if ( '' === $name ) {
+			return '';
+		}
+		$transient_name = Ckan_Backend::$plugin_slug . '_dataset_title_' . $name;
+		if ( false === ( $dataset_title = get_transient( $transient_name ) ) ) {
+			$endpoint = CKAN_API_ENDPOINT . 'action/package_show';
+			$data     = array( 'id' => $name );
+			$data     = wp_json_encode( $data );
+
+			$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
+			$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
+
+			if ( 0 === count( $errors ) ) {
+				$dataset_title = $response['result']['title'];
+
+				// save result in transient
+				set_transient( $transient_name, $dataset_title, 1 * HOUR_IN_SECONDS );
+			} else {
+				self::print_error_messages( $errors );
+			}
+		}
+
+		return self::get_localized_text( $dataset_title );
+	}
+
+	/**
 	 * Checks if the group exsits.
 	 *
 	 * @param string $name The name of the group.
