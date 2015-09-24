@@ -72,8 +72,8 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 
 			// Disallow non-administrators to edit users from other organisation
 			add_filter( 'user_has_cap', array( $this, 'allow_edit_users_of_same_organisation' ), 10, 3 );
-			// Disable admin role for non-admin users
-			add_filter( 'editable_roles', array( $this, 'disable_admin_role' ) );
+			// Disable possibility to assign admin or content manager role for non-admin users
+			add_filter( 'editable_roles', array( $this, 'disable_roles_for_non_admins' ) );
 
 			// Add organisation to user list
 			add_filter( 'manage_users_columns', array( $this, 'add_user_organisation_column' ) );
@@ -167,18 +167,21 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		}
 
 		/**
-		 * Disable admin role for non-admin users
+		 * Disable possibility to assign admin or content manager role for non-admin users
 		 *
 		 * @param array $roles Available roles.
 		 *
 		 * @return array
 		 */
-		public function disable_admin_role( $roles ) {
+		public function disable_roles_for_non_admins( $roles ) {
 			$user_info = get_userdata( get_current_user_id() );
 
 			if ( ! in_array( 'administrator', $user_info->roles ) ) {
 				if ( isset( $roles['administrator'] ) ) {
 					unset( $roles['administrator'] );
+				}
+				if ( isset( $roles['content-manager'] ) ) {
+					unset( $roles['content-manager'] );
 				}
 			}
 
