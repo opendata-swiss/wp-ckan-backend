@@ -430,7 +430,7 @@ class Ckan_Backend_Local_Dataset_Import {
 
 			$distributions = $xml->xpath( 'dcat:distribution' );
 			foreach ( $distributions as $distribution_xml ) {
-				$dataset->add_distribution( $this->get_distribution_object( $distribution_xml ) );
+				$dataset->add_distribution( $this->get_distribution_object( $distribution_xml, $dataset ) );
 			}
 
 			return $dataset;
@@ -536,17 +536,26 @@ class Ckan_Backend_Local_Dataset_Import {
 	 * Returns a distribution object from given xml
 	 *
 	 * @param SimpleXMLElement $xml XML content from file.
+	 * @param Ckan_Backend_Dataset_Model $dataset The parent dataset object.
 	 *
 	 * @return Ckan_Backend_Distribution_Model
 	 */
-	protected function get_distribution_object( $xml ) {
+	protected function get_distribution_object( $xml, $dataset ) {
 		global $language_priority;
 
 		$distribution = new Ckan_Backend_Distribution_Model();
 		$distribution->set_identifier( (string) $this->get_single_element_from_xpath( $xml, 'dct:identifier' ) );
 		foreach ( $language_priority as $lang ) {
-			$distribution->set_title( (string) $this->get_single_element_from_xpath( $xml, 'dct:title[@xml:lang="' . $lang . '"]' ), $lang );
-			$distribution->set_description( (string) $this->get_single_element_from_xpath( $xml, 'dct:description[@xml:lang="' . $lang . '"]' ), $lang );
+			$title = (string) $this->get_single_element_from_xpath( $xml, 'dct:title[@xml:lang="' . $lang . '"]' );
+			if( empty( $title ) ) {
+				$title = $dataset->get_title( $lang );
+			}
+			$distribution->set_title( $title, $lang );
+			$description = (string) $this->get_single_element_from_xpath( $xml, 'dct:description[@xml:lang="' . $lang . '"]' );
+			if( empty( $description ) ) {
+				$description = $dataset->get_description( $lang );
+			}
+			$distribution->set_description( $description, $lang );
 		}
 		$languages = $xml->xpath( 'dct:language' );
 		foreach ( $languages as $language ) {
