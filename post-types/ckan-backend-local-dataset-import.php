@@ -31,7 +31,7 @@ class Ckan_Backend_Local_Dataset_Import {
 	public function register_submenu_page() {
 		add_submenu_page(
 			'edit.php?post_type=' . Ckan_Backend_Local_Dataset::POST_TYPE,
-			__( 'Import CKAN Dataset', 'ogdch' ),
+			__( 'Import Catalog', 'ogdch' ),
 			__( 'Import', 'ogdch' ),
 			'create_datasets',
 			$this->menu_slug,
@@ -64,22 +64,38 @@ class Ckan_Backend_Local_Dataset_Import {
 				echo esc_attr( $imported_datasets->get_error_message() );
 				echo '</p></div>';
 			} else {
-				foreach ( $imported_datasets as $dataset_id ) {
-					if ( is_wp_error( $dataset_id ) ) {
+				foreach ( $imported_datasets as $dataset_information ) {
+					if ( is_wp_error( $dataset_information ) ) {
 						echo '<div class="error"><p>';
-						echo esc_attr( $dataset_id->get_error_message() );
+						echo esc_attr( $dataset_information->get_error_message() );
 						echo '</p></div>';
 					} else {
 						echo '<div class="updated">';
-						echo '<p><strong>' . esc_html( __( 'Import successful', 'ogdch' ) ) . '</strong></p><p>';
-						// @codingStandardsIgnoreStart
-						printf(
-							__( 'The dataset is not published yet! You can edit and publish it here: <a href="%s">%s</a>.', 'ogdch' ),
-							esc_url( admin_url( 'post.php?post=' . esc_attr( $dataset_id ) . '&action=edit' ) ),
-							esc_attr( get_the_title( $dataset_id ) )
-						);
-						// @codingStandardsIgnoreEnd
-						echo '</p></div>';
+						if( $dataset_information['new'] ) {
+							echo '<p><strong>' . esc_html( __( 'Successfully inserted new dataset', 'ogdch' ) ) . '</strong></p>';
+						} else {
+							echo '<p><strong>' . esc_html( __( 'Successfully updated dataset', 'ogdch' ) ) . '</strong></p>';
+						}
+						echo '<p>';
+						if( 'publish' === $dataset_information['post_status'] ) {
+							// @codingStandardsIgnoreStart
+							printf(
+								__( 'The dataset is already published. You can edit it here: <a href="%s">%s</a>.', 'ogdch' ),
+								esc_url( admin_url( 'post.php?post=' . esc_attr( $dataset_information['id'] ) . '&action=edit' ) ),
+								esc_attr( get_the_title( $dataset_information['id'] ) )
+							);
+							// @codingStandardsIgnoreEnd
+						} else {
+							// @codingStandardsIgnoreStart
+							printf(
+								__( 'The dataset is not yet published. You can edit and publish it here: <a href="%s">%s</a>.', 'ogdch' ),
+								esc_url( admin_url( 'post.php?post=' . esc_attr( $dataset_information['id'] ) . '&action=edit' ) ),
+								esc_attr( get_the_title( $dataset_information['id'] ) )
+							);
+							// @codingStandardsIgnoreEnd
+						}
+						echo '</p>';
+						echo '</div>';
 					}
 				}
 			}
@@ -109,13 +125,13 @@ class Ckan_Backend_Local_Dataset_Import {
 							<tbody>
 								<tr>
 									<th scope="row">
-										<label for="import_file"><?php esc_html_e( __( 'DCAT-AP File:', 'ogdch' ) ); ?></label>
+										<label for="import_file"><?php esc_html_e( __( 'DCAT-AP Catalog File:', 'ogdch' ) ); ?></label>
 									</th>
 
 									<td>
 										<input type="file" id="import_file" name="<?php esc_attr_e( $file_field_name ); ?>"/>
 										<br/>
-										<span class="description"><?php esc_html_e( __( 'File has to be in DACT-AP Switzerland format.', 'ogdch' ) ); ?></span>
+										<span class="description"><?php esc_html_e( __( 'File has to be a DACT-AP Switzerland catalog.', 'ogdch' ) ); ?></span>
 									</td>
 								</tr>
 							</tbody>
@@ -190,7 +206,7 @@ class Ckan_Backend_Local_Dataset_Import {
 	 */
 	public function import_datasets( $xml ) {
 		$imported_datasets = array();
-		$datasets = $xml->xpath( '//dcat:Catalog/dcat:Dataset' );
+		$datasets = $xml->xpath( '//dcat:Catalog/dcat:dataset/dcat:Dataset' );
 		foreach ( $datasets as $dataset ) {
 			$imported_datasets[] = $this->import_dataset( $dataset );
 		}
@@ -233,14 +249,13 @@ class Ckan_Backend_Local_Dataset_Import {
 
 		if ( is_array( $datasets ) && count( $datasets ) > 0 ) {
 			// Dataset already exists -> update
-			$dataset_id = $datasets[0]->ID;
-			$this->update( $dataset_id, $dataset );
+			$dataset_information = $this->update( $datasets[0]->ID, $dataset );
 		} else {
 			// Create new dataset
-			$dataset_id = $this->insert( $dataset );
+			$dataset_information = $this->insert( $dataset );
 		}
 
-		return $dataset_id;
+		return $dataset_information;
 	}
 
 	/**
@@ -248,10 +263,13 @@ class Ckan_Backend_Local_Dataset_Import {
 	 *
 	 * @param int                        $dataset_id ID of dataset to update.
 	 * @param Ckan_Backend_Dataset_Model $dataset Dataset instance with values.
+	 *
+	 * @return array|WP_Error
 	 */
 	protected function update( $dataset_id, $dataset ) {
 		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'disabled' ] = get_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'disabled', true );
 		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'ckan_id' ]  = get_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'ckan_id', true );
+		$post_status                                                    = get_post_status( $dataset_id );
 
 		$dataset_args = array(
 			'ID'         => $dataset_id,
@@ -266,19 +284,33 @@ class Ckan_Backend_Local_Dataset_Import {
 		}
 		// set post status to future if needed
 		if ( $dataset->get_issued() > time() ) {
-			if ( get_post_status( $dataset_id ) === 'publish' ) {
+			if ( $post_status === 'publish' ) {
 				$dataset_args['post_status'] = 'future';
+				$post_status = 'future';
 			}
 		} else {
-			if ( get_post_status( $dataset_id ) === 'future' ) {
+			if ( $post_status === 'future' ) {
 				$dataset_args['post_status'] = 'draft';
+				$post_status = 'draft';
 			}
 		}
 
-		wp_update_post( $dataset_args );
+		$dataset_id = wp_update_post( $dataset_args );
+		// if update fails return WP_Error
+		if( is_wp_error( $dataset_id ) ) {
+			return $dataset_id;
+		}
 		foreach ( $dataset->to_array() as $field => $value ) {
 			update_post_meta( $dataset_id, $field, $value );
 		}
+
+		$dataset_information = array(
+			'id' => $dataset_id,
+			'new' => false,
+			'post_status' => $post_status,
+		);
+
+		return $dataset_information;
 	}
 
 	/**
@@ -286,7 +318,7 @@ class Ckan_Backend_Local_Dataset_Import {
 	 *
 	 * @param Ckan_Backend_Dataset_Model $dataset Dataset instance with values.
 	 *
-	 * @return bool|int|WP_Error
+	 * @return array
 	 */
 	protected function insert( $dataset ) {
 		$dataset_args = array(
@@ -304,11 +336,21 @@ class Ckan_Backend_Local_Dataset_Import {
 		}
 
 		$dataset_id = wp_insert_post( $dataset_args );
+		// if insert fails return WP_Error
+		if( is_wp_error( $dataset_id ) ) {
+			return $dataset_id;
+		}
 		foreach ( $dataset->to_array() as $field => $value ) {
 			add_post_meta( $dataset_id, $field, $value, true );
 		}
 
-		return $dataset_id;
+		$dataset_information = array(
+			'id' => $dataset_id,
+			'new' => true,
+			'post_status' => $dataset_args['post_status'],
+		);
+
+		return $dataset_information;
 	}
 
 	/**
