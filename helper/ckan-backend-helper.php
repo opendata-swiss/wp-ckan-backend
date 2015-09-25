@@ -61,7 +61,9 @@ class Ckan_Backend_Helper {
 				$error = $response['error']['__type'];
 				foreach ( $response['error'] as $field => $messages ) {
 					if ( '__type' !== $field ) {
-						$error .= '<br />[' . $field . '] ' . implode( ', ', $messages );
+						// @codingStandardsIgnoreStart
+						$error .= ' / [' . $field . '] ' . sanitize_text_field( var_export( $messages, true ) );
+						// @codingStandardsIgnoreEnd
 					}
 				}
 				$errors[] = $error;

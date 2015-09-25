@@ -31,7 +31,7 @@ class Ckan_Backend_Local_Dataset_Import {
 	public function register_submenu_page() {
 		add_submenu_page(
 			'edit.php?post_type=' . Ckan_Backend_Local_Dataset::POST_TYPE,
-			__( 'Import CKAN Dataset', 'ogdch' ),
+			__( 'Import Catalog', 'ogdch' ),
 			__( 'Import', 'ogdch' ),
 			'create_datasets',
 			$this->menu_slug,
@@ -55,16 +55,49 @@ class Ckan_Backend_Local_Dataset_Import {
 
 		// Handle import
 		if ( isset( $_POST[ $import_submit_hidden_field_name ] ) && 'Y' === $_POST[ $import_submit_hidden_field_name ] ) {
-			$dataset_id = 0;
+			$imported_datasets = array();
 			if ( isset( $_FILES[ $file_field_name ] ) ) {
-				$dataset_id = $this->handle_file_import( $_FILES[ $file_field_name ] );
+				$imported_datasets = $this->handle_file_import( $_FILES[ $file_field_name ] );
 			}
-
-			if ( is_wp_error( $dataset_id ) ) {
+			if ( is_wp_error( $imported_datasets ) ) {
 				echo '<div class="error"><p>';
-				echo esc_attr( $dataset_id->get_error_message() );
+				echo esc_attr( $imported_datasets->get_error_message() );
 				echo '</p></div>';
-				$dataset_id = 0;
+			} else {
+				foreach ( $imported_datasets as $dataset_information ) {
+					if ( is_wp_error( $dataset_information ) ) {
+						echo '<div class="error"><p>';
+						echo esc_attr( $dataset_information->get_error_message() );
+						echo '</p></div>';
+					} else {
+						echo '<div class="updated">';
+						if ( $dataset_information['new'] ) {
+							echo '<p><strong>' . esc_html( __( 'Successfully inserted new dataset', 'ogdch' ) ) . '</strong></p>';
+						} else {
+							echo '<p><strong>' . esc_html( __( 'Successfully updated dataset', 'ogdch' ) ) . '</strong></p>';
+						}
+						echo '<p>';
+						if ( 'publish' === $dataset_information['post_status'] ) {
+							// @codingStandardsIgnoreStart
+							printf(
+								__( 'The dataset is already published. You can edit it here: <a href="%s">%s</a>.', 'ogdch' ),
+								esc_url( admin_url( 'post.php?post=' . esc_attr( $dataset_information['id'] ) . '&action=edit' ) ),
+								esc_attr( get_the_title( $dataset_information['id'] ) )
+							);
+							// @codingStandardsIgnoreEnd
+						} else {
+							// @codingStandardsIgnoreStart
+							printf(
+								__( 'The dataset is not yet published. You can edit and publish it here: <a href="%s">%s</a>.', 'ogdch' ),
+								esc_url( admin_url( 'post.php?post=' . esc_attr( $dataset_information['id'] ) . '&action=edit' ) ),
+								esc_attr( get_the_title( $dataset_information['id'] ) )
+							);
+							// @codingStandardsIgnoreEnd
+						}
+						echo '</p>';
+						echo '</div>';
+					}
+				}
 			}
 
 			// check for notices
@@ -75,19 +108,6 @@ class Ckan_Backend_Local_Dataset_Import {
 				// print available notices
 				foreach ( $notices as $key => $m ) {
 					echo '<div class="error"><p>' . esc_html( $m ) . '</p></div>';
-				}
-			} else {
-				if ( $dataset_id > 0 ) {
-					echo '<div class="updated">';
-					echo '<p><strong>' . esc_html( __( 'Import successful', 'ogdch' ) ) . '</strong></p><p>';
-					// @codingStandardsIgnoreStart
-					printf(
-						__( 'You can edit it here: <a href="%s">%s</a>.', 'ogdch' ),
-						esc_url( admin_url( 'post.php?post=' . esc_attr( $dataset_id ) . '&action=edit' ) ),
-						esc_attr( get_the_title( $dataset_id ) )
-					);
-					// @codingStandardsIgnoreEnd
-					echo '</p></div>';
 				}
 			}
 		} ?>
@@ -105,13 +125,13 @@ class Ckan_Backend_Local_Dataset_Import {
 							<tbody>
 								<tr>
 									<th scope="row">
-										<label for="import_file"><?php esc_html_e( __( 'DCAT-AP File:', 'ogdch' ) ); ?></label>
+										<label for="import_file"><?php esc_html_e( __( 'DCAT-AP Catalog File:', 'ogdch' ) ); ?></label>
 									</th>
 
 									<td>
 										<input type="file" id="import_file" name="<?php esc_attr_e( $file_field_name ); ?>"/>
 										<br/>
-										<span class="description"><?php esc_html_e( __( 'File has to be in DACT-AP Switzerland format.', 'ogdch' ) ); ?></span>
+										<span class="description"><?php esc_html_e( __( 'File has to be a DACT-AP Switzerland catalog.', 'ogdch' ) ); ?></span>
 									</td>
 								</tr>
 							</tbody>
@@ -174,7 +194,23 @@ class Ckan_Backend_Local_Dataset_Import {
 		$xml->registerXPathNamespace( 'odrs', 'http://schema.theodi.org/odrs#' );
 		$xml->registerXPathNamespace( 'schema', 'http://schema.org/' );
 
-		return $this->import_dataset( $xml );
+		return $this->import_datasets( $xml );
+	}
+
+	/**
+	 * Imports multiple datasets from xml
+	 *
+	 * @param SimpleXMLElement $xml The XML to be imported.
+	 *
+	 * @return bool|int|WP_Error
+	 */
+	public function import_datasets( $xml ) {
+		$imported_datasets = array();
+		$datasets = $xml->xpath( '//dcat:Catalog/dcat:dataset/dcat:Dataset' );
+		foreach ( $datasets as $dataset ) {
+			$imported_datasets[] = $this->import_dataset( $dataset );
+		}
+		return $imported_datasets;
 	}
 
 	/**
@@ -213,14 +249,13 @@ class Ckan_Backend_Local_Dataset_Import {
 
 		if ( is_array( $datasets ) && count( $datasets ) > 0 ) {
 			// Dataset already exists -> update
-			$dataset_id = $datasets[0]->ID;
-			$this->update( $dataset_id, $dataset );
+			$dataset_information = $this->update( $datasets[0]->ID, $dataset );
 		} else {
 			// Create new dataset
-			$dataset_id = $this->insert( $dataset );
+			$dataset_information = $this->insert( $dataset );
 		}
 
-		return $dataset_id;
+		return $dataset_information;
 	}
 
 	/**
@@ -228,10 +263,13 @@ class Ckan_Backend_Local_Dataset_Import {
 	 *
 	 * @param int                        $dataset_id ID of dataset to update.
 	 * @param Ckan_Backend_Dataset_Model $dataset Dataset instance with values.
+	 *
+	 * @return array|WP_Error
 	 */
 	protected function update( $dataset_id, $dataset ) {
 		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'disabled' ] = get_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'disabled', true );
 		$_POST[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'ckan_id' ]  = get_post_meta( $dataset_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'ckan_id', true );
+		$post_status                                                    = get_post_status( $dataset_id );
 
 		$dataset_args = array(
 			'ID'         => $dataset_id,
@@ -246,19 +284,33 @@ class Ckan_Backend_Local_Dataset_Import {
 		}
 		// set post status to future if needed
 		if ( $dataset->get_issued() > time() ) {
-			if ( get_post_status( $dataset_id ) === 'publish' ) {
+			if ( 'publish' === $post_status  ) {
 				$dataset_args['post_status'] = 'future';
+				$post_status = 'future';
 			}
 		} else {
-			if ( get_post_status( $dataset_id ) === 'future' ) {
+			if ( 'future' === $post_status  ) {
 				$dataset_args['post_status'] = 'draft';
+				$post_status = 'draft';
 			}
 		}
 
-		wp_update_post( $dataset_args );
+		$dataset_id = wp_update_post( $dataset_args );
+		// if update fails return WP_Error
+		if ( is_wp_error( $dataset_id ) ) {
+			return $dataset_id;
+		}
 		foreach ( $dataset->to_array() as $field => $value ) {
 			update_post_meta( $dataset_id, $field, $value );
 		}
+
+		$dataset_information = array(
+			'id' => $dataset_id,
+			'new' => false,
+			'post_status' => $post_status,
+		);
+
+		return $dataset_information;
 	}
 
 	/**
@@ -266,7 +318,7 @@ class Ckan_Backend_Local_Dataset_Import {
 	 *
 	 * @param Ckan_Backend_Dataset_Model $dataset Dataset instance with values.
 	 *
-	 * @return bool|int|WP_Error
+	 * @return array
 	 */
 	protected function insert( $dataset ) {
 		$dataset_args = array(
@@ -284,11 +336,21 @@ class Ckan_Backend_Local_Dataset_Import {
 		}
 
 		$dataset_id = wp_insert_post( $dataset_args );
+		// if insert fails return WP_Error
+		if ( is_wp_error( $dataset_id ) ) {
+			return $dataset_id;
+		}
 		foreach ( $dataset->to_array() as $field => $value ) {
 			add_post_meta( $dataset_id, $field, $value, true );
 		}
 
-		return $dataset_id;
+		$dataset_information = array(
+			'id' => $dataset_id,
+			'new' => true,
+			'post_status' => $dataset_args['post_status'],
+		);
+
+		return $dataset_information;
 	}
 
 	/**
@@ -305,7 +367,7 @@ class Ckan_Backend_Local_Dataset_Import {
 
 		try {
 			$dataset = new Ckan_Backend_Dataset_Model();
-			$identifier = (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:identifier' );
+			$identifier = (string) $this->get_single_element_from_xpath( $xml, 'dct:identifier' );
 			if ( '' === $identifier ) {
 				throw new Exception( __( 'Please provide an identifier for the dataset (eg. <dct:title xml:lang="en">My Dataset</dct:title>)', 'ogdch' ) );
 			}
@@ -317,26 +379,26 @@ class Ckan_Backend_Local_Dataset_Import {
 			$this->validate_organisation( $splitted_identifier['organisation'] );
 			$dataset->set_identifier( $splitted_identifier );
 			foreach ( $language_priority as $lang ) {
-				$dataset->set_title( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:title[@xml:lang="' . $lang . '"]' ), $lang );
-				$dataset->set_description( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:description[@xml:lang="' . $lang . '"]' ), $lang );
+				$dataset->set_title( (string) $this->get_single_element_from_xpath( $xml, 'dct:title[@xml:lang="' . $lang . '"]' ), $lang );
+				$dataset->set_description( (string) $this->get_single_element_from_xpath( $xml, 'dct:description[@xml:lang="' . $lang . '"]' ), $lang );
 			}
 			if ( '' === $dataset->get_main_title() ) {
 				//TODO: throw custom exception
 				throw new Exception( 'Please provide a title in at least one language for the dataset (eg. <dct:title xml:lang="en">My Dataset</dct:title>)' );
 			}
-			$issued = strtotime( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:issued' ) );
+			$issued = strtotime( (string) $this->get_single_element_from_xpath( $xml, 'dct:issued' ) );
 			$dataset->set_issued( $issued );
-			$modified = strtotime( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:modified' ) );
+			$modified = strtotime( (string) $this->get_single_element_from_xpath( $xml, 'dct:modified' ) );
 			$dataset->set_modified( $modified );
-			$publishers = $xml->xpath( '//dcat:Dataset/dct:publisher' );
+			$publishers = $xml->xpath( 'dct:publisher' );
 			foreach ( $publishers as $publisher_xml ) {
 				$dataset->add_publisher( $this->get_publisher_object( $publisher_xml ) );
 			}
-			$contact_points = $xml->xpath( '//dcat:Dataset/dcat:contactPoint/*' );
+			$contact_points = $xml->xpath( 'dcat:contactPoint/*' );
 			foreach ( $contact_points as $contact_point_xml ) {
 				$dataset->add_contact_point( $this->get_contact_point_object( $contact_point_xml ) );
 			}
-			$themes = $xml->xpath( '//dcat:Dataset/dcat:theme' );
+			$themes = $xml->xpath( 'dcat:theme' );
 			foreach ( $themes as $theme ) {
 				if ( is_object( $theme ) ) {
 					$theme_attributes = $theme->attributes( 'rdf', true );
@@ -345,30 +407,30 @@ class Ckan_Backend_Local_Dataset_Import {
 					$dataset->add_theme( $this->get_theme_name( $theme_uri ) );
 				}
 			}
-			$relations = $xml->xpath( '//dcat:Dataset/dct:relation/rdf:Description' );
+			$relations = $xml->xpath( 'dct:relation/rdf:Description' );
 			foreach ( $relations as $relation_xml ) {
 				$dataset->add_relation( $this->get_relation_object( $relation_xml ) );
 			}
-			$keywords = $xml->xpath( '//dcat:Dataset/dcat:keyword' );
+			$keywords = $xml->xpath( 'dcat:keyword' );
 			foreach ( $keywords as $keyword ) {
 				$dataset->add_keyword( (string) $keyword );
 			}
-			$dataset->set_landing_page( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dcat:landingPage' ) );
-			$dataset->set_spatial( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:spatial/@rdf:resource' ) );
-			$dataset->set_coverage( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:coverage' ) );
-			$temporals = $xml->xpath( '//dcat:Dataset/dct:temporal/dct:PeriodOfTime' );
+			$dataset->set_landing_page( (string) $this->get_single_element_from_xpath( $xml, 'dcat:landingPage' ) );
+			$dataset->set_spatial( (string) $this->get_single_element_from_xpath( $xml, 'dct:spatial/@rdf:resource' ) );
+			$dataset->set_coverage( (string) $this->get_single_element_from_xpath( $xml, 'dct:coverage' ) );
+			$temporals = $xml->xpath( 'dct:temporal/dct:PeriodOfTime' );
 			foreach ( $temporals as $temporal_xml ) {
 				$dataset->add_temporal( $this->get_temporal_object( $temporal_xml ) );
 			}
-			$dataset->set_accrual_periodicity( (string) $this->get_single_element_from_xpath( $xml, '//dcat:Dataset/dct:accrualPeriodicity/@rdf:resource' ) );
-			$see_alsos = $xml->xpath( '//dcat:Dataset/rdfs:seeAlso' );
+			$dataset->set_accrual_periodicity( (string) $this->get_single_element_from_xpath( $xml, 'dct:accrualPeriodicity/@rdf:resource' ) );
+			$see_alsos = $xml->xpath( 'rdfs:seeAlso' );
 			foreach ( $see_alsos as $see_also ) {
 				$dataset->add_see_also( (string) $see_also );
 			}
 
-			$distributions = $xml->xpath( '//dcat:Dataset/dcat:distribution' );
+			$distributions = $xml->xpath( 'dcat:distribution' );
 			foreach ( $distributions as $distribution_xml ) {
-				$dataset->add_distribution( $this->get_distribution_object( $distribution_xml ) );
+				$dataset->add_distribution( $this->get_distribution_object( $distribution_xml, $dataset ) );
 			}
 
 			return $dataset;
@@ -473,18 +535,27 @@ class Ckan_Backend_Local_Dataset_Import {
 	/**
 	 * Returns a distribution object from given xml
 	 *
-	 * @param SimpleXMLElement $xml XML content from file.
+	 * @param SimpleXMLElement           $xml XML content from file.
+	 * @param Ckan_Backend_Dataset_Model $dataset The parent dataset object.
 	 *
 	 * @return Ckan_Backend_Distribution_Model
 	 */
-	protected function get_distribution_object( $xml ) {
+	protected function get_distribution_object( $xml, $dataset ) {
 		global $language_priority;
 
 		$distribution = new Ckan_Backend_Distribution_Model();
 		$distribution->set_identifier( (string) $this->get_single_element_from_xpath( $xml, 'dct:identifier' ) );
 		foreach ( $language_priority as $lang ) {
-			$distribution->set_title( (string) $this->get_single_element_from_xpath( $xml, 'dct:title[@xml:lang="' . $lang . '"]' ), $lang );
-			$distribution->set_description( (string) $this->get_single_element_from_xpath( $xml, 'dct:description[@xml:lang="' . $lang . '"]' ), $lang );
+			$title = (string) $this->get_single_element_from_xpath( $xml, 'dct:title[@xml:lang="' . $lang . '"]' );
+			if ( empty( $title ) ) {
+				$title = $dataset->get_title( $lang );
+			}
+			$distribution->set_title( $title, $lang );
+			$description = (string) $this->get_single_element_from_xpath( $xml, 'dct:description[@xml:lang="' . $lang . '"]' );
+			if ( empty( $description ) ) {
+				$description = $dataset->get_description( $lang );
+			}
+			$distribution->set_description( $description, $lang );
 		}
 		$languages = $xml->xpath( 'dct:language' );
 		foreach ( $languages as $language ) {
