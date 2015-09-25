@@ -71,13 +71,13 @@ class Ckan_Backend_Local_Dataset_Import {
 						echo '</p></div>';
 					} else {
 						echo '<div class="updated">';
-						if( $dataset_information['new'] ) {
+						if ( $dataset_information['new'] ) {
 							echo '<p><strong>' . esc_html( __( 'Successfully inserted new dataset', 'ogdch' ) ) . '</strong></p>';
 						} else {
 							echo '<p><strong>' . esc_html( __( 'Successfully updated dataset', 'ogdch' ) ) . '</strong></p>';
 						}
 						echo '<p>';
-						if( 'publish' === $dataset_information['post_status'] ) {
+						if ( 'publish' === $dataset_information['post_status'] ) {
 							// @codingStandardsIgnoreStart
 							printf(
 								__( 'The dataset is already published. You can edit it here: <a href="%s">%s</a>.', 'ogdch' ),
@@ -284,12 +284,12 @@ class Ckan_Backend_Local_Dataset_Import {
 		}
 		// set post status to future if needed
 		if ( $dataset->get_issued() > time() ) {
-			if ( $post_status === 'publish' ) {
+			if ( 'publish' === $post_status  ) {
 				$dataset_args['post_status'] = 'future';
 				$post_status = 'future';
 			}
 		} else {
-			if ( $post_status === 'future' ) {
+			if ( 'future' === $post_status  ) {
 				$dataset_args['post_status'] = 'draft';
 				$post_status = 'draft';
 			}
@@ -297,7 +297,7 @@ class Ckan_Backend_Local_Dataset_Import {
 
 		$dataset_id = wp_update_post( $dataset_args );
 		// if update fails return WP_Error
-		if( is_wp_error( $dataset_id ) ) {
+		if ( is_wp_error( $dataset_id ) ) {
 			return $dataset_id;
 		}
 		foreach ( $dataset->to_array() as $field => $value ) {
@@ -337,7 +337,7 @@ class Ckan_Backend_Local_Dataset_Import {
 
 		$dataset_id = wp_insert_post( $dataset_args );
 		// if insert fails return WP_Error
-		if( is_wp_error( $dataset_id ) ) {
+		if ( is_wp_error( $dataset_id ) ) {
 			return $dataset_id;
 		}
 		foreach ( $dataset->to_array() as $field => $value ) {
