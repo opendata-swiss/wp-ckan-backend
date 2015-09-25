@@ -72,17 +72,16 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 
 			// Disallow non-administrators to edit users from other organisation
 			add_filter( 'user_has_cap', array( $this, 'allow_edit_users_of_same_organisation' ), 10, 3 );
-			// Disable admin role for non-admin users
-			add_filter( 'editable_roles', array( $this, 'disable_admin_role' ) );
+			// Disable possibility to assign admin or content manager role for non-admin users
+			add_filter( 'editable_roles', array( $this, 'disable_roles_for_non_admins' ) );
 
 			// Add organisation to user list
 			add_filter( 'manage_users_columns', array( $this, 'add_user_organisation_column' ) );
 			add_filter( 'manage_users_custom_column', array( $this, 'manage_user_organisation_column' ), 10, 3 );
 
-			// TODO implement
 			// Add organisation filter dropdown to user admin list
-			/*add_filter( 'pre_user_query', array( $this, 'add_user_organisation_filter' ) );
-			add_filter( 'parse_query', array( $this, 'filter_user_organisation' ) );*/
+			add_filter( 'pre_user_query', array( $this, 'filter_user_organisation' ) );
+			add_filter( 'restrict_manage_users', array( $this, 'add_user_organisation_filter' ) );
 		}
 
 		/**
@@ -167,22 +166,62 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		}
 
 		/**
-		 * Disable admin role for non-admin users
+		 * Disable possibility to assign admin or content manager role for non-admin users
 		 *
 		 * @param array $roles Available roles.
 		 *
 		 * @return array
 		 */
-		public function disable_admin_role( $roles ) {
+		public function disable_roles_for_non_admins( $roles ) {
 			$user_info = get_userdata( get_current_user_id() );
 
 			if ( ! in_array( 'administrator', $user_info->roles ) ) {
 				if ( isset( $roles['administrator'] ) ) {
 					unset( $roles['administrator'] );
 				}
+				if ( isset( $roles['content-manager'] ) ) {
+					unset( $roles['content-manager'] );
+				}
 			}
 
 			return $roles;
+		}
+
+		/**
+		 * Add organisation filter dropdown to user admin list
+		 */
+		public function add_user_organisation_filter() {
+			Ckan_Backend_Helper::print_organisation_filter( true );
+			submit_button( __( 'Filter' ), 'button', 'filter_action', false, array( 'id' => 'post-query-submit' ) );
+		}
+
+		/**
+		 * Applies organisation filter to user query
+		 *
+		 * @param WP_Query $query The current query.
+		 */
+		function filter_user_organisation( $query ) {
+			global $pagenow;
+			if ( is_admin() && 'users.php' === $pagenow ) {
+				$current_user          = wp_get_current_user();
+				$current_user_is_admin = in_array( 'administrator', $current_user->roles );
+				$organisation_filter   = '';
+				if ( isset( $_GET['organisation_filter'] ) ) {
+					$organisation_filter = sanitize_text_field( $_GET['organisation_filter'] );
+				} elseif ( ! $current_user_is_admin ) {
+					// set filter on first page load if user is not an administrator
+					$organisation_filter = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', $current_user->ID );
+				}
+
+				if ( ! empty( $organisation_filter ) ) {
+					global $wpdb;
+					// @codingStandardsIgnoreStart
+					$query->query_from .= " INNER JOIN {$wpdb->usermeta} ON " .
+					                      "{$wpdb->users}.ID={$wpdb->usermeta}.user_id AND " .
+					                      "{$wpdb->usermeta}.meta_key='" . Ckan_Backend::$plugin_slug . '_organisation' . "' AND {$wpdb->usermeta}.meta_value = '{$organisation_filter}' ";
+					// @codingStandardsIgnoreEnd
+				}
+			}
 		}
 
 		/**
