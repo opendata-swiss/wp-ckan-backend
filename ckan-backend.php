@@ -147,16 +147,16 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 				return $allcaps;
 			}
 			$current_user_id = $args[1];
-			$user_info       = get_userdata( $current_user_id );
 
-			if ( ! in_array( 'administrator', $user_info->roles ) ) {
+			// only remove capability if user is a non-admin user
+			if ( ! members_current_user_has_role( 'administrator' ) ) {
 				$other_user_id = $args[2];
 
 				if ( ! empty( $other_user_id ) ) {
 					$user_organisation       = get_the_author_meta( self::$plugin_slug . '_organisation', $current_user_id );
 					$other_user_organisation = get_user_meta( $other_user_id, self::$plugin_slug . '_organisation', true );
-					if ( $user_organisation !== $other_user_organisation ) {
-						// remove edit_users capability if other user isn't in same organisation
+					if ( $user_organisation !== $other_user_organisation || members_user_has_role( $other_user_id, 'administrator' ) || members_user_has_role( $other_user_id, 'content_manager' ) ) {
+						// remove edit_users capability if other user isn't in same organisation or an admin user
 						$allcaps[ $required_cap ] = false;
 					}
 				}
@@ -173,14 +173,12 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		 * @return array
 		 */
 		public function disable_roles_for_non_admins( $roles ) {
-			$user_info = get_userdata( get_current_user_id() );
-
-			if ( ! in_array( 'administrator', $user_info->roles ) ) {
+			if ( ! members_current_user_has_role( 'administrator' ) ) {
 				if ( isset( $roles['administrator'] ) ) {
 					unset( $roles['administrator'] );
 				}
-				if ( isset( $roles['content-manager'] ) ) {
-					unset( $roles['content-manager'] );
+				if ( isset( $roles['content_manager'] ) ) {
+					unset( $roles['content_manager'] );
 				}
 			}
 
@@ -203,14 +201,12 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		function filter_user_organisation( $query ) {
 			global $pagenow;
 			if ( is_admin() && 'users.php' === $pagenow ) {
-				$current_user          = wp_get_current_user();
-				$current_user_is_admin = in_array( 'administrator', $current_user->roles );
 				$organisation_filter   = '';
 				if ( isset( $_GET['organisation_filter'] ) ) {
 					$organisation_filter = sanitize_text_field( $_GET['organisation_filter'] );
-				} elseif ( ! $current_user_is_admin ) {
+				} elseif ( ! members_current_user_has_role( 'administrator' ) ) {
 					// set filter on first page load if user is not an administrator
-					$organisation_filter = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', $current_user->ID );
+					$organisation_filter = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
 				}
 
 				if ( ! empty( $organisation_filter ) ) {
