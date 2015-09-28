@@ -174,14 +174,12 @@ class Ckan_Backend_Local_Dataset {
 			$query->query_vars['post_type'] === self::POST_TYPE
 
 		) {
-			$current_user          = wp_get_current_user();
-			$current_user_is_admin = in_array( 'administrator', $current_user->roles );
 			$organisation_filter   = '';
 			if ( isset( $_GET['organisation_filter'] ) ) {
 				$organisation_filter = sanitize_text_field( $_GET['organisation_filter'] );
-			} elseif ( ! $current_user_is_admin ) {
+			} elseif ( ! members_current_user_has_role( 'administrator' ) ) {
 				// set filter on first page load if user is not an administrator
-				$organisation_filter = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', $current_user->ID );
+				$organisation_filter = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
 			}
 
 			if ( ! empty( $organisation_filter ) ) {
