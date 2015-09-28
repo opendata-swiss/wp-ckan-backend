@@ -91,7 +91,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 		if ( isset( $_GET ) && ( 'trash' === $_GET['action'] ) ) {
 			$success = $this->trash_action( $post );
 		} // If action is untrash -> set CKAN dataset to active
-		elseif ( isset( $_GET ) && 'unstrash' === $_GET['action'] ) {
+		elseif ( isset( $_GET ) && 'untrash' === $_GET['action'] ) {
 			$success = $this->untrash_action( $post );
 		} // If action is delete -> delete the CKAN dataset completely
 		elseif ( isset( $_GET ) && 'delete' === $_GET['action'] ) {
