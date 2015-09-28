@@ -154,7 +154,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 			return true;
 		}
 
-		$endpoint = CKAN_API_ENDPOINT . 'action/' . $this->api_type . '_delete';
+		$endpoint = CKAN_API_ENDPOINT . $this->api_type . '_delete';
 		$data     = array(
 			'id' => $ckan_id,
 		);
@@ -209,12 +209,12 @@ abstract class Ckan_Backend_Sync_Abstract {
 	protected function upsert_action( $post, $data ) {
 		// If data to send holds CKAN id -> do update in CKAN
 		if ( isset( $data['id'] ) ) {
-			$endpoint = CKAN_API_ENDPOINT . 'action/' . $this->api_type . '_patch';
+			$endpoint = CKAN_API_ENDPOINT . $this->api_type . '_patch';
 		} else {
 			$data['name'] = $this->generate_unique_name( sanitize_title_with_dashes( $post->post_title ) );
 
 			// Insert new dataset
-			$endpoint = CKAN_API_ENDPOINT . 'action/' . $this->api_type . '_create';
+			$endpoint = CKAN_API_ENDPOINT . $this->api_type . '_create';
 		}
 
 		$data     = wp_json_encode( $data );
@@ -239,7 +239,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 	protected function generate_unique_name( $name, $suffix = '' ) {
 		$errors        = array();
 		$name_to_check = $name . $suffix;
-		$endpoint      = CKAN_API_ENDPOINT . 'action/' . $this->api_type . '_show';
+		$endpoint      = CKAN_API_ENDPOINT . $this->api_type . '_show';
 		$data          = array(
 			'id' => $name_to_check,
 		);

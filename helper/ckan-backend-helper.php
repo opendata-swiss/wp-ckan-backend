@@ -113,7 +113,7 @@ class Ckan_Backend_Helper {
 
 		$transient_name = Ckan_Backend::$plugin_slug . '_' . $type . '_options';
 		if ( false === ( $options = get_transient( $transient_name ) ) ) {
-			$endpoint = CKAN_API_ENDPOINT . 'action/' . $type . '_list';
+			$endpoint = CKAN_API_ENDPOINT . $type . '_list';
 			$data     = array(
 				'all_fields' => true,
 			);
@@ -156,7 +156,7 @@ class Ckan_Backend_Helper {
 		}
 		$transient_name = Ckan_Backend::$plugin_slug . '_organization_title_' . $name;
 		if ( false === ( $organisation_title = get_transient( $transient_name ) ) ) {
-			$endpoint = CKAN_API_ENDPOINT . 'action/organization_show';
+			$endpoint = CKAN_API_ENDPOINT . 'organization_show';
 			$data     = array(
 				'id'               => $name,
 				'include_datasets' => false,
@@ -192,7 +192,7 @@ class Ckan_Backend_Helper {
 		}
 		$transient_name = Ckan_Backend::$plugin_slug . '_dataset_title_' . $name;
 		if ( false === ( $dataset_title = get_transient( $transient_name ) ) ) {
-			$endpoint = CKAN_API_ENDPOINT . 'action/package_show';
+			$endpoint = CKAN_API_ENDPOINT . 'package_show';
 			$data     = array( 'id' => $name );
 			$data     = wp_json_encode( $data );
 
@@ -258,7 +258,7 @@ class Ckan_Backend_Helper {
 
 		$transient_name = Ckan_Backend::$plugin_slug . '_' . $type . '_' . $name . '_exists';
 		if ( false === ( $object_exists = get_transient( $transient_name ) ) ) {
-			$endpoint      = CKAN_API_ENDPOINT . 'action/' . $type . '_show';
+			$endpoint      = CKAN_API_ENDPOINT . $type . '_show';
 			$data          = array(
 				'id' => $name,
 			);
