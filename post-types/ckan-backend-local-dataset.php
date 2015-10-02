@@ -262,7 +262,7 @@ class Ckan_Backend_Local_Dataset {
 			'supports'            => array( 'title' ),
 			'taxonomies'          => array( 'post_tag' ),
 			'hierarchical'        => false,
-			'public'              => false,
+			'public'              => true,
 			'show_ui'             => true,
 			'show_in_menu'        => true,
 			'menu_position'       => 5,
@@ -273,6 +273,7 @@ class Ckan_Backend_Local_Dataset {
 			'has_archive'         => false,
 			'exclude_from_search' => false,
 			'publicly_queryable'  => false,
+			'rewrite'             => array( 'slug' => 'dataset' ),
 			'map_meta_cap'        => true,
 			'capability_type'     => array( 'dataset', 'datasets' ),
 			'capabilities'        => array(

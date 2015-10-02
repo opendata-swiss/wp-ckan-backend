@@ -66,7 +66,7 @@ class Ckan_Backend_Local_Organisation {
 			'labels'              => $labels,
 			'supports'            => array( 'title' ),
 			'hierarchical'        => false,
-			'public'              => false,
+			'public'              => true,
 			'show_ui'             => true,
 			'show_in_menu'        => true,
 			'menu_position'       => 5,
@@ -77,6 +77,7 @@ class Ckan_Backend_Local_Organisation {
 			'has_archive'         => false,
 			'exclude_from_search' => false,
 			'publicly_queryable'  => false,
+			'rewrite'             => array( 'slug' => 'organization' ),
 			'map_meta_cap'        => true,
 			'capability_type'     => array( 'organisation', 'organisations' ),
 			'capabilities'        => array(
