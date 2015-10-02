@@ -127,42 +127,6 @@ class Ckan_Backend_Helper {
 	}
 
 	/**
-	 * Returns title of given CKAN organisation.
-	 *
-	 * @param string $name Name (slug) of organisation.
-	 *
-	 * @return string
-	 */
-	public static function get_organisation_title( $name ) {
-		if ( '' === $name ) {
-			return '';
-		}
-		$transient_name = Ckan_Backend::$plugin_slug . '_organization_title_' . $name;
-		if ( false === ( $organisation_title = get_transient( $transient_name ) ) ) {
-			$endpoint = CKAN_API_ENDPOINT . 'organization_show';
-			$data     = array(
-				'id'               => $name,
-				'include_datasets' => false,
-			);
-			$data     = wp_json_encode( $data );
-
-			$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
-			$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
-
-			if ( 0 === count( $errors ) ) {
-				$organisation_title = $response['result']['title'];
-
-				// save result in transient
-				set_transient( $transient_name, $organisation_title, 1 * HOUR_IN_SECONDS );
-			} else {
-				self::print_error_messages( $errors );
-			}
-		}
-
-		return self::get_localized_text( $organisation_title );
-	}
-
-	/**
 	 * Returns title of given CKAN dataset.
 	 *
 	 * @param string $name Name (slug) of dataset.
@@ -316,8 +280,7 @@ class Ckan_Backend_Helper {
 			$all_languages = json_decode( $all_languages, true );
 		}
 
-		$current_language = get_locale();
-		$localized_text   = $all_languages[ substr( $current_language, 0, 2 ) ];
+		$localized_text   = $all_languages[ self::get_current_language() ];
 		if ( empty( $localized_text ) ) {
 			foreach ( $language_priority as $lang ) {
 				if ( '' !== $all_languages[ $lang ] ) {
@@ -370,6 +333,11 @@ class Ckan_Backend_Helper {
 		<?php
 	}
 
+	/**
+	 * Returns current language slug
+	 *
+	 * @return string
+	 */
 	public static function get_current_language() {
 		if( function_exists( 'pll_current_language' ) ) {
 			return pll_current_language();
