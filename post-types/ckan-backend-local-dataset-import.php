@@ -321,8 +321,10 @@ class Ckan_Backend_Local_Dataset_Import {
 	 * @return array
 	 */
 	protected function insert( $dataset ) {
+		$post_title = $dataset->get_main_title();
 		$dataset_args = array(
-			'post_title'   => $dataset->get_main_title(),
+			'post_name'    => sanitize_title_with_dashes( $post_title ),
+			'post_title'   => $post_title,
 			'post_status'  => ( ( $dataset->get_issued() > time() ) ? 'future' : 'draft' ),
 			'post_type'    => Ckan_Backend_Local_Dataset::POST_TYPE,
 			'post_excerpt' => '',

@@ -31,7 +31,13 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		$modified       = $this->prepare_date( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'modified', $load_from_post ) );
 		$identifier     = Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'identifier', $load_from_post );
 
+		$post_name = $post->post_name;
+		if( empty( $post_name ) ) {
+			$post_name = sanitize_title_with_dashes( $post->post_title );
+		}
+
 		$data = array(
+			'name'                => $post_name,
 			'title'               => $titles,
 			'identifier'          => $identifier['original_identifier'] . '@' . $identifier['organisation'],
 			'notes'               => $descriptions,

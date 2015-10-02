@@ -211,8 +211,6 @@ abstract class Ckan_Backend_Sync_Abstract {
 		if ( isset( $data['id'] ) ) {
 			$endpoint = CKAN_API_ENDPOINT . $this->api_type . '_patch';
 		} else {
-			$data['name'] = $this->generate_unique_name( sanitize_title_with_dashes( $post->post_title ) );
-
 			// Insert new dataset
 			$endpoint = CKAN_API_ENDPOINT . $this->api_type . '_create';
 		}
@@ -225,35 +223,6 @@ abstract class Ckan_Backend_Sync_Abstract {
 			return $this->update_ckan_data( $post, $response['result'] );
 		} else {
 			return false;
-		}
-	}
-
-	/**
-	 * Returns a not existing name for a CKAN entity.
-	 *
-	 * @param string $name Name of CKAN entity.
-	 * @param string $suffix Additional suffix of name.
-	 *
-	 * @return string
-	 */
-	protected function generate_unique_name( $name, $suffix = '' ) {
-		$errors        = array();
-		$name_to_check = $name . $suffix;
-		$endpoint      = CKAN_API_ENDPOINT . $this->api_type . '_show';
-		$data          = array(
-			'id' => $name_to_check,
-		);
-		$response      = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
-		if ( ! is_array( $response ) ) {
-			$errors[] = 'There was a problem sending the request.';
-		}
-		$this->store_errors_in_notices_option( $errors );
-
-		// if name exists in CKAN -> try another name
-		if ( isset( $response['success'] ) && true === $response['success'] ) {
-			return $this->generate_unique_name( $name, '_' . uniqid() );
-		} else {
-			return $name_to_check;
 		}
 	}
 
