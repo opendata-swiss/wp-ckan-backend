@@ -94,7 +94,7 @@ class Ckan_Backend_Sync_Local_Organisation extends Ckan_Backend_Sync_Abstract {
 	 */
 	protected function after_sync_action( $post ) {
 		// Deletes all transients for this post-type instance.
-		delete_transient( Ckan_Backend::$plugin_slug . '_organization_options' );
+		delete_transient( Ckan_Backend::$plugin_slug . '_' . Ckan_Backend_Local_Organisation::POST_TYPE . '_options' );
 		delete_transient( Ckan_Backend::$plugin_slug . '_organization_' . $post->post_name . '_exists' );
 		delete_transient( Ckan_Backend::$plugin_slug . '_organization_title_' . $post->ID );
 	}

@@ -81,7 +81,7 @@ class Ckan_Backend_Helper {
 	 * @return array All group instances from CKAN
 	 */
 	public static function get_group_form_field_options() {
-		return Ckan_Backend_Helper::get_form_field_options( 'group' );
+		return Ckan_Backend_Helper::get_form_field_options( Ckan_Backend_Local_Group::POST_TYPE, Ckan_Backend_Local_Group::FIELD_PREFIX );
 	}
 
 	/**
@@ -90,7 +90,7 @@ class Ckan_Backend_Helper {
 	 * @return array All organisation instances from CKAN
 	 */
 	public static function get_organisation_form_field_options() {
-		return Ckan_Backend_Helper::get_form_field_options( 'organization' );
+		return Ckan_Backend_Helper::get_form_field_options( Ckan_Backend_Local_Organisation::POST_TYPE, Ckan_Backend_Local_Organisation::FIELD_PREFIX );
 	}
 
 	/**
@@ -100,44 +100,27 @@ class Ckan_Backend_Helper {
 	 *
 	 * @return array All instances from CKAN
 	 */
-	private static function get_form_field_options( $type ) {
-		$available_types = array(
-			'group',
-			'organization',
-		);
-		if ( ! in_array( $type, $available_types ) ) {
-			self::print_error_messages( array( 'Type not available!' ) );
-
-			return false;
-		}
-
-		$transient_name = Ckan_Backend::$plugin_slug . '_' . $type . '_options';
+	private static function get_form_field_options( $post_type, $field_prefix ) {
+		$transient_name = Ckan_Backend::$plugin_slug . '_' . $post_type . '_options';
 		if ( false === ( $options = get_transient( $transient_name ) ) ) {
-			$endpoint = CKAN_API_ENDPOINT . $type . '_list';
-			$data     = array(
-				'all_fields' => true,
+			$args  = array(
+				'posts_per_page'   => -1,
+				'meta_key'         => $field_prefix . 'title_' . self::get_current_language(),
+				'orderby'          => 'meta_value',
+				'order'            => 'ASC',
+				'post_type'        => $post_type,
+				'post_status'      => 'publish',
 			);
-			$data     = wp_json_encode( $data );
+			$posts = get_posts( $args );
 
-			$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
-			$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
-
-			if ( 0 === count( $errors ) ) {
-				$options = array();
-				if ( is_array( $response['result'] ) ) {
-					foreach ( $response['result'] as $instance ) {
-						$options[ $instance['name'] ] = self::get_localized_text( $instance['title'] );
-					}
-				}
-
-				// sort by title
-				asort( $options, SORT_NATURAL );
-
-				// save result in transient
-				set_transient( $transient_name, $options, 1 * HOUR_IN_SECONDS );
-			} else {
-				self::print_error_messages( $errors );
+			foreach ( $posts as $post ) {
+				$name  = get_post_meta( $post->ID, $field_prefix . 'ckan_name', true );
+				$title = get_post_meta( $post->ID, $field_prefix . 'title_' . self::get_current_language(), true );
+				$options[ $name ] = $title;
 			}
+
+			// save result in transient
+			set_transient( $transient_name, $options, 1 * HOUR_IN_SECONDS );
 		}
 
 		return $options;
@@ -409,5 +392,13 @@ class Ckan_Backend_Helper {
 			?>
 		</select>
 		<?php
+	}
+
+	public static function get_current_language() {
+		if( function_exists( 'pll_current_language' ) ) {
+			return pll_current_language();
+		} else {
+			return substr( get_locale(), 0, 2 );
+		}
 	}
 }
