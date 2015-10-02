@@ -96,7 +96,8 @@ class Ckan_Backend_Helper {
 	/**
 	 * Gets all instances of given type from CKAN and returns them in an array.
 	 *
-	 * @param string $type Name of a CKAN type.
+	 * @param string $post_type WordPress post type.
+	 * @param string $field_prefix Field prefix of post type.
 	 *
 	 * @return array All instances from CKAN
 	 */
@@ -104,9 +105,11 @@ class Ckan_Backend_Helper {
 		$transient_name = Ckan_Backend::$plugin_slug . '_' . $post_type . '_options';
 		if ( false === ( $options = get_transient( $transient_name ) ) ) {
 			$args  = array(
+				// @codingStandardsIgnoreStart
 				'posts_per_page'   => -1,
 				'meta_key'         => $field_prefix . 'title_' . self::get_current_language(),
 				'orderby'          => 'meta_value',
+				// @codingStandardsIgnoreEnd
 				'order'            => 'ASC',
 				'post_type'        => $post_type,
 				'post_status'      => 'publish',
@@ -184,7 +187,8 @@ class Ckan_Backend_Helper {
 	/**
 	 * Check if the object exists
 	 *
-	 * @param string $type Name of a CKAN type.
+	 * @param string $post_type WordPress post type.
+	 * @param string $field_prefix Field prefix of post type.
 	 * @param string $name Name (slug) of the CKAN entity.
 	 *
 	 * @return bool
@@ -193,11 +197,13 @@ class Ckan_Backend_Helper {
 		$transient_name = Ckan_Backend::$plugin_slug . '_' . $post_type . '_' . $name . '_exists';
 		if ( false === ( $object_exists = get_transient( $transient_name ) ) ) {
 			$args  = array(
+				// @codingStandardsIgnoreStart
 				'posts_per_page'   => -1,
 				'post_type'        => $post_type,
 				'post_status'      => 'publish',
 				'meta_key'         => $field_prefix . 'ckan_name',
 				'meta_value'       => $name,
+				// @codingStandardsIgnoreEnd
 			);
 			$posts = get_posts( $args );
 			$object_exists = count( $posts ) > 0;
@@ -339,7 +345,7 @@ class Ckan_Backend_Helper {
 	 * @return string
 	 */
 	public static function get_current_language() {
-		if( function_exists( 'pll_current_language' ) ) {
+		if ( function_exists( 'pll_current_language' ) ) {
 			return pll_current_language();
 		} else {
 			return substr( get_locale(), 0, 2 );

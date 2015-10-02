@@ -372,9 +372,9 @@ class Ckan_Backend_Local_Dataset_Import {
 	 *
 	 * @param SimpleXMLElement $xml XML content from file.
 	 *
-	 * @return Ckan_Backend_Dataset_Model
+	 * @return Ckan_Backend_Dataset_Model|WP_Error
 	 *
-	 * @throws array|WP_Error
+	 * @throws Exception Exception gets converted to WP_Error.
 	 */
 	protected function get_dataset_object( $xml ) {
 		global $language_priority;
@@ -463,7 +463,7 @@ class Ckan_Backend_Local_Dataset_Import {
 	 * Validates given organisation
 	 *
 	 * @param string $organisation Organisation to validate.
-	 * @param string $identifier Identifier of dataset
+	 * @param string $identifier Identifier of dataset.
 	 *
 	 * @return bool
 	 * @throws Exception If there are validation errors.
@@ -634,7 +634,7 @@ class Ckan_Backend_Local_Dataset_Import {
 	 * Transforms theme uris to names
 	 *
 	 * @param string $theme_uri The theme URI from the RDF.
-	 * @param string $identifier Identifier of dataset
+	 * @param string $identifier Identifier of dataset.
 	 *
 	 * @return Name of the theme (group)
 	 *

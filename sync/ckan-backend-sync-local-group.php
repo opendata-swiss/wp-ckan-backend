@@ -25,7 +25,7 @@ class Ckan_Backend_Sync_Local_Group extends Ckan_Backend_Sync_Abstract {
 		$descriptions = Ckan_Backend_Helper::prepare_multilingual_field( $post->ID, $this->field_prefix . 'description', $load_from_post );
 
 		$post_name = $post->post_name;
-		if( empty( $post_name ) ) {
+		if ( empty( $post_name ) ) {
 			$post_name = sanitize_title_with_dashes( $post->post_title );
 		}
 
