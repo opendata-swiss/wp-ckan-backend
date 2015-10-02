@@ -203,7 +203,7 @@ class Ckan_Backend_Helper {
 	 * @return bool
 	 */
 	public static function group_exists( $name ) {
-		return Ckan_Backend_Helper::object_exists( 'group', $name );
+		return Ckan_Backend_Helper::object_exists( Ckan_Backend_Local_Group::POST_TYPE, Ckan_Backend_Local_Group::FIELD_PREFIX, $name );
 	}
 
 	/**
@@ -214,7 +214,7 @@ class Ckan_Backend_Helper {
 	 * @return bool
 	 */
 	public static function organisation_exists( $name ) {
-		return Ckan_Backend_Helper::object_exists( 'organization', $name );
+		return Ckan_Backend_Helper::object_exists( Ckan_Backend_Local_Organisation::POST_TYPE, Ckan_Backend_Local_Organisation::FIELD_PREFIX, $name );
 	}
 
 	/**
@@ -225,30 +225,18 @@ class Ckan_Backend_Helper {
 	 *
 	 * @return bool
 	 */
-	private static function object_exists( $type, $name ) {
-		$available_types = array(
-			'group',
-			'organization',
-		);
-		if ( ! in_array( $type, $available_types ) ) {
-			self::print_error_messages( array( 'Type not available!' ) );
-
-			return false;
-		}
-		if ( '' === $name ) {
-			return false;
-		}
-
-		$transient_name = Ckan_Backend::$plugin_slug . '_' . $type . '_' . $name . '_exists';
+	private static function object_exists( $post_type, $field_prefix, $name ) {
+		$transient_name = Ckan_Backend::$plugin_slug . '_' . $post_type . '_' . $name . '_exists';
 		if ( false === ( $object_exists = get_transient( $transient_name ) ) ) {
-			$endpoint      = CKAN_API_ENDPOINT . $type . '_show';
-			$data          = array(
-				'id' => $name,
+			$args  = array(
+				'posts_per_page'   => -1,
+				'post_type'        => $post_type,
+				'post_status'      => 'publish',
+				'meta_key'         => $field_prefix . 'ckan_name',
+				'meta_value'       => $name,
 			);
-			$data          = wp_json_encode( $data );
-			$response      = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
-			$errors        = Ckan_Backend_Helper::check_response_for_errors( $response );
-			$object_exists = count( $errors ) === 0;
+			$posts = get_posts( $args );
+			$object_exists = count( $posts ) > 0;
 
 			// save result in transient
 			set_transient( $transient_name, $object_exists, 1 * HOUR_IN_SECONDS );

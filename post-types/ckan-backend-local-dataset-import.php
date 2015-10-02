@@ -71,11 +71,23 @@ class Ckan_Backend_Local_Dataset_Import {
 						echo '</p></div>';
 					} else {
 						echo '<div class="updated">';
+						echo '<p><strong>';
 						if ( $dataset_information['new'] ) {
-							echo '<p><strong>' . esc_html( __( 'Successfully inserted new dataset', 'ogdch' ) ) . '</strong></p>';
+							// @codingStandardsIgnoreStart
+							printf(
+								__( 'Successfully inserted new dataset %s', 'ogdch' ),
+								esc_attr( get_the_title( $dataset_information['id'] ) )
+							);
+							// @codingStandardsIgnoreEnd
 						} else {
-							echo '<p><strong>' . esc_html( __( 'Successfully updated dataset', 'ogdch' ) ) . '</strong></p>';
+							// @codingStandardsIgnoreStart
+							printf(
+								__( 'Successfully updated dataset %s', 'ogdch' ),
+								esc_attr( get_the_title( $dataset_information['id'] ) )
+							);
+							// @codingStandardsIgnoreEnd
 						}
+						echo '</strong></p>';
 						echo '<p>';
 						if ( 'publish' === $dataset_information['post_status'] ) {
 							// @codingStandardsIgnoreStart
@@ -224,8 +236,8 @@ class Ckan_Backend_Local_Dataset_Import {
 		$dataset = $this->get_dataset_object( $xml );
 
 		// if there was an error in the xml document
-		if ( false === $dataset ) {
-			return false;
+		if ( is_wp_error( $dataset ) ) {
+			return $dataset;
 		}
 
 		/*
@@ -362,7 +374,7 @@ class Ckan_Backend_Local_Dataset_Import {
 	 *
 	 * @return Ckan_Backend_Dataset_Model
 	 *
-	 * @throws Exception If there are validation errors.
+	 * @throws array|WP_Error
 	 */
 	protected function get_dataset_object( $xml ) {
 		global $language_priority;
@@ -371,22 +383,27 @@ class Ckan_Backend_Local_Dataset_Import {
 			$dataset = new Ckan_Backend_Dataset_Model();
 			$identifier = (string) $this->get_single_element_from_xpath( $xml, 'dct:identifier' );
 			if ( '' === $identifier ) {
-				throw new Exception( __( 'Please provide an identifier for the dataset (eg. <dct:title xml:lang="en">My Dataset</dct:title>)', 'ogdch' ) );
+				throw new Exception( __( 'Please provide an identifier for the dataset (eg. <dct:title xml:lang="en">My Dataset</dct:title>).  Dataset [no identifier] not imported', 'ogdch' ) );
 			}
 			$splitted_identifier = $this->split_identifier( $identifier );
 			if ( empty( $splitted_identifier['original_identifier'] ) ) {
-				throw new Exception( __( 'The original identifier of your dataset is missing. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[organisation_id]</dct:identifier>. Import aborted.', 'ogdch' ) );
+				throw new Exception( sprintf(
+					__( 'The original identifier of your dataset is missing. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[organisation_id]</dct:identifier>. Dataset %s not imported.', 'ogdch' ),
+					$identifier
+				) );
 			}
 
-			$this->validate_organisation( $splitted_identifier['organisation'] );
+			$this->validate_organisation( $splitted_identifier['organisation'], $identifier );
 			$dataset->set_identifier( $splitted_identifier );
 			foreach ( $language_priority as $lang ) {
 				$dataset->set_title( (string) $this->get_single_element_from_xpath( $xml, 'dct:title[@xml:lang="' . $lang . '"]' ), $lang );
 				$dataset->set_description( (string) $this->get_single_element_from_xpath( $xml, 'dct:description[@xml:lang="' . $lang . '"]' ), $lang );
 			}
 			if ( '' === $dataset->get_main_title() ) {
-				//TODO: throw custom exception
-				throw new Exception( 'Please provide a title in at least one language for the dataset (eg. <dct:title xml:lang="en">My Dataset</dct:title>)' );
+				throw new Exception( sprintf(
+					__( 'Please provide a title in at least one language for the dataset (eg. <dct:title xml:lang="en">My Dataset</dct:title>). Dataset %s not imported.', 'ogdch' ),
+					$identifier
+				) );
 			}
 			$issued = strtotime( (string) $this->get_single_element_from_xpath( $xml, 'dct:issued' ) );
 			$dataset->set_issued( $issued );
@@ -406,7 +423,7 @@ class Ckan_Backend_Local_Dataset_Import {
 					$theme_attributes = $theme->attributes( 'rdf', true );
 					$theme_uri        = (string) $theme_attributes['resource'];
 
-					$dataset->add_theme( $this->get_theme_name( $theme_uri ) );
+					$dataset->add_theme( $this->get_theme_name( $theme_uri, $identifier ) );
 				}
 			}
 			$relations = $xml->xpath( 'dct:relation/rdf:Description' );
@@ -437,8 +454,7 @@ class Ckan_Backend_Local_Dataset_Import {
 
 			return $dataset;
 		} catch (Exception $e) {
-			$this->store_error_in_notices_option( $e->getMessage() );
-			return false;
+			return new WP_Error( 'validation_errors', $e->getMessage() );
 		}
 
 	}
@@ -447,25 +463,36 @@ class Ckan_Backend_Local_Dataset_Import {
 	 * Validates given organisation
 	 *
 	 * @param string $organisation Organisation to validate.
+	 * @param string $identifier Identifier of dataset
 	 *
 	 * @return bool
 	 * @throws Exception If there are validation errors.
 	 */
-	protected function validate_organisation( $organisation ) {
+	protected function validate_organisation( $organisation, $identifier ) {
 		// Check if organisation is set
 		if ( empty( $organisation ) ) {
-			throw new Exception( __( 'The organisation id is missing in the identifier. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[organisation_id]</dct:identifier>. Import aborted.', 'ogdch' ) );
+			throw new Exception( sprintf(
+				__( 'The organisation id is missing in the identifier. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[organisation_id]</dct:identifier>. Dataset %s not imported.', 'ogdch' ),
+				$identifier
+			) );
 		}
 		// If user isn't allowed to edit_others_organisations for another organisation -> check if he has provided his own organisation
 		if ( ! current_user_can( 'edit_others_organisations' ) ) {
 			$user_organisation = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
 			if ( $user_organisation !== $organisation ) {
-				throw new Exception( __( 'You are not allowed to add a dataset for another organistaion. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[your_organisation_id]</dct:identifier>. Import aborted.', 'ogdch' ) );
+				throw new Exception( sprintf(
+					__( 'You are not allowed to add a dataset for another organistaion. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[your_organisation_id]</dct:identifier>. Dataset %s not imported.', 'ogdch' ),
+					$identifier
+				) );
 			}
 		}
 		// Check if organisation exists in CKAN
 		if ( ! Ckan_Backend_Helper::organisation_exists( $organisation ) ) {
-			throw new Exception( sprintf( __( 'Organization %1$s does not exist! Import aborted.', 'ogdch' ), $organisation ) );
+			throw new Exception( sprintf(
+				__( 'Organization %1$s does not exist. Dataset %2$s not imported.', 'ogdch' ),
+				$organisation,
+				$identifier
+			) );
 		}
 
 		return true;
@@ -604,30 +631,16 @@ class Ckan_Backend_Local_Dataset_Import {
 	}
 
 	/**
-	 * Stores error message in option to print them out after redirect of save action
-	 *
-	 * @param string $m Error message.
-	 *
-	 * @return bool True if error message was stored successfully.
-	 */
-	protected function store_error_in_notices_option( $m ) {
-		// store error notice in option array
-		$notices   = get_option( Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'notices' );
-		$notices[] = $m;
-
-		return update_option( Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'notices', $notices );
-	}
-
-	/**
 	 * Transforms theme uris to names
 	 *
 	 * @param string $theme_uri The theme URI from the RDF.
+	 * @param string $identifier Identifier of dataset
 	 *
 	 * @return Name of the theme (group)
 	 *
 	 * @throws Exception If group doesn't exist.
 	 */
-	public function get_theme_name( $theme_uri ) {
+	public function get_theme_name( $theme_uri, $identifier ) {
 		$transient_name = Ckan_Backend::$plugin_slug . '_' . sanitize_title_with_dashes( $theme_uri );
 		if ( false === ( $theme_name = get_transient( $transient_name ) ) ) {
 			$group_search_args = array(
@@ -641,13 +654,21 @@ class Ckan_Backend_Local_Dataset_Import {
 			if ( is_array( $groups ) && count( $groups ) > 0 ) {
 				$theme_name = get_post_meta( $groups[0]->ID, Ckan_Backend_Local_Group::FIELD_PREFIX . 'ckan_name', true );
 				if ( empty( $theme_name ) || ! Ckan_Backend_Helper::group_exists( $theme_name ) ) {
-					throw new Exception( __( sprintf( __( 'Group %1$s does not exist! Import aborted.', 'ogdch' ), $theme_uri ) ) );
+					throw new Exception( sprintf(
+						__( 'Group %1$s does not exist. Dataset %2$s not imported.', 'ogdch' ),
+						$theme_uri,
+						$identifier
+					) );
 				}
 
 				// save result in transient
 				set_transient( $transient_name, $theme_name, 1 * HOUR_IN_SECONDS );
 			} else {
-				throw new Exception( sprintf( __( 'Group %1$s does not exist! Import aborted.', 'ogdch' ), $theme_uri ) );
+				throw new Exception( sprintf(
+					__( 'Group %1$s does not exist. Dataset %2$s not imported.', 'ogdch' ),
+					$theme_uri,
+					$identifier
+				) );
 			}
 		}
 
