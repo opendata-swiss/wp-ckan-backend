@@ -27,9 +27,9 @@ abstract class Ckan_Backend_Sync_Abstract {
 	 * @var array
 	 */
 	private $api_type_mapping = array(
-		'ckan-local-dataset' => 'package',
-		'ckan-local-org'     => 'organization',
-		'ckan-local-group'   => 'group',
+		Ckan_Backend_Local_Dataset::POST_TYPE      => 'package',
+		Ckan_Backend_Local_Organisation::POST_TYPE => 'organization',
+		Ckan_Backend_Local_Group::POST_TYPE        => 'group',
 	);
 
 	/**
