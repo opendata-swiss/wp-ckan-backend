@@ -243,7 +243,6 @@ class Ckan_Backend_Local_Dataset_Import {
 		/*
 		 * TODO
 		 * - Tags import
-         * - accrualPeriodicity -> Select box -> Taxonomy -> URI Mapping
 		 */
 
 		// simulate $_POST data to make post_save hook work correctly
