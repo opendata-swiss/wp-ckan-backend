@@ -135,13 +135,9 @@ class Ckan_Backend_Local_Dataset {
 	 * @param int    $post_id Id of current post.
 	 */
 	public function add_organisation_column_data( $column, $post_id ) {
-
-		switch ( $column ) {
-			case self::FIELD_PREFIX . 'identifier' :
-				$identifier = get_post_meta( $post_id, $column, true );
-				// TODO use readable organisation name instead of slug
-				echo esc_attr( $identifier['organisation'] );
-				break;
+		if( $column === self::FIELD_PREFIX . 'identifier' ) {
+			$identifier = get_post_meta( $post_id, $column, true );
+			echo esc_attr( Ckan_Backend_Helper::get_organization_title( $identifier['organisation'] ) );
 		}
 	}
 

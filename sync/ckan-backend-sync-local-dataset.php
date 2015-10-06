@@ -209,6 +209,6 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	 */
 	protected function after_sync_action( $post ) {
 		// Deletes all transients for this post-type instance.
-		delete_transient( Ckan_Backend::$plugin_slug . '_dataset_title_' . Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'ckan_name', false ) );
+		delete_transient( Ckan_Backend::$plugin_slug . '_dataset_title_' . $post->post_name );
 	}
 }
