@@ -127,7 +127,7 @@ class Ckan_Backend_Helper {
 					}
 				}
 				// if title in all languages is empty use post title
-				if( empty( $title ) ) {
+				if ( empty( $title ) ) {
 					$title = $post->post_title;
 				}
 				$options[ $name ] = $title;
@@ -193,14 +193,14 @@ class Ckan_Backend_Helper {
 				'posts_per_page'   => 1,
 				'post_type'        => Ckan_Backend_Local_Organisation::POST_TYPE,
 				'post_status'      => 'publish',
-				// @codingStandardsIgnoreEnd
+				// @codingStandardsIgnoreStart
 				'meta_key'         => Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'ckan_name',
 				'meta_value'       => $name,
 				// @codingStandardsIgnoreEnd
 
 			);
 			$organisations = get_posts( $args );
-			if( count( $organisations ) > 0 ) {
+			if ( count( $organisations ) > 0 ) {
 				$organization_title = get_post_meta( $organisations[0]->ID, Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'title_' . Ckan_Backend_Helper::get_current_language(), true );
 				// if title in current language is not set -> find fallback title in other language
 				if ( empty( $organization_title ) ) {
