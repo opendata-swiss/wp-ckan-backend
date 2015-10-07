@@ -345,8 +345,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			if ( 'user_organisation' === $column_name ) {
 				$user_organisation = get_user_meta( $user_id, self::$plugin_slug . '_organisation', true );
 
-				// TODO use readable organisation name instead of slug
-				return $user_organisation;
+				return esc_attr( Ckan_Backend_Helper::get_organization_title( $user_organisation ) );
 			}
 		}
 

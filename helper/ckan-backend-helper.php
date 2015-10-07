@@ -106,21 +106,35 @@ class Ckan_Backend_Helper {
 		if ( false === ( $options = get_transient( $transient_name ) ) ) {
 			$args  = array(
 				// @codingStandardsIgnoreStart
-				'posts_per_page'   => -1,
-				'meta_key'         => $field_prefix . 'title_' . self::get_current_language(),
-				'orderby'          => 'meta_value',
+				'posts_per_page' => -1,
 				// @codingStandardsIgnoreEnd
-				'order'            => 'ASC',
-				'post_type'        => $post_type,
-				'post_status'      => 'publish',
+				'order'          => 'ASC',
+				'post_type'      => $post_type,
+				'post_status'    => 'publish',
 			);
 			$posts = get_posts( $args );
-
 			foreach ( $posts as $post ) {
 				$name  = get_post_meta( $post->ID, $field_prefix . 'ckan_name', true );
 				$title = get_post_meta( $post->ID, $field_prefix . 'title_' . self::get_current_language(), true );
+				// if title in current language is not set -> find fallback title in other language
+				if ( empty( $title ) ) {
+					global $language_priority;
+					foreach ( $language_priority as $lang ) {
+						$title = get_post_meta( $post->ID, $field_prefix . 'title_' . $lang, true );
+						if ( ! empty( $title ) ) {
+							break;
+						}
+					}
+				}
+				// if title in all languages is empty use post title
+				if ( empty( $title ) ) {
+					$title = $post->post_title;
+				}
 				$options[ $name ] = $title;
 			}
+
+			// TODO find a way to sort unicode values (like umlauts)
+			asort( $options, SORT_NATURAL );
 
 			// save result in transient
 			set_transient( $transient_name, $options, 1 * HOUR_IN_SECONDS );
@@ -160,6 +174,56 @@ class Ckan_Backend_Helper {
 		}
 
 		return self::get_localized_text( $dataset_title );
+	}
+
+	/**
+	 * Returns title of given CKAN organization.
+	 *
+	 * @param string $name Name (slug) of organization.
+	 *
+	 * @return string
+	 */
+	public static function get_organization_title( $name ) {
+		if ( '' === $name ) {
+			return '';
+		}
+		$transient_name = Ckan_Backend::$plugin_slug . '_organization_title_' . $name;
+		if ( false === ( $organization_title = get_transient( $transient_name ) ) ) {
+			$args  = array(
+				'posts_per_page'   => 1,
+				'post_type'        => Ckan_Backend_Local_Organisation::POST_TYPE,
+				'post_status'      => 'publish',
+				// @codingStandardsIgnoreStart
+				'meta_key'         => Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'ckan_name',
+				'meta_value'       => $name,
+				// @codingStandardsIgnoreEnd
+
+			);
+			$organisations = get_posts( $args );
+			if ( count( $organisations ) > 0 ) {
+				$organization_title = get_post_meta( $organisations[0]->ID, Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'title_' . Ckan_Backend_Helper::get_current_language(), true );
+				// if title in current language is not set -> find fallback title in other language
+				if ( empty( $organization_title ) ) {
+					global $language_priority;
+					foreach ( $language_priority as $lang ) {
+						$organization_title = get_post_meta( $organisations[0]->ID, Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'title_' . $lang, true );
+						if ( ! empty( $organization_title ) ) {
+							break;
+						}
+					}
+				}
+			}
+			// if title in all languages is empty use $name
+			if ( empty( $organization_title ) ) {
+				$organization_title = $name;
+			}
+
+			// save result in transient
+			set_transient( $transient_name, $organization_title, 1 * HOUR_IN_SECONDS );
+
+		}
+
+		return $organization_title;
 	}
 
 	/**
@@ -331,7 +395,7 @@ class Ckan_Backend_Helper {
 					'<option value="%s"%s>%s</option>',
 					esc_attr( $organisation->post_name ),
 					esc_attr( ( $organisation->post_name === $organisation_filter ) ? ' selected="selected"' : '' ),
-					esc_attr( $organisation->post_name )
+					esc_attr( self::get_organization_title( $organisation->post_name ) )
 				);
 			}
 			?>
