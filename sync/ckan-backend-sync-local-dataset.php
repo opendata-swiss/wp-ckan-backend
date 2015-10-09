@@ -40,7 +40,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 			'name'                => $post_name,
 			'title'               => $titles,
 			'identifier'          => $identifier['original_identifier'] . '@' . $identifier['organisation'],
-			'notes'               => $descriptions,
+			'description'         => $descriptions,
 			'issued'              => $issued,
 			'modified'            => $modified,
 			'publishers'          => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'publishers', $load_from_post ),
