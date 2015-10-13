@@ -583,6 +583,9 @@ class Ckan_Backend_Local_Dataset {
 			'id'   => 'issued',
 			'desc' => __( 'Date when dataset was issued.', 'ogdch' ),
 			'type' => 'text_date_timestamp',
+			'attributes' => array(
+				'required' => 'required',
+			),
 			//'date_format' => 'd.m.Y', // TODO date_format is still buggy in the CMB2 plugin
 		) );
 
@@ -620,6 +623,9 @@ class Ckan_Backend_Local_Dataset {
 			'name' => __( 'Access URL', 'ogdch' ),
 			'id'   => 'access_url',
 			'type' => 'text_url',
+			'attributes' => array(
+				'required' => 'required',
+			),
 		) );
 
 		$cmb->add_group_field( $distributions_group, array(
