@@ -32,4 +32,13 @@ class Ckan_Backend_Frequency {
 		);
 	}
 
+	/**
+	 * Returns frequencies.
+	 *
+	 * @return array
+	 */
+	public static function get_frequencies() {
+		return self::$frequencies;
+	}
+
 }

@@ -448,7 +448,7 @@ class Ckan_Backend_Local_Dataset_Import {
 
 			$distributions = $xml->xpath( 'dcat:distribution' );
 			foreach ( $distributions as $distribution_xml ) {
-				$dataset->add_distribution( $this->get_distribution_object( $distribution_xml, $dataset ) );
+				$dataset->add_distribution( $this->get_distribution_object( $distribution_xml, $dataset, $identifier ) );
 			}
 
 			return $dataset;
@@ -565,10 +565,13 @@ class Ckan_Backend_Local_Dataset_Import {
 	 *
 	 * @param SimpleXMLElement           $xml XML content from file.
 	 * @param Ckan_Backend_Dataset_Model $dataset The parent dataset object.
+	 * @param string $identifier Identifier of dataset.
 	 *
 	 * @return Ckan_Backend_Distribution_Model
+	 *
+	 * @throws Exception If not valid dcat-ap.
 	 */
-	protected function get_distribution_object( $xml, $dataset ) {
+	protected function get_distribution_object( $xml, $dataset, $identifier ) {
 		global $language_priority;
 
 		$distribution = new Ckan_Backend_Distribution_Model();
@@ -602,7 +605,15 @@ class Ckan_Backend_Local_Dataset_Import {
 		foreach ( $download_urls as $download_url ) {
 			$distribution->add_download_url( (string) $download_url );
 		}
-		$distribution->set_rights( (string) $this->get_single_element_from_xpath( $xml, 'dct:rights/odrs:dataLicence' ) );
+		$rights = (string) $this->get_single_element_from_xpath( $xml, 'dct:rights/odrs:dataLicence' );
+		if ( ! array_key_exists( $rights, Ckan_Backend_Rights::get_rights() ) ) {
+			throw new Exception( sprintf(
+				__( 'Right %1$s does not exist. Dataset %2$s not imported.', 'ogdch' ),
+				$rights,
+				$identifier
+			) );
+		}
+		$distribution->set_rights( $rights );
 		$distribution->set_license( (string) $this->get_single_element_from_xpath( $xml, 'dct:license' ) );
 		$distribution->set_byte_size( (string) $this->get_single_element_from_xpath( $xml, 'dcat:byteSize' ) );
 		$distribution->set_media_type( (string) $this->get_single_element_from_xpath( $xml, 'dcat:mediaType' ) );
