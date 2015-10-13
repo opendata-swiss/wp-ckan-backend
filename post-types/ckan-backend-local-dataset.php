@@ -583,6 +583,7 @@ class Ckan_Backend_Local_Dataset {
 			'id'   => 'issued',
 			'desc' => __( 'Date when dataset was issued.', 'ogdch' ),
 			'type' => 'text_date_timestamp',
+			//'date_format' => 'd.m.Y', // TODO date_format is still buggy in the CMB2 plugin
 		) );
 
 		$cmb->add_group_field( $distributions_group, array(
@@ -590,6 +591,7 @@ class Ckan_Backend_Local_Dataset {
 			'id'   => 'modified',
 			'desc' => __( 'Date when dataset was last modified.', 'ogdch' ),
 			'type' => 'text_date_timestamp',
+			//'date_format' => 'd.m.Y', // TODO date_format is still buggy in the CMB2 plugin
 		) );
 
 		$cmb->add_group_field( $distributions_group, array(
