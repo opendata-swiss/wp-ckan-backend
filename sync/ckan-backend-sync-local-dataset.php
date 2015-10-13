@@ -108,9 +108,9 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 				$ckan_resources[] = array(
 					'identifier'   => $resource['identifier'],
 					'title'        => $titles,
-					'notes'        => $descriptions,
-					//'issued'       => $issued, // TODO
-					//'modified'     => $modified, // TODO
+					'description'  => $descriptions,
+					//'issued'       => date( 'c', $issued ),
+					//'modified'     => date( 'c', $modified ),
 					'language'     => $resource['languages'],
 					'url'          => $resource['access_url'],
 					'download_url' => $resource['download_url'],
