@@ -2,7 +2,14 @@
 .post-type-ckan-local-dataset,
 .post-type-ckan-local-group,
 .post-type-ckan-local-org {
-  .submitbox #visibility {
+  .submitbox {
+    // hide preview button and visibility settings
+    #visibility, #preview-action {
+      display: none;
+    }
+  }
+  // hide yoast seo settings
+  #wpseo_meta {
     display: none;
   }
 }
@@ -14,6 +21,7 @@
 
 .post-type-ckan-local-group,
 .post-type-ckan-local-org {
+  // hide publishing settings
   #minor-publishing {
     display: none;
   }
