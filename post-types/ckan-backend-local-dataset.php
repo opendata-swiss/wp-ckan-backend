@@ -492,7 +492,7 @@ class Ckan_Backend_Local_Dataset {
 			'id'               => self::FIELD_PREFIX . 'accrual_periodicity',
 			'type'             => 'select',
 			'show_option_none' => false,
-			'options'          => Ckan_Backend_Frequency::$frequencies,
+			'options'          => Ckan_Backend_Frequency::get_frequencies(),
 		) );
 
 		$temporals_group = $cmb->add_field( array(
@@ -583,6 +583,9 @@ class Ckan_Backend_Local_Dataset {
 			'id'   => 'issued',
 			'desc' => __( 'Date when dataset was issued.', 'ogdch' ),
 			'type' => 'text_date_timestamp',
+			'attributes' => array(
+				'required' => 'required',
+			),
 			//'date_format' => 'd.m.Y', // TODO date_format is still buggy in the CMB2 plugin
 		) );
 
@@ -600,26 +603,16 @@ class Ckan_Backend_Local_Dataset {
 			'desc'             => 'All rights marked with an asterisk (*) will be published on this portal',
 			'type'             => 'select',
 			'show_option_none' => false,
-			'options'          => array(
-				'NonCommercialAllowed-CommercialAllowed-ReferenceNotRequired'           => __( '* Non-commercial Allowed / Commercial Allowed / Reference Not Required', 'ogdch' ),
-				'NonCommercialAllowed-CommercialAllowed-ReferenceRequired'              => __( '* Non-commercial Allowed / Commercial Allowed / Reference Required', 'ogdch' ),
-				'NonCommercialAllowed-CommercialWithPermission-ReferenceNotRequired'    => __( '* Non-commercial Allowed / Commercial With Permission Allowed / Reference Not Required', 'ogdch' ),
-				'NonCommercialAllowed-CommercialWithPermission-ReferenceRequired'       => __( '* Non-commercial Allowed / Commercial With Permission Allowed / Reference Required', 'ogdch' ),
-				'NonCommercialAllowed-CommercialNotAllowed-ReferenceNotRequired'        => __( 'Non-commercial Allowed / Commercial Not Allowed / Reference Not Required', 'ogdch' ),
-				'NonCommercialAllowed-CommercialNotAllowed-ReferenceRequired'           => __( 'Non-commercial Allowed / Commercial Not Allowed / Reference Required', 'ogdch' ),
-				'NonCommercialNotAllowed-CommercialNotAllowed-ReferenceNotRequired'     => __( 'Non-commercial Not Allowed / Commercial Not Allowed / Reference Not Required', 'ogdch' ),
-				'NonCommercialNotAllowed-CommercialNotAllowed-ReferenceRequired'        => __( 'Non-commercial Not Allowed / Commercial Not Allowed / Reference Required', 'ogdch' ),
-				'NonCommercialNotAllowed-CommercialAllowed-ReferenceNotRequired'        => __( 'Non-commercial Not Allowed / Commercial Allowed / Reference Not Required', 'ogdch' ),
-				'NonCommercialNotAllowed-CommercialAllowed-ReferenceRequired'           => __( 'Non-commercial Not Allowed / Commercial Allowed / Reference Required', 'ogdch' ),
-				'NonCommercialNotAllowed-CommercialWithPermission-ReferenceNotRequired' => __( 'Non-commercial Not Allowed / Commercial With Permission Allowed / Reference Not Required', 'ogdch' ),
-				'NonCommercialNotAllowed-CommercialWithPermission-ReferenceRequired'    => __( 'Non-commercial Not Allowed / Commercial With Permission Allowed / Reference Required', 'ogdch' ),
-			),
+			'options'          => Ckan_Backend_Rights::get_rights(),
 		) );
 
 		$cmb->add_group_field( $distributions_group, array(
 			'name' => __( 'Access URL', 'ogdch' ),
 			'id'   => 'access_url',
 			'type' => 'text_url',
+			'attributes' => array(
+				'required' => 'required',
+			),
 		) );
 
 		$cmb->add_group_field( $distributions_group, array(
