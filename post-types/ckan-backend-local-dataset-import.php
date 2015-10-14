@@ -565,7 +565,7 @@ class Ckan_Backend_Local_Dataset_Import {
 	 *
 	 * @param SimpleXMLElement           $xml XML content from file.
 	 * @param Ckan_Backend_Dataset_Model $dataset The parent dataset object.
-	 * @param string $identifier Identifier of dataset.
+	 * @param string                     $identifier Identifier of dataset.
 	 *
 	 * @return Ckan_Backend_Distribution_Model
 	 *
