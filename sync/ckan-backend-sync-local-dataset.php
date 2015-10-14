@@ -109,8 +109,8 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 					'identifier'   => $resource['identifier'],
 					'title'        => $titles,
 					'description'  => $descriptions,
-					//'issued'       => date( 'c', $issued ),
-					//'modified'     => date( 'c', $modified ),
+					'issued'       => $issued,
+					'modified'     => $modified,
 					'language'     => $resource['languages'],
 					'url'          => $resource['access_url'],
 					'download_url' => $resource['download_url'],
@@ -199,7 +199,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 			$datetime = $datetime['date'];
 		}
 
-		return date( 'Y-m-d', strtotime( $datetime ) );
+		return strtotime( $datetime );
 	}
 
 	/**
