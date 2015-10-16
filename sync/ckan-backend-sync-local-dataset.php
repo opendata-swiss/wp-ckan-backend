@@ -58,6 +58,10 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 			'groups'              => $groups,
 			'state'               => 'active',
 			'private'             => true,
+			// add empty array to fields because we're just doing a package patch (to remove old values)
+			'relations'           => array(),
+			'temporals'           => array(),
+			'see_alsos'           => array(),
 		);
 
 		// only add relations if at least one url field is filled out
