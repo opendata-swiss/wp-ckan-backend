@@ -30,6 +30,9 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		$issued         = $this->prepare_date( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'issued', $load_from_post ) );
 		$modified       = $this->prepare_date( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'modified', $load_from_post ) );
 		$identifier     = Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'identifier', $load_from_post );
+		$relations      = Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'relations', $load_from_post );
+		$temporals      = Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'temporals', $load_from_post );
+		$see_alsos      = Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'see_alsos', $load_from_post );
 
 		$post_name = $post->post_name;
 		if ( empty( $post_name ) ) {
@@ -46,19 +49,29 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 			'publishers'          => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'publishers', $load_from_post ),
 			'contact_points'      => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'contact_points', $load_from_post ),
 			'language'            => $languages,
-			'relations'           => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'relations', $load_from_post ),
 			'tags'                => $tags,
 			'url'                 => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'landing_page', $load_from_post ),
 			'spatial'             => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'spatial', $load_from_post ),
 			'coverage'            => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'coverage', $load_from_post ),
 			'accrual_periodicity' => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'accrual_periodicity', $load_from_post ),
-			'temporals'           => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'temporals', $load_from_post ),
-			'see_alsos'           => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'see_alsos', $load_from_post ),
 			'resources'           => $resources,
 			'groups'              => $groups,
 			'state'               => 'active',
 			'private'             => true,
 		);
+
+		// only add relations if at least one url field is filled out
+		if ( is_array( $relations ) && count( $relations ) > 0 && ! empty( $relations[0]['url'] ) ) {
+			$data['relations'] = $relations;
+		}
+		// only add temporals if at least one start_date field is filled out
+		if ( is_array( $temporals ) && count( $temporals ) > 0 && ! empty( $temporals[0]['start_date'] ) ) {
+			$data['temporals'] = $temporals;
+		}
+		// only add see alsos if at least one dataset_identifier field is filled out
+		if ( is_array( $see_alsos ) && count( $see_alsos ) > 0 && ! empty( $see_alsos[0]['dataset_identifier'] ) ) {
+			$data['see_alsos'] = $see_alsos;
+		}
 
 		$organisation   = $identifier['organisation'];
 		if ( ! empty( $organisation ) ) {
