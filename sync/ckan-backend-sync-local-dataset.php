@@ -237,7 +237,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		}
 
 		// if $datetime is already a timestamp
-		if (is_int($datetime)) {
+		if ( is_int( $datetime ) ) {
 			return $datetime;
 		}
 
