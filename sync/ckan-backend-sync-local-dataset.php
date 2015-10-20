@@ -31,7 +31,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		$modified       = $this->prepare_date( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'modified', $load_from_post ) );
 		$identifier     = Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'identifier', $load_from_post );
 		$relations      = Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'relations', $load_from_post );
-		$temporals      = Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'temporals', $load_from_post );
+		$temporals      = $this->prepare_temporals( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'temporals', $load_from_post ) );
 		$see_alsos      = Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'see_alsos', $load_from_post );
 
 		$post_name = $post->post_name;
@@ -202,6 +202,26 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		}
 
 		return $languages;
+	}
+
+	/**
+	 * Creates CKAN friendly temporals field
+	 *
+	 * @param array $temporals Temporals.
+	 *
+	 * @return array
+	 */
+	protected function prepare_temporals( $temporals ) {
+		$ckan_temporals = array();
+
+		foreach ( $temporals as $temporal ) {
+			$ckan_temporals[] = array(
+				'start_date' => $this->prepare_date( $temporal['start_date'] ),
+				'end_date'   => $this->prepare_date( $temporal['end_date'] ),
+			);
+		}
+
+		return $ckan_temporals;
 	}
 
 	/**
