@@ -390,6 +390,9 @@ class Ckan_Backend_Local_Dataset {
 			'name' => __( 'Label', 'ogdch' ),
 			'id'   => 'label',
 			'type' => 'text',
+			'attributes' => array(
+				'required' => 'required',
+			),
 		) );
 
 		$cmb->add_group_field( $publishers_group, array(
@@ -412,6 +415,9 @@ class Ckan_Backend_Local_Dataset {
 			'name' => __( 'Name', 'ogdch' ),
 			'id'   => 'name',
 			'type' => 'text',
+			'attributes' => array(
+				'required' => 'required',
+			),
 		) );
 
 		$cmb->add_group_field( $contact_points_group, array(
@@ -607,9 +613,9 @@ class Ckan_Backend_Local_Dataset {
 		) );
 
 		$cmb->add_group_field( $distributions_group, array(
-			'name' => __( 'Access URL', 'ogdch' ),
-			'id'   => 'access_url',
-			'type' => 'text_url',
+			'name'       => __( 'Access URL', 'ogdch' ),
+			'id'         => 'access_url',
+			'type'       => 'text_url',
 			'attributes' => array(
 				'required' => 'required',
 			),
