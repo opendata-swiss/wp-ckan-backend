@@ -48,7 +48,7 @@ class Ckan_Backend_Local_Dataset_Export {
 	 * @return bool|int|WP_Error
 	 */
 	public function export_datasets( $post_ids ) {
-
+		$export_file_name = 'opendata.swiss-export';
 		$xml_base = '<?xml version="1.0" encoding="utf-8" ?>';
 		$xml_base .= '<rdf:RDF ';
 
@@ -64,14 +64,17 @@ class Ckan_Backend_Local_Dataset_Export {
 		$catalog = $xml->addChild( 'Catalog', null, $this->namespaces['dcat'] );
 
 		foreach ( $post_ids as $post_id ) {
-			$this->add_dataset( $catalog, $post_id );
+			$dataset_slug = $this->add_dataset( $catalog, $post_id );
+			$export_file_name .= '_' . $dataset_slug;
 		}
 
-		Header('Content-type: text/xml');
-		print($xml->asXML());
+		header('Content-type: text/xml');
+		header('Content-Disposition: attachment; filename="' . $export_file_name . '.xml"');
+		$dom = dom_import_simplexml($xml)->ownerDocument;
+		$dom->formatOutput = TRUE;
+		$formatted_xml = $dom->saveXML();
+		print($formatted_xml);
 		exit();
-
-		return true;
 	}
 
 	/**
@@ -292,5 +295,7 @@ class Ckan_Backend_Local_Dataset_Export {
 				$dataset_xml->addChild( 'language', $dataset_language, $this->namespaces['dct'] );
 			}
 		}
+
+		return $post->post_name;
 	}
 }
