@@ -85,6 +85,12 @@ class Ckan_Backend_Local_Dataset_Export {
 		global $language_priority;
 		$post = get_post( $post_id );
 
+		// prepare array to store all languages from distributions
+		$dataset_languages = array();
+		foreach( $language_priority as $lang ) {
+			$dataset_languages[$lang] = false;
+		}
+
 		$dataset_root_xml = $catalog_xml->addChild( 'dataset', null, $this->namespaces['dcat'] );
 		$dataset_xml = $dataset_root_xml->addChild( 'Dataset', null, $this->namespaces['dcat'] );
 
@@ -167,18 +173,12 @@ class Ckan_Backend_Local_Dataset_Export {
 			}
 		}
 
-		// TODO add calculated <dct:language>
-		// TODO add keywords <dcat:keyword>
-		/*
-        <dcat:keyword xml:lang="de" rdf:about="#eisenbahn">Eisenbahn</dcat:keyword>
-        <dcat:keyword xml:lang="fr" rdf:about="#eisenbahn">Chemin-de-fer</dcat:keyword>
-        <dcat:keyword xml:lang="it" rdf:about="#eisenbahn">Ferrovia</dcat:keyword>
-        <dcat:keyword xml:lang="en" rdf:about="#eisenbahn">Railroad</dcat:keyword>
-        <dcat:keyword xml:lang="de" rdf:about="#nacht">Nacht</dcat:keyword>
-        <dcat:keyword xml:lang="fr" rdf:about="#nacht">Nuit</dcat:keyword>
-        <dcat:keyword xml:lang="it" rdf:about="#nacht">Noche</dcat:keyword>
-        <dcat:keyword xml:lang="en" rdf:about="#nacht">Night</dcat:keyword>
-		 */
+		$tags = wp_get_post_tags( $post->ID );
+		foreach ( $tags as $tag ) {
+			$tag_xml = $dataset_xml->addChild( 'keyword', $tag->name, $this->namespaces['dcat'] );
+			// TODO use correct language of tag
+			$tag_xml->addAttribute( 'xml:lang', 'de', 'xml' );
+		}
 
 		$landing_page = get_post_meta( $post->ID, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'landing_page', true );
 		if ( ! empty( $landing_page ) ) {
@@ -246,23 +246,51 @@ class Ckan_Backend_Local_Dataset_Export {
 				$distribution_modified_xml = $distribution_xml->addChild( 'modified', date( 'c', $distribution['modified'] ), $this->namespaces['dct'] );
 				$distribution_modified_xml->addAttribute( 'rdf:datatype', 'http://www.w3.org/2001/XMLSchema#dateTime', $this->namespaces['rdf'] );
 			}
+
+			foreach ( $distribution['languages'] as $language ) {
+				$distribution_xml->addChild( 'language', $language, $this->namespaces['dct'] );
+				$dataset_languages[$language] = true;
+			}
+
+			if( ! empty( $distribution['access_url'] ) ) {
+				$distribution_accessurl_xml = $distribution_xml->addChild( 'accessURL', $distribution['access_url'], $this->namespaces['dcat'] );
+				$distribution_accessurl_xml->addAttribute( 'rdf:datatype', 'http://www.w3.org/2001/XMLSchema#anyURI', $this->namespaces['rdf'] );
+			}
+			if( ! empty( $distribution['download_url'] ) ) {
+				$distribution_downloadurl_xml = $distribution_xml->addChild( 'downloadURL', $distribution['download_url'], $this->namespaces['dcat'] );
+				$distribution_downloadurl_xml->addAttribute( 'rdf:datatype', 'http://www.w3.org/2001/XMLSchema#anyURI', $this->namespaces['rdf'] );
+			}
+
+			if( ! empty( $distribution['rights'] ) ) {
+				$distribution_rights_xml = $distribution_xml->addChild( 'rights', null, $this->namespaces['dct'] );
+				$distribution_rights_xml->addChild( 'dataLicence', $distribution['rights'], $this->namespaces['odrs'] );
+			}
+
+			if( ! empty( $distribution['license'] ) ) {
+				$distribution_xml->addChild( 'license', $distribution['license'], $this->namespaces['dct'] );
+			}
+
+			if( ! empty( $distribution['byte_size'] ) ) {
+				$distribution_xml->addChild( 'byteSize', $distribution['byte_size'], $this->namespaces['dcat'] );
+			}
+
+			if( ! empty( $distribution['media_type'] ) ) {
+				$distribution_xml->addChild( 'mediaType', $distribution['media_type'], $this->namespaces['dcat'] );
+			}
+
+			if( ! empty( $distribution['format'] ) ) {
+				$distribution_xml->addChild( 'format', $distribution['format'], $this->namespaces['dct'] );
+			}
+
+			if( ! empty( $distribution['coverage'] ) ) {
+				$distribution_xml->addChild( 'coverage', $distribution['coverage'], $this->namespaces['dct'] );
+			}
 		}
 
-
-		/*
-        <dcat:distribution>
-          <dct:language>de</dct:language>
-          <dct:language>en</dct:language>
-          <dcat:accessURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">http://wms.geo.admin.ch/</dcat:accessURL>
-          <dct:rights>
-            <odrs:dataLicence>NonCommercialAllowed-CommercialAllowed-ReferenceNotRequired</odrs:dataLicence>
-          </dct:rights>
-          <dct:license/>
-          <dcat:byteSize>1024</dcat:byteSize>
-          <dcat:mediaType>text/html</dcat:mediaType>
-          <dct:format/>
-          <dct:coverage/>
-        </dcat:distribution>
-		 */
+		foreach( $dataset_languages as $dataset_language => $available ) {
+			if( $available ) {
+				$dataset_xml->addChild( 'language', $dataset_language, $this->namespaces['dct'] );
+			}
+		}
 	}
 }
