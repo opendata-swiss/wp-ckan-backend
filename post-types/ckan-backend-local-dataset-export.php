@@ -30,11 +30,8 @@ class Ckan_Backend_Local_Dataset_Export {
 
 	/**
 	 * Callback for the import of a file.
-	 *
-	 * @return void
 	 */
 	public function __construct() {
-		//Define bulk actions for custom-post-type property
 		$bulk_actions = new Seravo_Custom_Bulk_Action( array( 'post_type' => Ckan_Backend_Local_Dataset::POST_TYPE ) );
 
 		$bulk_actions->register_bulk_action( array(
@@ -42,6 +39,7 @@ class Ckan_Backend_Local_Dataset_Export {
 			'admin_notice' => __( 'Datasets exported', 'ogdch' ),
 			'callback'     => array( $this, 'export_datasets' ),
 		));
+
 		$bulk_actions->init();
 	}
 
