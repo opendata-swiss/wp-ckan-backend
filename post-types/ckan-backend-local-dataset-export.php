@@ -76,6 +76,9 @@ class Ckan_Backend_Local_Dataset_Export {
 		// @codingStandardsIgnoreStart
 		print( $formatted_xml );
 		// @codingStandardsIgnoreEnd
+
+		// We have to exit here because we changed the header to start a file download and this can take some time.
+		// If we would redirect here (which happens after the return statement) the download wouldn't start.
 		exit();
 	}
 
