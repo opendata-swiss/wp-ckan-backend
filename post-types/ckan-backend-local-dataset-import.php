@@ -436,7 +436,7 @@ class Ckan_Backend_Local_Dataset_Import {
 				$dataset->add_keyword( (string) $keyword );
 			}
 			$dataset->set_landing_page( (string) $this->get_single_element_from_xpath( $xml, './dcat:landingPage' ) );
-			$dataset->set_spatial( (string) $this->get_single_element_from_xpath( $xml, './dct:spatial/@rdf:resource' ) );
+			$dataset->set_spatial( (string) $this->get_single_element_from_xpath( $xml, './dct:spatial' ) );
 			$dataset->set_coverage( (string) $this->get_single_element_from_xpath( $xml, './dct:coverage' ) );
 			$temporals = $xml->xpath( './dct:temporal/dct:PeriodOfTime' );
 			foreach ( $temporals as $temporal_xml ) {
