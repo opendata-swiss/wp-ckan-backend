@@ -32,15 +32,17 @@ class Ckan_Backend_Local_Dataset_Export {
 	 * Callback for the import of a file.
 	 */
 	public function __construct() {
-		$bulk_actions = new Seravo_Custom_Bulk_Action( array( 'post_type' => Ckan_Backend_Local_Dataset::POST_TYPE ) );
+		if( class_exists( 'Seravo_Custom_Bulk_Action' ) ) {
+			$bulk_actions = new Seravo_Custom_Bulk_Action( array( 'post_type' => Ckan_Backend_Local_Dataset::POST_TYPE ) );
 
-		$bulk_actions->register_bulk_action( array(
-			'menu_text'    => __( 'Export', 'ogdch' ),
-			'admin_notice' => __( 'Datasets exported', 'ogdch' ),
-			'callback'     => array( $this, 'export_datasets' ),
-		));
+			$bulk_actions->register_bulk_action( array(
+				'menu_text'    => __( 'Export', 'ogdch' ),
+				'admin_notice' => __( 'Datasets exported', 'ogdch' ),
+				'callback'     => array( $this, 'export_datasets' ),
+			));
 
-		$bulk_actions->init();
+			$bulk_actions->init();
+		}
 	}
 
 	/**
