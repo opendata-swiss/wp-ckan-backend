@@ -218,7 +218,7 @@ class Ckan_Backend_Local_Dataset_Import {
 	 */
 	public function import_datasets( $xml ) {
 		$imported_datasets = array();
-		$datasets = $xml->xpath( '//dcat:Catalog/dcat:dataset/dcat:Dataset' );
+		$datasets = $xml->xpath( '/rdf:RDF/dcat:Catalog/dcat:dataset/dcat:Dataset' );
 		foreach ( $datasets as $dataset ) {
 			$imported_datasets[] = $this->import_dataset( $dataset );
 		}
@@ -288,13 +288,14 @@ class Ckan_Backend_Local_Dataset_Import {
 			'tags_input' => $dataset->get_keywords(),
 		);
 
-		if ( '' !== $dataset->get_issued() ) {
-			$dataset_args['post_date'] = date( 'Y-m-d H:i:s', $dataset->get_issued() );
+		$issued = $dataset->get_issued();
+		if ( ! empty( $issued ) ) {
+			$dataset_args['post_date'] = date( 'Y-m-d H:i:s', $issued );
 			// We also have to set post_date_gmt to get post_status update to work correctly
-			$dataset_args['post_date_gmt'] = gmdate( 'Y-m-d H:i:s', $dataset->get_issued() );
+			$dataset_args['post_date_gmt'] = gmdate( 'Y-m-d H:i:s', $issued );
 		}
 		// set post status to future if needed
-		if ( $dataset->get_issued() > time() ) {
+		if ( $issued > time() ) {
 			if ( 'publish' === $post_status  ) {
 				$dataset_args['post_status'] = 'future';
 				$post_status = 'future';
@@ -342,8 +343,9 @@ class Ckan_Backend_Local_Dataset_Import {
 			'tags_input'   => $dataset->get_keywords(),
 		);
 
-		if ( '' !== $dataset->get_issued() ) {
-			$dataset_args['post_date'] = date( 'Y-m-d H:i:s', $dataset->get_issued() );
+		$issued = $dataset->get_issued();
+		if ( ! empty( $issued ) ) {
+			$dataset_args['post_date'] = date( 'Y-m-d H:i:s', $issued );
 		} else {
 			$dataset_args['post_date'] = date( 'Y-m-d H:i:s' );
 		}
@@ -380,7 +382,7 @@ class Ckan_Backend_Local_Dataset_Import {
 
 		try {
 			$dataset = new Ckan_Backend_Dataset_Model();
-			$identifier = (string) $this->get_single_element_from_xpath( $xml, 'dct:identifier' );
+			$identifier = (string) $this->get_single_element_from_xpath( $xml, './dct:identifier' );
 			if ( '' === $identifier ) {
 				throw new Exception( __( 'Please provide an identifier for the dataset (eg. <dct:title xml:lang="en">My Dataset</dct:title>).  Dataset [no identifier] not imported', 'ogdch' ) );
 			}
@@ -395,8 +397,8 @@ class Ckan_Backend_Local_Dataset_Import {
 			$this->validate_organisation( $splitted_identifier['organisation'], $identifier );
 			$dataset->set_identifier( $splitted_identifier );
 			foreach ( $language_priority as $lang ) {
-				$dataset->set_title( (string) $this->get_single_element_from_xpath( $xml, 'dct:title[@xml:lang="' . $lang . '"]' ), $lang );
-				$dataset->set_description( (string) $this->get_single_element_from_xpath( $xml, 'dct:description[@xml:lang="' . $lang . '"]' ), $lang );
+				$dataset->set_title( (string) $this->get_single_element_from_xpath( $xml, './dct:title[@xml:lang="' . $lang . '"]' ), $lang );
+				$dataset->set_description( (string) $this->get_single_element_from_xpath( $xml, './dct:description[@xml:lang="' . $lang . '"]' ), $lang );
 			}
 			if ( '' === $dataset->get_main_title() ) {
 				throw new Exception( sprintf(
@@ -404,19 +406,19 @@ class Ckan_Backend_Local_Dataset_Import {
 					$identifier
 				) );
 			}
-			$issued = strtotime( (string) $this->get_single_element_from_xpath( $xml, 'dct:issued' ) );
+			$issued = strtotime( (string) $this->get_single_element_from_xpath( $xml, './dct:issued' ) );
 			$dataset->set_issued( $issued );
-			$modified = strtotime( (string) $this->get_single_element_from_xpath( $xml, 'dct:modified' ) );
+			$modified = strtotime( (string) $this->get_single_element_from_xpath( $xml, './dct:modified' ) );
 			$dataset->set_modified( $modified );
-			$publishers = $xml->xpath( 'dct:publisher' );
+			$publishers = $xml->xpath( './dct:publisher' );
 			foreach ( $publishers as $publisher_xml ) {
 				$dataset->add_publisher( $this->get_publisher_object( $publisher_xml ) );
 			}
-			$contact_points = $xml->xpath( 'dcat:contactPoint/*' );
+			$contact_points = $xml->xpath( './dcat:contactPoint/*' );
 			foreach ( $contact_points as $contact_point_xml ) {
 				$dataset->add_contact_point( $this->get_contact_point_object( $contact_point_xml ) );
 			}
-			$themes = $xml->xpath( 'dcat:theme' );
+			$themes = $xml->xpath( './dcat:theme' );
 			foreach ( $themes as $theme ) {
 				if ( is_object( $theme ) ) {
 					$theme_attributes = $theme->attributes( 'rdf', true );
@@ -425,28 +427,28 @@ class Ckan_Backend_Local_Dataset_Import {
 					$dataset->add_theme( $this->get_theme_name( $theme_uri, $identifier ) );
 				}
 			}
-			$relations = $xml->xpath( 'dct:relation/rdf:Description' );
+			$relations = $xml->xpath( './dct:relation/rdf:Description' );
 			foreach ( $relations as $relation_xml ) {
 				$dataset->add_relation( $this->get_relation_object( $relation_xml ) );
 			}
-			$keywords = $xml->xpath( 'dcat:keyword' );
+			$keywords = $xml->xpath( './dcat:keyword' );
 			foreach ( $keywords as $keyword ) {
 				$dataset->add_keyword( (string) $keyword );
 			}
-			$dataset->set_landing_page( (string) $this->get_single_element_from_xpath( $xml, 'dcat:landingPage' ) );
-			$dataset->set_spatial( (string) $this->get_single_element_from_xpath( $xml, 'dct:spatial/@rdf:resource' ) );
-			$dataset->set_coverage( (string) $this->get_single_element_from_xpath( $xml, 'dct:coverage' ) );
-			$temporals = $xml->xpath( 'dct:temporal/dct:PeriodOfTime' );
+			$dataset->set_landing_page( (string) $this->get_single_element_from_xpath( $xml, './dcat:landingPage' ) );
+			$dataset->set_spatial( (string) $this->get_single_element_from_xpath( $xml, './dct:spatial' ) );
+			$dataset->set_coverage( (string) $this->get_single_element_from_xpath( $xml, './dct:coverage' ) );
+			$temporals = $xml->xpath( './dct:temporal/dct:PeriodOfTime' );
 			foreach ( $temporals as $temporal_xml ) {
 				$dataset->add_temporal( $this->get_temporal_object( $temporal_xml ) );
 			}
-			$dataset->set_accrual_periodicity( (string) $this->get_single_element_from_xpath( $xml, 'dct:accrualPeriodicity/@rdf:resource' ) );
-			$see_alsos = $xml->xpath( 'rdfs:seeAlso' );
+			$dataset->set_accrual_periodicity( (string) $this->get_single_element_from_xpath( $xml, './dct:accrualPeriodicity/@rdf:resource' ) );
+			$see_alsos = $xml->xpath( './rdfs:seeAlso' );
 			foreach ( $see_alsos as $see_also ) {
 				$dataset->add_see_also( (string) $see_also );
 			}
 
-			$distributions = $xml->xpath( 'dcat:distribution' );
+			$distributions = $xml->xpath( './dcat:distribution' );
 			foreach ( $distributions as $distribution_xml ) {
 				$dataset->add_distribution( $this->get_distribution_object( $distribution_xml, $dataset, $identifier ) );
 			}
@@ -506,8 +508,8 @@ class Ckan_Backend_Local_Dataset_Import {
 	 */
 	protected function get_publisher_object( $xml ) {
 		$publisher                     = new Ckan_Backend_Publisher_Model();
-		$publisher->set_termdat_reference( (string) $this->get_single_element_from_xpath( $xml, 'rdf:Description/@rdf:about' ) );
-		$publisher->set_label( (string) $this->get_single_element_from_xpath( $xml, 'rdf:Description/rdfs:label' ) );
+		$publisher->set_termdat_reference( (string) $this->get_single_element_from_xpath( $xml, './rdf:Description/@rdf:about' ) );
+		$publisher->set_label( (string) $this->get_single_element_from_xpath( $xml, './rdf:Description/rdfs:label' ) );
 
 		return $publisher;
 	}
@@ -521,8 +523,8 @@ class Ckan_Backend_Local_Dataset_Import {
 	 */
 	protected function get_contact_point_object( $xml ) {
 		$contact_point = new Ckan_Backend_ContactPoint_Model();
-		$contact_point->set_name( (string) $this->get_single_element_from_xpath( $xml, 'vcard:fn' ) );
-		$contact_point_email = $this->get_single_element_from_xpath( $xml, 'vcard:hasEmail/@rdf:resource' );
+		$contact_point->set_name( (string) $this->get_single_element_from_xpath( $xml, './vcard:fn' ) );
+		$contact_point_email = $this->get_single_element_from_xpath( $xml, './vcard:hasEmail/@rdf:resource' );
 		$contact_point->set_email( str_replace( 'mailto:', '', (string) $contact_point_email ) );
 
 		return $contact_point;
@@ -537,8 +539,8 @@ class Ckan_Backend_Local_Dataset_Import {
 	 */
 	protected function get_relation_object( $xml ) {
 		$relation = new Ckan_Backend_Relation_Model();
-		$relation->set_url( (string) $this->get_single_element_from_xpath( $xml, '@rdf:about' ) );
-		$relation->set_label( (string) $this->get_single_element_from_xpath( $xml, 'rdfs:label' ) );
+		$relation->set_url( (string) $this->get_single_element_from_xpath( $xml, './@rdf:about' ) );
+		$relation->set_label( (string) $this->get_single_element_from_xpath( $xml, './rdfs:label' ) );
 
 		return $relation;
 	}
@@ -552,9 +554,9 @@ class Ckan_Backend_Local_Dataset_Import {
 	 */
 	protected function get_temporal_object( $xml ) {
 		$temporal   = new Ckan_Backend_Temporal_Model();
-		$start_date = strtotime( (string) $this->get_single_element_from_xpath( $xml, 'schema:startDate' ) );
+		$start_date = strtotime( (string) $this->get_single_element_from_xpath( $xml, './schema:startDate' ) );
 		$temporal->set_start_date( $start_date );
-		$end_date = strtotime( (string) $this->get_single_element_from_xpath( $xml, 'schema:endDate' ) );
+		$end_date = strtotime( (string) $this->get_single_element_from_xpath( $xml, './schema:endDate' ) );
 		$temporal->set_end_date( $end_date );
 
 		return $temporal;
@@ -575,37 +577,31 @@ class Ckan_Backend_Local_Dataset_Import {
 		global $language_priority;
 
 		$distribution = new Ckan_Backend_Distribution_Model();
-		$distribution->set_identifier( (string) $this->get_single_element_from_xpath( $xml, 'dct:identifier' ) );
+		$distribution->set_identifier( (string) $this->get_single_element_from_xpath( $xml, './dct:identifier' ) );
 		foreach ( $language_priority as $lang ) {
-			$title = (string) $this->get_single_element_from_xpath( $xml, 'dct:title[@xml:lang="' . $lang . '"]' );
-			if ( empty( $title ) ) {
-				$title = $dataset->get_title( $lang );
-			}
+			$title = (string) $this->get_single_element_from_xpath( $xml, './dct:title[@xml:lang="' . $lang . '"]' );
 			$distribution->set_title( $title, $lang );
-			$description = (string) $this->get_single_element_from_xpath( $xml, 'dct:description[@xml:lang="' . $lang . '"]' );
-			if ( empty( $description ) ) {
-				$description = $dataset->get_description( $lang );
-			}
+			$description = (string) $this->get_single_element_from_xpath( $xml, './dct:description[@xml:lang="' . $lang . '"]' );
 			$distribution->set_description( $description, $lang );
 		}
-		$languages = $xml->xpath( 'dct:language' );
+		$languages = $xml->xpath( './dct:language' );
 		foreach ( $languages as $language ) {
 			$distribution->add_language( (string) $language );
 		}
 
-		$issued = strtotime( (string) $this->get_single_element_from_xpath( $xml, 'dct:issued' ) );
+		$issued = strtotime( (string) $this->get_single_element_from_xpath( $xml, './dct:issued' ) );
 		$distribution->set_issued( $issued );
-		$modified = strtotime( (string) $this->get_single_element_from_xpath( $xml, 'dct:modified' ) );
+		$modified = strtotime( (string) $this->get_single_element_from_xpath( $xml, './dct:modified' ) );
 		$distribution->set_modified( $modified );
-		$access_urls = $xml->xpath( 'dcat:accessURL' );
+		$access_urls = $xml->xpath( './dcat:accessURL' );
 		foreach ( $access_urls as $access_url ) {
 			$distribution->add_access_url( (string) $access_url );
 		}
-		$download_urls = $xml->xpath( 'dcat:downloadURL' );
+		$download_urls = $xml->xpath( './dcat:downloadURL' );
 		foreach ( $download_urls as $download_url ) {
 			$distribution->add_download_url( (string) $download_url );
 		}
-		$rights = (string) $this->get_single_element_from_xpath( $xml, 'dct:rights/odrs:dataLicence' );
+		$rights = (string) $this->get_single_element_from_xpath( $xml, './dct:rights/odrs:dataLicence' );
 		if ( ! array_key_exists( $rights, Ckan_Backend_Rights::get_rights() ) ) {
 			throw new Exception( sprintf(
 				__( 'Right %1$s does not exist. Dataset %2$s not imported.', 'ogdch' ),
@@ -614,11 +610,11 @@ class Ckan_Backend_Local_Dataset_Import {
 			) );
 		}
 		$distribution->set_rights( $rights );
-		$distribution->set_license( (string) $this->get_single_element_from_xpath( $xml, 'dct:license' ) );
-		$distribution->set_byte_size( (string) $this->get_single_element_from_xpath( $xml, 'dcat:byteSize' ) );
-		$distribution->set_media_type( (string) $this->get_single_element_from_xpath( $xml, 'dcat:mediaType' ) );
-		$distribution->set_format( (string) $this->get_single_element_from_xpath( $xml, 'dct:format' ) );
-		$distribution->set_coverage( (string) $this->get_single_element_from_xpath( $xml, 'dct:coverage' ) );
+		$distribution->set_license( (string) $this->get_single_element_from_xpath( $xml, './dct:license' ) );
+		$distribution->set_byte_size( (string) $this->get_single_element_from_xpath( $xml, './dcat:byteSize' ) );
+		$distribution->set_media_type( (string) $this->get_single_element_from_xpath( $xml, './dcat:mediaType' ) );
+		$distribution->set_format( (string) $this->get_single_element_from_xpath( $xml, './dct:format' ) );
+		$distribution->set_coverage( (string) $this->get_single_element_from_xpath( $xml, './dct:coverage' ) );
 
 		return $distribution;
 	}
