@@ -67,6 +67,8 @@ class Ckan_Backend_Local_Dataset_Export {
 			$dataset_slug = $this->add_dataset( $catalog, $post_id );
 			$export_file_name .= '_' . $dataset_slug;
 		}
+		// limit export filename to 128 characters.
+		$export_file_name = substr( $export_file_name, 0, 128 );
 
 		header( 'Content-type: text/xml' );
 		header( 'Content-Disposition: attachment; filename="' . $export_file_name . '.xml"' );
