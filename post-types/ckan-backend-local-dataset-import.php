@@ -288,13 +288,14 @@ class Ckan_Backend_Local_Dataset_Import {
 			'tags_input' => $dataset->get_keywords(),
 		);
 
-		if ( '' !== $dataset->get_issued() ) {
-			$dataset_args['post_date'] = date( 'Y-m-d H:i:s', $dataset->get_issued() );
+		$issued = $dataset->get_issued();
+		if ( ! empty( $issued ) ) {
+			$dataset_args['post_date'] = date( 'Y-m-d H:i:s', $issued );
 			// We also have to set post_date_gmt to get post_status update to work correctly
-			$dataset_args['post_date_gmt'] = gmdate( 'Y-m-d H:i:s', $dataset->get_issued() );
+			$dataset_args['post_date_gmt'] = gmdate( 'Y-m-d H:i:s', $issued );
 		}
 		// set post status to future if needed
-		if ( $dataset->get_issued() > time() ) {
+		if ( $issued > time() ) {
 			if ( 'publish' === $post_status  ) {
 				$dataset_args['post_status'] = 'future';
 				$post_status = 'future';
@@ -342,8 +343,9 @@ class Ckan_Backend_Local_Dataset_Import {
 			'tags_input'   => $dataset->get_keywords(),
 		);
 
-		if ( '' !== $dataset->get_issued() ) {
-			$dataset_args['post_date'] = date( 'Y-m-d H:i:s', $dataset->get_issued() );
+		$issued = $dataset->get_issued();
+		if ( ! empty( $issued ) ) {
+			$dataset_args['post_date'] = date( 'Y-m-d H:i:s', $issued );
 		} else {
 			$dataset_args['post_date'] = date( 'Y-m-d H:i:s' );
 		}
