@@ -32,7 +32,7 @@ class Ckan_Backend_Local_Dataset_Export {
 	 * Callback for the import of a file.
 	 */
 	public function __construct() {
-		if( class_exists( 'Seravo_Custom_Bulk_Action' ) ) {
+		if ( class_exists( 'Seravo_Custom_Bulk_Action' ) ) {
 			$bulk_actions = new Seravo_Custom_Bulk_Action( array( 'post_type' => Ckan_Backend_Local_Dataset::POST_TYPE ) );
 
 			$bulk_actions->register_bulk_action( array(
