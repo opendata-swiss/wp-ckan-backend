@@ -107,7 +107,7 @@ class Ckan_Backend_Local_Dataset {
 	 */
 	public function cmb2_render_callback_dataset_search( $field, $escaped_value, $object_id, $object_type, $field_type_object ) {
 		?>
-		<select class="search-box"
+		<select class="dataset_search_box"
 		        style="width: 50%"
 		        name="<?php esc_attr_e( $field->args['_name'] ); ?>"
 		        id="<?php esc_attr_e( $field->args['_id'] ); ?>">

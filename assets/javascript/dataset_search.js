@@ -31,3 +31,19 @@ var select2_options = {
         return m;
     },
 };
+
+jQuery( document ).ready(function( $ ) {
+    $('.dataset_search_box').each(function(index) {
+        // get parent repeatable group table for current dataset_search box
+        var repeatableGroupTable = $( this ).closest('.cmb-repeatable-group');
+        repeatableGroupTable
+            .on('cmb2_add_row', function (event, row) {
+                var name = $(row).find('.dataset_search_box')[0].name;
+                // remove the previous select2 rendering, as CMB2 copies everything
+                $("[name='" + name + "'] + .select2-container").remove();
+                var new_select = $("[name='" + name + "'").select2(select2_options);
+                // select empty value as original is copied
+                new_select.val('').trigger('change');
+            });
+    });
+});
