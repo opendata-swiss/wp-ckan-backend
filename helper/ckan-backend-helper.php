@@ -81,7 +81,7 @@ class Ckan_Backend_Helper {
 	 * @return array All group instances from CKAN
 	 */
 	public static function get_group_form_field_options() {
-		return Ckan_Backend_Helper::get_form_field_options( Ckan_Backend_Local_Group::POST_TYPE, Ckan_Backend_Local_Group::FIELD_PREFIX );
+		return self::get_form_field_options( Ckan_Backend_Local_Group::POST_TYPE, Ckan_Backend_Local_Group::FIELD_PREFIX );
 	}
 
 	/**
@@ -90,7 +90,7 @@ class Ckan_Backend_Helper {
 	 * @return array All organisation instances from CKAN
 	 */
 	public static function get_organisation_form_field_options() {
-		return Ckan_Backend_Helper::get_form_field_options( Ckan_Backend_Local_Organisation::POST_TYPE, Ckan_Backend_Local_Organisation::FIELD_PREFIX );
+		return self::get_form_field_options( Ckan_Backend_Local_Organisation::POST_TYPE, Ckan_Backend_Local_Organisation::FIELD_PREFIX );
 	}
 
 	/**
@@ -154,45 +154,42 @@ class Ckan_Backend_Helper {
 		if ( empty( $identifier ) ) {
 			return '';
 		}
-		$transient_name = Ckan_Backend::$plugin_slug . '_dataset_title_' . $identifier;
-		if ( false === ( $dataset_title = get_transient( $transient_name ) ) ) {
-			$identifier_array = Ckan_Backend_Helper::split_identifier( $identifier );
-			$dataset_search_args = array(
-				// @codingStandardsIgnoreStart
-				'meta_key'    => Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'identifier',
-				'meta_value'  => maybe_serialize( $identifier_array ),
-				// @codingStandardsIgnoreEnd
-				'post_type'   => Ckan_Backend_Local_Dataset::POST_TYPE,
-				'post_status' => 'any',
-			);
-			$datasets            = get_posts( $dataset_search_args );
+		$dataset = self::get_dataset( $identifier );
 
-			if ( is_array( $datasets ) && count( $datasets ) > 0 ) {
-				$ckan_id = get_post_meta( $datasets[0]->ID, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'ckan_id', true );
+		return self::get_localized_text( $dataset['title'] );
+	}
 
-				if ( empty( $ckan_id ) ) {
-					return '';
-				}
+	/**
+	 * Returns dataset information of given dataset identifier.
+	 *
+	 * @param string $identifier Identifier of dataset as string.
+	 *
+	 * @return array|boolean
+	 */
+	public static function get_dataset( $identifier ) {
+		if ( empty( $identifier ) ) {
+			return '';
+		}
+		$transient_name = Ckan_Backend::$plugin_slug . '_dataset_' . $identifier;
+		if ( false === ( $dataset = get_transient( $transient_name ) ) ) {
+			$endpoint = CKAN_API_ENDPOINT . 'ogdch_dataset_by_identifier';
+			$data     = array( 'identifier' => $identifier );
+			$data     = wp_json_encode( $data );
 
-				$endpoint = CKAN_API_ENDPOINT . 'package_show';
-				$data     = array( 'id' => $ckan_id );
-				$data     = wp_json_encode( $data );
+			$response = self::do_api_request( $endpoint, $data );
+			$errors   = self::check_response_for_errors( $response );
 
-				$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
-				$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
+			if ( 0 === count( $errors ) ) {
+				$dataset = $response['result'];
 
-				if ( 0 === count( $errors ) ) {
-					$dataset_title = $response['result']['title'];
-
-					// save result in transient
-					set_transient( $transient_name, $dataset_title, 1 * HOUR_IN_SECONDS );
-				} else {
-					self::print_error_messages( $errors );
-				}
+				// save result in transient
+				set_transient( $transient_name, $dataset, 1 * HOUR_IN_SECONDS );
+			} else {
+				self::print_error_messages( $errors );
 			}
 		}
 
-		return self::get_localized_text( $dataset_title );
+		return $dataset;
 	}
 
 	/**
@@ -220,7 +217,7 @@ class Ckan_Backend_Helper {
 			);
 			$organisations = get_posts( $args );
 			if ( count( $organisations ) > 0 ) {
-				$organization_title = get_post_meta( $organisations[0]->ID, Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'title_' . Ckan_Backend_Helper::get_current_language(), true );
+				$organization_title = get_post_meta( $organisations[0]->ID, Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'title_' . self::get_current_language(), true );
 				// if title in current language is not set -> find fallback title in other language
 				if ( empty( $organization_title ) ) {
 					global $language_priority;
@@ -253,7 +250,7 @@ class Ckan_Backend_Helper {
 	 * @return bool
 	 */
 	public static function group_exists( $name ) {
-		return Ckan_Backend_Helper::object_exists( Ckan_Backend_Local_Group::POST_TYPE, Ckan_Backend_Local_Group::FIELD_PREFIX, $name );
+		return self::object_exists( Ckan_Backend_Local_Group::POST_TYPE, Ckan_Backend_Local_Group::FIELD_PREFIX, $name );
 	}
 
 	/**
@@ -264,7 +261,7 @@ class Ckan_Backend_Helper {
 	 * @return bool
 	 */
 	public static function organisation_exists( $name ) {
-		return Ckan_Backend_Helper::object_exists( Ckan_Backend_Local_Organisation::POST_TYPE, Ckan_Backend_Local_Organisation::FIELD_PREFIX, $name );
+		return self::object_exists( Ckan_Backend_Local_Organisation::POST_TYPE, Ckan_Backend_Local_Organisation::FIELD_PREFIX, $name );
 	}
 
 	/**

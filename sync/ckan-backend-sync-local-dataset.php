@@ -253,7 +253,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		// Deletes all transients for this post-type instance.
 		$identifier = get_post_meta( $post->ID, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'identifier', true );
 		if ( ! empty( $identifier ) ) {
-			delete_transient( Ckan_Backend::$plugin_slug . '_dataset_title_' . $identifier['original_identifier'] . '@' . $identifier['organisation'] );
+			delete_transient( Ckan_Backend::$plugin_slug . '_dataset_' . $identifier['original_identifier'] . '@' . $identifier['organisation'] );
 		}
 	}
 }
