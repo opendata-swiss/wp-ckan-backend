@@ -96,7 +96,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 
 		foreach ( $resources as $resource ) {
 			// Check if at least one mandatory field (access_url) is filled out. Because we don't want to add empty repeatable fields.
-			if( '' !== $resource['access_url'] ) {
+			if ( ! empty( $resource['access_url'] ) ) {
 				$titles = array();
 				foreach ( $language_priority as $lang ) {
 					$titles[ $lang ] = $resource[ 'title_' . $lang ];
@@ -182,7 +182,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 
 		foreach ( $resources as $resource ) {
 			// Check if at least one mandatory field (access_url) is filled out. Because we don't want to add empty repeatable fields.
-			if( '' !== $resource['access_url'] ) {
+			if ( ! empty( $resource['access_url'] ) ) {
 				$languages = array_merge( $languages, $resource['languages'] );
 			}
 		}

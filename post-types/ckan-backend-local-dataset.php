@@ -117,10 +117,10 @@ class Ckan_Backend_Local_Dataset {
 			<?php endif; ?>
 		</select>
 		<?php
-		if( is_object( $field->group ) ) {
+		if ( is_object( $field->group ) ) {
 			// Select2 library doesn't send field if it's empty but CMB2 won't save repeatable meta field if it's not in $_POST. So we have to add a dummy_value to the first repeatable item.
 			?>
-			<input type="hidden" name="<?php echo $field->group->args['id']; ?>[0][dummy_value]" />
+			<input type="hidden" name="<?php esc_attr_e( $field->group->args['id'] ); ?>[0][dummy_value]" />
 			<?php
 		}
 		?>
