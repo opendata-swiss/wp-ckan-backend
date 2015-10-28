@@ -409,10 +409,6 @@ class Ckan_Backend_Helper {
 	 * @return string
 	 */
 	public static function get_current_language() {
-		if ( function_exists( 'pll_current_language' ) ) {
-			return pll_current_language();
-		} else {
-			return substr( get_locale(), 0, 2 );
-		}
+		return substr( get_locale(), 0, 2 );
 	}
 }
