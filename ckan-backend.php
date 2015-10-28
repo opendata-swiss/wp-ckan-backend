@@ -251,9 +251,11 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 
 			wp_register_script( 'dataset-search', plugins_url( 'assets/javascript/dataset_search.js', __FILE__ ), array( 'select2' ), null, false );
 			wp_enqueue_script( 'dataset-search' );
-			wp_localize_script( 'dataset-search', 'ogdConfig',
+			wp_localize_script( 'dataset-search', 'datasetSearchConfig',
 				array(
 					'CKAN_API_ENDPOINT' => CKAN_API_ENDPOINT,
+					'currentLanguage'  => Ckan_Backend_Helper::get_current_language(),
+					'placeholder'       => __( 'Search dataset...', 'ogdch' ),
 				)
 			);
 
