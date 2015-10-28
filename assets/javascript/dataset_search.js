@@ -9,7 +9,7 @@ var select2_options = {
         processResults: function(result, page) {
             return {
                 results: jQuery.map(result.result.results, function (obj) {
-                    obj.id = obj.name;
+                    obj.id = obj.identifier;
                     obj.text = obj.title[datasetSearchConfig.currentLanguage];
                     obj.title = obj.title[datasetSearchConfig.currentLanguage];
                     return obj;
