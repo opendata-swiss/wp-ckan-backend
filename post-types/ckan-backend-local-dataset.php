@@ -36,6 +36,8 @@ class Ckan_Backend_Local_Dataset {
 
 		// add custom CMB2 field type dataset_identifier
 		add_action( 'cmb2_render_dataset_identifier', array( $this, 'cmb2_render_callback_dataset_identifier' ), 10, 5 );
+		// add custom CMB2 field type dataset_search
+		add_action( 'cmb2_render_dataset_search', array( $this, 'cmb2_render_callback_dataset_search' ), 10, 5 );
 
 		// initialize local dataset sync
 		new Ckan_Backend_Sync_Local_Dataset( self::POST_TYPE, self::FIELD_PREFIX );
@@ -92,6 +94,34 @@ class Ckan_Backend_Local_Dataset {
 		</div>
 		<?php
 		echo esc_attr( $field_type_object->_desc( true ) );
+	}
+
+	/**
+	 * Renders CMB2 field of type dataset_search
+	 *
+	 * @param CMB2_Field $field The passed in `CMB2_Field` object.
+	 * @param mixed      $escaped_value The value of this field escaped. It defaults to `sanitize_text_field`.
+	 * @param int        $object_id The ID of the current object.
+	 * @param string     $object_type The type of object you are working with.
+	 * @param CMB2_Types $field_type_object This `CMB2_Types` object.
+	 */
+	public function cmb2_render_callback_dataset_search( $field, $escaped_value, $object_id, $object_type, $field_type_object ) {
+		?>
+		<select class="search-box"
+		        style="width: 50%"
+		        name="<?php esc_attr_e( $field->args['_name'] ); ?>"
+		        id="<?php esc_attr_e( $field->args['_id'] ); ?>">
+			<?php if ( $escaped_value ) : ?>
+				<?php $title = Ckan_Backend_Helper::get_dataset_title( $escaped_value ); ?>
+				<option selected="selected" value="<?php esc_attr_e( $escaped_value )?>"><?php esc_html_e( $title ); ?></option>
+			<?php endif; ?>
+		</select>
+		<script type="text/javascript">
+			(function($) {
+				$("[name='<?php esc_attr_e( $field->args['_name'] ); ?>'").select2(select2_options);
+			})( jQuery );
+		</script>
+		<?php
 	}
 
 	/**
@@ -536,7 +566,7 @@ class Ckan_Backend_Local_Dataset {
 		$cmb->add_group_field( $see_alsos_group, array(
 			'name' => __( 'Dataset Identifier', 'ogdch' ),
 			'id'   => 'dataset_identifier',
-			'type' => 'text',
+			'type' => 'dataset_search',
 		) );
 
 		/* Resources */
