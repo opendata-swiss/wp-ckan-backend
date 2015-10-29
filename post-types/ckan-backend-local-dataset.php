@@ -294,7 +294,12 @@ class Ckan_Backend_Local_Dataset {
 			'description'         => __( 'Contains Data from the CKAN Instance', 'ogdch' ),
 			'labels'              => $labels,
 			'supports'            => array( 'title' ),
-			'taxonomies'          => array( 'post_tag' ),
+			'taxonomies'          => array(
+				Ckan_Backend_Tag_De::TAXONOMY,
+				Ckan_Backend_Tag_En::TAXONOMY,
+				Ckan_Backend_Tag_Fr::TAXONOMY,
+				Ckan_Backend_Tag_It::TAXONOMY,
+			),
 			'hierarchical'        => false,
 			'public'              => true,
 			'show_ui'             => true,

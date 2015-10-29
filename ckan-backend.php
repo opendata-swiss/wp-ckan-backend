@@ -230,6 +230,10 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 
 			Ckan_Backend_Frequency::init();
 			Ckan_Backend_Rights::init();
+			new Ckan_Backend_Tag_De();
+			new Ckan_Backend_Tag_En();
+			new Ckan_Backend_Tag_Fr();
+			new Ckan_Backend_Tag_It();
 			new Ckan_Backend_Local_Dataset();
 			new Ckan_Backend_Local_Group();
 			new Ckan_Backend_Local_Organisation();
@@ -385,6 +389,11 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			require_once plugin_dir_path( __FILE__ ) . 'model/ckan-backend-dataset.php';
 			require_once plugin_dir_path( __FILE__ ) . 'taxonomies/ckan-backend-frequency.php';
 			require_once plugin_dir_path( __FILE__ ) . 'taxonomies/ckan-backend-rights.php';
+			require_once plugin_dir_path( __FILE__ ) . 'taxonomies/ckan-backend-tag.php';
+			require_once plugin_dir_path( __FILE__ ) . 'taxonomies/ckan-backend-tag-de.php';
+			require_once plugin_dir_path( __FILE__ ) . 'taxonomies/ckan-backend-tag-en.php';
+			require_once plugin_dir_path( __FILE__ ) . 'taxonomies/ckan-backend-tag-fr.php';
+			require_once plugin_dir_path( __FILE__ ) . 'taxonomies/ckan-backend-tag-it.php';
 			require_once plugin_dir_path( __FILE__ ) . 'post-types/ckan-backend-local-dataset.php';
 			require_once plugin_dir_path( __FILE__ ) . 'post-types/ckan-backend-local-group.php';
 			require_once plugin_dir_path( __FILE__ ) . 'post-types/ckan-backend-local-organisation.php';
