@@ -364,19 +364,21 @@ class Ckan_Backend_Dataset_Model {
 	/**
 	 * Adds keyword
 	 *
+	 * @param string $slug Key to match multilingual keywords.
 	 * @param string $keyword Keyword to add.
+	 * @param string $lang Language of keyword.
 	 */
-	public function add_keyword( $keyword ) {
-		$this->keywords[] = $keyword;
+	public function add_keyword( $slug, $keyword, $lang = 'en' ) {
+		$this->keywords[$slug][$lang] = $keyword;
 	}
 
 	/**
 	 * Removes keyword
 	 *
-	 * @param string $keyword Keyword to remove.
+	 * @param string $slug Slug of keyword to remove.
 	 */
-	public function remove_keyword( $keyword ) {
-		if ( ( $key = array_search( $keyword, $this->get_keywords() ) ) !== false ) {
+	public function remove_keyword( $slug ) {
+		if ( ( $key = array_search( $slug, $this->get_keywords() ) ) !== false ) {
 			unset( $this->keywords[ $key ] );
 		}
 	}
