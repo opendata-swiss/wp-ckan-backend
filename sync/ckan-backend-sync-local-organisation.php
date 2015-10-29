@@ -76,7 +76,6 @@ class Ckan_Backend_Sync_Local_Organisation extends Ckan_Backend_Sync_Abstract {
 			}
 		} else {
 			$_POST[ $this->field_prefix . 'parent' ] = get_post_meta( $post->ID, $this->field_prefix . 'parent', true );
-			$this->store_errors_in_notices_option( array( __( 'You are not allowed to edit the parent organisation. Parent was resetted.' ) ) );
 		}
 
 		// set ckan id if its available in database
