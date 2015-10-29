@@ -36,7 +36,7 @@ abstract class Ckan_Backend_Tag {
 		);
 
 		$args = array(
-			'label' => __( 'Tags' ),
+			'label' => __( 'Tags ' . $this->get_language_suffix() ),
 			'labels' => $labels,
 			'description' => __( 'Tags for CKAN datasets', 'ogdch' ),
 			'hierarchical'          => false,
