@@ -71,7 +71,7 @@ class Ckan_Backend_Local_Dataset {
 			) ); ?>
 			<span>@</span>
 			<?php
-			if ( current_user_can( 'edit_others_organisations' ) ) {
+			if ( current_user_can( 'edit_data_of_all_organisations' ) ) {
 				echo $field_type_object->select( array(
 					'name'    => $field_type_object->_name( '[organisation]' ),
 					'id'      => $field_type_object->_id( '_organisation' ),

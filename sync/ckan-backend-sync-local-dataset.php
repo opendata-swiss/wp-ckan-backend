@@ -39,6 +39,13 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 			$post_name = sanitize_title_with_dashes( $post->post_title );
 		}
 
+		// if user is not allowed to edit data of other organisations -> reset data
+		if( ! current_user_can( 'edit_data_of_all_organisations' ) ) {
+			$identifier = get_post_meta( $post->ID, $this->field_prefix . 'identifier', true );
+			$_POST[ $this->field_prefix . 'identifier' ] = $identifier;
+			$this->store_errors_in_notices_option( array( __( 'You are not allowed to edit datasets of other organisations. Identifier was resetted.' ) ) );
+		}
+
 		$data = array(
 			'name'                => $post_name,
 			'title'               => $titles,
