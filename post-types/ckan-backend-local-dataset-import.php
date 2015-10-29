@@ -285,7 +285,7 @@ class Ckan_Backend_Local_Dataset_Import {
 		$dataset_args = array(
 			'ID'         => $dataset_id,
 			'post_title' => $dataset->get_main_title(),
-			'tags_input' => $dataset->get_keywords(),
+			'tax_input'  => $this->prepare_tax_input( $dataset ),
 		);
 
 		$issued = $dataset->get_issued();
@@ -340,7 +340,7 @@ class Ckan_Backend_Local_Dataset_Import {
 			'post_status'  => ( ( $dataset->get_issued() > time() ) ? 'future' : 'draft' ),
 			'post_type'    => Ckan_Backend_Local_Dataset::POST_TYPE,
 			'post_excerpt' => '',
-			'tags_input'   => $dataset->get_keywords(),
+			'tax_input'    => $this->prepare_tax_input( $dataset ),
 		);
 
 		$issued = $dataset->get_issued();
@@ -366,6 +366,33 @@ class Ckan_Backend_Local_Dataset_Import {
 		);
 
 		return $dataset_information;
+	}
+
+	/**
+	 * Prepares taxonomies.
+	 *
+	 * @param Ckan_Backend_Dataset_Model $dataset Dataset instance with values.
+	 *
+	 * @return array
+	 */
+	protected function prepare_tax_input( $dataset ) {
+		$tax_input = array();
+		foreach( $dataset->get_keywords() as $lang => $keywords ) {
+			if( 'en' === $lang ) {
+				$tax_input[ Ckan_Backend_Tag_En::TAXONOMY ] = $keywords;
+			}
+			if( 'de' === $lang ) {
+				$tax_input[ Ckan_Backend_Tag_De::TAXONOMY ] = $keywords;
+			}
+			if( 'fr' === $lang ) {
+				$tax_input[ Ckan_Backend_Tag_Fr::TAXONOMY ] = $keywords;
+			}
+			if( 'it' === $lang ) {
+				$tax_input[ Ckan_Backend_Tag_It::TAXONOMY ] = $keywords;
+			}
+		}
+
+		return $tax_input;
 	}
 
 	/**
@@ -433,7 +460,10 @@ class Ckan_Backend_Local_Dataset_Import {
 			}
 			$keywords = $xml->xpath( './dcat:keyword' );
 			foreach ( $keywords as $keyword ) {
-				$dataset->add_keyword( (string) $keyword );
+				$keyword_slug = (string) $this->get_single_element_from_xpath( $keyword, './@rdf:about' );
+				$keyword_slug = str_replace( '#', '', $keyword_slug );
+				$keyword_lang = (string) $this->get_single_element_from_xpath( $keyword, './@xml:lang' );
+				$dataset->add_keyword( $keyword_slug, (string) $keyword, $keyword_lang );
 			}
 			$dataset->set_landing_page( (string) $this->get_single_element_from_xpath( $xml, './dcat:landingPage' ) );
 			$dataset->set_spatial( (string) $this->get_single_element_from_xpath( $xml, './dct:spatial' ) );
@@ -477,8 +507,8 @@ class Ckan_Backend_Local_Dataset_Import {
 				$identifier
 			) );
 		}
-		// If user isn't allowed to edit_others_organisations for another organisation -> check if he has provided his own organisation
-		if ( ! current_user_can( 'edit_others_organisations' ) ) {
+		// If user isn't allowed to edit_data_of_all_organisations -> check if he has provided his own organisation
+		if ( ! current_user_can( 'edit_data_of_all_organisations' ) ) {
 			$user_organisation = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
 			if ( $user_organisation !== $organisation ) {
 				throw new Exception( sprintf(

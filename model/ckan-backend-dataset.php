@@ -369,7 +369,7 @@ class Ckan_Backend_Dataset_Model {
 	 * @param string $lang Language of keyword.
 	 */
 	public function add_keyword( $slug, $keyword, $lang = 'en' ) {
-		$this->keywords[$slug][$lang] = $keyword;
+		$this->keywords[$lang][$slug] = $keyword;
 	}
 
 	/**
