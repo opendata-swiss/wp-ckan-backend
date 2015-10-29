@@ -386,7 +386,7 @@ class Ckan_Backend_Local_Dataset_Import {
 			if ( '' === $identifier ) {
 				throw new Exception( __( 'Please provide an identifier for the dataset (eg. <dct:title xml:lang="en">My Dataset</dct:title>).  Dataset [no identifier] not imported', 'ogdch' ) );
 			}
-			$splitted_identifier = $this->split_identifier( $identifier );
+			$splitted_identifier = Ckan_Backend_Helper::split_identifier( $identifier );
 			if ( empty( $splitted_identifier['original_identifier'] ) ) {
 				throw new Exception( sprintf(
 					__( 'The original identifier of your dataset is missing. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[organisation_id]</dct:identifier>. Dataset %s not imported.', 'ogdch' ),
@@ -681,19 +681,5 @@ class Ckan_Backend_Local_Dataset_Import {
 		return $theme_name;
 	}
 
-	/**
-	 * Returns Original Identifiert and Organisation ID extracted from given identifier
-	 *
-	 * @param string $identifier Identifier in following format: <original_id>@<organisation_id>.
-	 *
-	 * @return array Format: array( 'original_identifier' = '123', 'organisation' = 'ABC' );
-	 */
-	public function split_identifier( $identifier ) {
-		$splitted_identifier = array(
-			'original_identifier' => substr( $identifier, 0, strrpos( $identifier, '@' ) ),
-			'organisation'        => substr( strrchr( $identifier, '@' ), 1 ),
-		);
 
-		return $splitted_identifier;
-	}
 }

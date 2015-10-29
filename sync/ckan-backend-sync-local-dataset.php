@@ -30,9 +30,9 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		$issued         = $this->prepare_date( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'issued', $load_from_post ) );
 		$modified       = $this->prepare_date( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'modified', $load_from_post ) );
 		$identifier     = Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'identifier', $load_from_post );
-		$relations      = Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'relations', $load_from_post );
+		$relations      = $this->prepare_relations( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'relations', $load_from_post ) );
 		$temporals      = $this->prepare_temporals( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'temporals', $load_from_post ) );
-		$see_alsos      = Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'see_alsos', $load_from_post );
+		$see_alsos      = $this->prepare_see_alsos( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'see_alsos', $load_from_post ) );
 
 		$post_name = $post->post_name;
 		if ( empty( $post_name ) ) {
@@ -58,33 +58,19 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 			'groups'              => $groups,
 			'state'               => 'active',
 			'private'             => true,
-			// add empty array to fields because we're just doing a package patch (to remove old values)
-			'relations'           => array(),
-			'temporals'           => array(),
-			'see_alsos'           => array(),
+			'relations'           => $relations,
+			'temporals'           => $temporals,
+			'see_alsos'           => $see_alsos,
 		);
 
-		// only add relations if at least one url field is filled out
-		if ( is_array( $relations ) && count( $relations ) > 0 && ! empty( $relations[0]['url'] ) ) {
-			$data['relations'] = $relations;
-		}
-		// only add temporals if at least one start_date field is filled out
-		if ( is_array( $temporals ) && count( $temporals ) > 0 && ! empty( $temporals[0]['start_date'] ) ) {
-			$data['temporals'] = $temporals;
-		}
-		// only add see alsos if at least one dataset_identifier field is filled out
-		if ( is_array( $see_alsos ) && count( $see_alsos ) > 0 && ! empty( $see_alsos[0]['dataset_identifier'] ) ) {
-			$data['see_alsos'] = $see_alsos;
-		}
-
-		$organisation   = $identifier['organisation'];
+		$organisation = $identifier['organisation'];
 		if ( ! empty( $organisation ) ) {
 			$data['owner_org'] = $organisation;
 		}
 
 		// set ckan id if its available in database
 		$ckan_id = get_post_meta( $post->ID, $this->field_prefix . 'ckan_id', true );
-		if ( '' !== $ckan_id ) {
+		if ( ! empty( $ckan_id ) ) {
 			$data['id'] = $ckan_id;
 		}
 		if ( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'disabled', $load_from_post ) === 'on' ) {
@@ -108,9 +94,9 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		global $language_priority;
 		$ckan_resources = array();
 
-		// Check if resources are added. If yes generate CKAN friendly array.
-		if ( '' !== $resources[0]['access_url'] ) {
-			foreach ( $resources as $resource ) {
+		foreach ( $resources as $resource ) {
+			// Check if at least one mandatory field (access_url) is filled out. Because we don't want to add empty repeatable fields.
+			if ( ! empty( $resource['access_url'] ) ) {
 				$titles = array();
 				foreach ( $language_priority as $lang ) {
 					$titles[ $lang ] = $resource[ 'title_' . $lang ];
@@ -194,9 +180,9 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	protected function gather_languages( $resources ) {
 		$languages = array();
 
-		// Check if resources are added. If yes generate CKAN friendly array.
-		if ( '' !== $resources[0]['access_url'] ) {
-			foreach ( $resources as $resource ) {
+		foreach ( $resources as $resource ) {
+			// Check if at least one mandatory field (access_url) is filled out. Because we don't want to add empty repeatable fields.
+			if ( ! empty( $resource['access_url'] ) ) {
 				$languages = array_merge( $languages, $resource['languages'] );
 			}
 		}
@@ -215,10 +201,13 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		$ckan_temporals = array();
 
 		foreach ( $temporals as $temporal ) {
-			$ckan_temporals[] = array(
-				'start_date' => $this->prepare_date( $temporal['start_date'] ),
-				'end_date'   => $this->prepare_date( $temporal['end_date'] ),
-			);
+			// Check if at least one mandatory field (start_date) is filled out. Because we don't want to add empty repeatable fields.
+			if ( ! empty( $temporal['start_date'] ) ) {
+				$ckan_temporals[] = array(
+					'start_date' => $this->prepare_date( $temporal['start_date'] ),
+					'end_date'   => $this->prepare_date( $temporal['end_date'] ),
+				);
+			}
 		}
 
 		return $ckan_temporals;
@@ -245,12 +234,60 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	}
 
 	/**
+	 * Creates a CKAN friendly relations and returns it.
+	 *
+	 * @param array $relations All relations of the dataset.
+	 *
+	 * @return array
+	 */
+	protected function prepare_relations( $relations ) {
+		$ckan_relations = array();
+
+		foreach ( $relations as $relation ) {
+			// Check if at least one mandatory field (url) is filled out. Because we don't want to add empty repeatable fields.
+			if ( ! empty( $relation['url'] ) ) {
+				$ckan_relations[] = array(
+					'url'   => $relation['url'],
+					'label' => $relation['label'],
+				);
+			}
+		}
+
+		return $ckan_relations;
+	}
+
+	/**
+	 * Creates a CKAN friendly see alsos and returns it.
+	 *
+	 * @param array $see_alsos All see alsos of the dataset.
+	 *
+	 * @return array
+	 */
+	protected function prepare_see_alsos( $see_alsos ) {
+		$ckan_see_alsos = array();
+
+		foreach ( $see_alsos as $see_also ) {
+			// Check if at least one mandatory field (dataset_identifier) is filled out. Because we don't want to add empty repeatable fields.
+			if ( ! empty( $see_also['dataset_identifier'] ) ) {
+				$ckan_see_alsos[] = array(
+					'dataset_identifier' => $see_also['dataset_identifier'],
+				);
+			}
+		}
+
+		return $ckan_see_alsos;
+	}
+
+	/**
 	 * Hook for after-sync action.
 	 *
 	 * @param object $post The post from WordPress.
 	 */
 	protected function after_sync_action( $post ) {
 		// Deletes all transients for this post-type instance.
-		delete_transient( Ckan_Backend::$plugin_slug . '_dataset_title_' . $post->post_name );
+		$identifier = get_post_meta( $post->ID, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'identifier', true );
+		if ( ! empty( $identifier ) ) {
+			delete_transient( Ckan_Backend::$plugin_slug . '_dataset_' . $identifier['original_identifier'] . '@' . $identifier['organisation'] );
+		}
 	}
 }
