@@ -28,12 +28,20 @@ abstract class Ckan_Backend_Tag {
 			'new_item_name' => __( 'New Tag Name ' . $this->get_language_suffix() ),
 		);
 
+		$capabilities = array(
+			'manage_terms' => 'manage_tags',
+			'edit_terms' => 'edit_tags',
+			'delete_terms' => 'delete_tags',
+			'assign_terms' => 'assign_tags',
+		);
+
 		$args = array(
 			'label' => __( 'Tags' ),
 			'labels' => $labels,
 			'description' => __( 'Tags for CKAN datasets', 'ogdch' ),
 			'hierarchical'          => false,
 			'update_count_callback' => '_update_post_term_count',
+			'capabilities' => $capabilities,
 		);
 
 		register_taxonomy(
