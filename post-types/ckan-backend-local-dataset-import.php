@@ -460,10 +460,8 @@ class Ckan_Backend_Local_Dataset_Import {
 			}
 			$keywords = $xml->xpath( './dcat:keyword' );
 			foreach ( $keywords as $keyword ) {
-				$keyword_slug = (string) $this->get_single_element_from_xpath( $keyword, './@rdf:about' );
-				$keyword_slug = str_replace( '#', '', $keyword_slug );
 				$keyword_lang = (string) $this->get_single_element_from_xpath( $keyword, './@xml:lang' );
-				$dataset->add_keyword( $keyword_slug, (string) $keyword, $keyword_lang );
+				$dataset->add_keyword( (string) $keyword, $keyword_lang );
 			}
 			$dataset->set_landing_page( (string) $this->get_single_element_from_xpath( $xml, './dcat:landingPage' ) );
 			$dataset->set_spatial( (string) $this->get_single_element_from_xpath( $xml, './dct:spatial' ) );
