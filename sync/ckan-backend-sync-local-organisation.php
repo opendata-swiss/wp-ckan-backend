@@ -54,7 +54,7 @@ class Ckan_Backend_Sync_Local_Organisation extends Ckan_Backend_Sync_Abstract {
 		}
 		$titles       = Ckan_Backend_Helper::prepare_multilingual_field( $post->ID, $this->field_prefix . 'title', $load_from_post );
 		$descriptions = Ckan_Backend_Helper::prepare_multilingual_field( $post->ID, $this->field_prefix . 'description', $load_from_post );
-
+		$parent       = Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'parent', $load_from_post );
 		$post_name = $post->post_name;
 		if ( empty( $post_name ) ) {
 			$post_name = sanitize_title_with_dashes( $post->post_title );
@@ -69,13 +69,13 @@ class Ckan_Backend_Sync_Local_Organisation extends Ckan_Backend_Sync_Abstract {
 			'state'        => 'active',
 		);
 
-		// only users with edit_others_organisations capability can assign parent organisations
-		if ( current_user_can( 'edit_others_organisations' ) ) {
-			if ( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'parent', $load_from_post ) !== '' ) {
-				$data['groups'] = array( array( 'name' => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'parent', $load_from_post ) ) );
-			} else {
-				$data['groups'] = array();
+		// only users with edit_data_of_all_organisations capability can assign parent organisations -> otherwise reset parent
+		if ( current_user_can( 'edit_data_of_all_organisations' ) ) {
+			if ( '' !== $parent ) {
+				$data['groups'] = array( array( 'name' => $parent ) );
 			}
+		} else {
+			$_POST[ $this->field_prefix . 'parent' ] = get_post_meta( $post->ID, $this->field_prefix . 'parent', true );
 		}
 
 		// set ckan id if its available in database

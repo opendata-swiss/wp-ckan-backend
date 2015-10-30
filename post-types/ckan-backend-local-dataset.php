@@ -71,7 +71,7 @@ class Ckan_Backend_Local_Dataset {
 			) ); ?>
 			<span>@</span>
 			<?php
-			if ( current_user_can( 'edit_others_organisations' ) ) {
+			if ( current_user_can( 'edit_data_of_all_organisations' ) ) {
 				echo $field_type_object->select( array(
 					'name'    => $field_type_object->_name( '[organisation]' ),
 					'id'      => $field_type_object->_id( '_organisation' ),
@@ -289,12 +289,17 @@ class Ckan_Backend_Local_Dataset {
 			'not_found_in_trash' => __( 'Not found in Trash', 'ogdch' ),
 		);
 
+		$taxonomies = array();
+		foreach ( Ckan_Backend::$keywords_tax_mapping as $lang => $taxonomy ) {
+			$taxonomies[] = $taxonomy;
+		}
+
 		$args = array(
 			'label'               => __( 'CKAN', 'ogdch' ),
 			'description'         => __( 'Contains Data from the CKAN Instance', 'ogdch' ),
 			'labels'              => $labels,
 			'supports'            => array( 'title' ),
-			'taxonomies'          => array( 'post_tag' ),
+			'taxonomies'          => $taxonomies,
 			'hierarchical'        => false,
 			'public'              => true,
 			'show_ui'             => true,

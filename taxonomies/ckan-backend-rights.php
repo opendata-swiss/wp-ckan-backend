@@ -1,6 +1,6 @@
 <?php
 /**
- * Post type ckan-rights
+ * Taxonomy ckan-rights
  *
  * @package CKAN\Backend
  */

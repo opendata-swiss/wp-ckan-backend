@@ -38,6 +38,13 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		public static $single_instance = null;
 
 		/**
+		 * Mapping between language and taxonomy name for keywords
+		 *
+		 * @var array
+		 */
+		public static $keywords_tax_mapping = array();
+
+		/**
 		 * Creates/returns the single instance Ckan_Backend object
 		 *
 		 * @return Ckan_Backend Single instance object
@@ -228,8 +235,19 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		public function bootstrap() {
 			$this->load_dependencies();
 
+			self::$keywords_tax_mapping = array(
+				'en' => Ckan_Backend_Keyword_En::TAXONOMY,
+				'de' => Ckan_Backend_Keyword_De::TAXONOMY,
+				'fr' => Ckan_Backend_Keyword_Fr::TAXONOMY,
+				'it' => Ckan_Backend_Keyword_It::TAXONOMY,
+			);
+
 			Ckan_Backend_Frequency::init();
 			Ckan_Backend_Rights::init();
+			new Ckan_Backend_Keyword_De();
+			new Ckan_Backend_Keyword_En();
+			new Ckan_Backend_Keyword_Fr();
+			new Ckan_Backend_Keyword_It();
 			new Ckan_Backend_Local_Dataset();
 			new Ckan_Backend_Local_Group();
 			new Ckan_Backend_Local_Organisation();
@@ -385,6 +403,11 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			require_once plugin_dir_path( __FILE__ ) . 'model/ckan-backend-dataset.php';
 			require_once plugin_dir_path( __FILE__ ) . 'taxonomies/ckan-backend-frequency.php';
 			require_once plugin_dir_path( __FILE__ ) . 'taxonomies/ckan-backend-rights.php';
+			require_once plugin_dir_path( __FILE__ ) . 'taxonomies/ckan-backend-keyword.php';
+			require_once plugin_dir_path( __FILE__ ) . 'taxonomies/ckan-backend-keyword-de.php';
+			require_once plugin_dir_path( __FILE__ ) . 'taxonomies/ckan-backend-keyword-en.php';
+			require_once plugin_dir_path( __FILE__ ) . 'taxonomies/ckan-backend-keyword-fr.php';
+			require_once plugin_dir_path( __FILE__ ) . 'taxonomies/ckan-backend-keyword-it.php';
 			require_once plugin_dir_path( __FILE__ ) . 'post-types/ckan-backend-local-dataset.php';
 			require_once plugin_dir_path( __FILE__ ) . 'post-types/ckan-backend-local-group.php';
 			require_once plugin_dir_path( __FILE__ ) . 'post-types/ckan-backend-local-organisation.php';

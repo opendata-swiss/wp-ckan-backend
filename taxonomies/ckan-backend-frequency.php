@@ -1,6 +1,6 @@
 <?php
 /**
- * Post type ckan-frequency
+ * Taxonomy ckan-frequency
  *
  * @package CKAN\Backend
  */

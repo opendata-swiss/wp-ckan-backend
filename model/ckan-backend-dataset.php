@@ -365,20 +365,10 @@ class Ckan_Backend_Dataset_Model {
 	 * Adds keyword
 	 *
 	 * @param string $keyword Keyword to add.
+	 * @param string $lang Language of keyword.
 	 */
-	public function add_keyword( $keyword ) {
-		$this->keywords[] = $keyword;
-	}
-
-	/**
-	 * Removes keyword
-	 *
-	 * @param string $keyword Keyword to remove.
-	 */
-	public function remove_keyword( $keyword ) {
-		if ( ( $key = array_search( $keyword, $this->get_keywords() ) ) !== false ) {
-			unset( $this->keywords[ $key ] );
-		}
+	public function add_keyword( $keyword, $lang = 'en' ) {
+		$this->keywords[ $lang ][] = $keyword;
 	}
 
 	/**

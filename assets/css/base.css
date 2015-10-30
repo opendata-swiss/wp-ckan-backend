@@ -4,10 +4,6 @@
 .post-type-ckan-local-org .submitbox #visibility,
 .post-type-ckan-local-org .submitbox #preview-action {
   display: none; }
-.post-type-ckan-local-dataset #wpseo_meta,
-.post-type-ckan-local-group #wpseo_meta,
-.post-type-ckan-local-org #wpseo_meta {
-  display: none; }
 
 #cmb2-metabox-ckan-local-dataset-sidebox-disabled .cmb2-metabox-description {
   color: #444;

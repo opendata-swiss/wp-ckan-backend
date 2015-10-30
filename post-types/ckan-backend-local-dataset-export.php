@@ -186,11 +186,13 @@ class Ckan_Backend_Local_Dataset_Export {
 			}
 		}
 
-		$tags = wp_get_post_tags( $post->ID );
-		foreach ( $tags as $tag ) {
-			$tag_xml = $dataset_xml->addChild( 'keyword', $tag->name, $this->namespaces['dcat'] );
-			// TODO use correct language of tag
-			$tag_xml->addAttribute( 'xml:lang', 'de', 'xml' );
+		// Add Keywords
+		foreach ( Ckan_Backend::$keywords_tax_mapping as $lang => $taxonomy ) {
+			$keywords = wp_get_post_terms( $post->ID, $taxonomy );
+			foreach ( $keywords as $keyword ) {
+				$keyword_xml = $dataset_xml->addChild( 'keyword', $keyword->name, $this->namespaces['dcat'] );
+				$keyword_xml->addAttribute( 'xml:lang', $lang, 'xml' );
+			}
 		}
 
 		$landing_page = get_post_meta( $post->ID, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'landing_page', true );
