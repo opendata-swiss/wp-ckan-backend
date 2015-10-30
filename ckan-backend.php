@@ -38,6 +38,18 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		public static $single_instance = null;
 
 		/**
+		 * Mapping between language and taxonomy class name for keywords
+		 *
+		 * @var array
+		 */
+		public static $keywords_tax_mapping = array(
+			'en' => 'Ckan_Backend_Tag_En',
+			'de' => 'Ckan_Backend_Tag_De',
+			'fr' => 'Ckan_Backend_Tag_Fr',
+			'it' => 'Ckan_Backend_Tag_It',
+		);
+
+		/**
 		 * Creates/returns the single instance Ckan_Backend object
 		 *
 		 * @return Ckan_Backend Single instance object

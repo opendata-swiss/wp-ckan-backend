@@ -17,18 +17,6 @@ class Ckan_Backend_Local_Dataset_Import {
 	public $menu_slug = 'ckan-local-dataset-import-page';
 
 	/**
-	 * Mapping between language and taxonomy class name
-	 *
-	 * @var array
-	 */
-	protected $tax_mapping = array(
-		'en' => 'Ckan_Backend_Tag_En',
-		'de' => 'Ckan_Backend_Tag_De',
-		'fr' => 'Ckan_Backend_Tag_Fr',
-		'it' => 'Ckan_Backend_Tag_It',
-	);
-
-	/**
 	 * Constructor of this class.
 	 */
 	public function __construct() {
@@ -390,7 +378,7 @@ class Ckan_Backend_Local_Dataset_Import {
 	protected function prepare_tax_input( $dataset ) {
 		$tax_input = array();
 		foreach( $dataset->get_keywords() as $lang => $keywords ) {
-			$tax_class = $this->tax_mapping[$lang];
+			$tax_class = Ckan_Backend::$keywords_tax_mapping[$lang];
 			$tax_input[ $tax_class::TAXONOMY ] = $keywords;
 		}
 

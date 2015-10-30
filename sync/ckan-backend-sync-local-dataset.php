@@ -9,19 +9,6 @@
  * Class Ckan_Backend_Sync_Local_Dataset
  */
 class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
-
-	/**
-	 * Mapping between language and taxonomy class name
-	 *
-	 * @var array
-	 */
-	protected $tax_mapping = array(
-		'en' => 'Ckan_Backend_Tag_En',
-		'de' => 'Ckan_Backend_Tag_De',
-		'fr' => 'Ckan_Backend_Tag_Fr',
-		'it' => 'Ckan_Backend_Tag_It',
-	);
-
 	/**
 	 * This method should return an array the ckan data
 	 *
@@ -181,7 +168,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	protected function prepare_keywords( $post ) {
 		$ckan_keywords = array();
 
-		foreach( $this->tax_mapping as $lang => $tax_class ) {
+		foreach( Ckan_Backend::$keywords_tax_mapping as $lang => $tax_class ) {
 			$keywords = wp_get_post_terms( $post->ID, $tax_class::TAXONOMY );
 			foreach ( $keywords as $keyword ) {
 				$ckan_keywords[$lang][] = $keyword->name;
