@@ -9,6 +9,19 @@
  * Class Ckan_Backend_Sync_Local_Dataset
  */
 class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
+
+	/**
+	 * Mapping between language and taxonomy class name
+	 *
+	 * @var array
+	 */
+	protected $tax_mapping = array(
+		'en' => 'Ckan_Backend_Tag_En',
+		'de' => 'Ckan_Backend_Tag_De',
+		'fr' => 'Ckan_Backend_Tag_Fr',
+		'it' => 'Ckan_Backend_Tag_It',
+	);
+
 	/**
 	 * This method should return an array the ckan data
 	 *
@@ -23,8 +36,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		}
 		$resources      = $this->prepare_resources( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'distributions', $load_from_post ) );
 		$groups         = $this->prepare_selected_groups( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'themes', $load_from_post ) );
-		// TODO use custom taxonomies instead of tags
-		$tags           = $this->prepare_tags( wp_get_object_terms( $post->ID, 'post_tag' ) );
+		$keywords       = $this->prepare_keywords( $post );
 		$titles         = Ckan_Backend_Helper::prepare_multilingual_field( $post->ID, $this->field_prefix . 'title', $load_from_post );
 		$descriptions   = Ckan_Backend_Helper::prepare_multilingual_field( $post->ID, $this->field_prefix . 'description', $load_from_post );
 		$languages      = $this->gather_languages( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'distributions', $load_from_post ) );
@@ -57,7 +69,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 			'publishers'          => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'publishers', $load_from_post ),
 			'contact_points'      => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'contact_points', $load_from_post ),
 			'language'            => $languages,
-			'tags'                => $tags,
+			'keywords'            => $keywords,
 			'url'                 => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'landing_page', $load_from_post ),
 			'spatial'             => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'spatial', $load_from_post ),
 			'coverage'            => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'coverage', $load_from_post ),
@@ -160,22 +172,23 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	}
 
 	/**
-	 * Create CKAN friendly array of all tags
+	 * Create CKAN friendly array of all keywords
 	 *
-	 * @param array $tags WordPress tags.
+	 * @param WP_Post $post WordPress post.
 	 *
 	 * @return array
 	 */
-	protected function prepare_tags( $tags ) {
-		$ckan_tags = array();
+	protected function prepare_keywords( $post ) {
+		$ckan_keywords = array();
 
-		foreach ( $tags as $tag ) {
-			$ckan_tags[] = array(
-				'name' => $tag->name,
-			);
+		foreach( $this->tax_mapping as $lang => $tax_class ) {
+			$keywords = wp_get_post_terms( $post->ID, $tax_class::TAXONOMY );
+			foreach ( $keywords as $keyword ) {
+				$ckan_keywords[$lang][] = $keyword->name;
+			}
 		}
 
-		return $ckan_tags;
+		return $ckan_keywords;
 	}
 
 	/**
