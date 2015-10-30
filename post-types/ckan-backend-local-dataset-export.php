@@ -29,6 +29,18 @@ class Ckan_Backend_Local_Dataset_Export {
 	);
 
 	/**
+	 * Mapping between language and taxonomy class name
+	 *
+	 * @var array
+	 */
+	protected $tax_mapping = array(
+		'en' => 'Ckan_Backend_Tag_En',
+		'de' => 'Ckan_Backend_Tag_De',
+		'fr' => 'Ckan_Backend_Tag_Fr',
+		'it' => 'Ckan_Backend_Tag_It',
+	);
+
+	/**
 	 * Callback for the import of a file.
 	 */
 	public function __construct() {
@@ -186,11 +198,13 @@ class Ckan_Backend_Local_Dataset_Export {
 			}
 		}
 
-		$tags = wp_get_post_tags( $post->ID );
-		foreach ( $tags as $tag ) {
-			$tag_xml = $dataset_xml->addChild( 'keyword', $tag->name, $this->namespaces['dcat'] );
-			// TODO use correct language of tag
-			$tag_xml->addAttribute( 'xml:lang', 'de', 'xml' );
+		// Add Keywords
+		foreach( $this->tax_mapping as $lang => $tax_class ) {
+			$keywords = wp_get_post_terms( $post->ID, $tax_class::TAXONOMY );
+			foreach ( $keywords as $keyword ) {
+				$tag_xml = $dataset_xml->addChild( 'keyword', $keyword->name, $this->namespaces['dcat'] );
+				$tag_xml->addAttribute( 'xml:lang', $lang, 'xml' );
+			}
 		}
 
 		$landing_page = get_post_meta( $post->ID, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'landing_page', true );
