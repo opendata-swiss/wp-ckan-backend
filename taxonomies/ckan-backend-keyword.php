@@ -16,6 +16,9 @@ abstract class Ckan_Backend_Keyword {
 		$this->register_taxonomy();
 	}
 
+	/**
+	 * Registers taxonomy
+	 */
 	public function register_taxonomy() {
 		$labels = array(
 			'name' => __( 'Keywords ' . $this->get_language_suffix() ),
@@ -53,6 +56,13 @@ abstract class Ckan_Backend_Keyword {
 		register_taxonomy_for_object_type( $this->get_taxonomy(), Ckan_Backend_Local_Dataset::POST_TYPE );
 	}
 
-	public abstract function get_language_suffix();
+	/**
+	 * Returns taxonomy name
+	 */
 	public abstract function get_taxonomy();
+
+	/**
+	 * Returns language suffix of taxonomy
+	 */
+	public abstract function get_language_suffix();
 }

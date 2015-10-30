@@ -372,9 +372,9 @@ class Ckan_Backend_Local_Dataset_Import {
 	 */
 	protected function prepare_tax_input( $dataset ) {
 		$tax_input = array();
-		foreach( $dataset->get_keywords() as $lang => $keywords ) {
-			$taxonomy = Ckan_Backend::$keywords_tax_mapping[$lang];
-			$tax_input[$taxonomy] = $keywords;
+		foreach ( $dataset->get_keywords() as $lang => $keywords ) {
+			$taxonomy = Ckan_Backend::$keywords_tax_mapping[ $lang ];
+			$tax_input[ $taxonomy ] = $keywords;
 		}
 
 		return $tax_input;

@@ -290,7 +290,7 @@ class Ckan_Backend_Local_Dataset {
 		);
 
 		$taxonomies = array();
-		foreach( Ckan_Backend::$keywords_tax_mapping as $lang => $taxonomy ) {
+		foreach ( Ckan_Backend::$keywords_tax_mapping as $lang => $taxonomy ) {
 			$taxonomies[] = $taxonomy;
 		}
 

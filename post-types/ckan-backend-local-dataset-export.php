@@ -187,7 +187,7 @@ class Ckan_Backend_Local_Dataset_Export {
 		}
 
 		// Add Keywords
-		foreach( Ckan_Backend::$keywords_tax_mapping as $lang => $taxonomy ) {
+		foreach ( Ckan_Backend::$keywords_tax_mapping as $lang => $taxonomy ) {
 			$keywords = wp_get_post_terms( $post->ID, $taxonomy );
 			foreach ( $keywords as $keyword ) {
 				$keyword_xml = $dataset_xml->addChild( 'keyword', $keyword->name, $this->namespaces['dcat'] );

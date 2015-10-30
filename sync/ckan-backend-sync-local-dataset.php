@@ -40,7 +40,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		}
 
 		// if user is not allowed to change organisation -> reset organisation in identifier
-		if( ! current_user_can( 'edit_data_of_all_organisations' ) ) {
+		if ( ! current_user_can( 'edit_data_of_all_organisations' ) ) {
 			$identifier_original = get_post_meta( $post->ID, $this->field_prefix . 'identifier', true );
 			$identifier['organisation'] = $identifier_original['organisation'];
 			$_POST[ $this->field_prefix . 'identifier' ] = $identifier;
@@ -168,10 +168,10 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	protected function prepare_keywords( $post ) {
 		$ckan_keywords = array();
 
-		foreach( Ckan_Backend::$keywords_tax_mapping as $lang => $taxonomy ) {
+		foreach ( Ckan_Backend::$keywords_tax_mapping as $lang => $taxonomy ) {
 			$keywords = wp_get_post_terms( $post->ID, $taxonomy );
 			foreach ( $keywords as $keyword ) {
-				$ckan_keywords[$lang][] = $keyword->name;
+				$ckan_keywords[ $lang ][] = $keyword->name;
 			}
 		}
 
