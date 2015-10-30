@@ -187,11 +187,11 @@ class Ckan_Backend_Local_Dataset_Export {
 		}
 
 		// Add Keywords
-		foreach( Ckan_Backend::$keywords_tax_mapping as $lang => $tax_class ) {
-			$keywords = wp_get_post_terms( $post->ID, $tax_class::TAXONOMY );
+		foreach( Ckan_Backend::$keywords_tax_mapping as $lang => $taxonomy ) {
+			$keywords = wp_get_post_terms( $post->ID, $taxonomy );
 			foreach ( $keywords as $keyword ) {
-				$tag_xml = $dataset_xml->addChild( 'keyword', $keyword->name, $this->namespaces['dcat'] );
-				$tag_xml->addAttribute( 'xml:lang', $lang, 'xml' );
+				$keyword_xml = $dataset_xml->addChild( 'keyword', $keyword->name, $this->namespaces['dcat'] );
+				$keyword_xml->addAttribute( 'xml:lang', $lang, 'xml' );
 			}
 		}
 

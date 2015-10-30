@@ -1,18 +1,18 @@
 <?php
 /**
- * Taxonomy ckan-tag-it
+ * Taxonomy ckan-keyword-de
  *
  * @package CKAN\Backend
  */
 
 /**
- * Class Ckan_Backend_Tag_It
+ * Class Ckan_Backend_Keyword_De
  */
-class Ckan_Backend_Tag_It extends Ckan_Backend_Tag {
+class Ckan_Backend_Keyword_De extends Ckan_Backend_Keyword {
 
-	const TAXONOMY = 'ckan-tag-it';
+	const TAXONOMY = 'ckan-keyword-de';
 
-	const LANGUAGE_SUFFIX = 'IT';
+	const LANGUAGE_SUFFIX = 'DE';
 
 	public function get_taxonomy() {
 		return self::TAXONOMY;

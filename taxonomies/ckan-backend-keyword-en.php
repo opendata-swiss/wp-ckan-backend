@@ -1,16 +1,16 @@
 <?php
 /**
- * Taxonomy ckan-tag-en
+ * Taxonomy ckan-keyword-en
  *
  * @package CKAN\Backend
  */
 
 /**
- * Class Ckan_Backend_Tag_En
+ * Class Ckan_Backend_Keyword_En
  */
-class Ckan_Backend_Tag_En extends Ckan_Backend_Tag {
+class Ckan_Backend_Keyword_En extends Ckan_Backend_Keyword {
 
-	const TAXONOMY = 'ckan-tag-en';
+	const TAXONOMY = 'ckan-keyword-en';
 
 	const LANGUAGE_SUFFIX = 'EN';
 

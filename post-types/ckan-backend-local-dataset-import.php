@@ -240,11 +240,6 @@ class Ckan_Backend_Local_Dataset_Import {
 			return $dataset;
 		}
 
-		/*
-		 * TODO
-		 * - Tags import
-		 */
-
 		// simulate $_POST data to make post_save hook work correctly
 		$_POST = array_merge( $_POST, $dataset->to_array() );
 
@@ -378,8 +373,8 @@ class Ckan_Backend_Local_Dataset_Import {
 	protected function prepare_tax_input( $dataset ) {
 		$tax_input = array();
 		foreach( $dataset->get_keywords() as $lang => $keywords ) {
-			$tax_class = Ckan_Backend::$keywords_tax_mapping[$lang];
-			$tax_input[ $tax_class::TAXONOMY ] = $keywords;
+			$taxonomy = Ckan_Backend::$keywords_tax_mapping[$lang];
+			$tax_input[$taxonomy] = $keywords;
 		}
 
 		return $tax_input;
