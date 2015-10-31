@@ -396,7 +396,7 @@ class Ckan_Backend_Helper {
 		$organisations = get_posts( $args );
 		?>
 		<select name="organisation_filter" <?php echo ($disable_floating) ? 'style="float: none;"' : ''; ?>>
-			<option value=""><?php esc_attr_e( 'All organisations', 'ogdch' ); ?></option>
+			<option value=""><?php esc_attr_e( 'All organizations', 'ogdch' ); ?></option>
 			<?php
 			$organisation_filter   = '';
 			if ( isset( $_GET['organisation_filter'] ) ) {

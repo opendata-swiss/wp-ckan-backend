@@ -401,7 +401,7 @@ class Ckan_Backend_Local_Dataset_Import {
 			$splitted_identifier = Ckan_Backend_Helper::split_identifier( $identifier );
 			if ( empty( $splitted_identifier['original_identifier'] ) ) {
 				throw new Exception( sprintf(
-					__( 'The original identifier of your dataset is missing. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[organisation_id]</dct:identifier>. Dataset %s not imported.', 'ogdch' ),
+					__( 'The original identifier of your dataset is missing. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[organization_id]</dct:identifier>. Dataset %s not imported.', 'ogdch' ),
 					$identifier
 				) );
 			}
@@ -486,7 +486,7 @@ class Ckan_Backend_Local_Dataset_Import {
 		// Check if organisation is set
 		if ( empty( $organisation ) ) {
 			throw new Exception( sprintf(
-				__( 'The organisation id is missing in the identifier. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[organisation_id]</dct:identifier>. Dataset %s not imported.', 'ogdch' ),
+				__( 'The organization id is missing in the identifier. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[organization_id]</dct:identifier>. Dataset %s not imported.', 'ogdch' ),
 				$identifier
 			) );
 		}
@@ -495,7 +495,7 @@ class Ckan_Backend_Local_Dataset_Import {
 			$user_organisation = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
 			if ( $user_organisation !== $organisation ) {
 				throw new Exception( sprintf(
-					__( 'You are not allowed to add a dataset for another organistaion. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[your_organisation_id]</dct:identifier>. Dataset %s not imported.', 'ogdch' ),
+					__( 'You are not allowed to add a dataset for another organistaion. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[your_organization_id]</dct:identifier>. Dataset %s not imported.', 'ogdch' ),
 					$identifier
 				) );
 			}

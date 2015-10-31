@@ -143,7 +143,7 @@ class Ckan_Backend_Local_Organisation {
 		if ( current_user_can( 'edit_data_of_all_organisations' ) ) {
 			/* Parent */
 			$cmb->add_field( array(
-				'name' => __( 'Parent Organisation', 'ogdch' ),
+				'name' => __( 'Parent Organization', 'ogdch' ),
 				'type' => 'title',
 				'id'   => 'parent_title',
 			) );

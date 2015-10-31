@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: CKAN Backend
- * Description: Plugin to create manual datasets, organisations and groups in CKAN via API.
+ * Description: Plugin to create manual datasets, organizations and groups in CKAN via API.
  * Author: Team Jazz <juerg.hunziker@liip.ch>
  * Version: 1.0
  * Date: 17.06.2015
@@ -296,12 +296,12 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 
 			$organisation_field_name = self::$plugin_slug . '_organisation';
 			?>
-			<h3>Organisation</h3>
+			<h3><?php esc_attr_e( 'Organization', 'ogdch' ); ?></h3>
 
 			<table class="form-table">
 				<tr class="form-field form-required">
 					<th scope="row">
-						<label for="<?php echo esc_attr( $organisation_field_name ); ?>">Organisation</label>
+						<label for="<?php echo esc_attr( $organisation_field_name ); ?>"><?php esc_attr_e( 'Organization', 'ogdch' ); ?></label>
 						<span class="description">(required)</span>
 					</th>
 					<td>
@@ -339,7 +339,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			}
 
 			if ( ! isset( $_POST[ self::$plugin_slug . '_organisation' ] ) || '' === $_POST[ self::$plugin_slug . '_organisation' ] ) {
-				$errors->add( 'organisation_required', __( 'Please choose an organisation for this user.' ) );
+				$errors->add( 'organization_required', __( 'Please choose an organization for this user.' ) );
 			}
 		}
 
