@@ -364,11 +364,11 @@ class Ckan_Backend_Local_Dataset {
 			),
 		) );
 
-		/* Title */
+		/* Dataset Information */
 		$cmb->add_field( array(
 			'name' => __( 'Dataset Information', 'ogdch' ),
 			'type' => 'title',
-			'id'   => 'title_title',
+			'id'   => 'dataset_information_title',
 		) );
 
 		foreach ( $language_priority as $lang ) {
