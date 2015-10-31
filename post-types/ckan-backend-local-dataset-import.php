@@ -655,7 +655,7 @@ class Ckan_Backend_Local_Dataset_Import {
 	 * @param string $theme_uri The theme URI from the RDF.
 	 * @param string $identifier Identifier of dataset.
 	 *
-	 * @return Name of the theme (group)
+	 * @return string Name of the theme (group)
 	 *
 	 * @throws Exception If group doesn't exist.
 	 */
