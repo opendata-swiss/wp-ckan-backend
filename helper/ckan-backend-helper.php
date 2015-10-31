@@ -102,7 +102,8 @@ class Ckan_Backend_Helper {
 	 * @return array All instances from CKAN
 	 */
 	private static function get_form_field_options( $post_type, $field_prefix ) {
-		$transient_name = Ckan_Backend::$plugin_slug . '_' . $post_type . '_options';
+		$current_language = self::get_current_language();
+		$transient_name = Ckan_Backend::$plugin_slug . '_' . $post_type . '_options_' . $current_language;
 		if ( false === ( $options = get_transient( $transient_name ) ) ) {
 			$args  = array(
 				// @codingStandardsIgnoreStart
@@ -115,7 +116,7 @@ class Ckan_Backend_Helper {
 			$posts = get_posts( $args );
 			foreach ( $posts as $post ) {
 				$name  = get_post_meta( $post->ID, $field_prefix . 'ckan_name', true );
-				$title = get_post_meta( $post->ID, $field_prefix . 'title_' . self::get_current_language(), true );
+				$title = get_post_meta( $post->ID, $field_prefix . 'title_' . $current_language, true );
 				// if title in current language is not set -> find fallback title in other language
 				if ( empty( $title ) ) {
 					global $language_priority;
@@ -203,7 +204,8 @@ class Ckan_Backend_Helper {
 		if ( '' === $name ) {
 			return '';
 		}
-		$transient_name = Ckan_Backend::$plugin_slug . '_organization_title_' . $name;
+		$current_language = self::get_current_language();
+		$transient_name = Ckan_Backend::$plugin_slug . '_organization_title_' . $name . '_' . $current_language;
 		if ( false === ( $organization_title = get_transient( $transient_name ) ) ) {
 			$args  = array(
 				'posts_per_page'   => 1,
@@ -217,7 +219,7 @@ class Ckan_Backend_Helper {
 			);
 			$organisations = get_posts( $args );
 			if ( count( $organisations ) > 0 ) {
-				$organization_title = get_post_meta( $organisations[0]->ID, Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'title_' . self::get_current_language(), true );
+				$organization_title = get_post_meta( $organisations[0]->ID, Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'title_' . $current_language, true );
 				// if title in current language is not set -> find fallback title in other language
 				if ( empty( $organization_title ) ) {
 					global $language_priority;
@@ -353,33 +355,31 @@ class Ckan_Backend_Helper {
 	}
 
 	/**
-	 * Extracts localized text from given CKAN JSON.
+	 * Extracts localized text from given array or JSON.
 	 *
-	 * @param string $all_languages JSON from CKAN with all languages in it.
+	 * @param string $multilingual_text Array or JSON with text in all languages.
+	 * @param string $default Text to return if text is empty in all languages.
 	 *
 	 * @return string
 	 */
-	public static function get_localized_text( $all_languages ) {
+	public static function get_localized_text( $multilingual_text, $default = '' ) {
 		global $language_priority;
-		$org_languages = $all_languages;
-		if ( ! is_array( $all_languages ) ) {
-			$all_languages = json_decode( $all_languages, true );
+		if ( ! is_array( $multilingual_text ) ) {
+			$multilingual_text = json_decode( $multilingual_text, true );
 		}
 
-		$localized_text   = $all_languages[ self::get_current_language() ];
-		if ( empty( $localized_text ) ) {
-			foreach ( $language_priority as $lang ) {
-				if ( '' !== $all_languages[ $lang ] ) {
-					$localized_text = $all_languages[ $lang ];
-					break;
-				}
+		$localized_text   = $multilingual_text[ self::get_current_language() ];
+		if ( ! empty( $localized_text ) ) {
+			return $localized_text;
+		}
+
+		foreach ( $language_priority as $lang ) {
+			if ( ! empty( $multilingual_text[ $lang ] ) ) {
+				return $multilingual_text[ $lang ];
 			}
 		}
-		if ( empty( $localized_text ) ) {
-			return $org_languages;
-		}
 
-		return $localized_text;
+		return $default;
 	}
 
 	/**
