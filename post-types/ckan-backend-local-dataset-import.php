@@ -396,12 +396,12 @@ class Ckan_Backend_Local_Dataset_Import {
 			$dataset = new Ckan_Backend_Dataset_Model();
 			$identifier = (string) $this->get_single_element_from_xpath( $xml, './dct:identifier' );
 			if ( '' === $identifier ) {
-				throw new Exception( __( 'Please provide an identifier for the dataset (eg. <dct:title xml:lang="en">My Dataset</dct:title>).  Dataset [no identifier] not imported', 'ogdch' ) );
+				throw new Exception( __( 'Please provide an identifier for the dataset (eg. &lt;dct:title xml:lang="en"&gt;My Dataset&lt;/dct:title&gt;).  Dataset [no identifier] not imported', 'ogdch' ) );
 			}
 			$splitted_identifier = Ckan_Backend_Helper::split_identifier( $identifier );
 			if ( empty( $splitted_identifier['original_identifier'] ) ) {
 				throw new Exception( sprintf(
-					__( 'The original identifier of your dataset is missing. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[organization_id]</dct:identifier>. Dataset %s not imported.', 'ogdch' ),
+					__( 'The original identifier of your dataset is missing. Please provide the dataset identifier in the following form &lt;dct:identifier&gt;[original_dataset_id]@[organization_id]&lt;/dct:identifier&gt;. Dataset %s not imported.', 'ogdch' ),
 					$identifier
 				) );
 			}
@@ -414,7 +414,7 @@ class Ckan_Backend_Local_Dataset_Import {
 			}
 			if ( '' === $dataset->get_main_title() ) {
 				throw new Exception( sprintf(
-					__( 'Please provide a title in at least one language for the dataset (eg. <dct:title xml:lang="en">My Dataset</dct:title>). Dataset %s not imported.', 'ogdch' ),
+					__( 'Please provide a title in at least one language for the dataset (eg. &lt;dct:title xml:lang="en"&gt;My Dataset&lt;/dct:title&gt;). Dataset %s not imported.', 'ogdch' ),
 					$identifier
 				) );
 			}
@@ -486,7 +486,7 @@ class Ckan_Backend_Local_Dataset_Import {
 		// Check if organisation is set
 		if ( empty( $organisation ) ) {
 			throw new Exception( sprintf(
-				__( 'The organization id is missing in the identifier. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[organization_id]</dct:identifier>. Dataset %s not imported.', 'ogdch' ),
+				__( 'The organization id is missing in the identifier. Please provide the dataset identifier in the following form &lt;dct:identifier&gt;[original_dataset_id]@[organization_id]&lt;/dct:identifier&gt;. Dataset %s not imported.', 'ogdch' ),
 				$identifier
 			) );
 		}
@@ -495,7 +495,7 @@ class Ckan_Backend_Local_Dataset_Import {
 			$user_organisation = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
 			if ( $user_organisation !== $organisation ) {
 				throw new Exception( sprintf(
-					__( 'You are not allowed to add a dataset for another organistaion. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[your_organization_id]</dct:identifier>. Dataset %s not imported.', 'ogdch' ),
+					__( 'You are not allowed to add a dataset for another organistaion. Please provide the dataset identifier in the following form &lt;dct:identifier&gt;[original_dataset_id]@[your_organization_id]&lt;/dct:identifier&gt;. Dataset %s not imported.', 'ogdch' ),
 					$identifier
 				) );
 			}
