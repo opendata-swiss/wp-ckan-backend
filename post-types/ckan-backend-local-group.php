@@ -43,26 +43,26 @@ class Ckan_Backend_Local_Group {
 	 */
 	public function register_post_type() {
 		$labels = array(
-			'name'               => __( 'Themes', 'ogdch' ),
-			'singular_name'      => __( 'Theme', 'ogdch' ),
-			'menu_name'          => __( 'Themes', 'ogdch' ),
-			'name_admin_bar'     => __( 'Themes', 'ogdch' ),
-			'parent_item_colon'  => __( 'Parent Theme:', 'ogdch' ),
-			'all_items'          => __( 'All Themes', 'ogdch' ),
-			'add_new_item'       => __( 'Add New Theme', 'ogdch' ),
+			'name'               => __( 'Categories', 'ogdch' ),
+			'singular_name'      => __( 'Category', 'ogdch' ),
+			'menu_name'          => __( 'Categories', 'ogdch' ),
+			'name_admin_bar'     => __( 'Categories', 'ogdch' ),
+			'parent_item_colon'  => __( 'Parent Category:', 'ogdch' ),
+			'all_items'          => __( 'All Categories', 'ogdch' ),
+			'add_new_item'       => __( 'Add New Category', 'ogdch' ),
 			'add_new'            => __( 'Add New', 'ogdch' ),
-			'new_item'           => __( 'New Theme', 'ogdch' ),
-			'edit_item'          => __( 'Edit Theme', 'ogdch' ),
-			'update_item'        => __( 'Update Theme', 'ogdch' ),
-			'view_item'          => __( 'View Theme', 'ogdch' ),
-			'search_items'       => __( 'Search Themes', 'ogdch' ),
+			'new_item'           => __( 'New Category', 'ogdch' ),
+			'edit_item'          => __( 'Edit Category', 'ogdch' ),
+			'update_item'        => __( 'Update Category', 'ogdch' ),
+			'view_item'          => __( 'View Category', 'ogdch' ),
+			'search_items'       => __( 'Search Categories', 'ogdch' ),
 			'not_found'          => __( 'Not found', 'ogdch' ),
 			'not_found_in_trash' => __( 'Not found in Trash', 'ogdch' ),
 		);
 
 		$args = array(
-			'label'               => __( 'CKAN', 'ogdch' ),
-			'description'         => __( 'Contains Data from the CKAN Instance', 'ogdch' ),
+			'label'               => __( 'Categories', 'ogdch' ),
+			'description'         => __( 'Categories which get synced with CKAN', 'ogdch' ),
 			'labels'              => $labels,
 			'supports'            => array( 'title' ),
 			'hierarchical'        => false,
@@ -142,7 +142,7 @@ class Ckan_Backend_Local_Group {
 
 		/* Image */
 		$cmb->add_field( array(
-			'name' => __( 'Group Image', 'ogdch' ),
+			'name' => __( 'Category Image', 'ogdch' ),
 			'type' => 'title',
 			'id'   => 'image_title',
 		) );
