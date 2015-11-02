@@ -9,6 +9,12 @@
   color: #444;
   font-style: normal; }
 
+#cmb2-metabox-ckan-local-dataset-box h2.cmb-group-name {
+  font-size: 14px;
+  font-weight: 600; }
+#cmb2-metabox-ckan-local-dataset-box .cmb2-metabox-description {
+  font-weight: normal; }
+
 .post-type-ckan-local-group #minor-publishing,
 .post-type-ckan-local-org #minor-publishing {
   display: none; }
