@@ -32,8 +32,6 @@ class Ckan_Backend_Helper {
 		$response = curl_exec( $ch );
 		$response = json_decode( $response, true );
 
-
-
 		curl_close( $ch );
 
 		return $response;
@@ -449,13 +447,13 @@ class Ckan_Backend_Helper {
 	/**
 	 * Returns the given array flattened.
 	 *
-	 * @param array $array The array to be flattened
+	 * @param array $array The array to be flattened.
 	 *
 	 * @return array
 	 */
 	public static function flatten(array $array) {
 		$return = array();
-		array_walk_recursive($array, function($a) use (&$return) { $return[] = $a; });
+		array_walk_recursive( $array, function( $a ) use ( &$return ) { $return[] = $a; });
 		return $return;
 	}
 }
