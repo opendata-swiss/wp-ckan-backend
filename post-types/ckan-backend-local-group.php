@@ -111,7 +111,7 @@ class Ckan_Backend_Local_Group {
 
 		$cmb = new_cmb2_box( array(
 			'id'           => self::POST_TYPE . '-box',
-			'title'        => __( 'Ressource Data', 'ogdch' ),
+			'title'        => __( 'Category', 'ogdch' ),
 			'object_types' => array( self::POST_TYPE ),
 			'context'      => 'normal',
 			'priority'     => 'high',

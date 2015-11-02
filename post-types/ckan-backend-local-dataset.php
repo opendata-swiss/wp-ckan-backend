@@ -347,7 +347,7 @@ class Ckan_Backend_Local_Dataset {
 		/* CMB Mainbox */
 		$cmb = new_cmb2_box( array(
 			'id'           => self::POST_TYPE . '-box',
-			'title'        => __( 'Ressource Data', 'ogdch' ),
+			'title'        => __( 'Dataset', 'ogdch' ),
 			'object_types' => array( self::POST_TYPE ),
 			'context'      => 'normal',
 			'priority'     => 'high',
