@@ -285,8 +285,8 @@ class Ckan_Backend_Local_Dataset {
 			'update_item'        => __( 'Update Dataset', 'ogdch' ),
 			'view_item'          => __( 'View Dataset', 'ogdch' ),
 			'search_items'       => __( 'Search Datasets', 'ogdch' ),
-			'not_found'          => __( 'Not found', 'ogdch' ),
-			'not_found_in_trash' => __( 'Not found in Trash', 'ogdch' ),
+			'not_found'          => __( 'No Datasets found', 'ogdch' ),
+			'not_found_in_trash' => __( 'No Datasets found in Trash', 'ogdch' ),
 		);
 
 		$taxonomies = array();
@@ -295,8 +295,8 @@ class Ckan_Backend_Local_Dataset {
 		}
 
 		$args = array(
-			'label'               => __( 'CKAN', 'ogdch' ),
-			'description'         => __( 'Contains Data from the CKAN Instance', 'ogdch' ),
+			'label'               => __( 'Datasets', 'ogdch' ),
+			'description'         => __( 'Datasets which get synced with CKAN', 'ogdch' ),
 			'labels'              => $labels,
 			'supports'            => array( 'title' ),
 			'taxonomies'          => $taxonomies,
@@ -347,7 +347,7 @@ class Ckan_Backend_Local_Dataset {
 		/* CMB Mainbox */
 		$cmb = new_cmb2_box( array(
 			'id'           => self::POST_TYPE . '-box',
-			'title'        => __( 'Ressource Data', 'ogdch' ),
+			'title'        => __( 'Dataset', 'ogdch' ),
 			'object_types' => array( self::POST_TYPE ),
 			'context'      => 'normal',
 			'priority'     => 'high',
@@ -377,9 +377,6 @@ class Ckan_Backend_Local_Dataset {
 				'name'       => __( 'Title', 'ogdch' ) . ' (' . strtoupper( $lang ) . ')',
 				'id'         => self::FIELD_PREFIX . 'title_' . $lang,
 				'type'       => 'text',
-				'attributes' => array(
-					'placeholder' => __( 'e.g. Awesome dataset', 'ogdch' ),
-				),
 			) );
 
 			/* Description */
@@ -477,7 +474,7 @@ class Ckan_Backend_Local_Dataset {
 
 		/* Theme */
 		$cmb->add_field( array(
-			'name'              => __( 'Theme', 'ogdch' ),
+			'name'              => __( 'Categories', 'ogdch' ),
 			'id'                => self::FIELD_PREFIX . 'themes',
 			'type'              => 'multicheck',
 			'select_all_button' => false,
@@ -488,9 +485,6 @@ class Ckan_Backend_Local_Dataset {
 			'name'       => __( 'Landing Page', 'ogdch' ),
 			'id'         => self::FIELD_PREFIX . 'landing_page',
 			'type'       => 'text_url',
-			'attributes' => array(
-				'placeholder' => 'http://example.com/',
-			),
 		) );
 
 		$cmb->add_field( array(

@@ -56,13 +56,13 @@ class Ckan_Backend_Local_Organisation {
 			'update_item'        => __( 'Update Organization', 'ogdch' ),
 			'view_item'          => __( 'View Organization', 'ogdch' ),
 			'search_items'       => __( 'Search Organizations', 'ogdch' ),
-			'not_found'          => __( 'Not found', 'ogdch' ),
-			'not_found_in_trash' => __( 'Not found in Trash', 'ogdch' ),
+			'not_found'          => __( 'No Organizations found', 'ogdch' ),
+			'not_found_in_trash' => __( 'No Organizations found in Trash', 'ogdch' ),
 		);
 
 		$args = array(
-			'label'               => __( 'CKAN', 'ogdch' ),
-			'description'         => __( 'Contains Data from the CKAN Instance', 'ogdch' ),
+			'label'               => __( 'Organizations', 'ogdch' ),
+			'description'         => __( 'Organizations which get synced with CKAN', 'ogdch' ),
 			'labels'              => $labels,
 			'supports'            => array( 'title' ),
 			'hierarchical'        => false,
@@ -111,7 +111,7 @@ class Ckan_Backend_Local_Organisation {
 
 		$cmb = new_cmb2_box( array(
 			'id'           => self::POST_TYPE . '-box',
-			'title'        => __( 'Organization Data', 'ogdch' ),
+			'title'        => __( 'Organization', 'ogdch' ),
 			'object_types' => array( self::POST_TYPE ),
 			'context'      => 'normal',
 			'priority'     => 'high',
@@ -143,7 +143,7 @@ class Ckan_Backend_Local_Organisation {
 		if ( current_user_can( 'edit_data_of_all_organisations' ) ) {
 			/* Parent */
 			$cmb->add_field( array(
-				'name' => __( 'Parent Organisation', 'ogdch' ),
+				'name' => __( 'Parent Organization', 'ogdch' ),
 				'type' => 'title',
 				'id'   => 'parent_title',
 			) );
