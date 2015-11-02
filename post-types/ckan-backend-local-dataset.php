@@ -93,7 +93,7 @@ class Ckan_Backend_Local_Dataset {
 			?>
 		</div>
 		<?php
-		echo esc_attr( $field_type_object->_desc( true ) );
+		$field_type_object->_desc( true, true );
 	}
 
 	/**
@@ -356,8 +356,9 @@ class Ckan_Backend_Local_Dataset {
 
 		/* Identifier */
 		$cmb->add_field( array(
-			'name'       => __( 'Dataset Identifier', 'ogdch' ),
+			'name'       => __( 'Dataset Identifier*', 'ogdch' ),
 			'id'         => self::FIELD_PREFIX . 'identifier',
+			'desc'       => __( 'Unique identifier of the dataset linked with the publisher. A good way to make sure this identifier is unique is to use the source system ID.', 'ogdch' ),
 			'type'       => 'dataset_identifier',
 			'attributes' => array(
 				'required' => 'required',
@@ -374,14 +375,14 @@ class Ckan_Backend_Local_Dataset {
 		foreach ( $language_priority as $lang ) {
 			/* Title */
 			$cmb->add_field( array(
-				'name'       => __( 'Title', 'ogdch' ) . ' (' . strtoupper( $lang ) . ')',
+				'name'       => __( 'Title', 'ogdch' ) . ' (' . strtoupper( $lang ) . ')*',
 				'id'         => self::FIELD_PREFIX . 'title_' . $lang,
 				'type'       => 'text',
 			) );
 
 			/* Description */
 			$cmb->add_field( array(
-				'name'       => __( 'Description', 'ogdch' ) . ' (' . strtoupper( $lang ) . ')',
+				'name'       => __( 'Description', 'ogdch' ) . ' (' . strtoupper( $lang ) . ')*',
 				'id'         => self::FIELD_PREFIX . 'description_' . $lang,
 				'type'       => 'textarea',
 				'attributes' => array( 'rows' => 3 ),
@@ -396,151 +397,36 @@ class Ckan_Backend_Local_Dataset {
 		) );
 
 		$cmb->add_field( array(
-			'name' => __( 'Issued', 'ogdch' ),
+			'name' => __( 'Issued*', 'ogdch' ),
 			'id'   => self::FIELD_PREFIX . 'issued',
-			'desc' => __( 'Date when dataset was issued.', 'ogdch' ),
+			'desc' => __( 'Date of the first publication of this dataset. If this date is unknown, the date of the first publication on this portal can be used.', 'ogdch' ),
 			'type' => 'text_date_timestamp',
+			'attributes' => array(
+				'required' => 'required',
+			),
 		) );
 
 		$cmb->add_field( array(
 			'name' => __( 'Modified', 'ogdch' ),
 			'id'   => self::FIELD_PREFIX . 'modified',
-			'desc' => __( 'Date when dataset was last modified.', 'ogdch' ),
+			'desc' => __( 'Date when dataset was last modified (since the first publication on the portal).', 'ogdch' ),
 			'type' => 'text_date_timestamp',
-		) );
-
-		/* Publisher */
-		$cmb->add_field( array(
-			'name' => __( 'Publisher', 'ogdch' ),
-			'type' => 'title',
-			'id'   => 'publisher_title',
-		) );
-
-		$publishers_group = $cmb->add_field( array(
-			'id'      => self::FIELD_PREFIX . 'publishers',
-			'type'    => 'group',
-			'options' => array(
-				'group_title'   => __( 'Publisher {#}', 'ogdch' ),
-				'add_button'    => __( 'Add another Publisher', 'ogdch' ),
-				'remove_button' => __( 'Remove Publisher', 'ogdch' ),
-			),
-		) );
-
-		$cmb->add_group_field( $publishers_group, array(
-			'name' => __( 'Label', 'ogdch' ),
-			'id'   => 'label',
-			'type' => 'text',
-			'attributes' => array(
-				'required' => 'required',
-			),
-		) );
-
-		$cmb->add_group_field( $publishers_group, array(
-			'name' => __( 'TERMDAT Reference', 'ogdch' ),
-			'id'   => 'termdat_reference',
-			'type' => 'text',
-		) );
-
-		$contact_points_group = $cmb->add_field( array(
-			'id'      => self::FIELD_PREFIX . 'contact_points',
-			'type'    => 'group',
-			'options' => array(
-				'group_title'   => __( 'Contact Point {#}', 'ogdch' ),
-				'add_button'    => __( 'Add another Contact Point', 'ogdch' ),
-				'remove_button' => __( 'Remove Contact Point', 'ogdch' ),
-			),
-		) );
-
-		$cmb->add_group_field( $contact_points_group, array(
-			'name' => __( 'Name', 'ogdch' ),
-			'id'   => 'name',
-			'type' => 'text',
-			'attributes' => array(
-				'required' => 'required',
-			),
-		) );
-
-		$cmb->add_group_field( $contact_points_group, array(
-			'name' => __( 'Email', 'ogdch' ),
-			'id'   => 'email',
-			'type' => 'text_email',
-		) );
-
-		$cmb->add_field( array(
-			'name' => __( 'Other', 'ogdch' ),
-			'type' => 'title',
-			'id'   => 'other_title',
-		) );
-
-		/* Theme */
-		$cmb->add_field( array(
-			'name'              => __( 'Categories', 'ogdch' ),
-			'id'                => self::FIELD_PREFIX . 'themes',
-			'type'              => 'multicheck',
-			'select_all_button' => false,
-			'options'           => array( 'Ckan_Backend_Helper', 'get_group_form_field_options' ),
-		) );
-
-		$cmb->add_field( array(
-			'name'       => __( 'Landing Page', 'ogdch' ),
-			'id'         => self::FIELD_PREFIX . 'landing_page',
-			'type'       => 'text_url',
-		) );
-
-		$cmb->add_field( array(
-			'name' => __( 'Relation', 'ogdch' ),
-			'type' => 'title',
-			'id'   => 'relation_title',
-		) );
-
-		$relations_group = $cmb->add_field( array(
-			'id'      => self::FIELD_PREFIX . 'relations',
-			'type'    => 'group',
-			'options' => array(
-				'group_title'   => __( 'Relation {#}', 'ogdch' ),
-				'add_button'    => __( 'Add another Relation', 'ogdch' ),
-				'remove_button' => __( 'Remove Relation', 'ogdch' ),
-			),
-		) );
-
-		$cmb->add_group_field( $relations_group, array(
-			'name' => __( 'URL', 'ogdch' ),
-			'id'   => 'url',
-			'type' => 'text_url',
-		) );
-
-		$cmb->add_group_field( $relations_group, array(
-			'name' => __( 'Label', 'ogdch' ),
-			'id'   => 'label',
-			'type' => 'text',
-		) );
-
-		$cmb->add_field( array(
-			'name'       => __( 'Spatial', 'ogdch' ),
-			'id'         => self::FIELD_PREFIX . 'spatial',
-			'type'       => 'text',
-			'attributes' => array(
-				'placeholder' => __( 'Geographical assignment of this dataset', 'ogdch' ),
-			),
-		) );
-
-		$cmb->add_field( array(
-			'name' => __( 'Coverage', 'ogdch' ),
-			'id'   => self::FIELD_PREFIX . 'coverage',
-			'type' => 'text',
 		) );
 
 		$cmb->add_field( array(
 			'name'             => __( 'Accrual Periodicity', 'ogdch' ),
 			'id'               => self::FIELD_PREFIX . 'accrual_periodicity',
+			'desc'             => __( 'The frequency in which this dataset is updated.', 'ogdch' ),
 			'type'             => 'select',
 			'show_option_none' => false,
 			'options'          => Ckan_Backend_Frequency::get_frequencies(),
 		) );
 
 		$temporals_group = $cmb->add_field( array(
-			'id'      => self::FIELD_PREFIX . 'temporals',
-			'type'    => 'group',
+			'id'          => self::FIELD_PREFIX . 'temporals',
+			'type'        => 'group',
+			'name'        => __( 'Temporals', 'ogdch' ),
+			'description' => __( 'One or more time period that this dataset covers.', 'ogdch' ),
 			'options' => array(
 				'group_title'   => __( 'Temporal {#}', 'ogdch' ),
 				'add_button'    => __( 'Add another Temporal', 'ogdch' ),
@@ -560,18 +446,131 @@ class Ckan_Backend_Local_Dataset {
 			'type' => 'text_date_timestamp',
 		) );
 
-		$see_alsos_group = $cmb->add_field( array(
-			'id'      => self::FIELD_PREFIX . 'see_alsos',
-			'type'    => 'group',
+		/* Publisher */
+		$cmb->add_field( array(
+			'name' => __( 'Publisher Information', 'ogdch' ),
+			'type' => 'title',
+			'id'   => 'publisher_title',
+		) );
+
+		$publishers_group = $cmb->add_field( array(
+			'id'          => self::FIELD_PREFIX . 'publishers',
+			'type'        => 'group',
+			'name'        => __( 'Publishers', 'ogdch' ),
+			'description' => __( 'The actual publisher(s) of this dataset. This can be the same as the organisation which publishes this dataset. At least one publisher is required.', 'ogdch' ),
 			'options' => array(
-				'group_title'   => __( 'See Also {#}', 'ogdch' ),
-				'add_button'    => __( 'Add another See Also', 'ogdch' ),
-				'remove_button' => __( 'Remove See Also', 'ogdch' ),
+				'group_title'   => __( 'Publisher {#}', 'ogdch' ),
+				'add_button'    => __( 'Add another Publisher', 'ogdch' ),
+				'remove_button' => __( 'Remove Publisher', 'ogdch' ),
+			),
+		) );
+
+		$cmb->add_group_field( $publishers_group, array(
+			'name' => __( 'Name*', 'ogdch' ),
+			'id'   => 'label',
+			'type' => 'text',
+			'attributes' => array(
+				'required' => 'required',
+			),
+		) );
+
+		$contact_points_group = $cmb->add_field( array(
+			'id'      => self::FIELD_PREFIX . 'contact_points',
+			'type'        => 'group',
+			'name'        => __( 'Contact points', 'ogdch' ),
+			'description' => __( 'The contact point if there are questions about this dataset. At least one contact point is required.', 'ogdch' ),
+			'options' => array(
+				'group_title'   => __( 'Contact Point {#}', 'ogdch' ),
+				'add_button'    => __( 'Add another Contact Point', 'ogdch' ),
+				'remove_button' => __( 'Remove Contact Point', 'ogdch' ),
+			),
+		) );
+
+		$cmb->add_group_field( $contact_points_group, array(
+			'name' => __( 'Name*', 'ogdch' ),
+			'id'   => 'name',
+			'type' => 'text',
+			'attributes' => array(
+				'required' => 'required',
+			),
+		) );
+
+		$cmb->add_group_field( $contact_points_group, array(
+			'name' => __( 'Email*', 'ogdch' ),
+			'id'   => 'email',
+			'type' => 'text_email',
+			'attributes' => array(
+				'required' => 'required',
+			),
+		) );
+
+		$cmb->add_field( array(
+			'name' => __( 'Other', 'ogdch' ),
+			'type' => 'title',
+			'id'   => 'other_title',
+		) );
+
+		/* Categories */
+		$cmb->add_field( array(
+			'name'              => __( 'Categories', 'ogdch' ),
+			'id'                => self::FIELD_PREFIX . 'themes',
+			'type'              => 'multicheck',
+			'select_all_button' => false,
+			'options'           => array( 'Ckan_Backend_Helper', 'get_group_form_field_options' ),
+		) );
+
+		/* Further Information */
+		$cmb->add_field( array(
+			'name' => __( 'Further Information', 'ogdch' ),
+			'type' => 'title',
+			'id'   => 'relation_title',
+		) );
+
+		$cmb->add_field( array(
+			'name'       => __( 'Landing Page', 'ogdch' ),
+			'id'         => self::FIELD_PREFIX . 'landing_page',
+			'desc'       => __( 'Website of the dataset with related information.', 'ogdch' ),
+			'type'       => 'text_url',
+		) );
+
+		$relations_group = $cmb->add_field( array(
+			'id'          => self::FIELD_PREFIX . 'relations',
+			'type'        => 'group',
+			'name'        => __( 'Relations', 'ogdch' ),
+			'description' => __( 'Further information related to this dataset.', 'ogdch' ),
+			'options' => array(
+				'group_title'   => __( 'Relation {#}', 'ogdch' ),
+				'add_button'    => __( 'Add another Relation', 'ogdch' ),
+				'remove_button' => __( 'Remove Relation', 'ogdch' ),
+			),
+		) );
+
+		$cmb->add_group_field( $relations_group, array(
+			'name' => __( 'Title', 'ogdch' ),
+			'id'   => 'label',
+			'type' => 'text',
+		) );
+
+		$cmb->add_group_field( $relations_group, array(
+			'name' => __( 'URL', 'ogdch' ),
+			'id'   => 'url',
+			'type' => 'text_url',
+		) );
+
+		$see_alsos_group = $cmb->add_field( array(
+			'id'          => self::FIELD_PREFIX . 'see_alsos',
+			'type'        => 'group',
+			'name'        => __( 'Dataset Relations', 'ogdch' ),
+			'description' => __( 'Relations to other datasets.', 'ogdch' ),
+			'options' => array(
+				'group_title'   => __( 'Dataset Relation {#}', 'ogdch' ),
+				'add_button'    => __( 'Add another Dataset Relation', 'ogdch' ),
+				'remove_button' => __( 'Remove Dataset Relation', 'ogdch' ),
 			),
 		) );
 
 		$cmb->add_group_field( $see_alsos_group, array(
-			'name' => __( 'Dataset Identifier', 'ogdch' ),
+			'name' => __( 'Dataset', 'ogdch' ),
 			'id'   => 'dataset_identifier',
 			'type' => 'dataset_search',
 		) );
@@ -593,17 +592,26 @@ class Ckan_Backend_Local_Dataset {
 			),
 		) );
 
+		$cmb->add_group_field( $distributions_group, array(
+			'name' => __( 'Identifier', 'ogdch' ),
+			'desc' => __( 'Identifier of the distribution in the source system.', 'ogdch' ),
+			'id'   => 'identifier',
+			'type' => 'text',
+		) );
+
 		foreach ( $language_priority as $lang ) {
 			$cmb->add_group_field( $distributions_group, array(
 				'name' => __( 'Title', 'ogdch' ) . ' (' . strtoupper( $lang ) . ')',
 				'id'   => 'title_' . $lang,
 				'type' => 'text',
+				'desc' => __( 'If this element is left empty, the title of the dataset is used instead.', 'ogdch' ),
 			) );
 
 			$cmb->add_group_field( $distributions_group, array(
 				'name'       => __( 'Description', 'ogdch' ) . ' (' . strtoupper( $lang ) . ')',
 				'id'         => 'description_' . $lang,
 				'type'       => 'textarea',
+				'desc'       => __( 'If this element is left empty, the description of the dataset is used instead.', 'ogdch' ),
 				'attributes' => array( 'rows' => 3 ),
 			) );
 		}
@@ -611,6 +619,7 @@ class Ckan_Backend_Local_Dataset {
 		$cmb->add_group_field( $distributions_group, array(
 			'name'              => __( 'Language', 'ogdch' ),
 			'id'                => 'languages',
+			'desc'              => __( 'Languages in which this distribution is available. If the distribution is language-independent do not check anything.', 'ogdch' ),
 			'type'              => 'multicheck_inline',
 			'select_all_button' => false,
 			'options'           => array(
@@ -622,9 +631,9 @@ class Ckan_Backend_Local_Dataset {
 		) );
 
 		$cmb->add_group_field( $distributions_group, array(
-			'name' => __( 'Issued', 'ogdch' ),
+			'name' => __( 'Issued*', 'ogdch' ),
 			'id'   => 'issued',
-			'desc' => __( 'Date when dataset was issued.', 'ogdch' ),
+			'desc' => __( 'Date of the publication of this distribution.', 'ogdch' ),
 			'type' => 'text_date_timestamp',
 			'attributes' => array(
 				'required' => 'required',
@@ -635,23 +644,24 @@ class Ckan_Backend_Local_Dataset {
 		$cmb->add_group_field( $distributions_group, array(
 			'name' => __( 'Modified', 'ogdch' ),
 			'id'   => 'modified',
-			'desc' => __( 'Date when dataset was last modified.', 'ogdch' ),
+			'desc' => __( 'Date of the last change of the distribution.', 'ogdch' ),
 			'type' => 'text_date_timestamp',
 			//'date_format' => 'd.m.Y', // TODO date_format is still buggy in the CMB2 plugin
 		) );
 
 		$cmb->add_group_field( $distributions_group, array(
-			'name'             => __( 'Rights', 'ogdch' ),
+			'name'             => __( 'Terms of use*', 'ogdch' ),
 			'id'               => 'rights',
-			'desc'             => 'All rights marked with an asterisk (*) will be published on this portal',
+			'desc'             => __( 'All terms of use marked with an asterisk (*) are declared as close data.', 'ogdch' ),
 			'type'             => 'select',
 			'show_option_none' => false,
 			'options'          => Ckan_Backend_Rights::get_rights(),
 		) );
 
 		$cmb->add_group_field( $distributions_group, array(
-			'name'       => __( 'Access URL', 'ogdch' ),
+			'name'       => __( 'Access URL*', 'ogdch' ),
 			'id'         => 'access_url',
+			'desc'       => __( 'URL where the distribution can be found. This could be either a download url, an API url or a landing page url. If the distribution is only available through a landing page, this field must contain the url of the landing page. If a download url was given for this distribution, this field has to contain the same value.', 'ogdch' ),
 			'type'       => 'text_url',
 			'attributes' => array(
 				'required' => 'required',
@@ -661,11 +671,12 @@ class Ckan_Backend_Local_Dataset {
 		$cmb->add_group_field( $distributions_group, array(
 			'name' => __( 'Download URL', 'ogdch' ),
 			'id'   => 'download_url',
+			'desc'       => __( 'URL of a file, if the distribution can be downloaded.', 'ogdch' ),
 			'type' => 'text_url',
 		) );
 
 		$cmb->add_group_field( $distributions_group, array(
-			'name' => __( 'Bytesize', 'ogdch' ),
+			'name' => __( 'Size (in Bytes)', 'ogdch' ),
 			'id'   => 'byte_size',
 			'type' => 'text',
 		) );
@@ -673,24 +684,6 @@ class Ckan_Backend_Local_Dataset {
 		$cmb->add_group_field( $distributions_group, array(
 			'name' => __( 'Mediatype', 'ogdch' ),
 			'id'   => 'media_type',
-			'type' => 'text',
-		) );
-
-		$cmb->add_group_field( $distributions_group, array(
-			'name' => __( 'Format', 'ogdch' ),
-			'id'   => 'format',
-			'type' => 'text',
-		) );
-
-		$cmb->add_group_field( $distributions_group, array(
-			'name' => __( 'Coverage', 'ogdch' ),
-			'id'   => 'coverage',
-			'type' => 'text',
-		) );
-
-		$cmb->add_group_field( $distributions_group, array(
-			'name' => __( 'Identifier', 'ogdch' ),
-			'id'   => 'identifier',
 			'type' => 'text',
 		) );
 
