@@ -24,6 +24,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		$resources      = $this->prepare_resources( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'distributions', $load_from_post ) );
 		$groups         = $this->prepare_selected_groups( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'themes', $load_from_post ) );
 		$keywords       = $this->prepare_keywords( $post );
+		$tags           = $this->prepare_tags(Ckan_Backend_Helper::flatten($keywords));
 		$titles         = Ckan_Backend_Helper::prepare_multilingual_field( $post->ID, $this->field_prefix . 'title', $load_from_post );
 		$descriptions   = Ckan_Backend_Helper::prepare_multilingual_field( $post->ID, $this->field_prefix . 'description', $load_from_post );
 		$languages      = $this->gather_languages( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'distributions', $load_from_post ) );
@@ -57,6 +58,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 			'contact_points'      => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'contact_points', $load_from_post ),
 			'language'            => $languages,
 			'keywords'            => $keywords,
+			'tags'                => $tags,
 			'url'                 => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'landing_page', $load_from_post ),
 			'spatial'             => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'spatial', $load_from_post ),
 			'coverage'            => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'coverage', $load_from_post ),
@@ -176,6 +178,25 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		}
 
 		return $ckan_keywords;
+	}
+
+	/**
+	 * Create CKAN friendly array of all tags
+	 *
+	 * @param array $tags WordPress tags.
+	 *
+	 * @return array
+	 */
+	protected function prepare_tags( $tags ) {
+		$ckan_tags = array();
+
+		foreach ( $tags as $tag ) {
+			$ckan_tags[] = array(
+				'name' => $tag,
+			);
+		}
+
+		return $ckan_tags;
 	}
 
 	/**
