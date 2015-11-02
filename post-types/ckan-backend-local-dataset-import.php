@@ -143,7 +143,7 @@ class Ckan_Backend_Local_Dataset_Import {
 									<td>
 										<input type="file" id="import_file" name="<?php esc_attr_e( $file_field_name ); ?>"/>
 										<br/>
-										<span class="description"><?php esc_html_e( __( 'File has to be a DACT-AP Switzerland catalog.', 'ogdch' ) ); ?></span>
+										<span class="description"><?php esc_html_e( __( 'File has to be a DCAT-AP Switzerland catalog.', 'ogdch' ) ); ?></span>
 									</td>
 								</tr>
 							</tbody>
