@@ -168,7 +168,12 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	 * @return array
 	 */
 	protected function prepare_keywords( $post ) {
-		$ckan_keywords = array();
+		$ckan_keywords = array(
+			'de' => array(),
+			'fr' => array(),
+			'en' => array(),
+			'it' => array(),
+		);
 
 		foreach ( Ckan_Backend::$keywords_tax_mapping as $lang => $taxonomy ) {
 			$keywords = wp_get_post_terms( $post->ID, $taxonomy );
