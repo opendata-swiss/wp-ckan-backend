@@ -61,8 +61,8 @@ class Ckan_Backend_Local_Organisation {
 		);
 
 		$args = array(
-			'label'               => __( 'CKAN', 'ogdch' ),
-			'description'         => __( 'Contains Data from the CKAN Instance', 'ogdch' ),
+			'label'               => __( 'Organizations', 'ogdch' ),
+			'description'         => __( 'Organizations which get synced with CKAN', 'ogdch' ),
 			'labels'              => $labels,
 			'supports'            => array( 'title' ),
 			'hierarchical'        => false,
