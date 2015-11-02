@@ -56,8 +56,8 @@ class Ckan_Backend_Local_Group {
 			'update_item'        => __( 'Update Category', 'ogdch' ),
 			'view_item'          => __( 'View Category', 'ogdch' ),
 			'search_items'       => __( 'Search Categories', 'ogdch' ),
-			'not_found'          => __( 'Not found', 'ogdch' ),
-			'not_found_in_trash' => __( 'Not found in Trash', 'ogdch' ),
+			'not_found'          => __( 'No Categories found', 'ogdch' ),
+			'not_found_in_trash' => __( 'No Categories found in Trash', 'ogdch' ),
 		);
 
 		$args = array(

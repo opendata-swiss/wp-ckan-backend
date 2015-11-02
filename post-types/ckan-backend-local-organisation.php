@@ -56,8 +56,8 @@ class Ckan_Backend_Local_Organisation {
 			'update_item'        => __( 'Update Organization', 'ogdch' ),
 			'view_item'          => __( 'View Organization', 'ogdch' ),
 			'search_items'       => __( 'Search Organizations', 'ogdch' ),
-			'not_found'          => __( 'Not found', 'ogdch' ),
-			'not_found_in_trash' => __( 'Not found in Trash', 'ogdch' ),
+			'not_found'          => __( 'No Organizations found', 'ogdch' ),
+			'not_found_in_trash' => __( 'No Organizations found in Trash', 'ogdch' ),
 		);
 
 		$args = array(

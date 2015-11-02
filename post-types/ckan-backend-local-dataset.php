@@ -285,8 +285,8 @@ class Ckan_Backend_Local_Dataset {
 			'update_item'        => __( 'Update Dataset', 'ogdch' ),
 			'view_item'          => __( 'View Dataset', 'ogdch' ),
 			'search_items'       => __( 'Search Datasets', 'ogdch' ),
-			'not_found'          => __( 'Not found', 'ogdch' ),
-			'not_found_in_trash' => __( 'Not found in Trash', 'ogdch' ),
+			'not_found'          => __( 'No Datasets found', 'ogdch' ),
+			'not_found_in_trash' => __( 'No Datasets found in Trash', 'ogdch' ),
 		);
 
 		$taxonomies = array();
