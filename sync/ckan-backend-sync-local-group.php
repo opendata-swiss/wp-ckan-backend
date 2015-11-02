@@ -52,8 +52,11 @@ class Ckan_Backend_Sync_Local_Group extends Ckan_Backend_Sync_Abstract {
 	 * @param object $post The post from WordPress.
 	 */
 	protected function after_sync_action( $post ) {
+		global $language_priority;
 		// Deletes all transients for this post-type instance.
-		delete_transient( Ckan_Backend::$plugin_slug . '_' . Ckan_Backend_Local_Group::POST_TYPE . '_options' );
+		foreach ( $language_priority as $lang ) {
+			delete_transient( Ckan_Backend::$plugin_slug . '_' . Ckan_Backend_Local_Group::POST_TYPE . '_options_' . $lang );
+		}
 		delete_transient( Ckan_Backend::$plugin_slug . '_' . Ckan_Backend_Local_Group::POST_TYPE . '_' . $post->post_name . '_exists' );
 		delete_transient( Ckan_Backend::$plugin_slug . '_' . sanitize_title_with_dashes( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'rdf_uri', false ) ) );
 	}

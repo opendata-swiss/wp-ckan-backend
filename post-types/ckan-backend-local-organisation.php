@@ -118,11 +118,11 @@ class Ckan_Backend_Local_Organisation {
 			'show_names'   => true,
 		) );
 
-		/* Title */
+		/* Organization Information */
 		$cmb->add_field( array(
-			'name' => __( 'Organization Title', 'ogdch' ),
+			'name' => __( 'Organization Information', 'ogdch' ),
 			'type' => 'title',
-			'id'   => 'title_title',
+			'id'   => 'organization_information_title',
 		) );
 
 		foreach ( $language_priority as $lang ) {
@@ -130,21 +130,8 @@ class Ckan_Backend_Local_Organisation {
 				'name'       => __( 'Title', 'ogdch' ) . ' (' . strtoupper( $lang ) . ')',
 				'id'         => self::FIELD_PREFIX . 'title_' . $lang,
 				'type'       => 'text',
-				'attributes' => array(
-					'placeholder' => __( 'e.g. Awesome organisation', 'ogdch' ),
-				),
 			) );
-		}
 
-		/* Description */
-		$cmb->add_field( array(
-			'name' => __( 'Organization Description', 'ogdch' ),
-			'type' => 'title',
-			'id'   => 'description_title',
-			'desc' => __( 'Markdown Syntax can be used to format the description.', 'ogdch' ),
-		) );
-
-		foreach ( $language_priority as $lang ) {
 			$cmb->add_field( array(
 				'name'       => __( 'Description', 'ogdch' ) . ' (' . strtoupper( $lang ) . ')',
 				'id'         => self::FIELD_PREFIX . 'description_' . $lang,

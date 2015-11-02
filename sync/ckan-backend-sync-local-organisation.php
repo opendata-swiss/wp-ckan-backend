@@ -93,9 +93,12 @@ class Ckan_Backend_Sync_Local_Organisation extends Ckan_Backend_Sync_Abstract {
 	 * @param object $post The post from WordPress.
 	 */
 	protected function after_sync_action( $post ) {
+		global $language_priority;
 		// Deletes all transients for this post-type instance.
-		delete_transient( Ckan_Backend::$plugin_slug . '_' . Ckan_Backend_Local_Organisation::POST_TYPE . '_options' );
+		foreach ( $language_priority as $lang ) {
+			delete_transient( Ckan_Backend::$plugin_slug . '_' . Ckan_Backend_Local_Organisation::POST_TYPE . '_options_' . $lang );
+			delete_transient( Ckan_Backend::$plugin_slug . '_organization_title_' . $post->post_name . '_' . $lang );
+		}
 		delete_transient( Ckan_Backend::$plugin_slug . '_' . Ckan_Backend_Local_Organisation::POST_TYPE . '_' . $post->post_name . '_exists' );
-		delete_transient( Ckan_Backend::$plugin_slug . '_organization_title_' . $post->post_name );
 	}
 }
