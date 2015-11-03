@@ -430,11 +430,11 @@ class Ckan_Backend_Distribution_Model {
 
 		// TODO remove these lines when better backend gui solution is found
 		$access_urls = $this->get_access_urls();
-		if( ! empty( $access_urls ) ) {
+		if ( ! empty( $access_urls ) ) {
 			$distribution['access_url']   = reset( $access_urls );
 		}
 		$download_urls = $this->get_download_urls();
-		if( ! empty( $download_urls ) ) {
+		if ( ! empty( $download_urls ) ) {
 			$distribution['download_url'] = reset( $download_urls );
 		}
 
