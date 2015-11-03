@@ -419,6 +419,8 @@ class Ckan_Backend_Distribution_Model {
 			'media_type'           => $this->get_media_type(),
 			'format'               => $this->get_format(),
 			'coverage'             => $this->get_coverage(),
+			'access_url'           => '',
+			'download_url'         => '',
 		);
 
 		foreach ( $language_priority as $lang ) {
@@ -427,10 +429,14 @@ class Ckan_Backend_Distribution_Model {
 		}
 
 		// TODO remove these lines when better backend gui solution is found
-		$access_urls                  = $this->get_access_urls();
-		$distribution['access_url']   = reset( $access_urls );
-		$download_urls                = $this->get_download_urls();
-		$distribution['download_url'] = reset( $download_urls );
+		$access_urls = $this->get_access_urls();
+		if( ! empty( $access_urls ) ) {
+			$distribution['access_url']   = reset( $access_urls );
+		}
+		$download_urls = $this->get_download_urls();
+		if( ! empty( $download_urls ) ) {
+			$distribution['download_url'] = reset( $download_urls );
+		}
 
 		return $distribution;
 	}
