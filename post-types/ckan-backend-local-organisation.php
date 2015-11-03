@@ -47,7 +47,6 @@ class Ckan_Backend_Local_Organisation {
 			'singular_name'      => __( 'Organization', 'ogdch' ),
 			'menu_name'          => __( 'Organizations', 'ogdch' ),
 			'name_admin_bar'     => __( 'Organizations', 'ogdch' ),
-			'parent_item_colon'  => __( 'Parent Organization:', 'ogdch' ),
 			'all_items'          => __( 'All Organizations', 'ogdch' ),
 			'add_new_item'       => __( 'Add New Organization', 'ogdch' ),
 			'add_new'            => __( 'Add New', 'ogdch' ),
