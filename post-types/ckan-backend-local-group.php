@@ -47,7 +47,6 @@ class Ckan_Backend_Local_Group {
 			'singular_name'      => __( 'Category', 'ogdch' ),
 			'menu_name'          => __( 'Categories', 'ogdch' ),
 			'name_admin_bar'     => __( 'Categories', 'ogdch' ),
-			'parent_item_colon'  => __( 'Parent Category:', 'ogdch' ),
 			'all_items'          => __( 'All Categories', 'ogdch' ),
 			'add_new_item'       => __( 'Add New Category', 'ogdch' ),
 			'add_new'            => __( 'Add New', 'ogdch' ),

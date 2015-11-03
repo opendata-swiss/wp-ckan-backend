@@ -396,7 +396,7 @@ class Ckan_Backend_Local_Dataset_Import {
 			$dataset = new Ckan_Backend_Dataset_Model();
 			$identifier = (string) $this->get_single_element_from_xpath( $xml, './dct:identifier' );
 			if ( '' === $identifier ) {
-				throw new Exception( __( 'Please provide an identifier for the dataset (eg. &lt;dct:title xml:lang="en"&gt;My Dataset&lt;/dct:title&gt;).  Dataset [no identifier] not imported', 'ogdch' ) );
+				throw new Exception( __( 'Please provide an identifier for the dataset (eg. &lt;dct:title xml:lang="en"&gt;My Dataset&lt;/dct:title&gt;).  Dataset [no identifier] not imported.', 'ogdch' ) );
 			}
 			$splitted_identifier = Ckan_Backend_Helper::split_identifier( $identifier );
 			if ( empty( $splitted_identifier['original_identifier'] ) ) {
@@ -617,7 +617,7 @@ class Ckan_Backend_Local_Dataset_Import {
 		$rights = (string) $this->get_single_element_from_xpath( $xml, './dct:rights/odrs:dataLicence' );
 		if ( ! array_key_exists( $rights, Ckan_Backend_Rights::get_rights() ) ) {
 			throw new Exception( sprintf(
-				__( 'Right %1$s does not exist. Dataset %2$s not imported.', 'ogdch' ),
+				__( 'Term of use %1$s does not exist. Dataset %2$s not imported.', 'ogdch' ),
 				$rights,
 				$identifier
 			) );
@@ -674,7 +674,7 @@ class Ckan_Backend_Local_Dataset_Import {
 				$theme_name = get_post_meta( $groups[0]->ID, Ckan_Backend_Local_Group::FIELD_PREFIX . 'ckan_name', true );
 				if ( empty( $theme_name ) || ! Ckan_Backend_Helper::group_exists( $theme_name ) ) {
 					throw new Exception( sprintf(
-						__( 'Group %1$s does not exist. Dataset %2$s not imported.', 'ogdch' ),
+						__( 'Category %1$s does not exist. Dataset %2$s not imported.', 'ogdch' ),
 						$theme_uri,
 						$identifier
 					) );
@@ -684,7 +684,7 @@ class Ckan_Backend_Local_Dataset_Import {
 				set_transient( $transient_name, $theme_name, 1 * HOUR_IN_SECONDS );
 			} else {
 				throw new Exception( sprintf(
-					__( 'Group %1$s does not exist. Dataset %2$s not imported.', 'ogdch' ),
+					__( 'Category %1$s does not exist. Dataset %2$s not imported.', 'ogdch' ),
 					$theme_uri,
 					$identifier
 				) );

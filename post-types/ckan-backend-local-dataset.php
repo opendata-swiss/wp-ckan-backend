@@ -276,7 +276,6 @@ class Ckan_Backend_Local_Dataset {
 			'singular_name'      => __( 'Dataset', 'ogdch' ),
 			'menu_name'          => __( 'Datasets', 'ogdch' ),
 			'name_admin_bar'     => __( 'Datasets', 'ogdch' ),
-			'parent_item_colon'  => __( 'Parent Dataset:', 'ogdch' ),
 			'all_items'          => __( 'All Datasets', 'ogdch' ),
 			'add_new_item'       => __( 'Add New Dataset', 'ogdch' ),
 			'add_new'            => __( 'Add New', 'ogdch' ),
@@ -356,7 +355,7 @@ class Ckan_Backend_Local_Dataset {
 
 		/* Identifier */
 		$cmb->add_field( array(
-			'name'       => __( 'Dataset Identifier*', 'ogdch' ),
+			'name'       => __( 'Dataset Identifier', 'ogdch' ) . '*',
 			'id'         => self::FIELD_PREFIX . 'identifier',
 			'desc'       => __( 'Unique identifier of the dataset linked with the publisher. A good way to make sure this identifier is unique is to use the source system ID.', 'ogdch' ),
 			'type'       => 'dataset_identifier',
@@ -397,7 +396,7 @@ class Ckan_Backend_Local_Dataset {
 		) );
 
 		$cmb->add_field( array(
-			'name' => __( 'Issued*', 'ogdch' ),
+			'name' => __( 'Issued', 'ogdch' ) . '*',
 			'id'   => self::FIELD_PREFIX . 'issued',
 			'desc' => __( 'Date of the first publication of this dataset. If this date is unknown, the date of the first publication on this portal can be used.', 'ogdch' ),
 			'type' => 'text_date_timestamp',
@@ -466,7 +465,7 @@ class Ckan_Backend_Local_Dataset {
 		) );
 
 		$cmb->add_group_field( $publishers_group, array(
-			'name' => __( 'Name*', 'ogdch' ),
+			'name' => __( 'Name', 'ogdch' ) . '*',
 			'id'   => 'label',
 			'type' => 'text',
 			'attributes' => array(
@@ -487,7 +486,7 @@ class Ckan_Backend_Local_Dataset {
 		) );
 
 		$cmb->add_group_field( $contact_points_group, array(
-			'name' => __( 'Name*', 'ogdch' ),
+			'name' => __( 'Name', 'ogdch' ) . '*',
 			'id'   => 'name',
 			'type' => 'text',
 			'attributes' => array(
@@ -496,7 +495,7 @@ class Ckan_Backend_Local_Dataset {
 		) );
 
 		$cmb->add_group_field( $contact_points_group, array(
-			'name' => __( 'Email*', 'ogdch' ),
+			'name' => __( 'Email', 'ogdch' ) . '*',
 			'id'   => 'email',
 			'type' => 'text_email',
 			'attributes' => array(
@@ -505,9 +504,9 @@ class Ckan_Backend_Local_Dataset {
 		) );
 
 		$cmb->add_field( array(
-			'name' => __( 'Other', 'ogdch' ),
+			'name' => __( 'Further Information', 'ogdch' ),
 			'type' => 'title',
-			'id'   => 'other_title',
+			'id'   => 'further_information_title',
 		) );
 
 		/* Categories */
@@ -529,7 +528,7 @@ class Ckan_Backend_Local_Dataset {
 		$cmb->add_field( array(
 			'name'       => __( 'Landing Page', 'ogdch' ),
 			'id'         => self::FIELD_PREFIX . 'landing_page',
-			'desc'       => __( 'Website of the dataset with related information.', 'ogdch' ),
+			'desc'       => __( 'Website with further information about the dataset.', 'ogdch' ),
 			'type'       => 'text_url',
 		) );
 
@@ -604,14 +603,14 @@ class Ckan_Backend_Local_Dataset {
 				'name' => __( 'Title', 'ogdch' ) . ' (' . strtoupper( $lang ) . ')',
 				'id'   => 'title_' . $lang,
 				'type' => 'text',
-				'desc' => __( 'If this element is left empty, the title of the dataset is used instead.', 'ogdch' ),
+				'desc' => __( 'If the title is left empty, the title of the dataset is used instead.', 'ogdch' ),
 			) );
 
 			$cmb->add_group_field( $distributions_group, array(
 				'name'       => __( 'Description', 'ogdch' ) . ' (' . strtoupper( $lang ) . ')',
 				'id'         => 'description_' . $lang,
 				'type'       => 'textarea',
-				'desc'       => __( 'If this element is left empty, the description of the dataset is used instead.', 'ogdch' ),
+				'desc'       => __( 'If the description is left empty, the description of the dataset is used instead.', 'ogdch' ),
 				'attributes' => array( 'rows' => 3 ),
 			) );
 		}
@@ -631,7 +630,7 @@ class Ckan_Backend_Local_Dataset {
 		) );
 
 		$cmb->add_group_field( $distributions_group, array(
-			'name' => __( 'Issued*', 'ogdch' ),
+			'name' => __( 'Issued', 'ogdch' ) . '*',
 			'id'   => 'issued',
 			'desc' => __( 'Date of the publication of this distribution.', 'ogdch' ),
 			'type' => 'text_date_timestamp',
@@ -650,16 +649,16 @@ class Ckan_Backend_Local_Dataset {
 		) );
 
 		$cmb->add_group_field( $distributions_group, array(
-			'name'             => __( 'Terms of use*', 'ogdch' ),
+			'name'             => __( 'Terms of use', 'ogdch' ) . '*',
 			'id'               => 'rights',
-			'desc'             => __( 'All terms of use marked with an asterisk (*) are declared as close data.', 'ogdch' ),
+			'desc'             => __( 'All terms of use which are not marked with an asterisk (*) are declared as close data.', 'ogdch' ),
 			'type'             => 'select',
 			'show_option_none' => false,
 			'options'          => Ckan_Backend_Rights::get_rights(),
 		) );
 
 		$cmb->add_group_field( $distributions_group, array(
-			'name'       => __( 'Access URL*', 'ogdch' ),
+			'name'       => __( 'Access URL', 'ogdch' ) . '*',
 			'id'         => 'access_url',
 			'desc'       => __( 'URL where the distribution can be found. This could be either a download url, an API url or a landing page url. If the distribution is only available through a landing page, this field must contain the url of the landing page. If a download url was given for this distribution, this field has to contain the same value.', 'ogdch' ),
 			'type'       => 'text_url',

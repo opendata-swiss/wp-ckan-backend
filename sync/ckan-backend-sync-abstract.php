@@ -82,7 +82,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 
 		// Check if the post title is set -> otherwise do not sync to CKAN
 		if ( '' === $post->post_title ) {
-			$this->store_errors_in_notices_option( array( __( 'CKAN Sync aborted! Please provide a title for this post.', 'ogdch' ) ) );
+			$this->store_errors_in_notices_option( array( __( 'CKAN Sync aborted! Please provide a title.', 'ogdch' ) ) );
 
 			return;
 		}
