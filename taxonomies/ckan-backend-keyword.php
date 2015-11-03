@@ -21,14 +21,14 @@ abstract class Ckan_Backend_Keyword {
 	 */
 	public function register_taxonomy() {
 		$labels = array(
-			'name'          => __( 'Keywords', 'ogdch' ) . ' (' .  $this->get_language_suffix() . ')',
-			'singular_name' => __( 'Keyword', 'ogdch' ) . ' (' .  $this->get_language_suffix() . ')',
-			'all_items'     => __( 'All Keywords', 'ogdch' ) . ' (' .  $this->get_language_suffix() . ')',
-			'edit_item'     => __( 'Edit Keywords', 'ogdch' ) . ' (' .  $this->get_language_suffix() . ')',
-			'view_item'     => __( 'View Keyword', 'ogdch' ) . ' (' .  $this->get_language_suffix() . ')',
-			'update_item'   => __( 'Update Keyword', 'ogdch' ) . ' (' .  $this->get_language_suffix() . ')',
-			'add_new_item'  => __( 'Add New Keyword', 'ogdch' ) . ' (' .  $this->get_language_suffix() . ')',
-			'new_item_name' => __( 'New Keyword Name', 'ogdch' ) . ' (' .  $this->get_language_suffix() . ')',
+			'name'          => sprintf( __( 'Keywords (%s)', 'ogdch' ), $this->get_language_suffix() ),
+			'singular_name' => sprintf( __( 'Keyword (%s)', 'ogdch' ), $this->get_language_suffix() ),
+			'all_items'     => sprintf( __( 'All Keywords (%s)', 'ogdch' ), $this->get_language_suffix() ),
+			'edit_item'     => sprintf( __( 'Edit Keywords (%s)', 'ogdch' ), $this->get_language_suffix() ),
+			'view_item'     => sprintf( __( 'View Keyword (%s)', 'ogdch' ), $this->get_language_suffix() ),
+			'update_item'   => sprintf( __( 'Update Keyword (%s)', 'ogdch' ), $this->get_language_suffix() ),
+			'add_new_item'  => sprintf( __( 'Add New Keyword (%s)', 'ogdch' ), $this->get_language_suffix() ),
+			'new_item_name' => sprintf( __( 'New Keyword Name (%s)', 'ogdch' ), $this->get_language_suffix() ),
 		);
 
 		$capabilities = array(
@@ -39,9 +39,9 @@ abstract class Ckan_Backend_Keyword {
 		);
 
 		$args = array(
-			'label'                 => __( 'Keywords', 'ogdch' ) . ' (' .  $this->get_language_suffix() . ')',
+			'label'                 => sprintf( __( 'Keywords (%s)', 'ogdch' ), $this->get_language_suffix() ),
 			'labels'                => $labels,
-			'description'           => __( 'Keywords for CKAN datasets', 'ogdch' ),
+			'description'           => sprintf( __( 'Keywords (%s) for CKAN datasets', 'ogdch' ), $this->get_language_suffix() ),
 			'hierarchical'          => false,
 			'update_count_callback' => '_update_post_term_count',
 			'capabilities'          => $capabilities,
