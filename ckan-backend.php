@@ -394,7 +394,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		/**
 		 * Add body class to uses which can edit data of all organizations
 		 *
-		 * @param string $classes Current classes on body element
+		 * @param string $classes Current classes on body element.
 		 *
 		 * @return string
 		 */
