@@ -18,5 +18,11 @@
 .post-type-ckan-local-group #minor-publishing,
 .post-type-ckan-local-org #minor-publishing {
   display: none; }
+.post-type-ckan-local-group #edit-slug-box,
+.post-type-ckan-local-org #edit-slug-box {
+  display: none; }
+.post-type-ckan-local-group.can_edit_data_of_all_organisations #edit-slug-box,
+.post-type-ckan-local-org.can_edit_data_of_all_organisations #edit-slug-box {
+  display: block; }
 
 /*# sourceMappingURL=base.css.map */
