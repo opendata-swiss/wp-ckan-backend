@@ -75,7 +75,7 @@ class Ckan_Backend_Local_Organisation {
 			'can_export'          => true,
 			'has_archive'         => false,
 			'exclude_from_search' => false,
-			'publicly_queryable'  => false,
+			'publicly_queryable'  => true,
 			'rewrite'             => array( 'slug' => 'organization' ),
 			'map_meta_cap'        => true,
 			'capability_type'     => array( 'organisation', 'organisations' ),

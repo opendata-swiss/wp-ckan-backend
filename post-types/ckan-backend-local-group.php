@@ -75,7 +75,7 @@ class Ckan_Backend_Local_Group {
 			'can_export'          => true,
 			'has_archive'         => false,
 			'exclude_from_search' => false,
-			'publicly_queryable'  => false,
+			'publicly_queryable'  => true,
 			'rewrite'             => array( 'slug' => 'group' ),
 			'map_meta_cap'        => true,
 			'capability_type'     => array( 'group', 'groups' ),
