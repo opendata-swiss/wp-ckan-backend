@@ -89,6 +89,9 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			// Add organisation filter dropdown to user admin list
 			add_filter( 'pre_user_query', array( $this, 'filter_user_organisation' ) );
 			add_filter( 'restrict_manage_users', array( $this, 'add_user_organisation_filter' ) );
+
+			// Add body class to uses which can edit data of all organizations
+			add_filter( 'admin_body_class', array( $this, 'add_admin_body_class' ) );
 		}
 
 		/**
@@ -386,6 +389,20 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 
 				return esc_attr( Ckan_Backend_Helper::get_organization_title( $user_organisation ) );
 			}
+		}
+
+		/**
+		 * Add body class to uses which can edit data of all organizations
+		 *
+		 * @param string $classes Current classes on body element
+		 *
+		 * @return string
+		 */
+		public function add_admin_body_class( $classes ) {
+			if ( current_user_can( 'edit_data_of_all_organisations' ) ) {
+				$classes .= ' can_edit_data_of_all_organisations';
+			}
+			return $classes;
 		}
 
 		/**

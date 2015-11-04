@@ -30,4 +30,13 @@
   #minor-publishing {
     display: none;
   }
+  #edit-slug-box {
+    display: none;
+  }
+
+  &.can_edit_data_of_all_organisations {
+    #edit-slug-box {
+      display: block;
+    }
+  }
 }
