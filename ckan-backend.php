@@ -423,7 +423,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 				Ckan_Backend_Local_Organisation::POST_TYPE,
 			);
 			if ( in_array( $post->post_type, $remove_quick_edit_on_cpt ) ) {
-				unset($actions['inline hide-if-no-js']);
+				unset( $actions['inline hide-if-no-js'] );
 			}
 			return $actions;
 		}
