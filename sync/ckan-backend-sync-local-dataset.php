@@ -42,9 +42,12 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 
 		// if user is not allowed to change organisation -> reset organisation in identifier
 		if ( ! current_user_can( 'edit_data_of_all_organisations' ) ) {
-			$identifier_original = get_post_meta( $post->ID, $this->field_prefix . 'identifier', true );
-			$identifier['organisation'] = $identifier_original['organisation'];
-			$_POST[ $this->field_prefix . 'identifier' ] = $identifier;
+			$user_organisation = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
+			if ( $identifier['organisation'] !== $user_organisation ) {
+				$original_identifier = get_post_meta( $post->ID, $this->field_prefix . 'identifier', true );
+				$identifier['organisation'] = $original_identifier['organisation'];
+				$_POST[ $this->field_prefix . 'identifier' ] = $identifier;
+			}
 		}
 
 		$data = array(
