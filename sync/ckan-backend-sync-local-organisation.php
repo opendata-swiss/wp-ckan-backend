@@ -80,7 +80,7 @@ class Ckan_Backend_Sync_Local_Organisation extends Ckan_Backend_Sync_Abstract {
 
 		// set ckan id if its available in database
 		$ckan_id = get_post_meta( $post->ID, $this->field_prefix . 'ckan_id', true );
-		if ( '' !== $ckan_id ) {
+		if ( ! empty( $ckan_id ) ) {
 			$data['id'] = $ckan_id;
 		}
 
