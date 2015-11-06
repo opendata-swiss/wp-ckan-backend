@@ -271,13 +271,18 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			wp_register_script( 'select2', '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js' );
 			wp_enqueue_script( 'select2' );
 
-			wp_register_script( 'dataset-search', plugins_url( 'assets/javascript/dataset_search.js', __FILE__ ), array( 'select2' ), null, false );
-			wp_enqueue_script( 'dataset-search' );
-			wp_localize_script( 'dataset-search', 'datasetSearchConfig',
+			wp_register_script( 'ckan-backend-base', plugins_url( 'assets/javascript/base.js', __FILE__ ), array( 'select2' ), null, false );
+			wp_enqueue_script( 'ckan-backend-base' );
+			wp_localize_script( 'ckan-backend-base', 'baseConfig',
 				array(
-					'CKAN_API_ENDPOINT' => CKAN_API_ENDPOINT,
-					'currentLanguage'  => Ckan_Backend_Helper::get_current_language(),
-					'placeholder'       => __( 'Search dataset...', 'ogdch' ),
+					datasetSearch => array(
+						'CKAN_API_ENDPOINT' => CKAN_API_ENDPOINT,
+						'currentLanguage'   => Ckan_Backend_Helper::get_current_language(),
+						'placeholder'       => __( 'Search dataset...', 'ogdch' ),
+					),
+					mediatypeSearch => array(
+						'placeholder' => __( 'No media type', 'ogdch' ),
+					)
 				)
 			);
 

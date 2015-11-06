@@ -38,6 +38,8 @@ class Ckan_Backend_Local_Dataset {
 		add_action( 'cmb2_render_dataset_identifier', array( $this, 'cmb2_render_callback_dataset_identifier' ), 10, 5 );
 		// add custom CMB2 field type dataset_search
 		add_action( 'cmb2_render_dataset_search', array( $this, 'cmb2_render_callback_dataset_search' ), 10, 5 );
+		// add custom CMB2 field type mediatype_search
+		add_action( 'cmb2_render_mediatype_search', array( $this, 'cmb2_render_callback_mediatype_search' ), 10, 5 );
 
 		// initialize local dataset sync
 		new Ckan_Backend_Sync_Local_Dataset( self::POST_TYPE, self::FIELD_PREFIX );
@@ -113,12 +115,13 @@ class Ckan_Backend_Local_Dataset {
 		        id="<?php esc_attr_e( $field->args['_id'] ); ?>">
 			<?php if ( $escaped_value ) : ?>
 				<?php $title = Ckan_Backend_Helper::get_dataset_title( $escaped_value ); ?>
-				<option selected="selected" value="<?php esc_attr_e( $escaped_value )?>"><?php esc_html_e( $title ); ?></option>
+				<option selected="selected" value="<?php esc_attr_e( $escaped_value ); ?>"><?php esc_attr_e( $title ); ?></option>
 			<?php endif; ?>
 		</select>
 		<?php
 		if ( is_object( $field->group ) ) {
 			// Select2 library doesn't send field if it's empty but CMB2 won't save repeatable meta field if it's not in $_POST. So we have to add a dummy_value to the first repeatable item.
+			// We just need this workaround if this field is the only field in the repeatable group.
 			?>
 			<input type="hidden" name="<?php esc_attr_e( $field->group->args['id'] ); ?>[0][dummy_value]" />
 			<?php
@@ -126,7 +129,39 @@ class Ckan_Backend_Local_Dataset {
 		?>
 		<script type="text/javascript">
 			(function($) {
-				$("[name='<?php esc_attr_e( $field->args['_name'] ); ?>'").select2(select2_options);
+				$("[name='<?php esc_attr_e( $field->args['_name'] ); ?>'").select2(datasetSearchOptions);
+			})( jQuery );
+		</script>
+		<?php
+	}
+
+	/**
+	 * Renders CMB2 field of type mediatype_search
+	 *
+	 * @param CMB2_Field $field The passed in `CMB2_Field` object.
+	 * @param mixed      $escaped_value The value of this field escaped. It defaults to `sanitize_text_field`.
+	 * @param int        $object_id The ID of the current object.
+	 * @param string     $object_type The type of object you are working with.
+	 * @param CMB2_Types $field_type_object This `CMB2_Types` object.
+	 */
+	public function cmb2_render_callback_mediatype_search( $field, $escaped_value, $object_id, $object_type, $field_type_object ) {
+		$media_types = get_terms( Ckan_Backend_MediaType::TAXONOMY, array( 'hide_empty' => 0 ) );
+		?>
+		<select class="mediatype_search_box"
+		        style="width: 50%"
+		        name="<?php esc_attr_e( $field->args['_name'] ); ?>"
+		        id="<?php esc_attr_e( $field->args['_id'] ); ?>">
+			<?php // add empty option to make placeholder work ?>
+			<option value=""></option>
+			<?php
+			foreach( $media_types as $media_type ) {
+				echo '<option value="' . $media_type->name . '"' . ( $media_type->name === $escaped_value ? ' selected="selected"' : '' ) . '>' . $media_type->name . '</option>';
+			}
+			?>
+		</select>
+		<script type="text/javascript">
+			(function($) {
+				$("[name='<?php esc_attr_e( $field->args['_name'] ); ?>'").select2(mediatypeSearchOptions);
 			})( jQuery );
 		</script>
 		<?php
@@ -684,7 +719,7 @@ class Ckan_Backend_Local_Dataset {
 		$cmb->add_group_field( $distributions_group, array(
 			'name' => __( 'Mediatype', 'ogdch' ),
 			'id'   => 'media_type',
-			'type' => 'text',
+			'type' => 'mediatype_search',
 		) );
 
 		/* CMB Sidebox to disable dataset */
