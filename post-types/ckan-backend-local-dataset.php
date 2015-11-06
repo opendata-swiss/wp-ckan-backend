@@ -383,7 +383,7 @@ class Ckan_Backend_Local_Dataset {
 			$cmb->add_field( array(
 				'name'       => __( 'Description', 'ogdch' ) . ' (' . strtoupper( $lang ) . ')*',
 				'id'         => self::FIELD_PREFIX . 'description_' . $lang,
-				'type'       => 'textarea',
+				'type'       => 'textarea_code',
 				'attributes' => array( 'rows' => 3 ),
 			) );
 		}
@@ -609,7 +609,7 @@ class Ckan_Backend_Local_Dataset {
 			$cmb->add_group_field( $distributions_group, array(
 				'name'       => __( 'Description', 'ogdch' ) . ' (' . strtoupper( $lang ) . ')',
 				'id'         => 'description_' . $lang,
-				'type'       => 'textarea',
+				'type'       => 'textarea_code',
 				'desc'       => __( 'If the description is left empty, the description of the dataset is used instead.', 'ogdch' ),
 				'attributes' => array( 'rows' => 3 ),
 			) );
