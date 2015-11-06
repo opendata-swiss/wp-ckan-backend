@@ -328,7 +328,7 @@ class Ckan_Backend_Helper {
 	 */
 	public static function get_metafield_value( $post_id, $field_name, $load_from_post ) {
 		if ( $load_from_post ) {
-			return $_POST[ $field_name ];
+			return stripslashes( $_POST[ $field_name ] );
 		} else {
 			return get_post_meta( $post_id, $field_name, true );
 		}
