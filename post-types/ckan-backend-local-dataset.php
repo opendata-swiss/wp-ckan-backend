@@ -154,8 +154,8 @@ class Ckan_Backend_Local_Dataset {
 			<?php // add empty option to make placeholder work ?>
 			<option value=""></option>
 			<?php
-			foreach( $media_types as $media_type ) {
-				echo '<option value="' . $media_type->name . '"' . ( $media_type->name === $escaped_value ? ' selected="selected"' : '' ) . '>' . $media_type->name . '</option>';
+			foreach ( $media_types as $media_type ) {
+				echo '<option value="' . esc_attr( $media_type->name ) . '"' . ( $media_type->name === $escaped_value ? ' selected="selected"' : '' ) . '>' . esc_attr( $media_type->name ) . '</option>';
 			}
 			?>
 		</select>
