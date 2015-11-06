@@ -292,6 +292,7 @@ class Ckan_Backend_Local_Dataset {
 		foreach ( Ckan_Backend::$keywords_tax_mapping as $lang => $taxonomy ) {
 			$taxonomies[] = $taxonomy;
 		}
+		$taxonomies[] = Ckan_Backend_MediaType::TAXONOMY;
 
 		$args = array(
 			'label'               => __( 'Datasets', 'ogdch' ),
