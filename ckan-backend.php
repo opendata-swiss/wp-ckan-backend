@@ -92,6 +92,9 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 
 			// Add body class to uses which can edit data of all organizations
 			add_filter( 'admin_body_class', array( $this, 'add_admin_body_class' ) );
+
+			// remove quick edit action
+			add_filter( 'post_row_actions', array( $this, 'remove_quick_edit_row_action' ), 10, 2 );
 		}
 
 		/**
@@ -403,6 +406,26 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 				$classes .= ' can_edit_data_of_all_organisations';
 			}
 			return $classes;
+		}
+
+		/**
+		 * Removes quick edit action on custom post types
+		 *
+		 * @param array   $actions An array of row action links. Defaults are 'Edit', 'Quick Edit', 'Restore, 'Trash', 'Delete Permanently', 'Preview', and 'View'.
+		 * @param WP_Post $post The post object.
+		 *
+		 * @return array
+		 */
+		public function remove_quick_edit_row_action( $actions, $post ) {
+			$remove_quick_edit_on_cpt = array(
+				Ckan_Backend_Local_Dataset::POST_TYPE,
+				Ckan_Backend_Local_Group::POST_TYPE,
+				Ckan_Backend_Local_Organisation::POST_TYPE,
+			);
+			if ( in_array( $post->post_type, $remove_quick_edit_on_cpt ) ) {
+				unset($actions['inline hide-if-no-js']);
+			}
+			return $actions;
 		}
 
 		/**
