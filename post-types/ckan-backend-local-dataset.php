@@ -546,7 +546,7 @@ class Ckan_Backend_Local_Dataset {
 
 		$cmb->add_group_field( $relations_group, array(
 			'name' => __( 'Title', 'ogdch' ),
-			'desc' => __( "Use the title 'legal_basis' to provide a link to the legal basis of this dataset. It's only possible to add one legal basis relation.", 'ogdch' ),
+			'desc' => __( "Use the title 'legal_basis' to provide a link to the legal basis of this dataset.", 'ogdch' ),
 			'id'   => 'label',
 			'type' => 'text',
 		) );
