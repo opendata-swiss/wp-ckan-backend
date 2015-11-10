@@ -1,6 +1,6 @@
 <?php
 /**
- * Post type ckan-local-group
+ * Post type ckan-local-harvester
  *
  * @package CKAN\Backend
  */
@@ -8,11 +8,11 @@
 /**
  * Class Ckan_Backend_Local_Group
  */
-class Ckan_Backend_Local_Group {
+class Ckan_Backend_Local_Harvester {
 
-	// Be careful max. 20 characters allowed!
-	const POST_TYPE = 'ckan-local-group';
-	const FIELD_PREFIX = '_ckan_local_group_';
+	// Be careful: POST_TYPE max. 20 characters allowed!
+	const POST_TYPE = 'ckan-local-harvester';
+	const FIELD_PREFIX = '_ckan_local_harvester_';
 
 	/**
 	 * Constructor of this class.
@@ -25,7 +25,7 @@ class Ckan_Backend_Local_Group {
 		add_action( 'cmb2_after_post_form_' . self::POST_TYPE . '-box', array( $this, 'render_addition_fields' ) );
 
 		// initialize local group sync
-		new Ckan_Backend_Sync_Local_Group( self::POST_TYPE, self::FIELD_PREFIX );
+		new Ckan_Backend_Sync_Local_Harvester( self::POST_TYPE, self::FIELD_PREFIX );
 	}
 
 	/**
@@ -43,33 +43,33 @@ class Ckan_Backend_Local_Group {
 	 */
 	public function register_post_type() {
 		$labels = array(
-			'name'               => __( 'Categories', 'ogdch' ),
-			'singular_name'      => __( 'Category', 'ogdch' ),
-			'menu_name'          => __( 'Categories', 'ogdch' ),
-			'name_admin_bar'     => __( 'Categories', 'ogdch' ),
-			'all_items'          => __( 'All Categories', 'ogdch' ),
-			'add_new_item'       => __( 'Add New Category', 'ogdch' ),
+			'name'               => __( 'Harvesters', 'ogdch' ),
+			'singular_name'      => __( 'Harvester', 'ogdch' ),
+			'menu_name'          => __( 'Harvesters', 'ogdch' ),
+			'name_admin_bar'     => __( 'Harvesters', 'ogdch' ),
+			'all_items'          => __( 'All Harvesters', 'ogdch' ),
+			'add_new_item'       => __( 'Add New Harvester', 'ogdch' ),
 			'add_new'            => __( 'Add New', 'ogdch' ),
-			'new_item'           => __( 'New Category', 'ogdch' ),
-			'edit_item'          => __( 'Edit Category', 'ogdch' ),
-			'update_item'        => __( 'Update Category', 'ogdch' ),
-			'view_item'          => __( 'View Category', 'ogdch' ),
-			'search_items'       => __( 'Search Categories', 'ogdch' ),
-			'not_found'          => __( 'No Categories found', 'ogdch' ),
-			'not_found_in_trash' => __( 'No Categories found in Trash', 'ogdch' ),
+			'new_item'           => __( 'New Harvester', 'ogdch' ),
+			'edit_item'          => __( 'Edit Harvester', 'ogdch' ),
+			'update_item'        => __( 'Update Harvester', 'ogdch' ),
+			'view_item'          => __( 'View Harvester', 'ogdch' ),
+			'search_items'       => __( 'Search Harvesters', 'ogdch' ),
+			'not_found'          => __( 'No Harvesters found', 'ogdch' ),
+			'not_found_in_trash' => __( 'No Harvesters found in Trash', 'ogdch' ),
 		);
 
 		$args = array(
-			'label'               => __( 'Categories', 'ogdch' ),
-			'description'         => __( 'Categories which get synced with CKAN', 'ogdch' ),
+			'label'               => __( 'Harvesters', 'ogdch' ),
+			'description'         => __( 'Harvesters which get synced with CKAN', 'ogdch' ),
 			'labels'              => $labels,
 			'supports'            => array( 'title' ),
 			'hierarchical'        => false,
 			'public'              => true,
 			'show_ui'             => true,
 			'show_in_menu'        => true,
-			'menu_position'       => 21,
-			'menu_icon'           => 'dashicons-category',
+			'menu_position'       => 23,
+			'menu_icon'           => 'dashicons-download',
 			'show_in_admin_bar'   => true,
 			'show_in_nav_menus'   => true,
 			'can_export'          => true,
@@ -110,18 +110,18 @@ class Ckan_Backend_Local_Group {
 
 		$cmb = new_cmb2_box( array(
 			'id'           => self::POST_TYPE . '-box',
-			'title'        => __( 'Category', 'ogdch' ),
+			'title'        => __( 'Harvester', 'ogdch' ),
 			'object_types' => array( self::POST_TYPE ),
 			'context'      => 'normal',
 			'priority'     => 'high',
 			'show_names'   => true,
 		) );
 
-		/* Category Information */
+		/* Harvester Information */
 		$cmb->add_field( array(
-			'name' => __( 'Category Information', 'ogdch' ),
+			'name' => __( 'Harvester Information', 'ogdch' ),
 			'type' => 'title',
-			'id'   => 'category_information_title',
+			'id'   => 'harvester_information_title',
 		) );
 
 		foreach ( $language_priority as $lang ) {
@@ -134,14 +134,14 @@ class Ckan_Backend_Local_Group {
 			$cmb->add_field( array(
 				'name'       => __( 'Description', 'ogdch' ) . ' (' . strtoupper( $lang ) . ')',
 				'id'         => self::FIELD_PREFIX . 'description_' . $lang,
-				'type'       => 'textarea_code',
+				'type'       => 'textarea',
 				'attributes' => array( 'rows' => 3 ),
 			) );
 		}
 
 		/* Image */
 		$cmb->add_field( array(
-			'name' => __( 'Category Image', 'ogdch' ),
+			'name' => __( 'Harvester Image', 'ogdch' ),
 			'type' => 'title',
 			'id'   => 'image_title',
 		) );

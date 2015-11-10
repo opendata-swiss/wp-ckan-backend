@@ -68,7 +68,7 @@ class Ckan_Backend_Local_Organisation {
 			'public'              => true,
 			'show_ui'             => true,
 			'show_in_menu'        => true,
-			'menu_position'       => 5,
+			'menu_position'       => 22,
 			'menu_icon'           => 'dashicons-building',
 			'show_in_admin_bar'   => true,
 			'show_in_nav_menus'   => true,

@@ -260,6 +260,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			new Ckan_Backend_Local_Organisation();
 			new Ckan_Backend_Local_Dataset_Import();
 			new Ckan_Backend_Local_Dataset_Export();
+			new Ckan_Backend_Local_Harvester();
 		}
 
 		/**
@@ -460,10 +461,12 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			require_once plugin_dir_path( __FILE__ ) . 'post-types/ckan-backend-local-organisation.php';
 			require_once plugin_dir_path( __FILE__ ) . 'post-types/ckan-backend-local-dataset-import.php';
 			require_once plugin_dir_path( __FILE__ ) . 'post-types/ckan-backend-local-dataset-export.php';
+			require_once plugin_dir_path( __FILE__ ) . 'post-types/ckan-backend-local-harvester.php';
 			require_once plugin_dir_path( __FILE__ ) . 'sync/ckan-backend-sync-abstract.php';
 			require_once plugin_dir_path( __FILE__ ) . 'sync/ckan-backend-sync-local-dataset.php';
 			require_once plugin_dir_path( __FILE__ ) . 'sync/ckan-backend-sync-local-group.php';
 			require_once plugin_dir_path( __FILE__ ) . 'sync/ckan-backend-sync-local-organisation.php';
+			require_once plugin_dir_path( __FILE__ ) . 'sync/ckan-backend-sync-local-harvester.php';
 		}
 
 	}
