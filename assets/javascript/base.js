@@ -1,6 +1,6 @@
-var select2_options = {
+var datasetSearchOptions = {
     'ajax': {
-        url: datasetSearchConfig.CKAN_API_ENDPOINT + 'package_search',
+        url: baseConfig.datasetSearch.CKAN_API_ENDPOINT + 'package_search',
         dataType: 'json',
         delay: 250,
         data: function(params) {
@@ -10,15 +10,15 @@ var select2_options = {
             return {
                 results: jQuery.map(result.result.results, function (obj) {
                     obj.id = obj.identifier;
-                    obj.text = obj.title[datasetSearchConfig.currentLanguage];
-                    obj.title = obj.title[datasetSearchConfig.currentLanguage];
+                    obj.text = obj.title[baseConfig.datasetSearch.currentLanguage];
+                    obj.title = obj.title[baseConfig.datasetSearch.currentLanguage];
                     return obj;
                 })
             };
         }
     },
     minimumInputLength: 3,
-    placeholder: datasetSearchConfig.placeholder,
+    placeholder: baseConfig.datasetSearch.placeholder,
     allowClear: true,
     templateResult: function(dataset) {
         if (dataset.loading) return dataset.text;
@@ -29,21 +29,35 @@ var select2_options = {
     },
     escapeMarkup: function(m) {
         return m;
-    },
+    }
+};
+
+var mediatypeSearchOptions = {
+    placeholder: baseConfig.mediatypeSearch.placeholder,
+    allowClear: true
 };
 
 jQuery( document ).ready(function( $ ) {
-    $('.dataset_search_box').each(function(index) {
+    var rebuild_select2_box = function(element, boxClassName, options) {
         // get parent repeatable group table for current dataset_search box
-        var repeatableGroupTable = $( this ).closest('.cmb-repeatable-group');
+        var repeatableGroupTable = $( element ).closest('.cmb-repeatable-group');
         repeatableGroupTable
             .on('cmb2_add_row', function (event, row) {
-                var name = $(row).find('.dataset_search_box')[0].name;
+                var name = $(row).find('.' + boxClassName)[0].name;
                 // remove the previous select2 rendering, as CMB2 copies everything
                 $("[name='" + name + "'] + .select2-container").remove();
-                var new_select = $("[name='" + name + "'").select2(select2_options);
+                var new_select = $("[name='" + name + "'").select2(options);
                 // select empty value as original is copied
                 new_select.val('').trigger('change');
             });
-    });
+    };
+    var rebuild_dataset_search_select2_box_cb = function() {
+        rebuild_select2_box(this, 'dataset_search_box', datasetSearchOptions);
+    };
+    var rebuild_mediatype_search_select2_box_cb = function() {
+        rebuild_select2_box(this, 'mediatype_search_box', mediatypeSearchOptions);
+    };
+
+    $('.dataset_search_box').each(rebuild_dataset_search_select2_box_cb);
+    $('.mediatype_search_box').each(rebuild_mediatype_search_select2_box_cb);
 });
