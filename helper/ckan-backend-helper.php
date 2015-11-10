@@ -370,7 +370,7 @@ class Ckan_Backend_Helper {
 	public static function get_localized_text( $multilingual_text, $default = '' ) {
 		global $language_priority;
 		if ( ! is_array( $multilingual_text ) ) {
-			//$multilingual_text = json_decode( $multilingual_text, true );
+			$multilingual_text = json_decode( $multilingual_text, true );
 		}
 
 		$localized_text   = $multilingual_text[ self::get_current_language() ];
