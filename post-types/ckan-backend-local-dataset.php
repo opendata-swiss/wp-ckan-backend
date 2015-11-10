@@ -456,7 +456,7 @@ class Ckan_Backend_Local_Dataset {
 			'desc'             => __( 'The frequency in which this dataset is updated.', 'ogdch' ),
 			'type'             => 'select',
 			'show_option_none' => false,
-			'options'          => Ckan_Backend_Frequency::get_frequencies(),
+			'options'          => array( 'Ckan_Backend_Frequency', 'get_frequencies' ),
 		) );
 
 		$temporals_group = $cmb->add_field( array(
@@ -693,7 +693,7 @@ class Ckan_Backend_Local_Dataset {
 			'desc'             => __( 'All terms of use which are not marked with an asterisk (*) are declared as close data.', 'ogdch' ),
 			'type'             => 'select',
 			'show_option_none' => false,
-			'options'          => Ckan_Backend_Rights::get_rights(),
+			'options'          => array( 'Ckan_Backend_Rights', 'get_rights' ),
 		) );
 
 		$cmb->add_group_field( $distributions_group, array(
