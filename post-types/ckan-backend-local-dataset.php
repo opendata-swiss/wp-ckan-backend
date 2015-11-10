@@ -439,6 +439,7 @@ class Ckan_Backend_Local_Dataset {
 			'attributes' => array(
 				'required' => 'required',
 			),
+			'date_format' => _x( 'mm/dd/yy', 'Valid formatDate string for date field', 'ogdch' ),
 		) );
 
 		$cmb->add_field( array(
@@ -446,6 +447,7 @@ class Ckan_Backend_Local_Dataset {
 			'id'   => self::FIELD_PREFIX . 'modified',
 			'desc' => __( 'Date when dataset was last modified (since the first publication on the portal).', 'ogdch' ),
 			'type' => 'text_date_timestamp',
+			'date_format' => _x( 'mm/dd/yy', 'Valid formatDate string for date field', 'ogdch' ),
 		) );
 
 		$cmb->add_field( array(
@@ -674,7 +676,7 @@ class Ckan_Backend_Local_Dataset {
 			'attributes' => array(
 				'required' => 'required',
 			),
-			//'date_format' => 'd.m.Y', // TODO date_format is still buggy in the CMB2 plugin
+			'date_format' => _x( 'mm/dd/yy', 'Valid formatDate string for date field', 'ogdch' ),
 		) );
 
 		$cmb->add_group_field( $distributions_group, array(
@@ -682,7 +684,7 @@ class Ckan_Backend_Local_Dataset {
 			'id'   => 'modified',
 			'desc' => __( 'Date of the last change of the distribution.', 'ogdch' ),
 			'type' => 'text_date_timestamp',
-			//'date_format' => 'd.m.Y', // TODO date_format is still buggy in the CMB2 plugin
+			'date_format' => _x( 'mm/dd/yy', 'Valid formatDate string for date field', 'ogdch' ),
 		) );
 
 		$cmb->add_group_field( $distributions_group, array(
