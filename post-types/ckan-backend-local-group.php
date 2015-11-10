@@ -134,7 +134,7 @@ class Ckan_Backend_Local_Group {
 			$cmb->add_field( array(
 				'name'       => __( 'Description', 'ogdch' ) . ' (' . strtoupper( $lang ) . ')',
 				'id'         => self::FIELD_PREFIX . 'description_' . $lang,
-				'type'       => 'textarea',
+				'type'       => 'textarea_code',
 				'attributes' => array( 'rows' => 3 ),
 			) );
 		}

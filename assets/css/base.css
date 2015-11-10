@@ -25,4 +25,8 @@
 .post-type-ckan-local-org.can_edit_data_of_all_organisations #edit-slug-box {
   display: block; }
 
+.cmb2-wrap textarea.cmb2-textarea-code {
+  font-family: "Open Sans", sans-serif !important;
+  line-height: 1.4 !important; }
+
 /*# sourceMappingURL=base.css.map */
