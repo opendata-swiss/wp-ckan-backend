@@ -439,6 +439,7 @@ class Ckan_Backend_Local_Dataset {
 			'attributes' => array(
 				'required' => 'required',
 			),
+			'date_format' => _x( 'm/d/Y', 'Valid date format string for date field', 'ogdch' ),
 		) );
 
 		$cmb->add_field( array(
@@ -446,6 +447,7 @@ class Ckan_Backend_Local_Dataset {
 			'id'   => self::FIELD_PREFIX . 'modified',
 			'desc' => __( 'Date when dataset was last modified (since the first publication on the portal).', 'ogdch' ),
 			'type' => 'text_date_timestamp',
+			'date_format' => _x( 'm/d/Y', 'Valid date format string for date field', 'ogdch' ),
 		) );
 
 		$cmb->add_field( array(
@@ -454,7 +456,7 @@ class Ckan_Backend_Local_Dataset {
 			'desc'             => __( 'The frequency in which this dataset is updated.', 'ogdch' ),
 			'type'             => 'select',
 			'show_option_none' => false,
-			'options'          => Ckan_Backend_Frequency::get_frequencies(),
+			'options'          => array( 'Ckan_Backend_Frequency', 'get_frequencies' ),
 		) );
 
 		$temporals_group = $cmb->add_field( array(
@@ -674,7 +676,7 @@ class Ckan_Backend_Local_Dataset {
 			'attributes' => array(
 				'required' => 'required',
 			),
-			//'date_format' => 'd.m.Y', // TODO date_format is still buggy in the CMB2 plugin
+			'date_format' => _x( 'm/d/Y', 'Valid date format string for date field', 'ogdch' ),
 		) );
 
 		$cmb->add_group_field( $distributions_group, array(
@@ -682,7 +684,7 @@ class Ckan_Backend_Local_Dataset {
 			'id'   => 'modified',
 			'desc' => __( 'Date of the last change of the distribution.', 'ogdch' ),
 			'type' => 'text_date_timestamp',
-			//'date_format' => 'd.m.Y', // TODO date_format is still buggy in the CMB2 plugin
+			'date_format' => _x( 'm/d/Y', 'Valid date format string for date field', 'ogdch' ),
 		) );
 
 		$cmb->add_group_field( $distributions_group, array(
@@ -691,7 +693,7 @@ class Ckan_Backend_Local_Dataset {
 			'desc'             => __( 'All terms of use which are not marked with an asterisk (*) are declared as close data.', 'ogdch' ),
 			'type'             => 'select',
 			'show_option_none' => false,
-			'options'          => Ckan_Backend_Rights::get_rights(),
+			'options'          => array( 'Ckan_Backend_Rights', 'get_rights' ),
 		) );
 
 		$cmb->add_group_field( $distributions_group, array(
