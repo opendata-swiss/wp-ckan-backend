@@ -166,7 +166,6 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 
 		<?php
 		if( ! empty( $harvester_status ) && ! empty( $harvester_status['last_job'] ) ) {
-			$last_job = $harvester_status['last_job'];
 			?>
 			<div class="latest-job">
 				<h3><?php esc_attr_e( 'Latest Harvest Job', 'ogdch' ); ?></h3>
@@ -178,29 +177,8 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 					</div>
 					<?php
 				}
+				$this->render_job_table( $harvester_status['last_job'] );
 				?>
-				<table class="table-small">
-					<tr>
-						<th><?php esc_attr_e( 'ID' ); ?></th>
-						<td><?php esc_attr_e( $last_job['id'] ); ?></td>
-					</tr>
-					<tr>
-						<th><?php esc_attr_e( 'Created' ); ?></th>
-						<td><?php esc_attr_e( $this->convert_datetime_to_readable_format( $last_job['created'] ) ); ?></td>
-					</tr>
-					<tr>
-						<th><?php esc_attr_e( 'Started' ); ?></th>
-						<td><?php esc_attr_e( $this->convert_datetime_to_readable_format( $last_job['gather_started'] ) ); ?></td>
-					</tr>
-					<tr>
-						<th><?php esc_attr_e( 'Finished' ); ?></th>
-						<td><?php esc_attr_e( $this->convert_datetime_to_readable_format( $last_job['gather_finished'] ) ); ?></td>
-					</tr>
-					<tr>
-						<th><?php esc_attr_e( 'Status' ); ?></th>
-						<td><?php esc_attr_e( $last_job['status'] ); ?></td>
-					</tr>
-				</table>
 			</div>
 			<?php
 		}
@@ -212,36 +190,45 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 			<?php
 			if( ! empty( $harvester_jobs ) ) {
 				foreach( $harvester_jobs as $job ) {
-					?>
-					<table class="table-small">
-						<tr>
-							<th><?php esc_attr_e( 'ID' ); ?></th>
-							<td><?php esc_attr_e( $job['id'] ); ?></td>
-						</tr>
-						<tr>
-							<th><?php esc_attr_e( 'Created' ); ?></th>
-							<td><?php esc_attr_e( $this->convert_datetime_to_readable_format( $job['created'] ) ); ?></td>
-						</tr>
-						<tr>
-							<th><?php esc_attr_e( 'Started' ); ?></th>
-							<td><?php esc_attr_e( $this->convert_datetime_to_readable_format( $job['gather_started'] ) ); ?></td>
-						</tr>
-						<tr>
-							<th><?php esc_attr_e( 'Finished' ); ?></th>
-							<td><?php esc_attr_e( $this->convert_datetime_to_readable_format( $job['gather_started'] ) ); ?></td>
-						</tr>
-						<tr>
-							<th><?php esc_attr_e( 'Status' ); ?></th>
-							<td><?php esc_attr_e( $job['status'] ); ?></td>
-						</tr>
-					</table>
-					<?php
+					$this->render_job_table( $job );
 				}
 			} else {
 				echo '<p>' . esc_attr__( 'No Jobs found for this harvester.', 'ogdch' ) . '</p>';
 			}
 			?>
 		</div>
+		<?php
+	}
+
+	/**
+	 * Renders job table with all information about it
+	 *
+	 * @param array $job Job to render.
+	 */
+	public function render_job_table( $job ) {
+		?>
+		<table class="table-small">
+			<tr>
+				<th><?php esc_attr_e( 'ID' ); ?></th>
+				<td><?php esc_attr_e( $job['id'] ); ?></td>
+			</tr>
+			<tr>
+				<th><?php esc_attr_e( 'Created' ); ?></th>
+				<td><?php esc_attr_e( $this->convert_datetime_to_readable_format( $job['created'] ) ); ?></td>
+			</tr>
+			<tr>
+				<th><?php esc_attr_e( 'Started' ); ?></th>
+				<td><?php esc_attr_e( $this->convert_datetime_to_readable_format( $job['gather_started'] ) ); ?></td>
+			</tr>
+			<tr>
+				<th><?php esc_attr_e( 'Finished' ); ?></th>
+				<td><?php esc_attr_e( $this->convert_datetime_to_readable_format( $job['gather_finished'] ) ); ?></td>
+			</tr>
+			<tr>
+				<th><?php esc_attr_e( 'Status' ); ?></th>
+				<td><?php esc_attr_e( $job['status'] ); ?></td>
+			</tr>
+		</table>
 		<?php
 	}
 
