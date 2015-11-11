@@ -1,7 +1,8 @@
 // Disable visibility selection from ckan posttypes
 .post-type-ckan-local-dataset,
 .post-type-ckan-local-group,
-.post-type-ckan-local-org {
+.post-type-ckan-local-org,
+.post-type-ckan-local-harvester {
   .submitbox {
     // hide preview button and visibility settings
     #visibility, #preview-action {
@@ -25,7 +26,8 @@
 }
 
 .post-type-ckan-local-group,
-.post-type-ckan-local-org {
+.post-type-ckan-local-org,
+.post-type-ckan-local-harvester {
   // hide publishing settings
   #minor-publishing {
     display: none;

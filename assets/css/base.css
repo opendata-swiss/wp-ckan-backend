@@ -2,7 +2,9 @@
 .post-type-ckan-local-group .submitbox #visibility,
 .post-type-ckan-local-group .submitbox #preview-action,
 .post-type-ckan-local-org .submitbox #visibility,
-.post-type-ckan-local-org .submitbox #preview-action {
+.post-type-ckan-local-org .submitbox #preview-action,
+.post-type-ckan-local-harvester .submitbox #visibility,
+.post-type-ckan-local-harvester .submitbox #preview-action {
   display: none; }
 
 #cmb2-metabox-ckan-local-dataset-sidebox-disabled .cmb2-metabox-description {
@@ -16,13 +18,16 @@
   font-weight: normal; }
 
 .post-type-ckan-local-group #minor-publishing,
-.post-type-ckan-local-org #minor-publishing {
+.post-type-ckan-local-org #minor-publishing,
+.post-type-ckan-local-harvester #minor-publishing {
   display: none; }
 .post-type-ckan-local-group #edit-slug-box,
-.post-type-ckan-local-org #edit-slug-box {
+.post-type-ckan-local-org #edit-slug-box,
+.post-type-ckan-local-harvester #edit-slug-box {
   display: none; }
 .post-type-ckan-local-group.can_edit_data_of_all_organisations #edit-slug-box,
-.post-type-ckan-local-org.can_edit_data_of_all_organisations #edit-slug-box {
+.post-type-ckan-local-org.can_edit_data_of_all_organisations #edit-slug-box,
+.post-type-ckan-local-harvester.can_edit_data_of_all_organisations #edit-slug-box {
   display: block; }
 
 .cmb2-wrap textarea.cmb2-textarea-code {
