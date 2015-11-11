@@ -212,6 +212,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 		if ( isset( $data['id'] ) ) {
 			$endpoint = CKAN_API_ENDPOINT . $this->api_type . '_patch';
 			// ckanext-harvest does not support 'harvest_source_patch' action
+			// TODO there is a problem with the update action when a harvester is untrashed -> we really need to implement the patch action
 			if ( 'harvest_source' === $this->api_type ) {
 				$endpoint = CKAN_API_ENDPOINT . $this->api_type . '_update';
 			}
