@@ -115,7 +115,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 				return $allcaps;
 			}
 
-			// TODO on save there is a call without a post id. Why?
+			// On save there is a call without a post id. Why?
 			if ( in_array( $requested_cap, array( 'edit_others_datasets', 'edit_others_organisations' ) ) && empty( $args[2] ) ) {
 				$allcaps[ $requested_cap ] = true;
 			}
