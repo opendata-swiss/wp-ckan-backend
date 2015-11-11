@@ -215,7 +215,7 @@ class Ckan_Backend_Local_Harvester {
 			}
 		}
 
-		foreach( $source_types as $source_type ) {
+		foreach ( $source_types as $source_type ) {
 			$source_type_options[ $source_type['name'] ] = $source_type['title'];
 		}
 
