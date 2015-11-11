@@ -144,12 +144,12 @@ class Ckan_Backend_Local_Harvester {
 			'id'      => self::FIELD_PREFIX . 'update_frequency',
 			'type'    => 'select',
 			'options' => array(
-				'manual'   => __( 'Manual', 'ogdch' ),
-				'monthly'  => __( 'Monthly', 'ogdch' ),
-				'weekly'   => __( 'Weekly', 'ogdch' ),
-				'biweekly' => __( 'Biweekly', 'ogdch' ),
-				'daily'    => __( 'Daily', 'ogdch' ),
-				'always'   => __( 'Always', 'ogdch' ),
+				'MANUAL'   => __( 'Manual', 'ogdch' ),
+				'MONTHLY'  => __( 'Monthly', 'ogdch' ),
+				'WEEKLY'   => __( 'Weekly', 'ogdch' ),
+				'BIWEEKLY' => __( 'Biweekly', 'ogdch' ),
+				'DAILY'    => __( 'Daily', 'ogdch' ),
+				'ALWAYS'   => __( 'Always', 'ogdch' ),
 			),
 		) );
 
