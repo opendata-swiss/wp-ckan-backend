@@ -22,11 +22,15 @@ class Ckan_Backend_Helper {
 			$data = wp_json_encode( $data );
 		}
 
+		$curl_headers = array(
+			'Authorization: ' . CKAN_API_KEY,
+			'Content-Type: application/json',
+		);
 		$ch = curl_init( $endpoint );
 		curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'POST' );
 		curl_setopt( $ch, CURLOPT_POSTFIELDS, $data );
 		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-		curl_setopt( $ch, CURLOPT_HTTPHEADER, array( 'Authorization: ' . CKAN_API_KEY ) );
+		curl_setopt( $ch, CURLOPT_HTTPHEADER,  $curl_headers );
 
 		// send request
 		$response = curl_exec( $ch );
