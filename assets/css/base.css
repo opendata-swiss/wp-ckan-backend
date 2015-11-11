@@ -37,6 +37,8 @@
 .post-type-ckan-local-harvester #view-post-btn {
   display: none; }
 
+.harvester_dashboard .actions {
+  margin: 10px 0; }
 .harvester_dashboard .table-small {
   border-collapse: collapse; }
   .harvester_dashboard .table-small th {
