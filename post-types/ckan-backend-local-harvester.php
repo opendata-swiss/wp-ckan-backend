@@ -155,7 +155,8 @@ class Ckan_Backend_Local_Harvester {
 
 		$cmb->add_field( array(
 			'name'       => __( 'Configuration', 'ogdch' ),
-			'id'         => self::FIELD_PREFIX . 'configuration',
+			'id'         => self::FIELD_PREFIX . 'config',
+			'desc'       => __( 'Only a valid JSON object is allowed', 'ogdch' ),
 			'type'       => 'textarea_code',
 			'attributes' => array( 'rows' => 3 ),
 		) );
