@@ -31,6 +31,7 @@ class Ckan_Backend_Sync_Local_Harvester extends Ckan_Backend_Sync_Abstract {
 			'url'         => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'url', $load_from_post ),
 			'notes'       => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'description', $load_from_post ),
 			'source_type' => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'source_type', $load_from_post ),
+			'owner_org'   => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'organisation', $load_from_post ),
 			'frequency'   => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'update_frequency', $load_from_post ),
 			'config'      => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'config', $load_from_post ),
 		);
