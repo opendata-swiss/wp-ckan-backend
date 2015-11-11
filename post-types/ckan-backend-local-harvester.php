@@ -6,7 +6,7 @@
  */
 
 /**
- * Class Ckan_Backend_Local_Group
+ * Class Ckan_Backend_Local_Harvester
  */
 class Ckan_Backend_Local_Harvester {
 
@@ -21,7 +21,7 @@ class Ckan_Backend_Local_Harvester {
 		$this->register_post_type();
 		add_action( 'cmb2_init', array( $this, 'define_fields' ) );
 
-		// initialize local group sync
+		// initialize local harvester sync
 		new Ckan_Backend_Sync_Local_Harvester( self::POST_TYPE, self::FIELD_PREFIX );
 	}
 
@@ -78,7 +78,7 @@ class Ckan_Backend_Local_Harvester {
 				'delete_others_posts'    => 'delete_others_harvesters',
 				'edit_private_posts'     => 'edit_private_harvesters',
 				'edit_published_posts'   => 'edit_published_harvesters',
-				'create_posts'           => 'create_groups',
+				'create_posts'           => 'create_harvesters',
 				// Meta capabilites assigned by WordPress. Do not give to any role.
 				'edit_post'              => 'edit_harvester',
 				'read_post'              => 'read_harvester',
@@ -133,7 +133,7 @@ class Ckan_Backend_Local_Harvester {
 		) );
 
 		$cmb->add_field( array(
-			'name'             => __( 'Organisation', 'ogdch' ),
+			'name'             => __( 'Organization', 'ogdch' ),
 			'id'               => self::FIELD_PREFIX . 'organisation',
 			'type'             => 'select',
 			'options'          => array( 'Ckan_Backend_Helper', 'get_organisation_form_field_options' ),
