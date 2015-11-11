@@ -93,8 +93,8 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			// Add body class to uses which can edit data of all organizations
 			add_filter( 'admin_body_class', array( $this, 'add_admin_body_class' ) );
 
-			// remove quick edit action
-			add_filter( 'post_row_actions', array( $this, 'remove_quick_edit_row_action' ), 10, 2 );
+			// hide specific row actions
+			add_filter( 'post_row_actions', array( $this, 'hide_row_actions' ), 10, 2 );
 		}
 
 		/**
@@ -417,21 +417,26 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		}
 
 		/**
-		 * Removes quick edit action on custom post types
+		 * Hides specific row actions on custom post type
 		 *
 		 * @param array   $actions An array of row action links. Defaults are 'Edit', 'Quick Edit', 'Restore, 'Trash', 'Delete Permanently', 'Preview', and 'View'.
 		 * @param WP_Post $post The post object.
 		 *
 		 * @return array
 		 */
-		public function remove_quick_edit_row_action( $actions, $post ) {
+		public function hide_row_actions( $actions, $post ) {
 			$remove_quick_edit_on_cpt = array(
 				Ckan_Backend_Local_Dataset::POST_TYPE,
 				Ckan_Backend_Local_Group::POST_TYPE,
 				Ckan_Backend_Local_Organisation::POST_TYPE,
+				Ckan_Backend_Local_Harvester::POST_TYPE,
 			);
 			if ( in_array( $post->post_type, $remove_quick_edit_on_cpt ) ) {
 				unset( $actions['inline hide-if-no-js'] );
+			}
+			// Hide 'View' link in harvest list
+			if ( $post->post_type === Ckan_Backend_Local_Harvester::POST_TYPE ) {
+				unset( $actions['view'] );
 			}
 			return $actions;
 		}
