@@ -1,6 +1,6 @@
 <?php
 /**
- * ckan-local-harvester-dashboard-page
+ * Menu page ckan-local-harvester-dashboard-page
  *
  * @package CKAN\Backend
  */
@@ -40,9 +40,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 	}
 
 	/**
-	 * Callback for the harvester dashboard page.
-	 *
-	 * @return void
+	 *  Callback for the harvester dashboard page.
 	 */
 	public function dashboard_page_callback() {
 		// must check that the user has the required capability
@@ -52,10 +50,10 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 
 		$harvester_selection_field_name = 'ckan_local_harvester_dashboard_harvester';
 		$selected_harvester_id = '';
-		if( isset( $_POST[ $harvester_selection_field_name ] ) ) {
+		if ( isset( $_POST[ $harvester_selection_field_name ] ) ) {
 			$selected_harvester_id = $_POST[ $harvester_selection_field_name ];
 		}
-		if( isset( $_POST[ 'reharvest' ] ) && ! empty( $selected_harvester_id ) ) {
+		if ( isset( $_POST[ 'reharvest' ] ) && ! empty( $selected_harvester_id ) ) {
 			$endpoint = CKAN_API_ENDPOINT . 'harvest_job_create';
 			$data     = array( 'source_id' => $selected_harvester_id );
 			$data     = wp_json_encode( $data );
@@ -69,9 +67,9 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 				Ckan_Backend_Helper::print_error_messages( $errors );
 			}
 		}
-		if( isset( $_POST[ 'abort' ] ) && ! empty( $selected_harvester_id ) ) {
+		if ( isset( $_POST[ 'abort' ] ) && ! empty( $selected_harvester_id ) ) {
 			$endpoint = CKAN_API_ENDPOINT . 'harvest_job_abort';
-			$data     = array( 'id' => $selected_harvester_id );
+			$data     = array( 'source_id' => $selected_harvester_id );
 			$data     = wp_json_encode( $data );
 
 			$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
@@ -83,7 +81,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 				Ckan_Backend_Helper::print_error_messages( $errors );
 			}
 		}
-		if( isset( $_POST[ 'clear' ] ) && ! empty( $selected_harvester_id ) ) {
+		if ( isset( $_POST[ 'clear' ] ) && ! empty( $selected_harvester_id ) ) {
 			$endpoint = CKAN_API_ENDPOINT . 'harvest_source_clear';
 			$data     = array( 'id' => $selected_harvester_id );
 			$data     = wp_json_encode( $data );
@@ -116,7 +114,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 										<select id="harvester_selection" name="<?php esc_attr_e( $harvester_selection_field_name ); ?>">
 											<option value=""><?php esc_attr_e( '- Please choose -', 'ogdch' ); ?></option>
 											<?php
-											foreach( $harvesters as $id => $title ) {
+											foreach ( $harvesters as $id => $title ) {
 												echo '<option value="' . esc_attr( $id ) . '"' . ( $id === $selected_harvester_id ? 'selected="selected"' : '' ) . '>' . esc_attr( $title ) . '</option>';
 											}
 											?>
@@ -141,37 +139,46 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 		<?php
 	}
 
+	/**
+	 * Renders harvester detail part
+	 *
+	 * @param int    $harvester_id ID of harvester which is selected
+	 * @param string $harvester_title Title of selected harvester
+	 */
 	public function render_harvester_detail( $harvester_id, $harvester_title ) {
 		$harvester_status = $this->get_harvester_status( $harvester_id );
 		$harvester_jobs = $this->get_harvester_jobs( $harvester_id );
-		$date_format = 'd.m.Y H:i:s';
+		$running_status = array( 'New', 'Running' );
+		$has_unfinished_job = false;
+		foreach ( $harvester_jobs as $harvester_job ) {
+			if ( in_array( $harvester_job['status'], $running_status ) ) {
+				$has_unfinished_job = true;
+				break;
+			}
+		}
 
 		?>
 		<h2><?php esc_attr_e( $harvester_title ); ?></h2>
 		<div class="actions">
-			<input type="submit" name="reharvest" class="button-secondary" value="<?php esc_attr_e( 'Reharvest', 'ogdch' ); ?>">
+			<input type="submit" name="reharvest" class="button-secondary" value="<?php esc_attr_e( 'Reharvest', 'ogdch' ); ?>"<?php echo ($has_unfinished_job ? ' disabled="disabled"': '' ); ?>>
 			<input type="submit" name="clear" class="button-secondary" value="<?php esc_attr_e( 'Clear', 'ogdch' ); ?>">
-			<input type="submit" name="abort" class="button-secondary" value="<?php esc_attr_e( 'Abort', 'ogdch' ); ?>">
 		</div>
 
 		<?php
 		if( ! empty( $harvester_status ) && ! empty( $harvester_status['last_job'] ) ) {
 			$last_job = $harvester_status['last_job'];
-			$last_job_created = '-';
-			if( ! empty( $last_job['created'] ) ) {
-				$last_job_created = date( $date_format, strtotime( $last_job['created'] ) );
-			}
-			$last_job_started = '-';
-			if( ! empty( $last_job['gather_started'] ) ) {
-				$last_job_started = date( $date_format, strtotime( $last_job['gather_started'] ) );
-			}
-			$last_job_finished = '-';
-			if( ! empty( $last_job['gather_started'] ) ) {
-				$last_job_finished = date( $date_format, strtotime( $last_job['gather_finished'] ) );
-			}
 			?>
 			<div class="latest-job">
 				<h3><?php esc_attr_e( 'Latest Harvest Job', 'ogdch' ); ?></h3>
+				<?php
+				if( $has_unfinished_job ) {
+					?>
+					<div class="actions">
+						<input type="submit" name="abort" class="button-secondary" value="<?php esc_attr_e( 'Abort unfinished job', 'ogdch' ); ?>">
+					</div>
+					<?php
+				}
+				?>
 				<table class="table-small">
 					<tr>
 						<th><?php esc_attr_e( 'ID' ); ?></th>
@@ -179,15 +186,15 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 					</tr>
 					<tr>
 						<th><?php esc_attr_e( 'Created' ); ?></th>
-						<td><?php esc_attr_e( $last_job_created ); ?></td>
+						<td><?php esc_attr_e( $this->convert_datetime_to_readable_format( $last_job['created'] ) ); ?></td>
 					</tr>
 					<tr>
 						<th><?php esc_attr_e( 'Started' ); ?></th>
-						<td><?php esc_attr_e( $last_job_started ); ?></td>
+						<td><?php esc_attr_e( $this->convert_datetime_to_readable_format( $last_job['gather_started'] ) ); ?></td>
 					</tr>
 					<tr>
 						<th><?php esc_attr_e( 'Finished' ); ?></th>
-						<td><?php esc_attr_e( $last_job_finished ); ?></td>
+						<td><?php esc_attr_e( $this->convert_datetime_to_readable_format( $last_job['gather_finished'] ) ); ?></td>
 					</tr>
 					<tr>
 						<th><?php esc_attr_e( 'Status' ); ?></th>
@@ -205,18 +212,6 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 			<?php
 			if( ! empty( $harvester_jobs ) ) {
 				foreach( $harvester_jobs as $job ) {
-					$job_created = '-';
-					if( ! empty( $job['created'] ) ) {
-						$job_created = date( $date_format, strtotime( $job['created'] ) );
-					}
-					$job_started = '-';
-					if( ! empty( $job['gather_started'] ) ) {
-						$job_started = date( $date_format, strtotime( $job['gather_started'] ) );
-					}
-					$job_finished = '-';
-					if( ! empty( $job['gather_started'] ) ) {
-						$job_finished = date( $date_format, strtotime( $job['gather_finished'] ) );
-					}
 					?>
 					<table class="table-small">
 						<tr>
@@ -225,15 +220,15 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 						</tr>
 						<tr>
 							<th><?php esc_attr_e( 'Created' ); ?></th>
-							<td><?php esc_attr_e( $job_created ); ?></td>
+							<td><?php esc_attr_e( $this->convert_datetime_to_readable_format( $job['created'] ) ); ?></td>
 						</tr>
 						<tr>
 							<th><?php esc_attr_e( 'Started' ); ?></th>
-							<td><?php esc_attr_e( $job_started ); ?></td>
+							<td><?php esc_attr_e( $this->convert_datetime_to_readable_format( $job['gather_started'] ) ); ?></td>
 						</tr>
 						<tr>
 							<th><?php esc_attr_e( 'Finished' ); ?></th>
-							<td><?php esc_attr_e( $job_finished ); ?></td>
+							<td><?php esc_attr_e( $this->convert_datetime_to_readable_format( $job['gather_started'] ) ); ?></td>
 						</tr>
 						<tr>
 							<th><?php esc_attr_e( 'Status' ); ?></th>
@@ -287,6 +282,8 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 	/**
 	 * Returns current status of given harvester. Warning: Status shouldn't be saved in transient because we have no control over it!
 	 *
+	 * @param int $harvester_id ID of harvester to get status from
+	 *
 	 * @return array
 	 */
 	public function get_harvester_status( $harvester_id ) {
@@ -311,6 +308,8 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 	/**
 	 * Returns all jobs of given harvester. Warning: Jobs shouldn't be saved in transient because we have no control over them!
 	 *
+	 * @param int $harvester_id ID of harvester to get jobs from
+	 *
 	 * @return array
 	 */
 	public function get_harvester_jobs( $harvester_id ) {
@@ -330,6 +329,24 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 		}
 
 		return $harvester_jobs;
+	}
+
+	/**
+	 * Converts datetime from harvester extension into readable format
+	 *
+	 * @param string $datetime Given datetime from harvester extension.
+	 * @param string $date_format Output date gets formatted with this format.
+	 *
+	 * @return string
+	 */
+	public function convert_datetime_to_readable_format( $datetime, $date_format = 'd.m.Y H:i:s' ) {
+		$formatted_datetime = '-';
+
+		if ( ! empty( $datetime ) ) {
+			$formatted_datetime = date( $date_format, strtotime( $datetime ) );
+		}
+
+		return $formatted_datetime;
 	}
 
 }
