@@ -261,7 +261,10 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 		$transient_name = Ckan_Backend::$plugin_slug . '_harvesters';
 		if ( false === ( $harvesters = get_transient( $transient_name ) ) ) {
 			$endpoint = CKAN_API_ENDPOINT . 'harvest_source_list';
-			$response = Ckan_Backend_Helper::do_api_request( $endpoint );
+			$data     = array( 'only_active' => true );
+			$data     = wp_json_encode( $data );
+
+			$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
 			$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
 
 			if ( 0 === count( $errors ) ) {
