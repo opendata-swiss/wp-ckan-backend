@@ -93,8 +93,8 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			// Add body class to uses which can edit data of all organizations
 			add_filter( 'admin_body_class', array( $this, 'add_admin_body_class' ) );
 
-			// remove quick edit action
-			add_filter( 'post_row_actions', array( $this, 'remove_quick_edit_row_action' ), 10, 2 );
+			// hide specific row actions
+			add_filter( 'post_row_actions', array( $this, 'hide_row_actions' ), 10, 2 );
 		}
 
 		/**
@@ -115,7 +115,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 				return $allcaps;
 			}
 
-			// TODO on save there is a call without a post id. Why?
+			// On save there is a call without a post id. Why?
 			if ( in_array( $requested_cap, array( 'edit_others_datasets', 'edit_others_organisations' ) ) && empty( $args[2] ) ) {
 				$allcaps[ $requested_cap ] = true;
 			}
@@ -260,6 +260,8 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			new Ckan_Backend_Local_Organisation();
 			new Ckan_Backend_Local_Dataset_Import();
 			new Ckan_Backend_Local_Dataset_Export();
+			new Ckan_Backend_Local_Harvester();
+			new Ckan_Backend_Local_Harvester_Dashboard();
 		}
 
 		/**
@@ -415,21 +417,26 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		}
 
 		/**
-		 * Removes quick edit action on custom post types
+		 * Hides specific row actions on custom post type
 		 *
 		 * @param array   $actions An array of row action links. Defaults are 'Edit', 'Quick Edit', 'Restore, 'Trash', 'Delete Permanently', 'Preview', and 'View'.
 		 * @param WP_Post $post The post object.
 		 *
 		 * @return array
 		 */
-		public function remove_quick_edit_row_action( $actions, $post ) {
+		public function hide_row_actions( $actions, $post ) {
 			$remove_quick_edit_on_cpt = array(
 				Ckan_Backend_Local_Dataset::POST_TYPE,
 				Ckan_Backend_Local_Group::POST_TYPE,
 				Ckan_Backend_Local_Organisation::POST_TYPE,
+				Ckan_Backend_Local_Harvester::POST_TYPE,
 			);
 			if ( in_array( $post->post_type, $remove_quick_edit_on_cpt ) ) {
 				unset( $actions['inline hide-if-no-js'] );
+			}
+			// Hide 'View' link in harvest list
+			if ( $post->post_type === Ckan_Backend_Local_Harvester::POST_TYPE ) {
+				unset( $actions['view'] );
 			}
 			return $actions;
 		}
@@ -460,10 +467,13 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			require_once plugin_dir_path( __FILE__ ) . 'post-types/ckan-backend-local-organisation.php';
 			require_once plugin_dir_path( __FILE__ ) . 'post-types/ckan-backend-local-dataset-import.php';
 			require_once plugin_dir_path( __FILE__ ) . 'post-types/ckan-backend-local-dataset-export.php';
+			require_once plugin_dir_path( __FILE__ ) . 'post-types/ckan-backend-local-harvester.php';
+			require_once plugin_dir_path( __FILE__ ) . 'post-types/ckan-backend-local-harvester-dashboard.php';
 			require_once plugin_dir_path( __FILE__ ) . 'sync/ckan-backend-sync-abstract.php';
 			require_once plugin_dir_path( __FILE__ ) . 'sync/ckan-backend-sync-local-dataset.php';
 			require_once plugin_dir_path( __FILE__ ) . 'sync/ckan-backend-sync-local-group.php';
 			require_once plugin_dir_path( __FILE__ ) . 'sync/ckan-backend-sync-local-organisation.php';
+			require_once plugin_dir_path( __FILE__ ) . 'sync/ckan-backend-sync-local-harvester.php';
 		}
 
 	}

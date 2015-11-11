@@ -30,6 +30,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 		Ckan_Backend_Local_Dataset::POST_TYPE      => 'package',
 		Ckan_Backend_Local_Organisation::POST_TYPE => 'organization',
 		Ckan_Backend_Local_Group::POST_TYPE        => 'group',
+		Ckan_Backend_Local_Harvester::POST_TYPE    => 'harvest_source',
 	);
 
 	/**
@@ -210,6 +211,11 @@ abstract class Ckan_Backend_Sync_Abstract {
 		// If data to send holds CKAN id -> do update in CKAN
 		if ( isset( $data['id'] ) ) {
 			$endpoint = CKAN_API_ENDPOINT . $this->api_type . '_patch';
+			// ckanext-harvest does not support 'harvest_source_patch' action
+			// TODO there is a problem with the update action when a harvester is untrashed -> we really need to implement the patch action
+			if ( 'harvest_source' === $this->api_type ) {
+				$endpoint = CKAN_API_ENDPOINT . $this->api_type . '_update';
+			}
 		} else {
 			// Insert new dataset
 			$endpoint = CKAN_API_ENDPOINT . $this->api_type . '_create';

@@ -152,7 +152,7 @@ class Ckan_Backend_Local_Dataset_Import {
 						<hr/>
 
 						<p class="submit">
-							<input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e( 'Import' ) ?>"/>
+							<input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e( 'Import', 'ogdch' ); ?>"/>
 						</p>
 					</div>
 				</div>

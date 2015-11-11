@@ -1,7 +1,8 @@
 // Disable visibility selection from ckan posttypes
 .post-type-ckan-local-dataset,
 .post-type-ckan-local-group,
-.post-type-ckan-local-org {
+.post-type-ckan-local-org,
+.post-type-ckan-local-harvester {
   .submitbox {
     // hide preview button and visibility settings
     #visibility, #preview-action {
@@ -25,7 +26,8 @@
 }
 
 .post-type-ckan-local-group,
-.post-type-ckan-local-org {
+.post-type-ckan-local-org,
+.post-type-ckan-local-harvester {
   // hide publishing settings
   #minor-publishing {
     display: none;
@@ -44,4 +46,34 @@
 .cmb2-wrap textarea.cmb2-textarea-code {
   font-family: "Open Sans", sans-serif !important;
   line-height: 1.4 !important;
+}
+
+.post-type-ckan-local-harvester {
+  #view-post-btn {
+    display: none;
+  }
+}
+
+.harvester_dashboard {
+  .actions {
+    margin: 10px 0;
+  }
+  .table-small {
+    border-collapse: collapse;
+    margin: 1em 0;
+    border: 2px solid #ddd;
+
+    th {
+      vertical-align: top;
+      text-align: left;
+      width: 100px;
+      line-height: 1.3;
+      font-weight: 600;
+    }
+    th, td {
+      padding: 5px;
+      border-top: 1px solid #ddd;
+      border-bottom: 1px solid #ddd;
+    }
+  }
 }
