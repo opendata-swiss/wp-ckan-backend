@@ -156,7 +156,7 @@ class Ckan_Backend_Local_Harvester {
 		$cmb->add_field( array(
 			'name'       => __( 'Configuration', 'ogdch' ),
 			'id'         => self::FIELD_PREFIX . 'config',
-			'desc'       => __( 'Only a valid JSON object is allowed', 'ogdch' ),
+			'desc'       => __( 'Only a valid JSON object is allowed. Eg. { "option": "value" }', 'ogdch' ),
 			'type'       => 'textarea_code',
 			'attributes' => array( 'rows' => 3 ),
 		) );
@@ -199,7 +199,7 @@ class Ckan_Backend_Local_Harvester {
 	public static function get_source_type_form_field_options() {
 		$source_type_options = array();
 
-		$transient_name = Ckan_Backend::$plugin_slug . '_source_types';
+		$transient_name = Ckan_Backend::$plugin_slug . '_harvester_source_types';
 		if ( false === ( $source_types = get_transient( $transient_name ) ) ) {
 			$endpoint = CKAN_API_ENDPOINT . 'harvesters_info_show';
 			$response = Ckan_Backend_Helper::do_api_request( $endpoint );
