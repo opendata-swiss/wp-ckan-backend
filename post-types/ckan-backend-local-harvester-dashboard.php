@@ -157,7 +157,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 			}
 		}
 
-		echo '<h2>' . esc_attr_e( $harvester_title ) . '</h2>';
+		echo '<h2>' . esc_attr__( $harvester_title ) . '</h2>';
 		echo '<div class="actions">';
 			echo '<input type="submit" name="reharvest" class="button-secondary" value="' . esc_attr__( 'Reharvest', 'ogdch' ) . '"' . ( $has_unfinished_job ? ' disabled="disabled"': '' ) .'> ';
 			echo '<input type="submit" name="clear" class="button-secondary" value="' . esc_attr__( 'Clear', 'ogdch' ) .'">';
