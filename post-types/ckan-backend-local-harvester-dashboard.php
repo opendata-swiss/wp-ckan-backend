@@ -16,11 +16,19 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 	 */
 	public $menu_slug = 'ckan-local-harvester-dashboard-page';
 
+
+	/**
+	 * Page suffix.
+	 * @var string
+	 */
+	public $page_suffix = '';
+
 	/**
 	 * Constructor of this class.
 	 */
 	public function __construct() {
 		add_action( 'admin_menu', array( $this, 'register_submenu_page' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'add_scripts' ), 10, 1 );
 	}
 
 	/**
@@ -29,7 +37,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 	 * @return void
 	 */
 	public function register_submenu_page() {
-		add_submenu_page(
+		$this->page_suffix = add_submenu_page(
 			'edit.php?post_type=' . Ckan_Backend_Local_Harvester::POST_TYPE,
 			__( 'Harvester Dashboard', 'ogdch' ),
 			__( 'Dashboard', 'ogdch' ),
@@ -119,7 +127,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 											}
 											?>
 										</select>
-										<input type="submit" name="show" class="button-primary" value="<?php esc_attr_e( 'Show', 'ogdch' ); ?>">
+										<?php submit_button( __( 'Show', 'ogdch' ), 'primary', 'show', false ); ?>
 									</td>
 								</tr>
 							</tbody>
@@ -156,13 +164,23 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 				break;
 			}
 		}
-
-		echo '<h2>' . esc_attr__( $harvester_title ) . '</h2>';
-		echo '<div class="actions">';
-			echo '<input type="submit" name="reharvest" class="button-secondary" value="' . esc_attr__( 'Reharvest', 'ogdch' ) . '"' . ( $has_unfinished_job ? ' disabled="disabled"': '' ) .'> ';
-			echo '<input type="submit" name="clear" class="button-secondary" value="' . esc_attr__( 'Clear', 'ogdch' ) .'">';
-		echo '</div>';
-
+		?>
+		<h2><?php esc_attr_e( $harvester_title ); ?></h2>
+		<div class="actions">
+			<?php
+			$reharvest_button_attr = array();
+			if ( $has_unfinished_job ) {
+				$reharvest_button_attr['disabled'] = 'disabled';
+			}
+			submit_button( __( 'Reharvest', 'ogdch' ), 'secondary', 'reharvest', false, $reharvest_button_attr );
+			echo ' ';
+			$clear_button_attr = array(
+				'onclick' => 'if( !confirm("' . esc_attr__( 'Are you sure you want to clear all data of this harvester?', 'ogdch' ) . '") ) return false;',
+			);
+			submit_button( __( 'Clear', 'ogdch' ), 'secondary', 'clear', false, $clear_button_attr );
+			?>
+		</div>
+		<?php
 		if ( ! empty( $harvester_status ) && ! empty( $harvester_status['last_job'] ) ) {
 			?>
 			<div class="latest-job">
@@ -171,7 +189,12 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 				if ( $has_unfinished_job ) {
 					?>
 					<div class="actions">
-						<input type="submit" name="abort" class="button-secondary" value="<?php esc_attr_e( 'Abort unfinished job', 'ogdch' ); ?>">
+						<?php
+						$abort_button_attr = array(
+							'onclick' => 'if( !confirm("' . esc_attr__( 'Are you sure you want to abort the current job of this harvester?', 'ogdch' ) . '") ) return false;',
+						);
+						submit_button( __( 'Abort unfinished job', 'ogdch' ), 'secondary', 'abort', false, $abort_button_attr );
+						?>
 					</div>
 					<?php
 				}
