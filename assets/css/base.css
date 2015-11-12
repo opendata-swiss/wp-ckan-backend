@@ -47,13 +47,16 @@
 .post-type-ckan-local-harvester #view-post-btn {
   display: none; }
 
+.harvester_dashboard .inside {
+  padding-bottom: 0; }
+.harvester_dashboard h4 {
+  cursor: pointer; }
 .harvester_dashboard .actions {
   margin: 10px 0; }
 .harvester_dashboard .ui-accordion-header-icon {
   margin-right: 8px; }
 .harvester_dashboard .table-small {
   border-collapse: collapse;
-  margin: 1em 0;
   width: 100%; }
   .harvester_dashboard .table-small tr:nth-child(even) {
     background: #fff; }
