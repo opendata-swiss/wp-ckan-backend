@@ -72,11 +72,20 @@
   .actions {
     margin: 10px 0;
   }
+  .ui-accordion-header-icon {
+    margin-right: 8px;
+  }
   .table-small {
     border-collapse: collapse;
     margin: 1em 0;
-    border: 2px solid #ddd;
+    width: 100%;
 
+    tr:nth-child(even) {
+      background: #fff;
+    }
+    tr:nth-child(odd) {
+      background: #eee;
+    }
     th {
       vertical-align: top;
       text-align: left;
@@ -86,8 +95,6 @@
     }
     th, td {
       padding: 5px;
-      border-top: 1px solid #ddd;
-      border-bottom: 1px solid #ddd;
     }
   }
 }
