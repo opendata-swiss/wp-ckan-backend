@@ -204,7 +204,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 			$clear_button_attr = array(
 				'onclick' => 'if( !confirm("' . esc_attr__( 'Are you sure you want to clear all data of this harvester?', 'ogdch' ) . '") ) return false;',
 			);
-			submit_button( __( 'Clear', 'ogdch' ), 'secondary', 'clear', false, $clear_button_attr );
+			submit_button( __( 'Clear', 'ogdch' ), 'delete', 'clear', false, $clear_button_attr );
 			?>
 		</div>
 		<div class="all-jobs">
@@ -259,7 +259,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 							$abort_button_attr = array(
 								'onclick' => 'if( !confirm("' . esc_attr__( 'Are you sure you want to abort the current job of this harvester?', 'ogdch' ) . '") ) return false;',
 							);
-							submit_button( __( 'Abort unfinished job', 'ogdch' ), 'secondary', 'abort', false, $abort_button_attr );
+							submit_button( __( 'Abort unfinished job', 'ogdch' ), 'delete', 'abort', false, $abort_button_attr );
 							?>
 						</div>
 						<?php
