@@ -62,7 +62,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		 */
 		public function __construct() {
 			add_action( 'init', array( $this, 'bootstrap' ), 0 );
-			add_action( 'admin_init', array( $this, 'add_scripts' ) );
+			add_action( 'admin_enqueue_scripts', array( $this, 'add_scripts' ), 10, 1 );
 			// add custom user profile fields
 			add_action( 'show_user_profile', array( $this, 'add_custom_user_profile_fields' ) );
 			add_action( 'edit_user_profile', array( $this, 'add_custom_user_profile_fields' ) );
@@ -267,13 +267,13 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		/**
 		 * Add scripts and styles.
 		 *
-		 * @return void
+		 * @param string $suffix Suffix of current admin page.
 		 */
-		public function add_scripts() {
+		public function add_scripts( $suffix ) {
 			wp_register_style( 'ckan-backend-base', plugins_url( 'assets/css/base.css', __FILE__ ) );
 			wp_enqueue_style( 'ckan-backend-base' );
 
-			wp_register_script( 'select2', '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js' );
+			wp_register_script( 'select2', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js' );
 			wp_enqueue_script( 'select2' );
 
 			wp_register_script( 'ckan-backend-base', plugins_url( 'assets/javascript/base.js', __FILE__ ), array( 'select2' ), null, false );
@@ -291,10 +291,10 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 				)
 			);
 
-			wp_register_script( 'select2-i18n', '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/i18n/' . Ckan_Backend_Helper::get_current_language() . '.js', array( 'select2' ), null, false );
+			wp_register_script( 'select2-i18n', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/i18n/' . Ckan_Backend_Helper::get_current_language() . '.js', array( 'select2' ), null, false );
 			wp_enqueue_script( 'select2-i18n' );
 
-			wp_register_style( 'select2-style', '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css' );
+			wp_register_style( 'select2-style', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css' );
 			wp_enqueue_style( 'select2-style' );
 		}
 
