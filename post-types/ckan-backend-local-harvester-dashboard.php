@@ -170,7 +170,20 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 	 * @param string $harvester_title Title of selected harvester.
 	 */
 	public function render_harvester_detail( $harvester_id, $harvester_title ) {
-		$harvester_jobs = $this->get_harvester_jobs( $harvester_id );
+		$show_all_jobs = false;
+		if ( isset( $_POST['show_more'] ) ) {
+			$show_all_jobs = true;
+		}
+		if ( $show_all_jobs ) {
+			$harvester_jobs = $this->get_harvester_jobs( $harvester_id );
+		} else {
+			$harvester_status = $this->get_harvester_status( $harvester_id );
+			$harvester_jobs = array();
+			if ( ! empty( $harvester_status['last_job'] ) ) {
+				$harvester_jobs[] = $harvester_status['last_job'];
+			}
+		}
+
 		$has_unfinished_job = false;
 		foreach ( $harvester_jobs as $harvester_job ) {
 			if ( in_array( $harvester_job['status'], $this->running_job_status ) ) {
@@ -195,7 +208,15 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 			?>
 		</div>
 		<div class="all-jobs">
-			<h3><?php esc_attr_e( 'All Harvest Jobs', 'ogdch' ); ?></h3>
+			<h3>
+				<?php
+				if ( $show_all_jobs ) {
+					esc_attr_e( 'All Harvest Jobs', 'ogdch' );
+				} else {
+					esc_attr_e( 'Latest Harvest Job', 'ogdch' );
+				}
+				?>
+			</h3>
 			<?php
 			if ( ! empty( $harvester_jobs ) ) {
 				$collapsed = false;
@@ -209,6 +230,11 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 			?>
 		</div>
 		<?php
+		if ( ! $show_all_jobs ) {
+			submit_button( __( 'Show all jobs', 'ogdch' ), 'secondary', 'show_more', false );
+		} else {
+			submit_button( __( 'Show less jobs', 'ogdch' ), 'secondary', 'show_less', false );
+		}
 	}
 
 	/**
