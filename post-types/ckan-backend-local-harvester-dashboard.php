@@ -101,7 +101,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 			$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
 
 			if ( 0 === count( $errors ) ) {
-				echo '<div class="updated"><p>' . esc_attr__( 'Current harvester job successfully aborted', 'ogdch' ) . '</p></div>';
+				echo '<div class="updated"><p>' . esc_attr__( 'Current harvester job successfully aborted.', 'ogdch' ) . '</p></div>';
 			} else {
 				Ckan_Backend_Helper::print_error_messages( $errors );
 			}
@@ -115,7 +115,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 			$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
 
 			if ( 0 === count( $errors ) ) {
-				echo '<div class="updated"><p>' . esc_attr__( 'Successfully cleared all harvester datasets', 'ogdch' ) . '</p></div>';
+				echo '<div class="updated"><p>' . esc_attr__( 'Successfully cleared all harvester datasets.', 'ogdch' ) . '</p></div>';
 			} else {
 				Ckan_Backend_Helper::print_error_messages( $errors );
 			}
