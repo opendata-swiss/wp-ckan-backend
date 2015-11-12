@@ -149,16 +149,15 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 								</tr>
 							</tbody>
 						</table>
-						<hr />
-						<?php
-						if ( ! empty( $selected_harvester_id ) ) {
-							$this->render_harvester_detail( $selected_harvester_id, $harvesters[ $selected_harvester_id ] );
-						} else {
-							echo '<p>' . esc_attr__( 'Please select a harvester first.', 'ogdch' ) . '</p>';
-						}
-						?>
 					</div>
 				</div>
+				<?php
+				if ( ! empty( $selected_harvester_id ) ) {
+					$this->render_harvester_detail( $selected_harvester_id, $harvesters[ $selected_harvester_id ] );
+				} else {
+					echo '<p>' . esc_attr__( 'Please select a harvester first.', 'ogdch' ) . '</p>';
+				}
+				?>
 			</form>
 		</div>
 		<?php
@@ -196,7 +195,6 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 			?>
 		</div>
 		<div class="all-jobs">
-			<hr />
 			<h3><?php esc_attr_e( 'All Harvest Jobs', 'ogdch' ); ?></h3>
 			<?php
 			if ( ! empty( $harvester_jobs ) ) {
@@ -223,49 +221,49 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 		$job_created = $this->convert_datetime_to_readable_format( $job['created'] );
 		$collapsed_class = ( $collapsed ? 'collapsed' : 'open' );
 		?>
-		<div class="collapsible <?php esc_attr_e( $collapsed_class ); ?>">
-
-			<h4><?php esc_attr_e( sprintf( __( 'Job started at %s', 'ogdch' ), $job_created ) ); ?></h4>
-			<div>
-				<?php
-				if ( in_array( $job['status'], $this->running_job_status ) ) {
-					?>
-					<div class="actions">
-						<?php
-						$abort_button_attr = array(
-							'onclick' => 'if( !confirm("' . esc_attr__( 'Are you sure you want to abort the current job of this harvester?', 'ogdch' ) . '") ) return false;',
-						);
-						submit_button( __( 'Abort unfinished job', 'ogdch' ), 'secondary', 'abort', false, $abort_button_attr );
-						?>
-					</div>
+		<div class="postbox">
+			<div class="inside collapsible <?php esc_attr_e( $collapsed_class ); ?>">
+				<h4><?php esc_attr_e( sprintf( __( 'Job created at %s', 'ogdch' ), $job_created ) ); ?></h4>
+				<div>
 					<?php
-				}
-				?>
-				<table class="table-small">
-					<tr>
-						<th><?php esc_attr_e( 'ID' ); ?></th>
-						<td><?php esc_attr_e( $job['id'] ); ?></td>
-					</tr>
-					<tr>
-						<th><?php esc_attr_e( 'Created' ); ?></th>
-						<td><?php esc_attr_e( $this->convert_datetime_to_readable_format( $job['created'] ) ); ?></td>
-					</tr>
-					<tr>
-						<th><?php esc_attr_e( 'Started' ); ?></th>
-						<td><?php esc_attr_e( $this->convert_datetime_to_readable_format( $job['gather_started'] ) ); ?></td>
-					</tr>
-					<tr>
-						<th><?php esc_attr_e( 'Finished' ); ?></th>
-						<td><?php esc_attr_e( $this->convert_datetime_to_readable_format( $job['gather_finished'] ) ); ?></td>
-					</tr>
-					<tr>
-						<th><?php esc_attr_e( 'Status' ); ?></th>
-						<td><?php esc_attr_e( $job['status'] ); ?></td>
-					</tr>
-				</table>
+					if ( in_array( $job['status'], $this->running_job_status ) ) {
+						?>
+						<div class="actions">
+							<?php
+							$abort_button_attr = array(
+								'onclick' => 'if( !confirm("' . esc_attr__( 'Are you sure you want to abort the current job of this harvester?', 'ogdch' ) . '") ) return false;',
+							);
+							submit_button( __( 'Abort unfinished job', 'ogdch' ), 'secondary', 'abort', false, $abort_button_attr );
+							?>
+						</div>
+						<?php
+					}
+					?>
+					<table class="table-small">
+						<tr>
+							<th><?php esc_attr_e( 'ID' ); ?></th>
+							<td><?php esc_attr_e( $job['id'] ); ?></td>
+						</tr>
+						<tr>
+							<th><?php esc_attr_e( 'Created' ); ?></th>
+							<td><?php esc_attr_e( $this->convert_datetime_to_readable_format( $job['created'] ) ); ?></td>
+						</tr>
+						<tr>
+							<th><?php esc_attr_e( 'Started' ); ?></th>
+							<td><?php esc_attr_e( $this->convert_datetime_to_readable_format( $job['gather_started'] ) ); ?></td>
+						</tr>
+						<tr>
+							<th><?php esc_attr_e( 'Finished' ); ?></th>
+							<td><?php esc_attr_e( $this->convert_datetime_to_readable_format( $job['gather_finished'] ) ); ?></td>
+						</tr>
+						<tr>
+							<th><?php esc_attr_e( 'Status' ); ?></th>
+							<td><?php esc_attr_e( $job['status'] ); ?></td>
+						</tr>
+					</table>
+				</div>
 			</div>
 		</div>
-		<hr />
 		<?php
 	}
 

@@ -55,6 +55,12 @@
 }
 
 .harvester_dashboard {
+  .inside {
+    padding-bottom: 0;
+  }
+  h4 {
+    cursor: pointer;
+  }
   .actions {
     margin: 10px 0;
   }
@@ -63,7 +69,6 @@
   }
   .table-small {
     border-collapse: collapse;
-    margin: 1em 0;
     width: 100%;
 
     tr:nth-child(even) {
