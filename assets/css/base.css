@@ -7,6 +7,16 @@
 .post-type-ckan-local-harvester .submitbox #preview-action {
   display: none; }
 
+.ckan-synced {
+  margin: 0;
+  color: #fff;
+  padding: 5px; }
+  .ckan-synced.success {
+    background-color: #00A200; }
+  .ckan-synced.error {
+    background-color: #cc0000;
+    padding: 5px; }
+
 #cmb2-metabox-ckan-local-dataset-sidebox-disabled .cmb2-metabox-description {
   color: #444;
   font-style: normal; }

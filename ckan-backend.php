@@ -95,6 +95,9 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 
 			// hide specific row actions
 			add_filter( 'post_row_actions', array( $this, 'hide_row_actions' ), 10, 2 );
+
+			// add custom CMB2 field type ckan_synced
+			add_action( 'cmb2_render_ckan_synced', array( $this, 'cmb2_render_callback_ckan_synced' ), 10, 5 );
 		}
 
 		/**
@@ -280,12 +283,12 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			wp_enqueue_script( 'ckan-backend-base' );
 			wp_localize_script( 'ckan-backend-base', 'baseConfig',
 				array(
-					datasetSearch => array(
+					'datasetSearch' => array(
 						'CKAN_API_ENDPOINT' => CKAN_API_ENDPOINT,
 						'currentLanguage'   => Ckan_Backend_Helper::get_current_language(),
 						'placeholder'       => __( 'Search dataset...', 'ogdch' ),
 					),
-					mediatypeSearch => array(
+					'mediatypeSearch' => array(
 						'placeholder' => __( 'No media type', 'ogdch' ),
 					),
 				)
@@ -439,6 +442,25 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 				unset( $actions['view'] );
 			}
 			return $actions;
+		}
+
+		/**
+		 * Renders CMB2 field of type ckan_synced. Field ID must be equal to synced meta key in database
+		 *
+		 * @param CMB2_Field $field The passed in `CMB2_Field` object.
+		 * @param mixed      $escaped_value The value of this field escaped. It defaults to `sanitize_text_field`.
+		 * @param int        $object_id The ID of the current object.
+		 * @param string     $object_type The type of object you are working with.
+		 * @param CMB2_Types $field_type_object This `CMB2_Types` object.
+		 */
+		public function cmb2_render_callback_ckan_synced( $field, $escaped_value, $object_id, $object_type, $field_type_object ) {
+			$meta_key = $field->id();
+			$synced = get_post_meta( $object_id, $meta_key, true );
+			if( $synced ) {
+				echo '<p class="ckan-synced success"><span class="dashicons dashicons-yes"></span>' . esc_attr__( 'All good!', 'ogdch' ) . '</p>';
+			} else {
+				echo '<p class="ckan-synced error"><span class="dashicons dashicons-no"></span>' . esc_attr__( 'Not synchronized! Please fix data and save the element again.', 'ogdch' ) . '</p>';
+			}
 		}
 
 		/**

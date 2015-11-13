@@ -11,6 +11,20 @@
   }
 }
 
+.ckan-synced {
+  margin: 0;
+  color: #fff;
+  padding: 5px;
+
+  &.success {
+    background-color: #00A200;
+  }
+  &.error {
+    background-color: #cc0000;
+    padding: 5px;
+  }
+}
+
 #cmb2-metabox-ckan-local-dataset-sidebox-disabled .cmb2-metabox-description {
   color: #444;
   font-style: normal;
