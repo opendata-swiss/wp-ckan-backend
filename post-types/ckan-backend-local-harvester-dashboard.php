@@ -56,6 +56,11 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 		);
 	}
 
+	/**
+	 * Adds scripts
+	 *
+	 * @param string $suffix Suffix of current page.
+	 */
 	public function add_scripts( $suffix ) {
 		if ( $suffix !== $this->page_suffix ) {
 			return;
