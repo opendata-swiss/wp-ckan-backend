@@ -180,7 +180,7 @@ class Ckan_Backend_Local_Organisation {
 
 		/* Ckan id (If Set -> update. Set on first save) */
 		$cmb_side_ckan->add_field( array(
-			'name'       => __( 'CKAN ID', 'ogdch' ),
+			'name'       => __( 'ID', 'ogdch' ),
 			'id'         => self::FIELD_PREFIX . 'ckan_id',
 			'type'       => 'text',
 			'attributes' => array(
@@ -190,12 +190,18 @@ class Ckan_Backend_Local_Organisation {
 
 		/* Ckan name */
 		$cmb_side_ckan->add_field( array(
-			'name'       => __( 'CKAN Name (Slug)', 'ogdch' ),
+			'name'       => __( 'Name (Slug)', 'ogdch' ),
 			'id'         => self::FIELD_PREFIX . 'ckan_name',
 			'type'       => 'text',
 			'attributes' => array(
 				'readonly' => 'readonly',
 			),
+		) );
+
+		$cmb_side_ckan->add_field( array(
+			'name' => __( 'Sync Status', 'ogdch' ),
+			'type' => 'ckan_synced',
+			'id'   => self::FIELD_PREFIX . 'ckan_synced',
 		) );
 	}
 

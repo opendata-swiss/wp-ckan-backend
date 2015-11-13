@@ -84,18 +84,18 @@ abstract class Ckan_Backend_Sync_Abstract {
 		// Check if the post title is set -> otherwise do not sync to CKAN
 		if ( '' === $post->post_title ) {
 			$this->store_errors_in_notices_option( array( __( 'CKAN Sync aborted! Please provide a title.', 'ogdch' ) ) );
-
+			$this->set_synced_meta( $post->ID, false );
 			return;
 		}
 
 		// If action is trash -> set CKAN dataset to deleted
-		if ( isset( $_GET ) && ( 'trash' === $_GET['action'] ) ) {
+		if ( isset( $_GET['action'] ) && ( 'trash' === $_GET['action'] ) ) {
 			$success = $this->trash_action( $post );
 		} // If action is untrash -> set CKAN dataset to active
-		elseif ( isset( $_GET ) && 'untrash' === $_GET['action'] ) {
+		elseif ( isset( $_GET['action'] ) && 'untrash' === $_GET['action'] ) {
 			$success = $this->untrash_action( $post );
 		} // If action is delete -> delete the CKAN dataset completely
-		elseif ( isset( $_GET ) && 'delete' === $_GET['action'] ) {
+		elseif ( isset( $_GET['action'] ) && 'delete' === $_GET['action'] ) {
 			// The trash action already set the CKAN dataset to deleted -> do nothing
 			return;
 		} // Or generate data for insert/update
@@ -111,6 +111,9 @@ abstract class Ckan_Backend_Sync_Abstract {
 
 		// TODO update dataset after group or organisation slug has changed
 		$this->after_sync_action( $post );
+
+		// Update ckan_synced meta field
+		$this->set_synced_meta( $post->ID, $success );
 
 		return $success;
 	}
@@ -293,5 +296,17 @@ abstract class Ckan_Backend_Sync_Abstract {
 		}
 
 		return delete_option( $this->field_prefix . 'notices' );
+	}
+
+	/**
+	 * Sets synchronization status after save_post hook
+	 *
+	 * @param int  $post_id ID of current post.
+	 * @param bool $success Flag which indicates if synchronization was successfull.
+	 */
+	public function set_synced_meta( $post_id, $success = true ) {
+		// Set ckan_synced from CKAN and add it to $_POST because the real meta save will follow after this action
+		update_post_meta( $post_id, $this->field_prefix . 'ckan_synced', $success );
+		$_POST[ $this->field_prefix . 'ckan_synced' ]   = $success;
 	}
 }
