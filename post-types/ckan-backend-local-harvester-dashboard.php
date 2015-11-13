@@ -141,7 +141,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 										<label for="harvester_selection"><?php esc_html_e( __( 'Choose Harvester:', 'ogdch' ) ); ?></label>
 									</th>
 									<td>
-										<select id="harvester_selection" name="<?php esc_attr_e( $harvester_selection_field_name ); ?>">
+										<select id="harvester_selection" name="<?php echo esc_attr( $harvester_selection_field_name ); ?>">
 											<option value=""><?php esc_attr_e( '- Please choose -', 'ogdch' ); ?></option>
 											<?php
 											foreach ( $harvesters as $id => $title ) {
@@ -197,7 +197,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 			}
 		}
 		?>
-		<h2><?php esc_attr_e( $harvester_title ); ?></h2>
+		<h2><?php echo esc_attr( $harvester_title ); ?></h2>
 		<div class="actions">
 			<?php
 			$reharvest_button_attr = array();
@@ -253,7 +253,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 		$collapsed_class = ( $collapsed ? 'collapsed' : 'open' );
 		?>
 		<div class="postbox">
-			<div class="inside collapsible <?php esc_attr_e( $collapsed_class ); ?>">
+			<div class="inside collapsible <?php echo esc_attr( $collapsed_class ); ?>">
 				<h4><?php esc_attr_e( sprintf( __( 'Job created at %s', 'ogdch' ), $job_created ) ); ?></h4>
 				<div>
 					<?php
@@ -272,24 +272,24 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 					?>
 					<table class="table-small">
 						<tr>
-							<th><?php esc_attr_e( 'ID' ); ?></th>
-							<td><?php esc_attr_e( $job['id'] ); ?></td>
+							<th><?php esc_attr_e( 'ID', 'ogdch' ); ?></th>
+							<td><?php echo esc_attr( $job['id'] ); ?></td>
 						</tr>
 						<tr>
-							<th><?php esc_attr_e( 'Created' ); ?></th>
-							<td><?php esc_attr_e( $this->convert_datetime_to_readable_format( $job['created'] ) ); ?></td>
+							<th><?php esc_attr_e( 'Created', 'ogdch' ); ?></th>
+							<td><?php echo esc_attr( $this->convert_datetime_to_readable_format( $job['created'] ) ); ?></td>
 						</tr>
 						<tr>
-							<th><?php esc_attr_e( 'Started' ); ?></th>
-							<td><?php esc_attr_e( $this->convert_datetime_to_readable_format( $job['gather_started'] ) ); ?></td>
+							<th><?php esc_attr_e( 'Started', 'ogdch' ); ?></th>
+							<td><?php echo esc_attr( $this->convert_datetime_to_readable_format( $job['gather_started'] ) ); ?></td>
 						</tr>
 						<tr>
-							<th><?php esc_attr_e( 'Finished' ); ?></th>
-							<td><?php esc_attr_e( $this->convert_datetime_to_readable_format( $job['gather_finished'] ) ); ?></td>
+							<th><?php esc_attr_e( 'Finished', 'ogdch' ); ?></th>
+							<td><?php echo esc_attr( $this->convert_datetime_to_readable_format( $job['gather_finished'] ) ); ?></td>
 						</tr>
 						<tr>
-							<th><?php esc_attr_e( 'Status' ); ?></th>
-							<td><?php esc_attr_e( $job['status'] ); ?></td>
+							<th><?php esc_attr_e( 'Status', 'ogdch' ); ?></th>
+							<td><?php echo esc_attr( $job['status'] ); ?></td>
 						</tr>
 					</table>
 				</div>
