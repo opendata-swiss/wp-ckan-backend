@@ -127,7 +127,7 @@ class Ckan_Backend_Local_Dataset_Import {
 			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
 
 			<form enctype="multipart/form-data" action="" method="POST">
-				<input type="hidden" name="<?php esc_attr_e( $import_submit_hidden_field_name ); ?>" value="Y">
+				<input type="hidden" name="<?php echo esc_attr( $import_submit_hidden_field_name ); ?>" value="Y">
 				<?php // Field shows that the metadata is not yet saved in database when save_post hook is called -> get values from $_POST array ?>
 				<input type="hidden" id="metadata_not_in_db" name="metadata_not_in_db" value="1"/>
 
@@ -141,7 +141,7 @@ class Ckan_Backend_Local_Dataset_Import {
 									</th>
 
 									<td>
-										<input type="file" id="import_file" name="<?php esc_attr_e( $file_field_name ); ?>"/>
+										<input type="file" id="import_file" name="<?php echo esc_attr( $file_field_name ); ?>"/>
 										<br/>
 										<span class="description"><?php esc_html_e( __( 'File has to be a DCAT-AP Switzerland catalog.', 'ogdch' ) ); ?></span>
 									</td>
@@ -176,7 +176,7 @@ class Ckan_Backend_Local_Dataset_Import {
 			! isset( $file['error'] ) ||
 			is_array( $file['error'] )
 		) {
-			return new WP_Error( 'invalid_parameters', 'Invalid parameters.' );
+			return new WP_Error( 'invalid_parameters', __( 'Invalid parameters.', 'ogdch' ) );
 		}
 
 		// Check $file['error'] value.
@@ -184,17 +184,17 @@ class Ckan_Backend_Local_Dataset_Import {
 			case UPLOAD_ERR_OK:
 				break;
 			case UPLOAD_ERR_NO_FILE:
-				return new WP_Error( 'missing_file', 'Missing import file.' );
+				return new WP_Error( 'missing_file', __( 'Missing import file.', 'ogdch' ) );
 			case UPLOAD_ERR_INI_SIZE:
 			case UPLOAD_ERR_FORM_SIZE:
-				return new WP_Error( 'exceeded_filesize', 'Exceeded filesize limit.' );
+				return new WP_Error( 'exceeded_filesize', __( 'Exceeded filesize limit.', 'ogdch' ) );
 			default:
-				return new WP_Error( 'unknown_errors', 'Unknown errors.' );
+				return new WP_Error( 'unknown_errors', __( 'Unknown errors.', 'ogdch' ) );
 		}
 
 		$xml = simplexml_load_file( $file['tmp_name'] );
 		if ( ! is_object( $xml ) ) {
-			return new WP_Error( 'invalid_xml', 'Uploaded file is not a vaild XML file.' );
+			return new WP_Error( 'invalid_xml', __( 'Uploaded file is not a vaild XML file.', 'ogdch' ) );
 		}
 		$xml->registerXPathNamespace( 'dcat', 'http://www.w3.org/ns/dcat#' );
 		$xml->registerXPathNamespace( 'dct', 'http://purl.org/dc/terms/' );
