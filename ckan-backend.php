@@ -456,7 +456,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		public function cmb2_render_callback_ckan_synced( $field, $escaped_value, $object_id, $object_type, $field_type_object ) {
 			$meta_key = $field->id();
 			$synced = get_post_meta( $object_id, $meta_key, true );
-			if( $synced ) {
+			if ( $synced ) {
 				echo '<p class="ckan-synced success"><span class="dashicons dashicons-yes"></span>' . esc_attr__( 'All good!', 'ogdch' ) . '</p>';
 			} else {
 				echo '<p class="ckan-synced error"><span class="dashicons dashicons-no"></span>' . esc_attr__( 'Not synchronized! Please fix data and save the element again.', 'ogdch' ) . '</p>';
