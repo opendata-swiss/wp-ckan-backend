@@ -111,11 +111,11 @@ class Ckan_Backend_Local_Dataset {
 		?>
 		<select class="dataset_search_box"
 		        style="width: 50%"
-		        name="<?php esc_attr_e( $field->args['_name'] ); ?>"
-		        id="<?php esc_attr_e( $field->args['_id'] ); ?>">
+		        name="<?php echo esc_attr( $field->args['_name'] ); ?>"
+		        id="<?php echo esc_attr( $field->args['_id'] ); ?>">
 			<?php if ( $escaped_value ) : ?>
 				<?php $title = Ckan_Backend_Helper::get_dataset_title( $escaped_value ); ?>
-				<option selected="selected" value="<?php esc_attr_e( $escaped_value ); ?>"><?php esc_attr_e( $title ); ?></option>
+				<option selected="selected" value="<?php echo esc_attr( $escaped_value ); ?>"><?php echo esc_attr( $title ); ?></option>
 			<?php endif; ?>
 		</select>
 		<?php
@@ -123,13 +123,13 @@ class Ckan_Backend_Local_Dataset {
 			// Select2 library doesn't send field if it's empty but CMB2 won't save repeatable meta field if it's not in $_POST. So we have to add a dummy_value to the first repeatable item.
 			// We just need this workaround if this field is the only field in the repeatable group.
 			?>
-			<input type="hidden" name="<?php esc_attr_e( $field->group->args['id'] ); ?>[0][dummy_value]" />
+			<input type="hidden" name="<?php echo esc_attr( $field->group->args['id'] ); ?>[0][dummy_value]" />
 			<?php
 		}
 		?>
 		<script type="text/javascript">
 			(function($) {
-				$("[name='<?php esc_attr_e( $field->args['_name'] ); ?>'").select2(datasetSearchOptions);
+				$("[name='<?php echo esc_attr( $field->args['_name'] ); ?>'").select2(datasetSearchOptions);
 			})( jQuery );
 		</script>
 		<?php
@@ -149,8 +149,8 @@ class Ckan_Backend_Local_Dataset {
 		?>
 		<select class="mediatype_search_box"
 		        style="width: 50%"
-		        name="<?php esc_attr_e( $field->args['_name'] ); ?>"
-		        id="<?php esc_attr_e( $field->args['_id'] ); ?>">
+		        name="<?php echo esc_attr( $field->args['_name'] ); ?>"
+		        id="<?php echo esc_attr( $field->args['_id'] ); ?>">
 			<?php // add empty option to make placeholder work ?>
 			<option value=""></option>
 			<?php
@@ -161,7 +161,7 @@ class Ckan_Backend_Local_Dataset {
 		</select>
 		<script type="text/javascript">
 			(function($) {
-				$("[name='<?php esc_attr_e( $field->args['_name'] ); ?>'").select2(mediatypeSearchOptions);
+				$("[name='<?php echo esc_attr( $field->args['_name'] ); ?>'").select2(mediatypeSearchOptions);
 			})( jQuery );
 		</script>
 		<?php
