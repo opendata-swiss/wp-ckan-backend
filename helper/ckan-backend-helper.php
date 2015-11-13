@@ -51,7 +51,7 @@ class Ckan_Backend_Helper {
 	public static function check_response_for_errors( $response ) {
 		$errors = array();
 		if ( ! is_array( $response ) ) {
-			$errors[] = 'There was a problem sending the request.';
+			$errors[] = __( 'There was a problem sending the request.', 'ogdch' );
 		}
 
 		if ( isset( $response['success'] ) && false === $response['success'] ) {
@@ -72,7 +72,7 @@ class Ckan_Backend_Helper {
 				}
 				$errors[] = $error;
 			} else {
-				$errors[] = 'API responded with unknown error.';
+				$errors[] = __( 'API responded with unknown error.', 'ogdch' );
 			}
 		}
 

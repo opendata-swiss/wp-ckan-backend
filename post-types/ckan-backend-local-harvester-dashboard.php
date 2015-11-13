@@ -16,11 +16,28 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 	 */
 	public $menu_slug = 'ckan-local-harvester-dashboard-page';
 
+
+	/**
+	 * Page suffix.
+	 * @var string
+	 */
+	public $page_suffix = '';
+
+	/**
+	 * Job status which mean that the it is still running.
+	 * @var array
+	 */
+	public $running_job_status = array(
+		'New',
+		'Running',
+	);
+
 	/**
 	 * Constructor of this class.
 	 */
 	public function __construct() {
 		add_action( 'admin_menu', array( $this, 'register_submenu_page' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'add_scripts' ), 10, 1 );
 	}
 
 	/**
@@ -29,7 +46,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 	 * @return void
 	 */
 	public function register_submenu_page() {
-		add_submenu_page(
+		$this->page_suffix = add_submenu_page(
 			'edit.php?post_type=' . Ckan_Backend_Local_Harvester::POST_TYPE,
 			__( 'Harvester Dashboard', 'ogdch' ),
 			__( 'Dashboard', 'ogdch' ),
@@ -37,6 +54,19 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 			$this->menu_slug,
 			array( $this, 'dashboard_page_callback' )
 		);
+	}
+
+	/**
+	 * Adds scripts
+	 *
+	 * @param string $suffix Suffix of current page.
+	 */
+	public function add_scripts( $suffix ) {
+		if ( $suffix !== $this->page_suffix ) {
+			return;
+		}
+
+		wp_enqueue_script( 'harvester-dashboard', plugins_url( '../assets/javascript/harvester-dashboard.js', __FILE__ ), array( 'jquery-ui-accordion', 'jquery-effects-core' ) );
 	}
 
 	/**
@@ -76,7 +106,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 			$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
 
 			if ( 0 === count( $errors ) ) {
-				echo '<div class="updated"><p>' . esc_attr__( 'Current harvester job successfully aborted', 'ogdch' ) . '</p></div>';
+				echo '<div class="updated"><p>' . esc_attr__( 'Current harvester job successfully aborted.', 'ogdch' ) . '</p></div>';
 			} else {
 				Ckan_Backend_Helper::print_error_messages( $errors );
 			}
@@ -90,7 +120,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 			$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
 
 			if ( 0 === count( $errors ) ) {
-				echo '<div class="updated"><p>' . esc_attr__( 'Successfully cleared all harvester datasets', 'ogdch' ) . '</p></div>';
+				echo '<div class="updated"><p>' . esc_attr__( 'Successfully cleared all harvester datasets.', 'ogdch' ) . '</p></div>';
 			} else {
 				Ckan_Backend_Helper::print_error_messages( $errors );
 			}
@@ -111,7 +141,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 										<label for="harvester_selection"><?php esc_html_e( __( 'Choose Harvester:', 'ogdch' ) ); ?></label>
 									</th>
 									<td>
-										<select id="harvester_selection" name="<?php esc_attr_e( $harvester_selection_field_name ); ?>">
+										<select id="harvester_selection" name="<?php echo esc_attr( $harvester_selection_field_name ); ?>">
 											<option value=""><?php esc_attr_e( '- Please choose -', 'ogdch' ); ?></option>
 											<?php
 											foreach ( $harvesters as $id => $title ) {
@@ -119,21 +149,20 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 											}
 											?>
 										</select>
-										<input type="submit" name="show" class="button-primary" value="<?php esc_attr_e( 'Show', 'ogdch' ); ?>">
+										<?php submit_button( __( 'Show', 'ogdch' ), 'primary', 'show', false ); ?>
 									</td>
 								</tr>
 							</tbody>
 						</table>
-						<hr />
-						<?php
-						if ( ! empty( $selected_harvester_id ) ) {
-							$this->render_harvester_detail( $selected_harvester_id, $harvesters[ $selected_harvester_id ] );
-						} else {
-							echo '<p>' . esc_attr__( 'Please select a harvester first.', 'ogdch' ) . '</p>';
-						}
-						?>
 					</div>
 				</div>
+				<?php
+				if ( ! empty( $selected_harvester_id ) ) {
+					$this->render_harvester_detail( $selected_harvester_id, $harvesters[ $selected_harvester_id ] );
+				} else {
+					echo '<p>' . esc_attr__( 'Please select a harvester first.', 'ogdch' ) . '</p>';
+				}
+				?>
 			</form>
 		</div>
 		<?php
@@ -146,49 +175,59 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 	 * @param string $harvester_title Title of selected harvester.
 	 */
 	public function render_harvester_detail( $harvester_id, $harvester_title ) {
-		$harvester_status = $this->get_harvester_status( $harvester_id );
-		$harvester_jobs = $this->get_harvester_jobs( $harvester_id );
-		$running_status = array( 'New', 'Running' );
+		$show_all_jobs = false;
+		if ( isset( $_POST['show_more'] ) ) {
+			$show_all_jobs = true;
+		}
+		if ( $show_all_jobs ) {
+			$harvester_jobs = $this->get_harvester_jobs( $harvester_id );
+		} else {
+			$harvester_status = $this->get_harvester_status( $harvester_id );
+			$harvester_jobs = array();
+			if ( ! empty( $harvester_status['last_job'] ) ) {
+				$harvester_jobs[] = $harvester_status['last_job'];
+			}
+		}
+
 		$has_unfinished_job = false;
 		foreach ( $harvester_jobs as $harvester_job ) {
-			if ( in_array( $harvester_job['status'], $running_status ) ) {
+			if ( in_array( $harvester_job['status'], $this->running_job_status ) ) {
 				$has_unfinished_job = true;
 				break;
 			}
 		}
-
-		echo '<h2>' . esc_attr__( $harvester_title ) . '</h2>';
-		echo '<div class="actions">';
-			echo '<input type="submit" name="reharvest" class="button-secondary" value="' . esc_attr__( 'Reharvest', 'ogdch' ) . '"' . ( $has_unfinished_job ? ' disabled="disabled"': '' ) .'> ';
-			echo '<input type="submit" name="clear" class="button-secondary" value="' . esc_attr__( 'Clear', 'ogdch' ) .'">';
-		echo '</div>';
-
-		if ( ! empty( $harvester_status ) && ! empty( $harvester_status['last_job'] ) ) {
-			?>
-			<div class="latest-job">
-				<h3><?php esc_attr_e( 'Latest Harvest Job', 'ogdch' ); ?></h3>
-				<?php
-				if ( $has_unfinished_job ) {
-					?>
-					<div class="actions">
-						<input type="submit" name="abort" class="button-secondary" value="<?php esc_attr_e( 'Abort unfinished job', 'ogdch' ); ?>">
-					</div>
-					<?php
-				}
-				$this->render_job_table( $harvester_status['last_job'] );
-				?>
-			</div>
-			<?php
-		}
 		?>
-
-
+		<h2><?php echo esc_attr( $harvester_title ); ?></h2>
+		<div class="actions">
+			<?php
+			$reharvest_button_attr = array();
+			if ( $has_unfinished_job ) {
+				$reharvest_button_attr['disabled'] = 'disabled';
+			}
+			submit_button( __( 'Reharvest', 'ogdch' ), 'secondary', 'reharvest', false, $reharvest_button_attr );
+			echo ' ';
+			$clear_button_attr = array(
+				'onclick' => 'if( !confirm("' . esc_attr__( 'Are you sure you want to clear all data of this harvester?', 'ogdch' ) . '") ) return false;',
+			);
+			submit_button( __( 'Clear', 'ogdch' ), 'delete', 'clear', false, $clear_button_attr );
+			?>
+		</div>
 		<div class="all-jobs">
-			<h3><?php esc_attr_e( 'All Harvest Jobs', 'ogdch' ); ?></h3>
+			<h3>
+				<?php
+				if ( $show_all_jobs ) {
+					esc_attr_e( 'All Harvest Jobs', 'ogdch' );
+				} else {
+					esc_attr_e( 'Latest Harvest Job', 'ogdch' );
+				}
+				?>
+			</h3>
 			<?php
 			if ( ! empty( $harvester_jobs ) ) {
+				$collapsed = false;
 				foreach ( $harvester_jobs as $job ) {
-					$this->render_job_table( $job );
+					$this->render_job_table( $job, $collapsed );
+					$collapsed = true;
 				}
 			} else {
 				echo '<p>' . esc_attr__( 'No Jobs found for this harvester.', 'ogdch' ) . '</p>';
@@ -196,37 +235,66 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 			?>
 		</div>
 		<?php
+		if ( ! $show_all_jobs ) {
+			submit_button( __( 'Show all jobs', 'ogdch' ), 'secondary', 'show_more', false );
+		} else {
+			submit_button( __( 'Show less jobs', 'ogdch' ), 'secondary', 'show_less', false );
+		}
 	}
 
 	/**
 	 * Renders job table with all information about it
 	 *
 	 * @param array $job Job to render.
+	 * @param bool  $collapsed If job should be collapsed on load.
 	 */
-	public function render_job_table( $job ) {
+	public function render_job_table( $job, $collapsed = true ) {
+		$job_created = $this->convert_datetime_to_readable_format( $job['created'] );
+		$collapsed_class = ( $collapsed ? 'collapsed' : 'open' );
 		?>
-		<table class="table-small">
-			<tr>
-				<th><?php esc_attr_e( 'ID' ); ?></th>
-				<td><?php esc_attr_e( $job['id'] ); ?></td>
-			</tr>
-			<tr>
-				<th><?php esc_attr_e( 'Created' ); ?></th>
-				<td><?php esc_attr_e( $this->convert_datetime_to_readable_format( $job['created'] ) ); ?></td>
-			</tr>
-			<tr>
-				<th><?php esc_attr_e( 'Started' ); ?></th>
-				<td><?php esc_attr_e( $this->convert_datetime_to_readable_format( $job['gather_started'] ) ); ?></td>
-			</tr>
-			<tr>
-				<th><?php esc_attr_e( 'Finished' ); ?></th>
-				<td><?php esc_attr_e( $this->convert_datetime_to_readable_format( $job['gather_finished'] ) ); ?></td>
-			</tr>
-			<tr>
-				<th><?php esc_attr_e( 'Status' ); ?></th>
-				<td><?php esc_attr_e( $job['status'] ); ?></td>
-			</tr>
-		</table>
+		<div class="postbox">
+			<div class="inside collapsible <?php echo esc_attr( $collapsed_class ); ?>">
+				<h4><?php esc_attr_e( sprintf( __( 'Job created at %s', 'ogdch' ), $job_created ) ); ?></h4>
+				<div>
+					<?php
+					if ( in_array( $job['status'], $this->running_job_status ) ) {
+						?>
+						<div class="actions">
+							<?php
+							$abort_button_attr = array(
+								'onclick' => 'if( !confirm("' . esc_attr__( 'Are you sure you want to abort the current job of this harvester?', 'ogdch' ) . '") ) return false;',
+							);
+							submit_button( __( 'Abort unfinished job', 'ogdch' ), 'delete', 'abort', false, $abort_button_attr );
+							?>
+						</div>
+						<?php
+					}
+					?>
+					<table class="table-small">
+						<tr>
+							<th><?php esc_attr_e( 'ID', 'ogdch' ); ?></th>
+							<td><?php echo esc_attr( $job['id'] ); ?></td>
+						</tr>
+						<tr>
+							<th><?php esc_attr_e( 'Created', 'ogdch' ); ?></th>
+							<td><?php echo esc_attr( $this->convert_datetime_to_readable_format( $job['created'] ) ); ?></td>
+						</tr>
+						<tr>
+							<th><?php esc_attr_e( 'Started', 'ogdch' ); ?></th>
+							<td><?php echo esc_attr( $this->convert_datetime_to_readable_format( $job['gather_started'] ) ); ?></td>
+						</tr>
+						<tr>
+							<th><?php esc_attr_e( 'Finished', 'ogdch' ); ?></th>
+							<td><?php echo esc_attr( $this->convert_datetime_to_readable_format( $job['gather_finished'] ) ); ?></td>
+						</tr>
+						<tr>
+							<th><?php esc_attr_e( 'Status', 'ogdch' ); ?></th>
+							<td><?php echo esc_attr( $job['status'] ); ?></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>
 		<?php
 	}
 
