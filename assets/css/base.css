@@ -31,6 +31,8 @@
   width: 100% !important; }
 .cmb2-wrap .original_identifier {
   width: 50%; }
+.cmb2-wrap .cmb2-metabox .cmb-repeat-group-wrap {
+  max-width: initial; }
 .cmb2-wrap textarea.cmb2-textarea-code {
   font-family: "Open Sans", sans-serif !important;
   line-height: 1.4 !important; }

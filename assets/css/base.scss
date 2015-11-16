@@ -45,6 +45,11 @@
   .original_identifier {
     width: 50%;
   }
+  // change size of repeatable group box
+  .cmb2-metabox .cmb-repeat-group-wrap {
+    max-width: initial;
+  }
+
   textarea.cmb2-textarea-code {
     font-family: "Open Sans", sans-serif !important;
     line-height: 1.4 !important;
