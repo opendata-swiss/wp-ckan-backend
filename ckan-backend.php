@@ -1,9 +1,9 @@
 <?php
 /**
  * Plugin Name: CKAN Backend
- * Description: Plugin to create manual datasets, organizations and groups in CKAN via API.
- * Author: Team Jazz <juerg.hunziker@liip.ch>
- * Version: 1.0
+ * Description: Plugin to create manual datasets, organizations, groups and harvesters in CKAN via API.
+ * Author: Team Jazz <jazz@liip.ch>
+ * Version: 1.0.0
  * Date: 17.06.2015
  *
  * @package CKAN\Backend
@@ -98,6 +98,9 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 
 			// add custom CMB2 field type ckan_synced
 			add_action( 'cmb2_render_ckan_synced', array( $this, 'cmb2_render_callback_ckan_synced' ), 10, 5 );
+
+			// order custom post types alphabetically in admin list
+			add_action( 'pre_get_posts', array( $this, 'set_post_order_in_admin' ) );
 		}
 
 		/**
@@ -460,6 +463,33 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 				echo '<p class="ckan-synced success"><span class="dashicons dashicons-yes"></span>' . esc_attr__( 'All good!', 'ogdch' ) . '</p>';
 			} else {
 				echo '<p class="ckan-synced error"><span class="dashicons dashicons-no"></span>' . esc_attr__( 'Not synchronized! Please fix data and save the element again.', 'ogdch' ) . '</p>';
+			}
+		}
+
+		/**
+		 * Order custom post types alphabetically in admin list
+		 *
+		 * @param WP_Query $wp_query The current query as reference.
+		 */
+		public function set_post_order_in_admin( $wp_query ) {
+			if ( ! is_admin() ) {
+				return;
+			}
+
+			$post_types = array(
+				Ckan_Backend_Local_Dataset::POST_TYPE,
+				Ckan_Backend_Local_Organisation::POST_TYPE,
+				Ckan_Backend_Local_Group::POST_TYPE,
+				Ckan_Backend_Local_Harvester::POST_TYPE,
+			);
+			$current_post_type = $wp_query->get( 'post_type' );
+			if ( in_array( $current_post_type, $post_types ) ) {
+				if ( '' === $wp_query->get( 'orderby' ) ) {
+					$wp_query->set( 'orderby', 'title' );
+				}
+				if ( '' === $wp_query->get( 'order' ) ) {
+					$wp_query->set( 'order', 'ASC' );
+				}
 			}
 		}
 
