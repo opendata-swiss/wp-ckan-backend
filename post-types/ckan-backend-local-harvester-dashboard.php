@@ -333,35 +333,39 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 		$job = $this->get_job( $job_id );
 		$job_report = $this->get_job_report( $job_id );
 
-		echo '<h3>' . esc_html( __( 'Job report', 'ogdch' ) ) . '</h3>';
+		echo '<h3>' . esc_html( __( 'Job detail', 'ogdch' ) ) . '</h3>';
 		$this->render_job_table( $job, false, false );
 		$this->render_job_report( $job, $job_report );
 	}
 
 	public function render_job_report( $job, $job_report ) {
 		if ( 'Finished' === $job['status'] ) {
-			if (
-				isset( $job['object_error_summary'] ) &&
-				0 === count( $job['object_error_summary'] ) &&
-				isset( $job['gather_error_summary'] ) &&
-				0 === count( $job['gather_error_summary'] )
-			) {
-				echo '<h5>' . esc_html__( 'Error summary', 'ogdch' ) . '</h5>';
-				echo '<p>' . esc_html__( 'No errors for this job', 'ogdch' ) . '</p>';
-			} else {
-				if( isset( $job['gather_error_summary'] ) && 0 < count( $job['gather_error_summary'] ) ) {
-					?>
-					<h5><?php esc_html_e( 'Job Errors', 'ogdch' ); ?></h5>
-					<?php
-					$this->render_job_error_table( $job['gather_error_summary'] );
-				}
-				if( isset( $job['object_error_summary'] ) && 0 < count( $job['object_error_summary'] ) ) {
-					?>
-					<h5><?php esc_html_e( 'Document Errors', 'ogdch' ); ?></h5>
-					<?php
-					$this->render_job_error_table( $job['object_error_summary'] );
-				}
-			}
+			echo '<h3>' . esc_html( __( 'Error summary', 'ogdch' ) ) . '</h3>';
+			echo '<div class="postbox">';
+				echo '<div class="inside">';
+					if (
+						isset( $job['object_error_summary'] ) &&
+						0 === count( $job['object_error_summary'] ) &&
+						isset( $job['gather_error_summary'] ) &&
+						0 === count( $job['gather_error_summary'] )
+					) {
+						echo '<p>' . esc_html__( 'No errors for this job', 'ogdch' ) . '</p>';
+					} else {
+						if( isset( $job['gather_error_summary'] ) && 0 < count( $job['gather_error_summary'] ) ) {
+							?>
+							<h4><?php esc_html_e( 'Job Errors', 'ogdch' ); ?></h4>
+							<?php
+							$this->render_job_error_table( $job['gather_error_summary'] );
+						}
+						if( isset( $job['object_error_summary'] ) && 0 < count( $job['object_error_summary'] ) ) {
+							?>
+							<h4><?php esc_html_e( 'Document Errors', 'ogdch' ); ?></h4>
+							<?php
+							$this->render_job_error_table( $job['object_error_summary'] );
+						}
+					}
+				echo '</div>';
+			echo '</div>';
 		}
 	}
 
