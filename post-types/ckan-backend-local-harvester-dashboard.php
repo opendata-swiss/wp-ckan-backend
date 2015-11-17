@@ -80,10 +80,10 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 
 		$harvester_selection_field_name = 'ckan_local_harvester_dashboard_harvester';
 		$selected_harvester_id = '';
-		if ( isset( $_POST[ $harvester_selection_field_name ] ) ) {
-			$selected_harvester_id = $_POST[ $harvester_selection_field_name ];
+		if ( isset( $_GET[ $harvester_selection_field_name ] ) ) {
+			$selected_harvester_id = $_GET[ $harvester_selection_field_name ];
 		}
-		if ( isset( $_POST['reharvest'] ) && ! empty( $selected_harvester_id ) ) {
+		if ( isset( $_GET['reharvest'] ) && ! empty( $selected_harvester_id ) ) {
 			$endpoint = CKAN_API_ENDPOINT . 'harvest_job_create';
 			$data     = array( 'source_id' => $selected_harvester_id );
 			$data     = wp_json_encode( $data );
@@ -97,7 +97,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 				Ckan_Backend_Helper::print_error_messages( $errors );
 			}
 		}
-		if ( isset( $_POST['abort'] ) && ! empty( $selected_harvester_id ) ) {
+		if ( isset( $_GET['abort'] ) && ! empty( $selected_harvester_id ) ) {
 			$endpoint = CKAN_API_ENDPOINT . 'harvest_job_abort';
 			$data     = array( 'source_id' => $selected_harvester_id );
 			$data     = wp_json_encode( $data );
@@ -111,7 +111,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 				Ckan_Backend_Helper::print_error_messages( $errors );
 			}
 		}
-		if ( isset( $_POST['clear'] ) && ! empty( $selected_harvester_id ) ) {
+		if ( isset( $_GET['clear'] ) && ! empty( $selected_harvester_id ) ) {
 			$endpoint = CKAN_API_ENDPOINT . 'harvest_source_clear';
 			$data     = array( 'id' => $selected_harvester_id );
 			$data     = wp_json_encode( $data );
@@ -131,7 +131,9 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 		<div class="wrap harvester_dashboard">
 			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
 
-			<form enctype="multipart/form-data" action="" method="POST">
+			<form enctype="multipart/form-data" action="" method="GET">
+				<input type="hidden" name="post_type" value="<?php echo ( isset( $_GET['post_type'] ) ? $_GET['post_type'] : '' ) ?>" />
+				<input type="hidden" name="page" value="<?php echo ( isset( $_GET['page'] ) ? $_GET['page'] : '' ) ?>" />
 				<div class="postbox">
 					<div class="inside">
 						<table class="form-table">
@@ -176,7 +178,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 	 */
 	public function render_harvester_detail( $harvester_id, $harvester_title ) {
 		$show_all_jobs = false;
-		if ( isset( $_POST['show_more'] ) ) {
+		if ( isset( $_GET['show_more'] ) ) {
 			$show_all_jobs = true;
 		}
 		if ( $show_all_jobs ) {
@@ -204,6 +206,8 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 			if ( $has_unfinished_job ) {
 				$reharvest_button_attr['disabled'] = 'disabled';
 			}
+			submit_button( __( 'Refresh', 'ogdch' ), 'secondary', 'refresh', false );
+			echo ' ';
 			submit_button( __( 'Reharvest', 'ogdch' ), 'secondary', 'reharvest', false, $reharvest_button_attr );
 			echo ' ';
 			$clear_button_attr = array(
