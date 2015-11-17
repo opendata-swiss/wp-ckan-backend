@@ -106,6 +106,31 @@
   .actions {
     margin: 10px 0;
   }
+
+  .label {
+    display: inline;
+    padding: .2em .6em .3em;
+    font-size: 0.8em;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25em;
+  }
+  .label-errored {
+    background-color: #d23900;
+  }
+  .label-added {
+    background-color: #5cb85c;
+  }
+  .label-updated {
+    background-color: #337ab7;
+  }
+  .label-deleted {
+    background-color: #f0ad4e;
+  }
+
   .button.delete {
     color: #fff;
     background: #d23900;
@@ -116,9 +141,10 @@
   .ui-accordion-header-icon {
     margin-right: 8px;
   }
-  .table-small {
+  .job-table {
     border-collapse: collapse;
     width: 100%;
+    margin: 10px 0;
 
     tr:nth-child(even) {
       background: #fff;
@@ -135,6 +161,10 @@
     }
     th, td {
       padding: 5px;
+    }
+
+    pre {
+      margin: 0;
     }
   }
 }
