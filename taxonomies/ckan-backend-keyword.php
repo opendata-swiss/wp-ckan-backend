@@ -71,7 +71,7 @@ abstract class Ckan_Backend_Keyword {
 	 * @return mixed
 	 */
 	public function sanatize_keyword( $term, $taxonomy ) {
-		if( $taxonomy === $this->get_taxonomy() ) {
+		if ( $taxonomy === $this->get_taxonomy() ) {
 			$term = $this->unicode_2_ascii( $term ); // replace unicode characters with ascii equivalent
 			$term = trim( strtolower( $term ) ); // lowercase term and remove whitespaces around it
 			$term = preg_replace( '/[^a-zA-Z0-9\- ]/', '', $term ); // remove all characters which doesn't fit the pattern
@@ -85,7 +85,7 @@ abstract class Ckan_Backend_Keyword {
 	 * Converts unicode characters into ASCII equivalents.
 	 * Source: http://stackoverflow.com/a/14815225/1328415
 	 *
-	 * @param $unicode_string String with possible unicode characters.
+	 * @param string $unicode_string String with possible unicode characters.
 	 *
 	 * @return string
 	 */
