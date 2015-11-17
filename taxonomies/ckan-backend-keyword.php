@@ -14,6 +14,9 @@ abstract class Ckan_Backend_Keyword {
 	 */
 	public function __construct() {
 		$this->register_taxonomy();
+
+		// Sanitize keyword before saving it. Only allow 'a-z', '0-9' and '-'.
+		add_filter( 'pre_insert_term', array( $this, 'sanatize_keyword' ), 10, 2 );
 	}
 
 	/**
@@ -57,6 +60,42 @@ abstract class Ckan_Backend_Keyword {
 		);
 
 		register_taxonomy_for_object_type( $this->get_taxonomy(), Ckan_Backend_Local_Dataset::POST_TYPE );
+	}
+
+	/**
+	 * Sanitize keyword before saving it. Only allow 'a-z', '0-9' and '-'.
+	 *
+	 * @param string $term     The term to add or update.
+	 * @param string $taxonomy Taxonomy slug.
+	 *
+	 * @return mixed
+	 */
+	public function sanatize_keyword( $term, $taxonomy ) {
+		if( $taxonomy === $this->get_taxonomy() ) {
+			$term = $this->unicode_2_ascii( $term ); // replace unicode characters with ascii equivalent
+			$term = trim( strtolower( $term ) ); // lowercase term and remove whitespaces around it
+			$term = preg_replace( '/[^a-zA-Z0-9\- ]/', '', $term ); // remove all characters which doesn't fit the pattern
+			$term = str_replace( ' ', '-', $term ); // replace whitespaces with dashes
+		}
+
+		return $term;
+	}
+
+	/**
+	 * Converts unicode characters into ASCII equivalents.
+	 * Source: http://stackoverflow.com/a/14815225/1328415
+	 *
+	 * @param $unicode_string String with possible unicode characters.
+	 *
+	 * @return string
+	 */
+	public function unicode_2_ascii( $unicode_string ) {
+		// @codingStandardsIgnoreStart
+		return strtr( utf8_decode( $unicode_string ),
+			utf8_decode(
+				'ŠŒŽšœžŸ¥µÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýÿ' ),
+				'SOZsozYYuAAAAAAACEEEEIIIIDNOOOOOOUUUUYsaaaaaaaceeeeiiiionoooooouuuuyy' );
+		// @codingStandardsIgnoreEnd
 	}
 
 	/**
