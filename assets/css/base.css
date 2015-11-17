@@ -68,7 +68,7 @@
 /* Harvester Dashboar */
 .harvester_dashboard .inside {
   padding-bottom: 0; }
-.harvester_dashboard h4 {
+.harvester_dashboard .collapsible h4 {
   cursor: pointer; }
 .harvester_dashboard h5 {
   font-size: 1em;
