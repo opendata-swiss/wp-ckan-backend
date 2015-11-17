@@ -70,6 +70,7 @@ class Ckan_Backend_Local_Dataset {
 				'id'    => $field_type_object->_id( '_original_identifier' ),
 				'value' => $original_identifier,
 				'desc'  => '',
+				'class' => 'original_identifier',
 			) ); ?>
 			<span>@</span>
 			<?php
@@ -110,7 +111,7 @@ class Ckan_Backend_Local_Dataset {
 	public function cmb2_render_callback_dataset_search( $field, $escaped_value, $object_id, $object_type, $field_type_object ) {
 		?>
 		<select class="dataset_search_box"
-		        style="width: 50%"
+		        style="width: 100%"
 		        name="<?php echo esc_attr( $field->args['_name'] ); ?>"
 		        id="<?php echo esc_attr( $field->args['_id'] ); ?>">
 			<?php if ( $escaped_value ) : ?>
@@ -148,7 +149,7 @@ class Ckan_Backend_Local_Dataset {
 		$media_types = get_terms( Ckan_Backend_MediaType::TAXONOMY, array( 'hide_empty' => 0 ) );
 		?>
 		<select class="mediatype_search_box"
-		        style="width: 50%"
+		        style="width: 100%"
 		        name="<?php echo esc_attr( $field->args['_name'] ); ?>"
 		        id="<?php echo esc_attr( $field->args['_id'] ); ?>">
 			<?php // add empty option to make placeholder work ?>
@@ -241,7 +242,6 @@ class Ckan_Backend_Local_Dataset {
 			// Only filter when ckan-local-datasets are queried
 			! empty( $query->query_vars['post_type'] ) &&
 			$query->query_vars['post_type'] === self::POST_TYPE
-
 		) {
 			$organisation_filter   = '';
 			if ( isset( $_GET['organisation_filter'] ) ) {

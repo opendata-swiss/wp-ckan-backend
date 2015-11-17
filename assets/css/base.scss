@@ -1,3 +1,4 @@
+/* Disable WP functions */
 // Disable visibility selection from ckan posttypes
 .post-type-ckan-local-dataset,
 .post-type-ckan-local-group,
@@ -10,35 +11,6 @@
     }
   }
 }
-
-.ckan-synced {
-  margin: 0;
-  color: #fff;
-  padding: 5px;
-
-  &.success {
-    background-color: #00A200;
-  }
-  &.error {
-    background-color: #cc0000;
-    padding: 5px;
-  }
-}
-
-#cmb2-metabox-ckan-local-dataset-sidebox-disabled .cmb2-metabox-description {
-  color: #444;
-  font-style: normal;
-}
-#cmb2-metabox-ckan-local-dataset-box {
-  h2.cmb-group-name {
-    font-size: 14px;
-    font-weight: 600;
-  }
-  .cmb2-metabox-description {
-    font-weight: normal;
-  }
-}
-
 .post-type-ckan-local-group,
 .post-type-ckan-local-org,
 .post-type-ckan-local-harvester {
@@ -57,17 +29,73 @@
   }
 }
 
-.cmb2-wrap textarea.cmb2-textarea-code {
-  font-family: "Open Sans", sans-serif !important;
-  line-height: 1.4 !important;
-}
-
 .post-type-ckan-local-harvester {
   #view-post-btn {
     display: none;
   }
 }
 
+/* CMB2 style changes */
+.cmb2-wrap {
+  input.regular-text,
+  input.cmb2-text-medium,
+  textarea {
+    width: 100% !important;
+  }
+  .original_identifier {
+    width: 50%;
+  }
+  // change size of repeatable group box
+  .cmb2-metabox .cmb-repeat-group-wrap {
+    max-width: initial;
+  }
+
+  textarea.cmb2-textarea-code {
+    font-family: "Open Sans", sans-serif !important;
+    line-height: 1.4 !important;
+  }
+  .cmb-type-title {
+    border-bottom: 0 !important;
+    padding-bottom: 0 !important;
+    padding-top: 2em !important
+  }
+
+  // Change style of titles
+  .cmb2-metabox-title {
+    font-size: 20px !important
+  }
+}
+// Change style of group titles
+#poststuff .cmb-repeatable-group h2 {
+  font-size: 14px;
+  font-weight: 600;
+}
+.cmb-th .cmb2-metabox-description {
+  font-weight: normal;
+}
+
+// Change style of checkbox description in side box
+#cmb2-metabox-ckan-local-dataset-sidebox-disabled .cmb2-metabox-description {
+  color: #444;
+  font-style: normal;
+}
+
+/* CKAN Synchronized field */
+.ckan-synced {
+  margin: 0;
+  color: #fff;
+  padding: 5px;
+
+  &.success {
+    background-color: #00A200;
+  }
+  &.error {
+    background-color: #cc0000;
+    padding: 5px;
+  }
+}
+
+/* Harvester Dashboar */
 .harvester_dashboard {
   .inside {
     padding-bottom: 0;

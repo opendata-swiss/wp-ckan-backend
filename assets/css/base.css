@@ -1,3 +1,4 @@
+/* Disable WP functions */
 .post-type-ckan-local-dataset .submitbox #visibility, .post-type-ckan-local-dataset .submitbox #preview-action,
 .post-type-ckan-local-group .submitbox #visibility,
 .post-type-ckan-local-group .submitbox #preview-action,
@@ -6,26 +7,6 @@
 .post-type-ckan-local-harvester .submitbox #visibility,
 .post-type-ckan-local-harvester .submitbox #preview-action {
   display: none; }
-
-.ckan-synced {
-  margin: 0;
-  color: #fff;
-  padding: 5px; }
-  .ckan-synced.success {
-    background-color: #00A200; }
-  .ckan-synced.error {
-    background-color: #cc0000;
-    padding: 5px; }
-
-#cmb2-metabox-ckan-local-dataset-sidebox-disabled .cmb2-metabox-description {
-  color: #444;
-  font-style: normal; }
-
-#cmb2-metabox-ckan-local-dataset-box h2.cmb-group-name {
-  font-size: 14px;
-  font-weight: 600; }
-#cmb2-metabox-ckan-local-dataset-box .cmb2-metabox-description {
-  font-weight: normal; }
 
 .post-type-ckan-local-group #minor-publishing,
 .post-type-ckan-local-org #minor-publishing,
@@ -40,13 +21,51 @@
 .post-type-ckan-local-harvester.can_edit_data_of_all_organisations #edit-slug-box {
   display: block; }
 
-.cmb2-wrap textarea.cmb2-textarea-code {
-  font-family: "Open Sans", sans-serif !important;
-  line-height: 1.4 !important; }
-
 .post-type-ckan-local-harvester #view-post-btn {
   display: none; }
 
+/* CMB2 style changes */
+.cmb2-wrap input.regular-text,
+.cmb2-wrap input.cmb2-text-medium,
+.cmb2-wrap textarea {
+  width: 100% !important; }
+.cmb2-wrap .original_identifier {
+  width: 50%; }
+.cmb2-wrap .cmb2-metabox .cmb-repeat-group-wrap {
+  max-width: initial; }
+.cmb2-wrap textarea.cmb2-textarea-code {
+  font-family: "Open Sans", sans-serif !important;
+  line-height: 1.4 !important; }
+.cmb2-wrap .cmb-type-title {
+  border-bottom: 0 !important;
+  padding-bottom: 0 !important;
+  padding-top: 2em !important; }
+.cmb2-wrap .cmb2-metabox-title {
+  font-size: 20px !important; }
+
+#poststuff .cmb-repeatable-group h2 {
+  font-size: 14px;
+  font-weight: 600; }
+
+.cmb-th .cmb2-metabox-description {
+  font-weight: normal; }
+
+#cmb2-metabox-ckan-local-dataset-sidebox-disabled .cmb2-metabox-description {
+  color: #444;
+  font-style: normal; }
+
+/* CKAN Synchronized field */
+.ckan-synced {
+  margin: 0;
+  color: #fff;
+  padding: 5px; }
+  .ckan-synced.success {
+    background-color: #00A200; }
+  .ckan-synced.error {
+    background-color: #cc0000;
+    padding: 5px; }
+
+/* Harvester Dashboar */
 .harvester_dashboard .inside {
   padding-bottom: 0; }
 .harvester_dashboard h4 {
