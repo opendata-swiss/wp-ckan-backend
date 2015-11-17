@@ -71,6 +71,7 @@ class Ckan_Backend_Local_Dataset_Export {
 		}
 		// limit export filename to 128 characters.
 		$export_file_name = substr( $export_file_name, 0, 128 );
+		$export_file_name = sanitize_file_name( $export_file_name );
 
 		header( 'Content-type: text/xml' );
 		header( 'Content-Disposition: attachment; filename="' . $export_file_name . '.xml"' );
@@ -92,7 +93,7 @@ class Ckan_Backend_Local_Dataset_Export {
 	 * @param SimpleXMLElement $catalog_xml The catalog xml (Passed by reference!).
 	 * @param int              $post_id Id of dataset to export.
 	 *
-	 * @return bool|int|WP_Error
+	 * @return string Slug of dataset.
 	 */
 	public function add_dataset( $catalog_xml, $post_id ) {
 		global $language_priority;
