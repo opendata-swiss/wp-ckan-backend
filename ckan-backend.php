@@ -1,9 +1,9 @@
 <?php
 /**
  * Plugin Name: CKAN Backend
- * Description: Plugin to create manual datasets, organizations and groups in CKAN via API.
- * Author: Team Jazz <juerg.hunziker@liip.ch>
- * Version: 1.0
+ * Description: Plugin to create manual datasets, organizations, groups and harvesters in CKAN via API.
+ * Author: Team Jazz <jazz@liip.ch>
+ * Version: 1.0.0
  * Date: 17.06.2015
  *
  * @package CKAN\Backend
