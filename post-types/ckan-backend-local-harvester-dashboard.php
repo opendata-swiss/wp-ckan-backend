@@ -371,13 +371,13 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 				) {
 					echo '<p>' . esc_html__( 'No errors for this job', 'ogdch' ) . '</p>';
 				} else {
-					if( isset( $job['gather_error_summary'] ) && 0 < count( $job['gather_error_summary'] ) ) {
+					if ( isset( $job['gather_error_summary'] ) && 0 < count( $job['gather_error_summary'] ) ) {
 						?>
 						<h4><?php esc_html_e( 'Job Errors', 'ogdch' ); ?></h4>
 						<?php
 						$this->render_job_error_table( $job['gather_error_summary'] );
 					}
-					if( isset( $job['object_error_summary'] ) && 0 < count( $job['object_error_summary'] ) ) {
+					if ( isset( $job['object_error_summary'] ) && 0 < count( $job['object_error_summary'] ) ) {
 						?>
 						<h4><?php esc_html_e( 'Document Errors', 'ogdch' ); ?></h4>
 						<?php
@@ -406,7 +406,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 						?>
 						<h4><?php esc_html_e( 'Job Errors', 'ogdch' ); ?></h4>
 						<ul>
-							<?php foreach( $job_report['gather_errors'] as $gather_error ) { ?>
+							<?php foreach ( $job_report['gather_errors'] as $gather_error ) { ?>
 								<li><?php echo esc_html( $gather_error['message'] ); ?></li>
 							<?php } ?>
 						</ul>
@@ -416,16 +416,16 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 						?>
 						<h4><?php esc_html_e( 'Document Errors', 'ogdch' ); ?></h4>
 						<ul>
-							<?php foreach( $job_report['object_errors'] as $object_error ) { ?>
+							<?php foreach ( $job_report['object_errors'] as $object_error ) { ?>
 								<li>
 									<h5><?php echo esc_html( $object_error['guid'] ); ?></h5>
 									<?php
-									foreach( $object_error['errors'] as $error ) {
+									foreach ( $object_error['errors'] as $error ) {
 										$line = '';
 										if ( ! empty( $error['line'] ) ) {
 											$line = ' <span>' . esc_html( sprintf( __( '(Line: %s)', 'ogdch' ), $error['line'] ) ) . '</span>';
 										}
-										echo '<p>' . esc_html( $error['message'] ) . $line . '</p>';
+										echo '<p>' . esc_html( $error['message'] . $line ) . '</p>';
 									}
 									?>
 								</li>
