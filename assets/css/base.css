@@ -120,5 +120,7 @@
   width: 100px; }
 .harvester_dashboard .error-table .count {
   width: 100px; }
+.harvester_dashboard ul li p {
+  margin-top: 0; }
 
 /*# sourceMappingURL=base.css.map */
