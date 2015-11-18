@@ -178,6 +178,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 	 */
 	public function render_harvester_detail( $harvester_id, $harvester_title ) {
 		echo '<h2>' . esc_html( $harvester_title ) . '</h2>';
+		echo '<p><span class="dashicons dashicons-image-rotate"></span> <a href="">' . esc_html( __( 'Refresh page', 'ogdch' ) ) . '</a></p>';
 		printf( esc_html( __( 'Harvester ID: %s', 'ogdch' ) ), esc_html( $harvester_id ) );
 
 		if ( isset( $_GET['job_id'] ) ) {
@@ -227,8 +228,6 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 			if ( $has_unfinished_job ) {
 				$reharvest_button_attr['disabled'] = 'disabled';
 			}
-			submit_button( __( 'Refresh', 'ogdch' ), 'secondary', 'refresh', false );
-			echo ' ';
 			submit_button( __( 'Reharvest', 'ogdch' ), 'secondary', 'reharvest', false, $reharvest_button_attr );
 			echo ' ';
 			$clear_button_attr = array(
@@ -344,7 +343,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 		$job = $this->get_job( $job_id );
 
 		echo '<h3>' . esc_html( __( 'Job detail', 'ogdch' ) ) . '</h3>';
-		echo '<p><a href="' . esc_url( remove_query_arg( 'job_id' ) ) . '">' . esc_html( __( 'Back to Job list', 'ogdch' ) ) . '</a></p>';
+		echo '<p><span class="dashicons dashicons-arrow-left-alt2"></span> <a href="' . esc_url( remove_query_arg( 'job_id' ) ) . '">' . esc_html( __( 'Back to Job list', 'ogdch' ) ) . '</a></p>';
 		$this->render_job_table( $job, false, false );
 		if ( 'Finished' === $job['status'] ) {
 			$this->render_job_error_summary( $job );
