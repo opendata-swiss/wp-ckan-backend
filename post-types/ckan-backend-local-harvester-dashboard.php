@@ -206,6 +206,12 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 		}
 	}
 
+	/**
+	 * Renders job list of harvester
+	 *
+	 * @param array   $jobs All jobs of current harvester.
+	 * @param boolean $show_all_jobs True when currently all jobs of this harvester are displayed.
+	 */
 	public function render_harvester_job_list( $jobs, $show_all_jobs ) {
 		$has_unfinished_job = false;
 		foreach ( $jobs as $harvester_job ) {
@@ -329,43 +335,108 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 		<?php
 	}
 
+	/**
+	 * Renders job detail page
+	 *
+	 * @param int $job_id ID of current job.
+	 */
 	public function render_job_detail( $job_id ) {
 		$job = $this->get_job( $job_id );
-		$job_report = $this->get_job_report( $job_id );
 
 		echo '<h3>' . esc_html( __( 'Job detail', 'ogdch' ) ) . '</h3>';
+		echo '<p><a href="' . esc_url( remove_query_arg( 'job_id' ) ) . '">' . esc_html( __( 'Back to Job list', 'ogdch' ) ) . '</a></p>';
 		$this->render_job_table( $job, false, false );
-		$this->render_job_report( $job, $job_report );
+		if ( 'Finished' === $job['status'] ) {
+			$this->render_job_error_summary( $job );
+			$this->render_job_report( $this->get_job_report( $job_id ) );
+		}
 	}
 
-	public function render_job_report( $job, $job_report ) {
-		if ( 'Finished' === $job['status'] ) {
-			echo '<h3>' . esc_html( __( 'Error summary', 'ogdch' ) ) . '</h3>';
-			echo '<div class="postbox">';
-				echo '<div class="inside">';
-					if (
-						isset( $job['object_error_summary'] ) &&
-						0 === count( $job['object_error_summary'] ) &&
-						isset( $job['gather_error_summary'] ) &&
-						0 === count( $job['gather_error_summary'] )
-					) {
-						echo '<p>' . esc_html__( 'No errors for this job', 'ogdch' ) . '</p>';
-					} else {
-						if( isset( $job['gather_error_summary'] ) && 0 < count( $job['gather_error_summary'] ) ) {
-							?>
-							<h4><?php esc_html_e( 'Job Errors', 'ogdch' ); ?></h4>
-							<?php
-							$this->render_job_error_table( $job['gather_error_summary'] );
-						}
-						if( isset( $job['object_error_summary'] ) && 0 < count( $job['object_error_summary'] ) ) {
-							?>
-							<h4><?php esc_html_e( 'Document Errors', 'ogdch' ); ?></h4>
-							<?php
-							$this->render_job_error_table( $job['object_error_summary'] );
-						}
+	/**
+	 * Renders job error summary
+	 *
+	 * @param array $job Current job.
+	 */
+	public function render_job_error_summary( $job ) {
+		?>
+		<h3><?php esc_html_e( 'Error summary', 'ogdch' ); ?></h3>
+		<div class="postbox">
+			<div class="inside">
+				<?php
+				if (
+					isset( $job['object_error_summary'] ) &&
+					0 === count( $job['object_error_summary'] ) &&
+					isset( $job['gather_error_summary'] ) &&
+					0 === count( $job['gather_error_summary'] )
+				) {
+					echo '<p>' . esc_html__( 'No errors for this job', 'ogdch' ) . '</p>';
+				} else {
+					if( isset( $job['gather_error_summary'] ) && 0 < count( $job['gather_error_summary'] ) ) {
+						?>
+						<h4><?php esc_html_e( 'Job Errors', 'ogdch' ); ?></h4>
+						<?php
+						$this->render_job_error_table( $job['gather_error_summary'] );
 					}
-				echo '</div>';
-			echo '</div>';
+					if( isset( $job['object_error_summary'] ) && 0 < count( $job['object_error_summary'] ) ) {
+						?>
+						<h4><?php esc_html_e( 'Document Errors', 'ogdch' ); ?></h4>
+						<?php
+						$this->render_job_error_table( $job['object_error_summary'] );
+					}
+				}
+				?>
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Renders job report
+	 *
+	 * @param array $job_report Report of current job.
+	 */
+	public function render_job_report( $job_report ) {
+		if ( count( $job_report['gather_errors'] ) > 0 || count( $job_report['object_errors'] ) > 0 ) {
+			?>
+			<h3><?php esc_html_e( 'Error Report', 'ogdch' ); ?></h3>
+			<div class="postbox">
+				<div class="inside">
+					<?php
+					if ( count( $job_report['gather_errors'] ) > 0 ) {
+						?>
+						<h4><?php esc_html_e( 'Job Errors', 'ogdch' ); ?></h4>
+						<ul>
+							<?php foreach( $job_report['gather_errors'] as $gather_error ) { ?>
+								<li><?php echo esc_html( $gather_error['message'] ); ?></li>
+							<?php } ?>
+						</ul>
+						<?php
+					}
+					if ( count( $job_report['object_errors'] ) > 0 ) {
+						?>
+						<h4><?php esc_html_e( 'Document Errors', 'ogdch' ); ?></h4>
+						<ul>
+							<?php foreach( $job_report['object_errors'] as $object_error ) { ?>
+								<li>
+									<h5><?php echo esc_html( $object_error['guid'] ); ?></h5>
+									<?php
+									foreach( $object_error['errors'] as $error ) {
+										$line = '';
+										if ( ! empty( $error['line'] ) ) {
+											$line = ' <span>' . esc_html( sprintf( __( '(Line: %s)', 'ogdch' ), $error['line'] ) ) . '</span>';
+										}
+										echo '<p>' . esc_html( $error['message'] ) . $line . '</p>';
+									}
+									?>
+								</li>
+							<?php } ?>
+						</ul>
+						<?php
+					}
+					?>
+				</div>
+			</div>
+			<?php
 		}
 	}
 
@@ -517,7 +588,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 	public function get_job_report( $job_id ) {
 		$job_report = array();
 
-		$endpoint = CKAN_API_ENDPOINT . 'harvest_job_list';
+		$endpoint = CKAN_API_ENDPOINT . 'harvest_job_report';
 		$data     = array( 'id' => $job_id );
 		$data     = wp_json_encode( $data );
 
