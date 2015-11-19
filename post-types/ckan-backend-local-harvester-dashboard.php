@@ -170,7 +170,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 					</div>
 				</div>
 				<?php
-				if ( ! empty( $selected_harvester_id ) ) {
+				if ( ! empty( $selected_harvester_id ) && array_key_exists( $selected_harvester_id, $harvesters ) ) {
 					$this->render_harvester_detail( $selected_harvester_id, $harvesters[ $selected_harvester_id ] );
 				} else {
 					echo '<p>' . esc_html__( 'Please select a harvester first.', 'ogdch' ) . '</p>';
@@ -356,10 +356,12 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 
 		echo '<h3>' . esc_html( __( 'Job detail', 'ogdch' ) ) . '</h3>';
 		echo '<p><span class="dashicons dashicons-arrow-left-alt2"></span> <a href="' . esc_url( remove_query_arg( 'job_id' ), $this->current_url_without_action ) . '">' . esc_html( __( 'Back to Job list', 'ogdch' ) ) . '</a></p>';
-		$this->render_job_table( $job, false, false );
-		if ( 'Finished' === $job['status'] ) {
-			$this->render_job_error_summary( $job );
-			$this->render_job_report( $this->get_job_report( $job_id ) );
+		if( ! empty( $job) ) {
+			$this->render_job_table( $job, false, false );
+			if ( 'Finished' === $job['status'] ) {
+				$this->render_job_error_summary( $job );
+				$this->render_job_report( $this->get_job_report( $job_id ) );
+			}
 		}
 	}
 
