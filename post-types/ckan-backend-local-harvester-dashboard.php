@@ -356,7 +356,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 
 		echo '<h3>' . esc_html( __( 'Job detail', 'ogdch' ) ) . '</h3>';
 		echo '<p><span class="dashicons dashicons-arrow-left-alt2"></span> <a href="' . esc_url( remove_query_arg( 'job_id' ), $this->current_url_without_action ) . '">' . esc_html( __( 'Back to Job list', 'ogdch' ) ) . '</a></p>';
-		if( ! empty( $job) ) {
+		if ( ! empty( $job ) ) {
 			$this->render_job_table( $job, false, false );
 			if ( 'Finished' === $job['status'] ) {
 				$this->render_job_error_summary( $job );
