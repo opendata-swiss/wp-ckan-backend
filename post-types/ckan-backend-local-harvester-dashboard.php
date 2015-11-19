@@ -192,6 +192,20 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 		echo '<p><span class="dashicons dashicons-image-rotate"></span> <a href="' . esc_url( $this->current_url_without_action ) . '">' . esc_html( __( 'Refresh page', 'ogdch' ) ) . '</a></p>';
 		printf( esc_html( __( 'Harvester ID: %s', 'ogdch' ) ), esc_html( $harvester_id ) );
 
+		$harvester_search_args = array(
+			// @codingStandardsIgnoreStart
+			'meta_key'       => Ckan_Backend_Local_Harvester::FIELD_PREFIX . 'ckan_id',
+			'meta_value'     => $harvester_id,
+			// @codingStandardsIgnoreEnd
+			'post_type'      => Ckan_Backend_Local_Harvester::POST_TYPE,
+			'post_status'    => 'any',
+			'posts_per_page' => 1,
+		);
+		$harvesters            = get_posts( $harvester_search_args );
+		if ( is_array( $harvesters ) && count( $harvesters ) > 0 ) {
+			echo ' <a href="' . esc_url( admin_url( 'post.php?post=' . esc_attr( $harvesters[0]->ID ) . '&action=edit' ) ) . '">' . esc_html__( '(edit)', 'ogdch' ) . '</a>';
+		}
+
 		if ( isset( $_GET['job_id'] ) ) {
 			$this->render_job_detail( $_GET['job_id'] );
 		} else {
