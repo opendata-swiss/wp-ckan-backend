@@ -68,10 +68,31 @@
 /* Harvester Dashboar */
 .harvester_dashboard .inside {
   padding-bottom: 0; }
-.harvester_dashboard h4 {
+.harvester_dashboard .collapsible h4 {
   cursor: pointer; }
+.harvester_dashboard h5 {
+  font-size: 1em;
+  margin-bottom: 5px; }
 .harvester_dashboard .actions {
   margin: 10px 0; }
+.harvester_dashboard .label {
+  display: inline;
+  padding: .2em .6em .3em;
+  font-size: 0.8em;
+  line-height: 1;
+  color: #fff;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: .25em; }
+.harvester_dashboard .label-errored {
+  background-color: #d23900; }
+.harvester_dashboard .label-added {
+  background-color: #5cb85c; }
+.harvester_dashboard .label-updated {
+  background-color: #337ab7; }
+.harvester_dashboard .label-deleted {
+  background-color: #f0ad4e; }
 .harvester_dashboard .button.delete {
   color: #fff;
   background: #d23900;
@@ -80,20 +101,26 @@
   box-shadow: inset 0 1px 0 rgba(230, 55, 70, 0.5), 0 1px 0 rgba(0, 0, 0, 0.15); }
 .harvester_dashboard .ui-accordion-header-icon {
   margin-right: 8px; }
-.harvester_dashboard .table-small {
+.harvester_dashboard table {
   border-collapse: collapse;
-  width: 100%; }
-  .harvester_dashboard .table-small tr:nth-child(even) {
-    background: #fff; }
-  .harvester_dashboard .table-small tr:nth-child(odd) {
-    background: #eee; }
-  .harvester_dashboard .table-small th {
-    vertical-align: top;
+  width: 100%;
+  margin: 10px 0; }
+  .harvester_dashboard table th {
     text-align: left;
-    width: 100px;
-    line-height: 1.3;
     font-weight: 600; }
-  .harvester_dashboard .table-small th, .harvester_dashboard .table-small td {
-    padding: 5px; }
+  .harvester_dashboard table th, .harvester_dashboard table td {
+    vertical-align: top;
+    padding: 5px;
+    line-height: 1.3; }
+.harvester_dashboard .table-striped tbody tr:nth-child(even) {
+  background: #fff; }
+.harvester_dashboard .table-striped tbody tr:nth-child(odd) {
+  background: #eee; }
+.harvester_dashboard .job-table th {
+  width: 100px; }
+.harvester_dashboard .error-table .count {
+  width: 100px; }
+.harvester_dashboard ul li p {
+  margin-top: 0; }
 
 /*# sourceMappingURL=base.css.map */
