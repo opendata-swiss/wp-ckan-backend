@@ -40,10 +40,13 @@
   input.regular-text,
   input.cmb2-text-medium,
   textarea {
-    width: 100% !important;
+    width: 100%;
   }
   .original_identifier {
     width: 50%;
+  }
+  input.cmb2-upload-file {
+    width: 65%;
   }
   // change size of repeatable group box
   .cmb2-metabox .cmb-repeat-group-wrap {
@@ -51,18 +54,18 @@
   }
 
   textarea.cmb2-textarea-code {
-    font-family: "Open Sans", sans-serif !important;
-    line-height: 1.4 !important;
+    font-family: "Open Sans", sans-serif;
+    line-height: 1.4;
   }
   .cmb-type-title {
     border-bottom: 0 !important;
     padding-bottom: 0 !important;
-    padding-top: 2em !important
+    padding-top: 2em !important;
   }
 
   // Change style of titles
   .cmb2-metabox-title {
-    font-size: 20px !important
+    font-size: 20px;
   }
 }
 // Change style of group titles
