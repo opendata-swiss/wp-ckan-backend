@@ -28,20 +28,22 @@
 .cmb2-wrap input.regular-text,
 .cmb2-wrap input.cmb2-text-medium,
 .cmb2-wrap textarea {
-  width: 100% !important; }
+  width: 100%; }
 .cmb2-wrap .original_identifier {
   width: 50%; }
+.cmb2-wrap input.cmb2-upload-file {
+  width: 65%; }
 .cmb2-wrap .cmb2-metabox .cmb-repeat-group-wrap {
   max-width: initial; }
 .cmb2-wrap textarea.cmb2-textarea-code {
-  font-family: "Open Sans", sans-serif !important;
-  line-height: 1.4 !important; }
+  font-family: "Open Sans", sans-serif;
+  line-height: 1.4; }
 .cmb2-wrap .cmb-type-title {
   border-bottom: 0 !important;
   padding-bottom: 0 !important;
   padding-top: 2em !important; }
 .cmb2-wrap .cmb2-metabox-title {
-  font-size: 20px !important; }
+  font-size: 20px; }
 
 #poststuff .cmb-repeatable-group h2 {
   font-size: 14px;

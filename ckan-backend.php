@@ -62,7 +62,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		 */
 		public function __construct() {
 			add_action( 'init', array( $this, 'bootstrap' ), 0 );
-			add_action( 'admin_enqueue_scripts', array( $this, 'add_scripts' ), 10, 1 );
+			add_action( 'admin_enqueue_scripts', array( $this, 'add_scripts' ), 999, 1 );
 			// add custom user profile fields
 			add_action( 'show_user_profile', array( $this, 'add_custom_user_profile_fields' ) );
 			add_action( 'edit_user_profile', array( $this, 'add_custom_user_profile_fields' ) );
