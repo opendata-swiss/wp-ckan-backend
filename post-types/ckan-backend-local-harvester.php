@@ -94,8 +94,6 @@ class Ckan_Backend_Local_Harvester {
 	 * @return void
 	 */
 	public function define_fields() {
-		global $language_priority;
-
 		$cmb = new_cmb2_box( array(
 			'id'           => self::POST_TYPE . '-box',
 			'title'        => __( 'Harvester', 'ogdch' ),
@@ -113,9 +111,12 @@ class Ckan_Backend_Local_Harvester {
 		) );
 
 		$cmb->add_field( array(
-			'name' => __( 'URL', 'ogdch' ),
-			'id'   => self::FIELD_PREFIX . 'url',
-			'type' => 'text_url',
+			'name'       => __( 'URL', 'ogdch' ) . '*',
+			'id'         => self::FIELD_PREFIX . 'url',
+			'type'       => 'text_url',
+			'attributes' => array(
+				'required' => 'required',
+			),
 		) );
 
 		$cmb->add_field( array(
@@ -126,21 +127,27 @@ class Ckan_Backend_Local_Harvester {
 		) );
 
 		$cmb->add_field( array(
-			'name'    => __( 'Source type', 'ogdch' ),
-			'id'      => self::FIELD_PREFIX . 'source_type',
-			'type'    => 'select',
-			'options' => array( $this, 'get_source_type_form_field_options' ),
+			'name'       => __( 'Source type', 'ogdch' ) . '*',
+			'id'         => self::FIELD_PREFIX . 'source_type',
+			'type'       => 'select',
+			'options'    => array( $this, 'get_source_type_form_field_options' ),
+			'attributes' => array(
+				'required' => 'required',
+			),
 		) );
 
 		$cmb->add_field( array(
-			'name'             => __( 'Organization', 'ogdch' ),
-			'id'               => self::FIELD_PREFIX . 'organisation',
-			'type'             => 'select',
-			'options'          => array( 'Ckan_Backend_Helper', 'get_organisation_form_field_options' ),
+			'name'       => __( 'Organization', 'ogdch' ) . '*',
+			'id'         => self::FIELD_PREFIX . 'organisation',
+			'type'       => 'select',
+			'options'    => array( 'Ckan_Backend_Helper', 'get_organisation_form_field_options' ),
+			'attributes' => array(
+				'required' => 'required',
+			),
 		) );
 
 		$cmb->add_field( array(
-			'name'    => __( 'Update frequency', 'ogdch' ),
+			'name'    => __( 'Update frequency', 'ogdch' ) . '*',
 			'id'      => self::FIELD_PREFIX . 'update_frequency',
 			'type'    => 'select',
 			'options' => array(
@@ -150,6 +157,9 @@ class Ckan_Backend_Local_Harvester {
 				'BIWEEKLY' => __( 'Biweekly', 'ogdch' ),
 				'DAILY'    => __( 'Daily', 'ogdch' ),
 				'ALWAYS'   => __( 'Always', 'ogdch' ),
+			),
+			'attributes' => array(
+				'required' => 'required',
 			),
 		) );
 
