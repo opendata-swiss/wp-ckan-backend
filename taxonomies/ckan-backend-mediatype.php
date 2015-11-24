@@ -27,14 +27,14 @@ class Ckan_Backend_MediaType {
 	 */
 	public function register_taxonomy() {
 		$labels = array(
-			'name'          => __( 'Media types', 'ogdch' ),
-			'singular_name' => __( 'Media type', 'ogdch' ),
-			'all_items'     => __( 'All Media types', 'ogdch' ),
-			'edit_item'     => __( 'Edit Media types', 'ogdch' ),
-			'view_item'     => __( 'View Media type', 'ogdch' ),
-			'update_item'   => __( 'Update Media type', 'ogdch' ),
-			'add_new_item'  => __( 'Add New Media type', 'ogdch' ),
-			'new_item_name' => __( 'New Media type Name', 'ogdch' ),
+			'name'          => __( 'Formats', 'ogdch' ),
+			'singular_name' => __( 'Format', 'ogdch' ),
+			'all_items'     => __( 'All Formats', 'ogdch' ),
+			'edit_item'     => __( 'Edit Formats', 'ogdch' ),
+			'view_item'     => __( 'View Format', 'ogdch' ),
+			'update_item'   => __( 'Update Format', 'ogdch' ),
+			'add_new_item'  => __( 'Add New Format', 'ogdch' ),
+			'new_item_name' => __( 'New Format Name', 'ogdch' ),
 		);
 
 		$capabilities = array(
@@ -45,9 +45,9 @@ class Ckan_Backend_MediaType {
 		);
 
 		$args = array(
-			'label'                 => __( 'Media types', 'ogdch' ),
+			'label'                 => __( 'Formats', 'ogdch' ),
 			'labels'                => $labels,
-			'description'           => __( 'Media types for CKAN datasets', 'ogdch' ),
+			'description'           => __( 'Formats for CKAN datasets', 'ogdch' ),
 			'show_ui'               => true,
 			'show_in_menu'          => true,
 			'show_in_nav_menus'     => false,

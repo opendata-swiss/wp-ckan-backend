@@ -451,9 +451,9 @@ class Ckan_Backend_Local_Dataset {
 		) );
 
 		$cmb->add_field( array(
-			'name'             => __( 'Accrual Periodicity', 'ogdch' ),
+			'name'             => __( 'Update interval', 'ogdch' ),
 			'id'               => self::FIELD_PREFIX . 'accrual_periodicity',
-			'desc'             => __( 'The frequency in which this dataset is updated.', 'ogdch' ),
+			'desc'             => __( 'The interval in which this dataset is updated.', 'ogdch' ),
 			'type'             => 'select',
 			'show_option_none' => false,
 			'options'          => array( 'Ckan_Backend_Frequency', 'get_frequencies' ),
@@ -462,12 +462,12 @@ class Ckan_Backend_Local_Dataset {
 		$temporals_group = $cmb->add_field( array(
 			'id'          => self::FIELD_PREFIX . 'temporals',
 			'type'        => 'group',
-			'name'        => __( 'Temporals', 'ogdch' ),
-			'description' => __( 'One or more time period that this dataset covers.', 'ogdch' ),
+			'name'        => __( 'Temporal coverage', 'ogdch' ),
+			'description' => __( 'One or more time period(s) that this dataset covers.', 'ogdch' ),
 			'options' => array(
-				'group_title'   => __( 'Temporal {#}', 'ogdch' ),
-				'add_button'    => __( 'Add another Temporal', 'ogdch' ),
-				'remove_button' => __( 'Remove Temporal', 'ogdch' ),
+				'group_title'   => __( 'Temporal coverage {#}', 'ogdch' ),
+				'add_button'    => __( 'Add another Temporal coverage', 'ogdch' ),
+				'remove_button' => __( 'Remove Temporal coverage', 'ogdch' ),
 			),
 		) );
 
@@ -494,7 +494,7 @@ class Ckan_Backend_Local_Dataset {
 			'id'          => self::FIELD_PREFIX . 'publishers',
 			'type'        => 'group',
 			'name'        => __( 'Publishers', 'ogdch' ),
-			'description' => __( 'The actual publisher(s) of this dataset. This can be the same as the organisation which publishes this dataset. At least one publisher is required.', 'ogdch' ),
+			'description' => __( 'The actual publisher(s) of this dataset. This can be the same as the organization which publishes this dataset. At least one publisher is required.', 'ogdch' ),
 			'options' => array(
 				'group_title'   => __( 'Publisher {#}', 'ogdch' ),
 				'add_button'    => __( 'Add another Publisher', 'ogdch' ),
@@ -632,7 +632,7 @@ class Ckan_Backend_Local_Dataset {
 
 		$cmb->add_group_field( $distributions_group, array(
 			'name' => __( 'Identifier', 'ogdch' ),
-			'desc' => __( 'Identifier of the distribution in the source system.', 'ogdch' ),
+			'desc' => __( 'Identifier of the distribution in the source system of the publisher.', 'ogdch' ),
 			'id'   => 'identifier',
 			'type' => 'text',
 		) );
@@ -690,7 +690,7 @@ class Ckan_Backend_Local_Dataset {
 		$cmb->add_group_field( $distributions_group, array(
 			'name'             => __( 'Terms of use', 'ogdch' ) . '*',
 			'id'               => 'rights',
-			'desc'             => __( 'All terms of use which are not marked with an asterisk (*) are declared as close data.', 'ogdch' ),
+			'desc'             => __( 'All terms of use which are not marked with an asterisk (*) are declared as closed data.', 'ogdch' ),
 			'type'             => 'select',
 			'show_option_none' => false,
 			'options'          => array( 'Ckan_Backend_Rights', 'get_rights' ),
@@ -699,7 +699,7 @@ class Ckan_Backend_Local_Dataset {
 		$cmb->add_group_field( $distributions_group, array(
 			'name'       => __( 'Access URL', 'ogdch' ) . '*',
 			'id'         => 'access_url',
-			'desc'       => __( 'URL where the distribution can be found. This could be either a download url, an API url or a landing page url. If the distribution is only available through a landing page, this field must contain the url of the landing page. If a download url was given for this distribution, this field has to contain the same value.', 'ogdch' ),
+			'desc'       => __( 'URL where the distribution can be found. This could be either a download URL, an API url or a landing page URL. If the distribution is only available through a landing page, this field must contain the URL of the landing page. If a download URL was given for this distribution, this field has to contain the same value.', 'ogdch' ),
 			'type'       => 'text_url',
 			'attributes' => array(
 				'required' => 'required',
@@ -720,7 +720,7 @@ class Ckan_Backend_Local_Dataset {
 		) );
 
 		$cmb->add_group_field( $distributions_group, array(
-			'name' => __( 'Mediatype', 'ogdch' ),
+			'name' => __( 'Format', 'ogdch' ),
 			'id'   => 'media_type',
 			'type' => 'mediatype_search',
 		) );
