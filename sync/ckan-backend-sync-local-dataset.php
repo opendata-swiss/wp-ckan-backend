@@ -12,7 +12,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	/**
 	 * This method should return an array the ckan data
 	 *
-	 * @param object $post The post from WordPress.
+	 * @param WP_Post $post The post from WordPress.
 	 *
 	 * @return array $data Data to send
 	 */
