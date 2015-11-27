@@ -198,10 +198,12 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	protected function prepare_tags( $tags ) {
 		$ckan_tags = array();
 
-		foreach ( $tags as $tag ) {
-			$ckan_tags[] = array(
-				'name' => $tag,
-			);
+		if ( is_array( $tags ) ) {
+			foreach ( $tags as $tag ) {
+				$ckan_tags[] = array(
+					'name' => $tag,
+				);
+			}
 		}
 
 		return $ckan_tags;
@@ -217,10 +219,12 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	protected function gather_languages( $resources ) {
 		$languages = array();
 
-		foreach ( $resources as $resource ) {
-			// Check if at least one mandatory field (access_url) is filled out. Because we don't want to add empty repeatable fields.
-			if ( ! empty( $resource['access_url'] ) ) {
-				$languages = array_merge( $languages, $resource['languages'] );
+		if ( is_array( $resources ) ) {
+			foreach ( $resources as $resource ) {
+				// Check if at least one mandatory field (access_url) is filled out. Because we don't want to add empty repeatable fields.
+				if ( ! empty( $resource['access_url'] ) ) {
+					$languages = array_merge( $languages, $resource['languages'] );
+				}
 			}
 		}
 
