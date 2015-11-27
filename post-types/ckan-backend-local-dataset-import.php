@@ -64,50 +64,56 @@ class Ckan_Backend_Local_Dataset_Import {
 				echo esc_attr( $imported_datasets->get_error_message() );
 				echo '</p></div>';
 			} else {
-				foreach ( $imported_datasets as $dataset_information ) {
-					if ( is_wp_error( $dataset_information ) ) {
-						echo '<div class="error"><p>';
-						echo esc_attr( $dataset_information->get_error_message() );
-						echo '</p></div>';
-					} else {
-						echo '<div class="updated">';
-						echo '<p><strong>';
-						if ( $dataset_information['new'] ) {
-							// @codingStandardsIgnoreStart
-							printf(
-								__( 'Successfully inserted new dataset %s', 'ogdch' ),
-								esc_attr( get_the_title( $dataset_information['id'] ) )
-							);
-							// @codingStandardsIgnoreEnd
+				if ( is_array( $imported_datasets) && 0 === count( $imported_datasets ) ) {
+					echo '<div class="error"><p>';
+					esc_html_e( 'No datasets found in given import file', 'ogdch' );
+					echo '</p></div>';
+				} else {
+					foreach ( $imported_datasets as $dataset_information ) {
+						if ( is_wp_error( $dataset_information ) ) {
+							echo '<div class="error"><p>';
+							echo esc_attr( $dataset_information->get_error_message() );
+							echo '</p></div>';
 						} else {
-							// @codingStandardsIgnoreStart
-							printf(
-								__( 'Successfully updated dataset %s', 'ogdch' ),
-								esc_attr( get_the_title( $dataset_information['id'] ) )
-							);
-							// @codingStandardsIgnoreEnd
+							echo '<div class="updated">';
+							echo '<p><strong>';
+							if ( $dataset_information['new'] ) {
+								// @codingStandardsIgnoreStart
+								printf(
+									__( 'Successfully inserted new dataset %s', 'ogdch' ),
+									esc_attr( get_the_title( $dataset_information['id'] ) )
+								);
+								// @codingStandardsIgnoreEnd
+							} else {
+								// @codingStandardsIgnoreStart
+								printf(
+									__( 'Successfully updated dataset %s', 'ogdch' ),
+									esc_attr( get_the_title( $dataset_information['id'] ) )
+								);
+								// @codingStandardsIgnoreEnd
+							}
+							echo '</strong></p>';
+							echo '<p>';
+							if ( 'publish' === $dataset_information['post_status'] ) {
+								// @codingStandardsIgnoreStart
+								printf(
+									__( 'The dataset is already published. You can edit it here: <a href="%s">%s</a>.', 'ogdch' ),
+									esc_url( admin_url( 'post.php?post=' . esc_attr( $dataset_information['id'] ) . '&action=edit' ) ),
+									esc_attr( get_the_title( $dataset_information['id'] ) )
+								);
+								// @codingStandardsIgnoreEnd
+							} else {
+								// @codingStandardsIgnoreStart
+								printf(
+									__( 'The dataset is not yet published. You can edit and publish it here: <a href="%s">%s</a>.', 'ogdch' ),
+									esc_url( admin_url( 'post.php?post=' . esc_attr( $dataset_information['id'] ) . '&action=edit' ) ),
+									esc_attr( get_the_title( $dataset_information['id'] ) )
+								);
+								// @codingStandardsIgnoreEnd
+							}
+							echo '</p>';
+							echo '</div>';
 						}
-						echo '</strong></p>';
-						echo '<p>';
-						if ( 'publish' === $dataset_information['post_status'] ) {
-							// @codingStandardsIgnoreStart
-							printf(
-								__( 'The dataset is already published. You can edit it here: <a href="%s">%s</a>.', 'ogdch' ),
-								esc_url( admin_url( 'post.php?post=' . esc_attr( $dataset_information['id'] ) . '&action=edit' ) ),
-								esc_attr( get_the_title( $dataset_information['id'] ) )
-							);
-							// @codingStandardsIgnoreEnd
-						} else {
-							// @codingStandardsIgnoreStart
-							printf(
-								__( 'The dataset is not yet published. You can edit and publish it here: <a href="%s">%s</a>.', 'ogdch' ),
-								esc_url( admin_url( 'post.php?post=' . esc_attr( $dataset_information['id'] ) . '&action=edit' ) ),
-								esc_attr( get_the_title( $dataset_information['id'] ) )
-							);
-							// @codingStandardsIgnoreEnd
-						}
-						echo '</p>';
-						echo '</div>';
 					}
 				}
 			}
