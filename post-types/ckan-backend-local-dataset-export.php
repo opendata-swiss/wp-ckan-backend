@@ -78,6 +78,10 @@ class Ckan_Backend_Local_Dataset_Export {
 		$dom = dom_import_simplexml( $xml )->ownerDocument;
 		$dom->formatOutput = true;
 		$formatted_xml = $dom->saveXML();
+
+		// Clean output buffer before printing xml
+		ob_clean();
+
 		// @codingStandardsIgnoreStart
 		print( $formatted_xml );
 		// @codingStandardsIgnoreEnd
