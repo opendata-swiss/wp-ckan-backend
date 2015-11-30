@@ -429,10 +429,22 @@ class Ckan_Backend_Local_Dataset_Import {
 			$modified = strtotime( (string) $this->get_single_element_from_xpath( $xml, './dct:modified' ) );
 			$dataset->set_modified( $modified );
 			$publishers = $xml->xpath( './dct:publisher' );
+			if ( empty ( $publishers ) ) {
+				throw new Exception( sprintf(
+					__( 'Please provide at least one publisher for the dataset (eg. &lt;dct:publisher&gt;&lt;rdf:Description&gt;&lt;rdfs:label&gt;Publisher&lt;/rdfs:label&gt;&lt;/rdf:Description&gt;&lt;/dct:publisher&gt;). Dataset %s not imported.', 'ogdch' ),
+					$identifier
+				) );
+			}
 			foreach ( $publishers as $publisher_xml ) {
 				$dataset->add_publisher( $this->get_publisher_object( $publisher_xml ) );
 			}
 			$contact_points = $xml->xpath( './dcat:contactPoint/*' );
+			if ( empty ( $contact_points ) ) {
+				throw new Exception( sprintf(
+					__( 'Please provide at least one contact point for the dataset (eg. &lt;dcat:contactPoint&gt;&lt;vcard:Organization&gt;&lt;vcard:fn&gt;Contact Point&lt;/vcard:fn&gt;&lt;vcard:hasEmail rdf:resource="mailto:contact.point@swiss.ch"/&gt;&lt;/vcard:Organization&gt;&lt;/dcat:contactPoint&gt;). Dataset %s not imported.', 'ogdch' ),
+					$identifier
+				) );
+			}
 			foreach ( $contact_points as $contact_point_xml ) {
 				$dataset->add_contact_point( $this->get_contact_point_object( $contact_point_xml ) );
 			}
