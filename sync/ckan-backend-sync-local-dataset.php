@@ -106,7 +106,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		global $language_priority;
 		$ckan_resources = array();
 
-		if ( is_array( $resources) ) {
+		if ( is_array( $resources ) ) {
 			foreach ( $resources as $resource ) {
 				// Check if at least one mandatory field (access_url) is filled out. Because we don't want to add empty repeatable fields.
 				if ( ! empty( $resource['access_url'] ) ) {
