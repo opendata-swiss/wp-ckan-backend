@@ -106,36 +106,36 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		global $language_priority;
 		$ckan_resources = array();
 
-		foreach ( $resources as $resource ) {
-			// Check if at least one mandatory field (access_url) is filled out. Because we don't want to add empty repeatable fields.
-			if ( ! empty( $resource['access_url'] ) ) {
-				$titles = array();
-				foreach ( $language_priority as $lang ) {
-					$titles[ $lang ] = $resource[ 'title_' . $lang ];
-				}
-				$descriptions = array();
-				foreach ( $language_priority as $lang ) {
-					$descriptions[ $lang ] = $resource[ 'description_' . $lang ];
-				}
-				$issued   = $this->prepare_date( $resource['issued'] );
-				$modified = $this->prepare_date( $resource['modified'] );
+		if ( is_array( $resources ) ) {
+			foreach ( $resources as $resource ) {
+				// Check if at least one mandatory field (access_url) is filled out. Because we don't want to add empty repeatable fields.
+				if ( ! empty( $resource['access_url'] ) ) {
+					$titles = array();
+					$descriptions = array();
+					foreach ( $language_priority as $lang ) {
+						$titles[ $lang ] = $resource[ 'title_' . $lang ];
+						$descriptions[ $lang ] = $resource[ 'description_' . $lang ];
+					}
+					$issued   = $this->prepare_date( $resource['issued'] );
+					$modified = $this->prepare_date( $resource['modified'] );
 
-				$ckan_resources[] = array(
-					'identifier'   => $resource['identifier'],
-					'title'        => $titles,
-					'description'  => $descriptions,
-					'issued'       => $issued,
-					'modified'     => $modified,
-					'language'     => $resource['languages'],
-					'url'          => $resource['access_url'],
-					'download_url' => $resource['download_url'],
-					'rights'       => $resource['rights'],
-					'license'      => '',
-					'byte_size'    => $resource['byte_size'],
-					'media_type'   => $resource['media_type'],
-					'format'       => $resource['format'],
-					'coverage'     => $resource['coverage'],
-				);
+					$ckan_resources[] = array(
+						'identifier'   => $resource['identifier'],
+						'title'        => $titles,
+						'description'  => $descriptions,
+						'issued'       => $issued,
+						'modified'     => $modified,
+						'language'     => $resource['languages'],
+						'url'          => $resource['access_url'],
+						'download_url' => $resource['download_url'],
+						'rights'       => $resource['rights'],
+						'license'      => '',
+						'byte_size'    => $resource['byte_size'],
+						'media_type'   => $resource['media_type'],
+						'format'       => $resource['format'],
+						'coverage'     => $resource['coverage'],
+					);
+				}
 			}
 		}
 
@@ -198,10 +198,12 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	protected function prepare_tags( $tags ) {
 		$ckan_tags = array();
 
-		foreach ( $tags as $tag ) {
-			$ckan_tags[] = array(
-				'name' => $tag,
-			);
+		if ( is_array( $tags ) ) {
+			foreach ( $tags as $tag ) {
+				$ckan_tags[] = array(
+					'name' => $tag,
+				);
+			}
 		}
 
 		return $ckan_tags;
@@ -217,10 +219,12 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	protected function gather_languages( $resources ) {
 		$languages = array();
 
-		foreach ( $resources as $resource ) {
-			// Check if at least one mandatory field (access_url) is filled out. Because we don't want to add empty repeatable fields.
-			if ( ! empty( $resource['access_url'] ) ) {
-				$languages = array_merge( $languages, $resource['languages'] );
+		if ( is_array( $resources ) ) {
+			foreach ( $resources as $resource ) {
+				// Check if at least one mandatory field (access_url) is filled out. Because we don't want to add empty repeatable fields.
+				if ( ! empty( $resource['access_url'] ) ) {
+					$languages = array_merge( $languages, $resource['languages'] );
+				}
 			}
 		}
 
@@ -237,13 +241,15 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	protected function prepare_temporals( $temporals ) {
 		$ckan_temporals = array();
 
-		foreach ( $temporals as $temporal ) {
-			// Check if at least one mandatory field (start_date) is filled out. Because we don't want to add empty repeatable fields.
-			if ( ! empty( $temporal['start_date'] ) ) {
-				$ckan_temporals[] = array(
-					'start_date' => $this->prepare_date( $temporal['start_date'] ),
-					'end_date'   => $this->prepare_date( $temporal['end_date'] ),
-				);
+		if ( is_array( $temporals ) ) {
+			foreach ( $temporals as $temporal ) {
+				// Check if at least one mandatory field (start_date) is filled out. Because we don't want to add empty repeatable fields.
+				if ( ! empty( $temporal['start_date'] ) ) {
+					$ckan_temporals[] = array(
+						'start_date' => $this->prepare_date( $temporal['start_date'] ),
+						'end_date'   => $this->prepare_date( $temporal['end_date'] ),
+					);
+				}
 			}
 		}
 
@@ -280,13 +286,15 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	protected function prepare_relations( $relations ) {
 		$ckan_relations = array();
 
-		foreach ( $relations as $relation ) {
-			// Check if at least one mandatory field (url) is filled out. Because we don't want to add empty repeatable fields.
-			if ( ! empty( $relation['url'] ) ) {
-				$ckan_relations[] = array(
-					'url'   => $relation['url'],
-					'label' => $relation['label'],
-				);
+		if ( is_array( $relations ) ) {
+			foreach ( $relations as $relation ) {
+				// Check if at least one mandatory field (url) is filled out. Because we don't want to add empty repeatable fields.
+				if ( ! empty( $relation['url'] ) ) {
+					$ckan_relations[] = array(
+						'url'   => $relation['url'],
+						'label' => $relation['label'],
+					);
+				}
 			}
 		}
 
@@ -303,12 +311,14 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 	protected function prepare_see_alsos( $see_alsos ) {
 		$ckan_see_alsos = array();
 
-		foreach ( $see_alsos as $see_also ) {
-			// Check if at least one mandatory field (dataset_identifier) is filled out. Because we don't want to add empty repeatable fields.
-			if ( ! empty( $see_also['dataset_identifier'] ) ) {
-				$ckan_see_alsos[] = array(
-					'dataset_identifier' => $see_also['dataset_identifier'],
-				);
+		if ( is_array( $see_alsos ) ) {
+			foreach ( $see_alsos as $see_also ) {
+				// Check if at least one mandatory field (dataset_identifier) is filled out. Because we don't want to add empty repeatable fields.
+				if ( ! empty( $see_also['dataset_identifier'] ) ) {
+					$ckan_see_alsos[] = array(
+						'dataset_identifier' => $see_also['dataset_identifier'],
+					);
+				}
 			}
 		}
 

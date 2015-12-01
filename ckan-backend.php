@@ -113,8 +113,14 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		 * @return array
 		 */
 		public function allow_edit_own_organisation( $allcaps, $cap, $args ) {
-			$requested_cap = $args[0];
-			$required_cap  = $cap[0];
+			$requested_cap = '';
+			if ( count( $args ) > 0 ) {
+				$requested_cap = $args[0];
+			}
+			$required_cap = '';
+			if ( count( $cap ) > 0 ) {
+				$required_cap = $cap[0];
+			}
 
 			// Bail out users who are already allowed to edit other datasets / organisations)
 			if ( isset( $allcaps['edit_others_organisations'] ) || isset( $allcaps['edit_others_datasets'] ) ) {
@@ -160,7 +166,10 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		 * @return array
 		 */
 		public function allow_edit_users_of_same_organisation( $allcaps, $cap, $args ) {
-			$required_cap = $cap[0];
+			$required_cap = '';
+			if ( count( $cap ) > 0 ) {
+				$required_cap = $cap[0];
+			}
 
 			if ( 'edit_users' !== $required_cap ) {
 				return $allcaps;

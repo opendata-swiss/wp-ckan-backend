@@ -168,10 +168,11 @@ class Ckan_Backend_Helper {
 	 * Returns dataset information of given dataset identifier.
 	 *
 	 * @param string $identifier Identifier of dataset as string.
+	 * @param bool   $show_errors If true errors get printed.
 	 *
 	 * @return array|boolean
 	 */
-	public static function get_dataset( $identifier ) {
+	public static function get_dataset( $identifier, $show_errors = true ) {
 		if ( empty( $identifier ) ) {
 			return '';
 		}
@@ -190,7 +191,9 @@ class Ckan_Backend_Helper {
 				// save result in transient
 				set_transient( $transient_name, $dataset, 1 * HOUR_IN_SECONDS );
 			} else {
-				self::print_error_messages( $errors );
+				if ( $show_errors ) {
+					self::print_error_messages( $errors );
+				}
 			}
 		}
 
@@ -332,11 +335,14 @@ class Ckan_Backend_Helper {
 	 */
 	public static function get_metafield_value( $post_id, $field_name, $load_from_post ) {
 		if ( $load_from_post ) {
-			// remove magic quotes which WordPress adds in wp_includes/load.php -> wp_magic_quotes()
-			return stripslashes_deep( $_POST[ $field_name ] );
+			if ( isset( $_POST[ $field_name ] ) ) {
+				// remove magic quotes which WordPress adds in wp_includes/load.php -> wp_magic_quotes()
+				return stripslashes_deep( $_POST[ $field_name ] );
+			}
 		} else {
 			return get_post_meta( $post_id, $field_name, true );
 		}
+		return '';
 	}
 
 	/**
