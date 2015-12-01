@@ -168,10 +168,11 @@ class Ckan_Backend_Helper {
 	 * Returns dataset information of given dataset identifier.
 	 *
 	 * @param string $identifier Identifier of dataset as string.
+	 * @param bool   $show_errors If true errors get printed.
 	 *
 	 * @return array|boolean
 	 */
-	public static function get_dataset( $identifier ) {
+	public static function get_dataset( $identifier, $show_errors = true ) {
 		if ( empty( $identifier ) ) {
 			return '';
 		}
@@ -190,7 +191,9 @@ class Ckan_Backend_Helper {
 				// save result in transient
 				set_transient( $transient_name, $dataset, 1 * HOUR_IN_SECONDS );
 			} else {
-				self::print_error_messages( $errors );
+				if ( $show_errors ) {
+					self::print_error_messages( $errors );
+				}
 			}
 		}
 
