@@ -217,7 +217,11 @@ class Ckan_Backend_Local_Dataset {
 	public function add_organisation_column_data( $column, $post_id ) {
 		if ( self::FIELD_PREFIX . 'identifier' === $column ) {
 			$identifier = get_post_meta( $post_id, $column, true );
-			echo esc_attr( Ckan_Backend_Helper::get_organization_title( $identifier['organisation'] ) );
+			$organisation = '';
+			if ( is_array( $identifier ) && array_key_exists( 'organisation', $identifier ) ) {
+				$organisation = Ckan_Backend_Helper::get_organization_title( $identifier['organisation'] );
+			}
+			echo esc_html( $organisation );
 		}
 	}
 
