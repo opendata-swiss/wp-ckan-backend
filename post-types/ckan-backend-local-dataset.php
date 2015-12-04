@@ -55,8 +55,14 @@ class Ckan_Backend_Local_Dataset {
 	 * @param CMB2_Types $field_type_object This `CMB2_Types` object.
 	 */
 	public function cmb2_render_callback_dataset_identifier( $field, $escaped_value, $object_id, $object_type, $field_type_object ) {
-		$original_identifier = $escaped_value['original_identifier'];
-		$organisation        = $escaped_value['organisation'];
+		$original_identifier = '';
+		if ( is_array( $escaped_value ) && array_key_exists( 'original_identifier', $escaped_value ) ) {
+			$original_identifier = $escaped_value['original_identifier'];
+		}
+		$organisation = '';
+		if ( is_array( $escaped_value ) && array_key_exists( 'organisation', $escaped_value ) ) {
+			$organisation = $escaped_value['organisation'];
+		}
 
 		if ( empty( $organisation ) ) {
 			$organisation = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
