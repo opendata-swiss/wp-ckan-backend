@@ -190,7 +190,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 	public function render_harvester_detail( $harvester_id, $harvester_title ) {
 		echo '<h2>' . esc_html( $harvester_title ) . '</h2>';
 		echo '<p><span class="dashicons dashicons-image-rotate"></span> <a href="' . esc_url( $this->current_url_without_action ) . '">' . esc_html( __( 'Refresh page', 'ogdch' ) ) . '</a></p>';
-		printf( esc_html( __( 'Harvester ID: %s', 'ogdch' ) ), esc_html( $harvester_id ) );
+		printf( esc_html_x( 'Harvester ID: %s', '%s contains the id of the harvester', 'ogdch' ), esc_html( $harvester_id ) );
 
 		$harvester_search_args = array(
 			// @codingStandardsIgnoreStart
@@ -299,16 +299,16 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 		?>
 		<div class="postbox">
 			<div class="inside collapsible <?php echo esc_attr( $collapsed_class ); ?>">
-				<h4><?php esc_html_e( sprintf( __( 'Job created at %s', 'ogdch' ), $job_created ) ); ?></h4>
+				<h4><?php printf( esc_html_x( 'Job created at %s', '%s contains the date and time when the jobs was created.', 'ogdch' ), esc_html( $job_created ) ); ?></h4>
 				<div>
 					<?php
 					if ( ! empty( $job['stats'] ) ) {
 						?>
 						<div class="status">
-							<span class="label label-errored"><?php printf( esc_html( __( '%s errors', 'ogdch' ) ), esc_html( ( array_key_exists( 'errored', $job['stats'] ) ) ? $job['stats']['errored'] : 0 ) ); ?></span>
-							<span class="label label-added"><?php printf( esc_html( __( '%s added', 'ogdch' ) ), esc_html( ( array_key_exists( 'added', $job['stats'] ) ? $job['stats']['added'] : 0 ) ) ); ?></span>
-							<span class="label label-updated"><?php printf( esc_html( __( '%s updated', 'ogdch' ) ), esc_html( ( array_key_exists( 'updated', $job['stats'] ) ? $job['stats']['updated'] : 0 ) ) ); ?></span>
-							<span class="label label-deleted"><?php printf( esc_html( __( '%s deleted', 'ogdch' ) ), esc_html( ( array_key_exists( 'deleted', $job['stats'] ) ? $job['stats']['deleted'] : 0 ) ) ); ?></span>
+							<span class="label label-errored"><?php printf( esc_html_x( '%s errors', '%s contains the number of errors.', 'ogdch' ), esc_html( ( array_key_exists( 'errored', $job['stats'] ) ) ? $job['stats']['errored'] : 0 ) ); ?></span>
+							<span class="label label-added"><?php printf( esc_html_x( '%s added', '%s contains the number of added datasets.', 'ogdch' ), esc_html( ( array_key_exists( 'added', $job['stats'] ) ? $job['stats']['added'] : 0 ) ) ); ?></span>
+							<span class="label label-updated"><?php printf( esc_html_x( '%s updated', '%s contains the number of updated datasets.', 'ogdch' ), esc_html( ( array_key_exists( 'updated', $job['stats'] ) ? $job['stats']['updated'] : 0 ) ) ); ?></span>
+							<span class="label label-deleted"><?php printf( esc_html_x( '%s deleted', '%s contains the number of deleted datasets.', 'ogdch' ), esc_html( ( array_key_exists( 'deleted', $job['stats'] ) ? $job['stats']['deleted'] : 0 ) ) ); ?></span>
 						</div>
 						<?php
 					}
@@ -436,7 +436,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 									foreach ( $object_error['errors'] as $error ) {
 										$line = '';
 										if ( ! empty( $error['line'] ) ) {
-											$line = ' <span>' . esc_html( sprintf( __( '(Line: %s)', 'ogdch' ), $error['line'] ) ) . '</span>';
+											$line = ' <span>' . printf( esc_html_x( '(Line: %s)', '%s contains the line number of the error.', 'ogdch' ), esc_html( $error['line'] ) ) . '</span>';
 										}
 										echo '<p>' . esc_html( $error['message'] . $line ) . '</p>';
 									}
