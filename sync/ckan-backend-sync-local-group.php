@@ -26,7 +26,7 @@ class Ckan_Backend_Sync_Local_Group extends Ckan_Backend_Sync_Abstract {
 
 		$post_name = $post->post_name;
 		if ( empty( $post_name ) ) {
-			$post_name = sanitize_title_with_dashes( $post->post_title );
+			$post_name = sanitize_title( $post->post_title );
 		}
 
 		$data = array(
@@ -58,6 +58,6 @@ class Ckan_Backend_Sync_Local_Group extends Ckan_Backend_Sync_Abstract {
 			delete_transient( Ckan_Backend::$plugin_slug . '_' . Ckan_Backend_Local_Group::POST_TYPE . '_options_' . $lang );
 		}
 		delete_transient( Ckan_Backend::$plugin_slug . '_' . Ckan_Backend_Local_Group::POST_TYPE . '_' . $post->post_name . '_exists' );
-		delete_transient( Ckan_Backend::$plugin_slug . '_' . sanitize_title_with_dashes( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'rdf_uri', false ) ) );
+		delete_transient( Ckan_Backend::$plugin_slug . '_' . sanitize_title( Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'rdf_uri', false ) ) );
 	}
 }

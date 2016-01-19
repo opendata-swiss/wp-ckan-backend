@@ -336,7 +336,7 @@ class Ckan_Backend_Local_Dataset_Import {
 	protected function insert( $dataset ) {
 		$post_title = $dataset->get_main_title();
 		$dataset_args = array(
-			'post_name'    => sanitize_title_with_dashes( $post_title ),
+			'post_name'    => sanitize_title( $post_title ),
 			'post_title'   => $post_title,
 			'post_status'  => ( ( $dataset->get_issued() > time() ) ? 'future' : 'draft' ),
 			'post_type'    => Ckan_Backend_Local_Dataset::POST_TYPE,
@@ -678,7 +678,7 @@ class Ckan_Backend_Local_Dataset_Import {
 	 * @throws Exception If group doesn't exist.
 	 */
 	public function get_theme_name( $theme_uri, $identifier ) {
-		$transient_name = Ckan_Backend::$plugin_slug . '_' . sanitize_title_with_dashes( $theme_uri );
+		$transient_name = Ckan_Backend::$plugin_slug . '_' . sanitize_title( $theme_uri );
 		if ( false === ( $theme_name = get_transient( $transient_name ) ) ) {
 			$group_search_args = array(
 				// @codingStandardsIgnoreStart
