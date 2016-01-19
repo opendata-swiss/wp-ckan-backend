@@ -336,7 +336,7 @@ class Ckan_Backend_Local_Dataset_Import {
 	protected function insert( $dataset ) {
 		$post_title = $dataset->get_main_title();
 		$dataset_args = array(
-			'post_name'    => sanitize_title( $post_title ),
+			'post_name'    => substr( sanitize_title( $post_title ), 0, 100 ) /* CKAN slugs can't be more than 100 character */,
 			'post_title'   => $post_title,
 			'post_status'  => ( ( $dataset->get_issued() > time() ) ? 'future' : 'draft' ),
 			'post_type'    => Ckan_Backend_Local_Dataset::POST_TYPE,
