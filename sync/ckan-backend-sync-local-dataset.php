@@ -37,7 +37,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 
 		$post_name = $post->post_name;
 		if ( empty( $post_name ) ) {
-			$post_name = sanitize_title_with_dashes( $post->post_title );
+			$post_name = sanitize_title( $post->post_title );
 		}
 
 		// if user is not allowed to change organisation -> reset organisation in identifier

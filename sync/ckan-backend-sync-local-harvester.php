@@ -22,7 +22,7 @@ class Ckan_Backend_Sync_Local_Harvester extends Ckan_Backend_Sync_Abstract {
 
 		$post_name = $post->post_name;
 		if ( empty( $post_name ) ) {
-			$post_name = sanitize_title_with_dashes( $post->post_title );
+			$post_name = sanitize_title( $post->post_title );
 		}
 
 		$data = array(
