@@ -142,13 +142,7 @@ class Ckan_Backend_Local_Organisation {
 		if ( current_user_can( 'edit_data_of_all_organisations' ) ) {
 			/* Parent */
 			$cmb->add_field( array(
-				'name' => __( 'Parent Organization', 'ogdch' ),
-				'type' => 'title',
-				'id'   => 'parent_title',
-			) );
-
-			$cmb->add_field( array(
-				'name'             => __( 'Parent', 'ogdch' ),
+				'name'             => __( 'Parent Organization', 'ogdch' ),
 				'id'               => self::FIELD_PREFIX . 'parent',
 				'type'             => 'select',
 				'show_option_none' => __( 'None - top level', 'ogdch' ),
@@ -156,13 +150,14 @@ class Ckan_Backend_Local_Organisation {
 			) );
 		}
 
-		/* Image */
+		/* URL */
 		$cmb->add_field( array(
-			'name' => __( 'Organization Image', 'ogdch' ),
-			'type' => 'title',
-			'id'   => 'image_title',
+			'name' => __( 'URL', 'ogdch' ),
+			'id'   => self::FIELD_PREFIX . 'url',
+			'type' => 'text_url',
 		) );
 
+		/* Image */
 		$cmb->add_field( array(
 			'name' => __( 'Image', 'ogdch' ),
 			'id'   => self::FIELD_PREFIX . 'image',

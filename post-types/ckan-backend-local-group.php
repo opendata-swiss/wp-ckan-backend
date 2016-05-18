@@ -141,12 +141,6 @@ class Ckan_Backend_Local_Group {
 
 		/* Image */
 		$cmb->add_field( array(
-			'name' => __( 'Category Image', 'ogdch' ),
-			'type' => 'title',
-			'id'   => 'image_title',
-		) );
-
-		$cmb->add_field( array(
 			'name'       => __( 'Image', 'ogdch' ),
 			'id'         => self::FIELD_PREFIX . 'image',
 			'type'    => 'file',

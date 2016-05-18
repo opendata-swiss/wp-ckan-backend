@@ -66,6 +66,7 @@ class Ckan_Backend_Sync_Local_Organisation extends Ckan_Backend_Sync_Abstract {
 			'display_name' => $titles,
 			'description'  => $descriptions,
 			'image_url'    => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'image', $load_from_post ),
+			'url'          => Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'url', $load_from_post ),
 			'state'        => 'active',
 		);
 
