@@ -485,12 +485,14 @@ class Ckan_Backend_Local_Dataset {
 			'name' => __( 'Start Date', 'ogdch' ),
 			'id'   => 'start_date',
 			'type' => 'text_date_timestamp',
+			'date_format' => _x( 'm/d/Y', 'Valid date format string for date field', 'ogdch' ),
 		) );
 
 		$cmb->add_group_field( $temporals_group, array(
 			'name' => __( 'End Date', 'ogdch' ),
 			'id'   => 'end_date',
 			'type' => 'text_date_timestamp',
+			'date_format' => _x( 'm/d/Y', 'Valid date format string for date field', 'ogdch' ),
 		) );
 
 		/* Publisher */
