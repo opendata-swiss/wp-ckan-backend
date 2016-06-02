@@ -340,7 +340,9 @@ class Ckan_Backend_Helper {
 				return stripslashes_deep( $_POST[ $field_name ] );
 			}
 		} else {
-			return get_post_meta( $post_id, $field_name, true );
+			$value_from_db = get_post_meta( $post_id, $field_name, true );
+			// return empty string instead of null because some ckan validators (fluent_text) don't allow null values
+			return ( $value_from_db !== null ? $value_from_db : '' );
 		}
 		return '';
 	}

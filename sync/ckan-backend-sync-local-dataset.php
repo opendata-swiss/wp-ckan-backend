@@ -113,8 +113,18 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 					$titles = array();
 					$descriptions = array();
 					foreach ( $language_priority as $lang ) {
-						$titles[ $lang ] = $resource[ 'title_' . $lang ];
-						$descriptions[ $lang ] = $resource[ 'description_' . $lang ];
+						if ( key_exists( 'title_' . $lang, $resource ) ) {
+							$titles[ $lang ] = $resource[ 'title_' . $lang ];
+						} else {
+							// use empty string instead of null because some ckan validators (fluent_text) don't allow null values
+							$titles[ $lang ] = '';
+						}
+						if ( key_exists( 'description_' . $lang, $resource ) ) {
+							$descriptions[ $lang ] = $resource[ 'description_' . $lang ];
+						} else {
+							// use empty string instead of null because some ckan validators (fluent_text) don't allow null values
+							$descriptions[ $lang ] = '';
+						}
 					}
 					$issued   = $this->prepare_date( $resource['issued'] );
 					$modified = $this->prepare_date( $resource['modified'] );
