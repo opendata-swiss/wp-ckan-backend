@@ -481,7 +481,11 @@ class Ckan_Backend_Local_Dataset_Import {
 				$dataset->add_see_also( (string) $see_also );
 			}
 
-			$distributions = $xml->xpath( './dcat:distribution' );
+			$distributions = $xml->xpath( './dcat:distribution/dcat:Distribution' );
+			if ( empty ( $distributions ) ) {
+				// Fallback for old RDF format
+				$distributions = $xml->xpath( './dcat:distribution' );
+			}
 			foreach ( $distributions as $distribution_xml ) {
 				$dataset->add_distribution( $this->get_distribution_object( $distribution_xml, $dataset, $identifier ) );
 			}
