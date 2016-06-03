@@ -103,7 +103,7 @@ class Ckan_Backend_Local_Dataset_Export {
 	 * @param int              $post_id Id of dataset to export.
 	 *
 	 * @return string Slug of dataset.
-	 * @throws Exception
+	 * @throws Exception Exception when export fails.
 	 */
 	public function add_dataset( $catalog_xml, $post_id ) {
 		global $language_priority;

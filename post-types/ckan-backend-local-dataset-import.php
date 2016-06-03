@@ -482,7 +482,7 @@ class Ckan_Backend_Local_Dataset_Import {
 			}
 
 			$distributions = $xml->xpath( './dcat:distribution/dcat:Distribution' );
-			if ( empty ( $distributions ) ) {
+			if ( empty( $distributions ) ) {
 				// Fallback for old RDF format
 				$distributions = $xml->xpath( './dcat:distribution' );
 			}
