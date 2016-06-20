@@ -304,7 +304,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 					<?php
 					if ( ! empty( $job['stats'] ) ) {
 						?>
-						<div class="status">
+						<div class="harvester-status">
 							<span class="label label-errored"><?php printf( esc_html_x( '%s errors', '%s contains the number of errors.', 'ogdch' ), esc_html( ( array_key_exists( 'errored', $job['stats'] ) ) ? $job['stats']['errored'] : 0 ) ); ?></span>
 							<span class="label label-added"><?php printf( esc_html_x( '%s added', '%s contains the number of added datasets.', 'ogdch' ), esc_html( ( array_key_exists( 'added', $job['stats'] ) ? $job['stats']['added'] : 0 ) ) ); ?></span>
 							<span class="label label-updated"><?php printf( esc_html_x( '%s updated', '%s contains the number of updated datasets.', 'ogdch' ), esc_html( ( array_key_exists( 'updated', $job['stats'] ) ? $job['stats']['updated'] : 0 ) ) ); ?></span>

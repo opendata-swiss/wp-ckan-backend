@@ -14,11 +14,18 @@ class Ckan_Backend_Local_Harvester {
 	const POST_TYPE = 'ckan-local-harvester';
 	const FIELD_PREFIX = '_ckan_local_harvester_';
 
+	protected static $harvester_sources = array();
+
 	/**
 	 * Constructor of this class.
 	 */
 	public function __construct() {
 		$this->register_post_type();
+
+		// add status column to admin list
+		add_filter( 'manage_' . self::POST_TYPE . '_posts_columns', array( $this, 'add_status_column' ) );
+		add_action( 'manage_' . self::POST_TYPE . '_posts_custom_column', array( $this, 'add_status_column_data' ), 10, 2 );
+
 		add_action( 'cmb2_init', array( $this, 'define_fields' ) );
 
 		// initialize local harvester sync
@@ -86,6 +93,89 @@ class Ckan_Backend_Local_Harvester {
 			),
 		);
 		register_post_type( self::POST_TYPE, $args );
+	}
+
+	/**
+	 * Adds status column to admin list
+	 *
+	 * @param array $columns Array with all current columns.
+	 *
+	 * @return array
+	 */
+	public function add_status_column( $columns ) {
+		$new_columns = array(
+			self::FIELD_PREFIX . 'status' => __( 'Status', 'ogdch' ),
+		);
+
+		return array_merge( $columns, $new_columns );
+	}
+
+	/**
+	 * Prints data to status column
+	 *
+	 * @param string $column Name of custom column.
+	 * @param int    $post_id Id of current post.
+	 */
+	public function add_status_column_data( $column, $post_id ) {
+		if ( self::FIELD_PREFIX . 'status' === $column ) {
+			$harvester_sources = $this->get_harvester_sources();
+			$ckan_id = get_post_meta( $post_id, self::FIELD_PREFIX . 'ckan_id', true );
+			foreach ( $harvester_sources as $source ) {
+				if ( $source['id'] === $ckan_id ) {
+					$status_text = '';
+					$status = $source['status'];
+					if ( $status['job_count'] > 0 ) {
+						$last_harvest_time = strtotime( $status['last_harvest_request'] );
+						if ( $last_harvest_time ) {
+							$last_harvest_text = date( 'd.m.Y H:m:s', $last_harvest_time );
+						} else {
+							$last_harvest_text = $status['last_harvest_request'];
+						}
+						$status_text .= '<div class="harvester-status">';
+						$status_text .= sprintf( esc_html_x( 'Job count: %s', '%s contains job count of harvester', 'ogdch' ), $status['job_count'] ) . '</br>';
+						$status_text .= '
+							<div class="last-harvest">
+								' . sprintf( esc_html_x( 'Last harvest: %s', '%s contains the date of the last harvest request', 'ogdch' ), $last_harvest_text ) . '<br />
+								<span class="label label-errored">' . sprintf( esc_html_x( '%s errors', '%s contains the number of errors.', 'ogdch' ), esc_html( $status['last_harvest_statistics']['errors'] ) ) . '</span>
+								<span class="label label-added">' . sprintf( esc_html_x( '%s added', '%s contains the number of added datasets.', 'ogdch' ), esc_html( $status['last_harvest_statistics']['added'] ) ) . '</span>
+								<span class="label label-updated">' . sprintf( esc_html_x( '%s updated', '%s contains the number of updated datasets.', 'ogdch' ), esc_html( $status['last_harvest_statistics']['updated'] ) ) . '</span>
+								<span class="label label-deleted">' . sprintf( esc_html_x( '%s deleted', '%s contains the number of deleted datasets.', 'ogdch' ), esc_html( $status['last_harvest_statistics']['deleted'] ) ) . '</span>
+							</div>';
+						$status_text .= '</div>';
+					} else {
+						$status_text .= esc_html__( 'No jobs yet', 'ogdch' );
+					}
+					echo $status_text;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Retrieves information of all existing harvester sources.
+	 * 
+	 * @return array Information about existing harvester sources.
+	 */
+	protected function get_harvester_sources() {
+		if ( empty ( self::$harvester_sources ) ) {
+			$transient_name = Ckan_Backend::$plugin_slug . '_harvest_source_list';
+			if ( false === ( self::$harvester_sources = get_transient( $transient_name ) ) ) {
+				$endpoint = CKAN_API_ENDPOINT . 'harvest_source_list';
+
+				$response = Ckan_Backend_Helper::do_api_request( $endpoint );
+				$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
+
+				if ( 0 === count( $errors ) ) {
+					self::$harvester_sources = $response['result'];
+					// save result in transient
+					set_transient( $transient_name, self::$harvester_sources, 1 * HOUR_IN_SECONDS );
+				} else {
+					Ckan_Backend_Helper::print_error_messages( $errors );
+				}
+			}
+		}
+
+		return self::$harvester_sources;
 	}
 
 	/**
