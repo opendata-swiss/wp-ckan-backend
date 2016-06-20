@@ -14,6 +14,11 @@ class Ckan_Backend_Local_Harvester {
 	const POST_TYPE = 'ckan-local-harvester';
 	const FIELD_PREFIX = '_ckan_local_harvester_';
 
+	/**
+	 * Information about all harvesters.
+	 *
+	 * @var array
+	 */
 	protected static $harvester_sources = array();
 
 	/**
@@ -22,9 +27,9 @@ class Ckan_Backend_Local_Harvester {
 	public function __construct() {
 		$this->register_post_type();
 
-		// add status column to admin list
-		add_filter( 'manage_' . self::POST_TYPE . '_posts_columns', array( $this, 'add_status_column' ) );
-		add_action( 'manage_' . self::POST_TYPE . '_posts_custom_column', array( $this, 'add_status_column_data' ), 10, 2 );
+		// add custom columns to admin list
+		add_filter( 'manage_' . self::POST_TYPE . '_posts_columns', array( $this, 'add_list_columns' ) );
+		add_action( 'manage_' . self::POST_TYPE . '_posts_custom_column', array( $this, 'add_list_columns_data' ), 10, 2 );
 
 		add_action( 'cmb2_init', array( $this, 'define_fields' ) );
 
@@ -96,30 +101,31 @@ class Ckan_Backend_Local_Harvester {
 	}
 
 	/**
-	 * Adds status column to admin list
+	 * Adds custom columns to admin list
 	 *
 	 * @param array $columns Array with all current columns.
 	 *
 	 * @return array
 	 */
-	public function add_status_column( $columns ) {
+	public function add_list_columns( $columns ) {
 		$new_columns = array(
 			self::FIELD_PREFIX . 'status' => __( 'Status', 'ogdch' ),
+			self::FIELD_PREFIX . 'dashboard' => __( 'Dashboard', 'ogdch' ),
 		);
 
 		return array_merge( $columns, $new_columns );
 	}
 
 	/**
-	 * Prints data to status column
+	 * Prints data to custom list columns
 	 *
 	 * @param string $column Name of custom column.
 	 * @param int    $post_id Id of current post.
 	 */
-	public function add_status_column_data( $column, $post_id ) {
+	public function add_list_columns_data( $column, $post_id ) {
+		$ckan_id = get_post_meta( $post_id, self::FIELD_PREFIX . 'ckan_id', true );
 		if ( self::FIELD_PREFIX . 'status' === $column ) {
 			$harvester_sources = $this->get_harvester_sources();
-			$ckan_id = get_post_meta( $post_id, self::FIELD_PREFIX . 'ckan_id', true );
 			foreach ( $harvester_sources as $source ) {
 				if ( $source['id'] === $ckan_id ) {
 					$status_text = '';
@@ -145,19 +151,26 @@ class Ckan_Backend_Local_Harvester {
 					} else {
 						$status_text .= esc_html__( 'No jobs yet', 'ogdch' );
 					}
+
+					// @codingStandardsIgnoreStart
 					echo $status_text;
+					// @codingStandardsIgnoreEnd
 				}
 			}
+		} else if ( self::FIELD_PREFIX . 'dashboard' === $column ) {
+			// @codingStandardsIgnoreStart
+			echo '<a href="edit.php?post_type=' . esc_attr( self::POST_TYPE ) . '&page=ckan-local-harvester-dashboard-page&harvester_id=' . esc_attr( $ckan_id ) . '""><span class="dashicons dashicons-dashboard"></span> ' . esc_html__( 'Dashboard', 'ogdch' ) . '</a>';
+			// @codingStandardsIgnoreEnd
 		}
 	}
 
 	/**
 	 * Retrieves information of all existing harvester sources.
-	 * 
+	 *
 	 * @return array Information about existing harvester sources.
 	 */
 	protected function get_harvester_sources() {
-		if ( empty ( self::$harvester_sources ) ) {
+		if ( empty( self::$harvester_sources ) ) {
 			$transient_name = Ckan_Backend::$plugin_slug . '_harvest_source_list';
 			if ( false === ( self::$harvester_sources = get_transient( $transient_name ) ) ) {
 				$endpoint = CKAN_API_ENDPOINT . 'harvest_source_list';
