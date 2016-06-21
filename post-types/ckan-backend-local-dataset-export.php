@@ -65,26 +65,31 @@ class Ckan_Backend_Local_Dataset_Export {
 
 		$catalog = $xml->addChild( 'Catalog', null, $this->namespaces['dcat'] );
 
-		foreach ( $post_ids as $post_id ) {
-			$dataset_slug = $this->add_dataset( $catalog, $post_id );
-			$export_file_name .= '_' . $dataset_slug;
+		try {
+			foreach ( $post_ids as $post_id ) {
+				$dataset_slug = $this->add_dataset( $catalog, $post_id );
+				$export_file_name .= '_' . $dataset_slug;
+			}
+
+			// limit export filename to 128 characters.
+			$export_file_name = substr( $export_file_name, 0, 128 );
+			$export_file_name = sanitize_file_name( $export_file_name );
+
+			header( 'Content-type: text/xml' );
+			header( 'Content-Disposition: attachment; filename="' . $export_file_name . '.xml"' );
+			$dom = dom_import_simplexml( $xml )->ownerDocument;
+			$dom->formatOutput = true;
+			$formatted_xml = $dom->saveXML();
+
+			// Clean output buffer before printing xml
+			ob_clean();
+
+			// @codingStandardsIgnoreStart
+			print( $formatted_xml );
+			// @codingStandardsIgnoreEnd
+		} catch (Exception $e) {
+			echo esc_html( $e->getMessage() );
 		}
-		// limit export filename to 128 characters.
-		$export_file_name = substr( $export_file_name, 0, 128 );
-		$export_file_name = sanitize_file_name( $export_file_name );
-
-		header( 'Content-type: text/xml' );
-		header( 'Content-Disposition: attachment; filename="' . $export_file_name . '.xml"' );
-		$dom = dom_import_simplexml( $xml )->ownerDocument;
-		$dom->formatOutput = true;
-		$formatted_xml = $dom->saveXML();
-
-		// Clean output buffer before printing xml
-		ob_clean();
-
-		// @codingStandardsIgnoreStart
-		print( $formatted_xml );
-		// @codingStandardsIgnoreEnd
 
 		// We have to exit here because we changed the header to start a file download and this can take some time.
 		// If we would redirect here (which happens after the return statement) the download wouldn't start.
@@ -98,6 +103,7 @@ class Ckan_Backend_Local_Dataset_Export {
 	 * @param int              $post_id Id of dataset to export.
 	 *
 	 * @return string Slug of dataset.
+	 * @throws Exception Exception when export fails.
 	 */
 	public function add_dataset( $catalog_xml, $post_id ) {
 		global $language_priority;
@@ -113,9 +119,16 @@ class Ckan_Backend_Local_Dataset_Export {
 		$dataset_xml = $dataset_root_xml->addChild( 'Dataset', null, $this->namespaces['dcat'] );
 
 		$identifier = get_post_meta( $post->ID, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'identifier', true );
-		if ( ! empty( $identifier ) ) {
-			$dataset_xml->addChild( 'identifier', $identifier['original_identifier'] . '@' . $identifier['organisation'], $this->namespaces['dct'] );
+		if ( empty( $identifier ) || ! is_array( $identifier ) ) {
+			throw new Exception( sprintf(
+				esc_html_x( 'Could not read identifier of dataset %s.', '%s contains the post_id of the dataset.', 'ogdch' ),
+				$post_id
+			) );
 		}
+
+		$dataset_rdf_uri = esc_url( 'http://' . $identifier['organisation'] . '/' . $identifier['original_identifier'] );
+		$dataset_xml->addAttribute( 'rdf:about', $dataset_rdf_uri, $this->namespaces['rdf'] );
+		$dataset_xml->addChild( 'identifier', $identifier['original_identifier'] . '@' . $identifier['organisation'], $this->namespaces['dct'] );
 
 		foreach ( $language_priority as $lang ) {
 			$title = get_post_meta( $post->ID, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'title_' . $lang, true );
@@ -239,13 +252,21 @@ class Ckan_Backend_Local_Dataset_Export {
 			$dataset_xml->addChild( 'seeAlso', $see_also['dataset_identifier'], $this->namespaces['rdfs'] );
 		}
 
+		$distribution_root_xml = $dataset_xml->addChild( 'distribution', null, $this->namespaces['dcat'] );
+
 		$distributions = get_post_meta( $post->ID, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'distributions', true );
+		$distribution_count = 0;
 		foreach ( $distributions as $distribution ) {
-			$distribution_xml = $dataset_xml->addChild( 'distribution', null, $this->namespaces['dcat'] );
+			$distribution_count++;
+			$distribution_xml = $distribution_root_xml->addChild( 'Distribution', null, $this->namespaces['dcat'] );
 
 			if ( ! empty( $distribution['identifier'] ) ) {
+				$distribution_rdf_uri = esc_url( $dataset_rdf_uri . '/' . $distribution['identifier'] );
 				$distribution_xml->addChild( 'identifier', $distribution['identifier'], $this->namespaces['dct'] );
+			} else {
+				$distribution_rdf_uri = esc_url( $dataset_rdf_uri . '/' . $distribution_count );
 			}
+			$distribution_xml->addAttribute( 'rdf:about', $distribution_rdf_uri, $this->namespaces['rdf'] );
 
 			foreach ( $language_priority as $lang ) {
 				if ( ! empty( $distribution[ 'title_' . $lang ] ) ) {
