@@ -252,12 +252,11 @@ class Ckan_Backend_Local_Dataset_Export {
 			$dataset_xml->addChild( 'seeAlso', $see_also['dataset_identifier'], $this->namespaces['rdfs'] );
 		}
 
-		$distribution_root_xml = $dataset_xml->addChild( 'distribution', null, $this->namespaces['dcat'] );
-
 		$distributions = get_post_meta( $post->ID, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'distributions', true );
 		$distribution_count = 0;
 		foreach ( $distributions as $distribution ) {
 			$distribution_count++;
+			$distribution_root_xml = $dataset_xml->addChild( 'distribution', null, $this->namespaces['dcat'] );
 			$distribution_xml = $distribution_root_xml->addChild( 'Distribution', null, $this->namespaces['dcat'] );
 
 			if ( ! empty( $distribution['identifier'] ) ) {
