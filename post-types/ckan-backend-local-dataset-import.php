@@ -638,7 +638,11 @@ class Ckan_Backend_Local_Dataset_Import {
 		foreach ( $download_urls as $download_url ) {
 			$distribution->add_download_url( (string) $download_url );
 		}
-		$rights = (string) $this->get_single_element_from_xpath( $xml, './dct:rights/odrs:dataLicence' );
+		$rights = (string) $this->get_single_element_from_xpath( $xml, './dct:license' );
+		if ( empty( $rights ) ) {
+			// Fallback for old license-format (which never worked?)
+			$rights = (string) $this->get_single_element_from_xpath( $xml, './dct:rights/odrs:dataLicence' );
+		}
 		if ( ! array_key_exists( $rights, Ckan_Backend_Rights::get_rights() ) ) {
 			throw new Exception( sprintf(
 				esc_html_x( 'Term of use %1$s does not exist. Dataset %2$s not imported.', '%1$s contains the rights of the dataset. %2$s contains the identifier of the dataset.', 'ogdch' ),
