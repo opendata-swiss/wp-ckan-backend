@@ -125,38 +125,32 @@ class Ckan_Backend_Local_Harvester {
 	public function add_list_columns_data( $column, $post_id ) {
 		$ckan_id = get_post_meta( $post_id, self::FIELD_PREFIX . 'ckan_id', true );
 		if ( self::FIELD_PREFIX . 'status' === $column ) {
-			$harvester_sources = $this->get_harvester_sources();
-			foreach ( $harvester_sources as $source ) {
-				if ( $source['id'] === $ckan_id ) {
-					$status_text = '';
-					$status = $source['status'];
-					if ( $status['job_count'] > 0 ) {
-						$last_harvest_time = strtotime( $status['last_harvest_request'] );
-						if ( $last_harvest_time ) {
-							$last_harvest_text = date( 'd.m.Y H:m:s', $last_harvest_time );
-						} else {
-							$last_harvest_text = $status['last_harvest_request'];
-						}
-						$status_text .= '<div class="harvester-status">';
-						$status_text .= sprintf( esc_html_x( 'Job count: %s', '%s contains job count of harvester', 'ogdch' ), $status['job_count'] ) . '</br>';
-						$status_text .= '
-							<div class="last-harvest">
-								' . sprintf( esc_html_x( 'Last harvest: %s', '%s contains the date of the last harvest request', 'ogdch' ), $last_harvest_text ) . '<br />
-								<span class="label label-errored">' . sprintf( esc_html_x( '%s errors', '%s contains the number of errors.', 'ogdch' ), esc_html( $status['last_harvest_statistics']['errors'] ) ) . '</span>
-								<span class="label label-added">' . sprintf( esc_html_x( '%s added', '%s contains the number of added datasets.', 'ogdch' ), esc_html( $status['last_harvest_statistics']['added'] ) ) . '</span>
-								<span class="label label-updated">' . sprintf( esc_html_x( '%s updated', '%s contains the number of updated datasets.', 'ogdch' ), esc_html( $status['last_harvest_statistics']['updated'] ) ) . '</span>
-								<span class="label label-deleted">' . sprintf( esc_html_x( '%s deleted', '%s contains the number of deleted datasets.', 'ogdch' ), esc_html( $status['last_harvest_statistics']['deleted'] ) ) . '</span>
-							</div>';
-						$status_text .= '</div>';
-					} else {
-						$status_text .= esc_html__( 'No jobs yet', 'ogdch' );
-					}
-
-					// @codingStandardsIgnoreStart
-					echo $status_text;
-					// @codingStandardsIgnoreEnd
-				}
+			$harvest_source_status = $this->get_harvest_source_status( $ckan_id );
+			$status_text = '';
+			if ( $harvest_source_status['job_count'] > 0 ) {
+				$created_date = Ckan_Backend_Helper::convert_date_to_readable_format( $harvest_source_status['last_job']['created'] );
+				$started_date = Ckan_Backend_Helper::convert_date_to_readable_format( $harvest_source_status['last_job']['gather_started'] );
+				$finished_date = Ckan_Backend_Helper::convert_date_to_readable_format( $harvest_source_status['last_job']['finished'] );
+				$status_text .= '<div class="harvester-status">';
+				$status_text .= sprintf( esc_html_x( 'Job count: %s', '%s contains job count of harvester', 'ogdch' ), $harvest_source_status['job_count'] ) . '<br />';
+				$status_text .= '
+					<div class="last-harvest">
+						' . sprintf( esc_html_x( 'Last job created: %s', '%s contains the date when the last job was created', 'ogdch' ), $created_date ) . '<br />
+						' . sprintf( esc_html_x( 'Last job started: %s', '%s contains the date when the last job started', 'ogdch' ), $started_date ) . '<br />
+						' . sprintf( esc_html_x( 'Last job finished: %s', '%s contains the date when the last job finished', 'ogdch' ), $finished_date ) . '<br />
+						<span class="label label-added">' . sprintf( esc_html_x( '%s added', '%s contains the number of added datasets.', 'ogdch' ), esc_html( $harvest_source_status['last_job']['stats']['added'] ) ) . '</span>
+						<span class="label label-updated">' . sprintf( esc_html_x( '%s updated', '%s contains the number of updated datasets.', 'ogdch' ), esc_html( $harvest_source_status['last_job']['stats']['updated'] ) ) . '</span>
+						<span class="label label-deleted">' . sprintf( esc_html_x( '%s deleted', '%s contains the number of deleted datasets.', 'ogdch' ), esc_html( $harvest_source_status['last_job']['stats']['deleted'] ) ) . '</span>
+						<span class="label label-errored">' . sprintf( esc_html_x( '%s errored', '%s contains the number of errored dataset.', 'ogdch' ), esc_html( $harvest_source_status['last_job']['stats']['errored'] ) ) . '</span>
+					</div>';
+				$status_text .= '</div>';
+			} else {
+				$status_text .= esc_html__( 'No jobs yet', 'ogdch' );
 			}
+
+			// @codingStandardsIgnoreStart
+			echo $status_text;
+			// @codingStandardsIgnoreEnd
 		} else if ( self::FIELD_PREFIX . 'dashboard' === $column ) {
 			// @codingStandardsIgnoreStart
 			echo '<a href="edit.php?post_type=' . esc_attr( self::POST_TYPE ) . '&page=ckan-local-harvester-dashboard-page&harvester_id=' . esc_attr( $ckan_id ) . '""><span class="dashicons dashicons-dashboard"></span> ' . esc_html__( 'Dashboard', 'ogdch' ) . '</a>';
@@ -165,30 +159,29 @@ class Ckan_Backend_Local_Harvester {
 	}
 
 	/**
-	 * Retrieves information of all existing harvester sources.
+	 * Returns status of given harvester. Warning: Status should never be saved in transient because we have no control over it!
 	 *
-	 * @return array Information about existing harvester sources.
+	 * @param int $harvester_id ID of harvester to get status from.
+	 *
+	 * @return array
 	 */
-	protected function get_harvester_sources() {
-		if ( empty( self::$harvester_sources ) ) {
-			$transient_name = Ckan_Backend::$plugin_slug . '_harvest_source_list';
-			if ( false === ( self::$harvester_sources = get_transient( $transient_name ) ) ) {
-				$endpoint = CKAN_API_ENDPOINT . 'harvest_source_list';
+	public function get_harvest_source_status( $harvester_id ) {
+		$harvester_status = array();
 
-				$response = Ckan_Backend_Helper::do_api_request( $endpoint );
-				$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
+		$endpoint = CKAN_API_ENDPOINT . 'harvest_source_show_status';
+		$data     = array( 'id' => $harvester_id );
+		$data     = wp_json_encode( $data );
 
-				if ( 0 === count( $errors ) ) {
-					self::$harvester_sources = $response['result'];
-					// save result in transient
-					set_transient( $transient_name, self::$harvester_sources, 1 * HOUR_IN_SECONDS );
-				} else {
-					Ckan_Backend_Helper::print_error_messages( $errors );
-				}
-			}
+		$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
+		$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
+
+		if ( 0 === count( $errors ) ) {
+			$harvester_status = $response['result'];
+		} else {
+			Ckan_Backend_Helper::print_error_messages( $errors );
 		}
 
-		return self::$harvester_sources;
+		return $harvester_status;
 	}
 
 	/**
