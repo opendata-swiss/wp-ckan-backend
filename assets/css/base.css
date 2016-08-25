@@ -23,6 +23,8 @@
 
 .post-type-ckan-local-harvester #view-post-btn {
   display: none; }
+.post-type-ckan-local-harvester th#_ckan_local_harvester_dashboard {
+  width: 120px; }
 
 /* CMB2 style changes */
 .cmb2-wrap input.regular-text,
