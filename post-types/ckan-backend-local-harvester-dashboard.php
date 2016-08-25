@@ -293,7 +293,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 	 * @param bool  $show_detail_button Add show detail button at the bottom.
 	 */
 	public function render_job_table( $job, $collapsed = true, $show_detail_button = true ) {
-		$job_created = $this->convert_datetime_to_readable_format( $job['created'] );
+		$job_created = Ckan_Backend_Helper::convert_date_to_readable_format( $job['created'] );
 		$collapsed_class = ( $collapsed ? 'collapsed' : 'open' );
 		?>
 		<div class="postbox">
@@ -319,15 +319,15 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 						</tr>
 						<tr>
 							<th><?php esc_html_e( 'Created', 'ogdch' ); ?></th>
-							<td><?php echo esc_html( $this->convert_datetime_to_readable_format( $job['created'] ) ); ?></td>
+							<td><?php echo esc_html( Ckan_Backend_Helper::convert_date_to_readable_format( $job['created'] ) ); ?></td>
 						</tr>
 						<tr>
 							<th><?php esc_html_e( 'Started', 'ogdch' ); ?></th>
-							<td><?php echo esc_html( $this->convert_datetime_to_readable_format( $job['gather_started'] ) ); ?></td>
+							<td><?php echo esc_html( Ckan_Backend_Helper::convert_date_to_readable_format( $job['gather_started'] ) ); ?></td>
 						</tr>
 						<tr>
 							<th><?php esc_html_e( 'Finished', 'ogdch' ); ?></th>
-							<td><?php echo esc_html( $this->convert_datetime_to_readable_format( $job['finished'] ) ); ?></td>
+							<td><?php echo esc_html( Ckan_Backend_Helper::convert_date_to_readable_format( $job['finished'] ) ); ?></td>
 						</tr>
 						<tr>
 							<th><?php esc_html_e( 'Status', 'ogdch' ); ?></th>
@@ -615,17 +615,4 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 
 		return $job_report;
 	}
-
-	/**
-	 * Converts date from harvester extension into readable format
-	 *
-	 * @param string $date_string Given date from harvester extension.
-	 * @param string $format The format of the outputted date string.
-	 *
-	 * @return string
-	 */
-	public function convert_datetime_to_readable_format( $date_string, $format = 'd.m.Y H:i:s' ) {
-		return ( ! empty( $date_string ) ? Ckan_Backend_Helper::get_local_date( $date_string, $format ) : '-' );
-	}
-
 }

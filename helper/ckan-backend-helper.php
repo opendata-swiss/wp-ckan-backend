@@ -483,9 +483,22 @@ class Ckan_Backend_Helper {
 	 *
 	 * @return string Formatted local date.
 	 */
-	public static function get_local_date( $date_string, $format = 'Y-m-d' ) {
+	public static function get_local_date( $date_string, $format = 'd.m.Y H:i:s' ) {
 		$date_obj = new DateTime( $date_string );
 		$date_obj->setTimezone( new DateTimeZone( get_option( 'timezone_string' ) ) );
 		return $date_obj->format( $format );
+	}
+
+	/**
+	 * Converts UTC date into readable format.
+	 *
+	 * @param string $date_string Date which is passed to the constructor of DateTime.
+	 * @param string $format The format of the outputted date string.
+	 * @param string $default The default text which should be returned when $date_string is empty.
+	 *
+	 * @return string
+	 */
+	public static function convert_date_to_readable_format( $date_string, $format = 'd.m.Y H:i:s', $default = '-' ) {
+		return ( ! empty( $date_string ) ? Ckan_Backend_Helper::get_local_date( $date_string, $format ) : $default );
 	}
 }
