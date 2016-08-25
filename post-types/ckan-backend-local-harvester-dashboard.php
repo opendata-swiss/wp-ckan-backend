@@ -16,7 +16,6 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 	 */
 	public $menu_slug = 'ckan-local-harvester-dashboard-page';
 
-
 	/**
 	 * Page suffix.
 	 * @var string
@@ -618,21 +617,15 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 	}
 
 	/**
-	 * Converts datetime from harvester extension into readable format
+	 * Converts date from harvester extension into readable format
 	 *
-	 * @param string $datetime Given datetime from harvester extension.
-	 * @param string $date_format Output date gets formatted with this format.
+	 * @param string $date_string Given date from harvester extension.
+	 * @param string $format The format of the outputted date string.
 	 *
 	 * @return string
 	 */
-	public function convert_datetime_to_readable_format( $datetime, $date_format = 'd.m.Y H:i:s' ) {
-		$formatted_datetime = '-';
-
-		if ( ! empty( $datetime ) ) {
-			$formatted_datetime = date( $date_format, strtotime( $datetime ) );
-		}
-
-		return $formatted_datetime;
+	public function convert_datetime_to_readable_format( $date_string, $format = 'd.m.Y H:i:s' ) {
+		return ( ! empty( $date_string ) ? Ckan_Backend_Helper::get_local_date( $date_string, $format ) : '-' );
 	}
 
 }

@@ -474,4 +474,18 @@ class Ckan_Backend_Helper {
 		);
 		return $return;
 	}
+
+	/**
+	 * Converts UTC date to local date.
+	 *
+	 * @param string $date_string Date which is passed to the constructor of DateTime.
+	 * @param string $format The format of the outputted date string.
+	 *
+	 * @return string Formatted local date.
+	 */
+	public static function get_local_date( $date_string, $format = 'Y-m-d' ) {
+		$date_obj = new DateTime( $date_string );
+		$date_obj->setTimezone( new DateTimeZone( get_option( 'timezone_string' ) ) );
+		return $date_obj->format( $format );
+	}
 }
