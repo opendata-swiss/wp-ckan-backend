@@ -150,6 +150,15 @@ class Ckan_Backend_Local_Organisation {
 			) );
 		}
 
+		/* Type */
+		$cmb->add_field( array(
+			'name' => __( 'Federal level', 'ogdch' ),
+			'id'   => self::FIELD_PREFIX . 'federal_level',
+			'type' => 'select',
+			'show_option_none' => false,
+			'options' => array( 'Ckan_Backend_FederalLevel', 'get_federal_levels' ),
+		) );
+
 		/* URL */
 		$cmb->add_field( array(
 			'name' => __( 'URL', 'ogdch' ),

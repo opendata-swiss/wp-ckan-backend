@@ -265,6 +265,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 
 			Ckan_Backend_Frequency::init();
 			Ckan_Backend_Rights::init();
+			Ckan_Backend_FederalLevel::init();
 			new Ckan_Backend_Keyword_De();
 			new Ckan_Backend_Keyword_En();
 			new Ckan_Backend_Keyword_Fr();
@@ -523,6 +524,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			require_once plugin_dir_path( __FILE__ ) . 'taxonomies/ckan-backend-keyword-fr.php';
 			require_once plugin_dir_path( __FILE__ ) . 'taxonomies/ckan-backend-keyword-it.php';
 			require_once plugin_dir_path( __FILE__ ) . 'taxonomies/ckan-backend-mediatype.php';
+			require_once plugin_dir_path( __FILE__ ) . 'taxonomies/ckan-backend-federallevel.php';
 			require_once plugin_dir_path( __FILE__ ) . 'post-types/ckan-backend-local-dataset.php';
 			require_once plugin_dir_path( __FILE__ ) . 'post-types/ckan-backend-local-group.php';
 			require_once plugin_dir_path( __FILE__ ) . 'post-types/ckan-backend-local-organisation.php';
