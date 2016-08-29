@@ -152,11 +152,11 @@ class Ckan_Backend_Local_Organisation {
 
 		/* Type */
 		$cmb->add_field( array(
-			'name' => __( 'Federal level', 'ogdch' ),
-			'id'   => self::FIELD_PREFIX . 'federal_level',
+			'name' => __( 'Political level', 'ogdch' ),
+			'id'   => self::FIELD_PREFIX . 'political_level',
 			'type' => 'select',
 			'show_option_none' => false,
-			'options' => array( 'Ckan_Backend_FederalLevel', 'get_federal_levels' ),
+			'options' => array( 'Ckan_Backend_PoliticalLevel', 'get_political_levels' ),
 		) );
 
 		/* URL */

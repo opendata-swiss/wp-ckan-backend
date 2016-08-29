@@ -1,27 +1,27 @@
 <?php
 /**
- * Hardcoded taxonomy ckan-federal-level
+ * Hardcoded taxonomy ckan-political-level
  *
  * @package CKAN\Backend
  */
 
 /**
- * Class Ckan_Backend_FederalLevel
+ * Class Ckan_Backend_PoliticalLevel
  */
-class Ckan_Backend_FederalLevel {
+class Ckan_Backend_PoliticalLevel {
 
 	/**
-	 * Federal levels.
+	 * Political levels.
 	 *
 	 * @var array
 	 */
-	public static $federal_levels = array();
+	public static $political_levels = array();
 
 	/**
 	 * Constructor.
 	 */
 	public static function init() {
-		self::$federal_levels = array(
+		self::$political_levels = array(
 			'federation' => __( 'Federation', 'ogdch' ),
 			'canton' => __( 'Canton', 'ogdch' ),
 			'municipality' => __( 'Municipality', 'ogdch' ),
@@ -31,12 +31,12 @@ class Ckan_Backend_FederalLevel {
 	}
 
 	/**
-	 * Returns federal levels.
+	 * Returns political levels.
 	 *
 	 * @return array
 	 */
-	public static function get_federal_levels() {
-		return self::$federal_levels;
+	public static function get_political_levels() {
+		return self::$political_levels;
 	}
 
 }
