@@ -150,6 +150,15 @@ class Ckan_Backend_Local_Organisation {
 			) );
 		}
 
+		/* Type */
+		$cmb->add_field( array(
+			'name' => __( 'Political level', 'ogdch' ),
+			'id'   => self::FIELD_PREFIX . 'political_level',
+			'type' => 'select',
+			'show_option_none' => false,
+			'options' => array( 'Ckan_Backend_PoliticalLevel', 'get_political_levels' ),
+		) );
+
 		/* URL */
 		$cmb->add_field( array(
 			'name' => __( 'URL', 'ogdch' ),

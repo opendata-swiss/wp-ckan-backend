@@ -55,6 +55,7 @@ class Ckan_Backend_Sync_Local_Organisation extends Ckan_Backend_Sync_Abstract {
 		$titles       = Ckan_Backend_Helper::prepare_multilingual_field( $post->ID, $this->field_prefix . 'title', $load_from_post );
 		$descriptions = Ckan_Backend_Helper::prepare_multilingual_field( $post->ID, $this->field_prefix . 'description', $load_from_post );
 		$parent       = Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'parent', $load_from_post );
+		$political_level = Ckan_Backend_Helper::get_metafield_value( $post->ID, $this->field_prefix . 'political_level', $load_from_post );
 		$post_name = $post->post_name;
 		if ( empty( $post_name ) ) {
 			$post_name = sanitize_title( $post->post_title );
@@ -75,8 +76,12 @@ class Ckan_Backend_Sync_Local_Organisation extends Ckan_Backend_Sync_Abstract {
 			if ( '' !== $parent ) {
 				$data['groups'] = array( array( 'name' => $parent ) );
 			}
+			if ( '' !== $political_level ) {
+				$data['political_level'] = $political_level;
+			}
 		} else {
 			$_POST[ $this->field_prefix . 'parent' ] = get_post_meta( $post->ID, $this->field_prefix . 'parent', true );
+			$_POST[ $this->field_prefix . 'political_level' ] = get_post_meta( $post->ID, $this->field_prefix . 'political_level', true );
 		}
 
 		// set ckan id if its available in database
