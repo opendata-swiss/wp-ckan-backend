@@ -101,6 +101,9 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 
 			// order custom post types alphabetically in admin list
 			add_action( 'pre_get_posts', array( $this, 'set_post_order_in_admin' ) );
+
+			// filter slug generation
+			add_filter( 'sanitize_title', array( $this, 'slug_must_be_string' ) );
 		}
 
 		/**
@@ -500,6 +503,22 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 					$wp_query->set( 'order', 'ASC' );
 				}
 			}
+		}
+
+		/**
+		 * Make sure all slugs are strings.
+		 *
+		 * CKAN currently can't handle nummeric dataset slugs
+		 *
+		 * @param $title The string to be sanitized.
+		 *
+		 * @return mixed
+		 */
+		public function slug_must_be_string( $title ) {
+			if ( is_numeric( $title ) ) {
+				$title = '_' . $title;
+			}
+			return $title;
 		}
 
 		/**
