@@ -512,7 +512,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		 *
 		 * @param string $title The string to be sanitized.
 		 *
-		 * @return mixed
+		 * @return string
 		 */
 		public function slug_must_be_string( $title ) {
 			if ( is_numeric( $title ) ) {
