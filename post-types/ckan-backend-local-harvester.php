@@ -19,7 +19,7 @@ class Ckan_Backend_Local_Harvester {
 	 *
 	 * @var array
 	 */
-	protected static $harvester_sources = array();
+	protected static $harvest_sources = array();
 
 	/**
 	 * Constructor of this class.
@@ -126,31 +126,35 @@ class Ckan_Backend_Local_Harvester {
 		$ckan_id = get_post_meta( $post_id, self::FIELD_PREFIX . 'ckan_id', true );
 		if ( self::FIELD_PREFIX . 'status' === $column ) {
 			$harvest_source_status = $this->get_harvest_source_status( $ckan_id );
-			$status_text = '';
-			if ( $harvest_source_status['job_count'] > 0 ) {
-				$created_date = Ckan_Backend_Helper::convert_date_to_readable_format( $harvest_source_status['last_job']['created'] );
-				$started_date = Ckan_Backend_Helper::convert_date_to_readable_format( $harvest_source_status['last_job']['gather_started'] );
-				$finished_date = Ckan_Backend_Helper::convert_date_to_readable_format( $harvest_source_status['last_job']['finished'] );
-				$status_text .= '<div class="harvester-status">';
-				$status_text .= sprintf( esc_html_x( 'Job count: %s', '%s contains job count of harvester', 'ogdch' ), $harvest_source_status['job_count'] ) . '<br />';
-				$status_text .= '
-					<div class="last-harvest">
-						' . sprintf( esc_html_x( 'Last job created: %s', '%s contains the date when the last job was created', 'ogdch' ), $created_date ) . '<br />
-						' . sprintf( esc_html_x( 'Last job started: %s', '%s contains the date when the last job started', 'ogdch' ), $started_date ) . '<br />
-						' . sprintf( esc_html_x( 'Last job finished: %s', '%s contains the date when the last job finished', 'ogdch' ), $finished_date ) . '<br />
-						<span class="label label-added">' . sprintf( esc_html_x( '%s added', '%s contains the number of added datasets.', 'ogdch' ), esc_html( $harvest_source_status['last_job']['stats']['added'] ) ) . '</span>
-						<span class="label label-updated">' . sprintf( esc_html_x( '%s updated', '%s contains the number of updated datasets.', 'ogdch' ), esc_html( $harvest_source_status['last_job']['stats']['updated'] ) ) . '</span>
-						<span class="label label-deleted">' . sprintf( esc_html_x( '%s deleted', '%s contains the number of deleted datasets.', 'ogdch' ), esc_html( $harvest_source_status['last_job']['stats']['deleted'] ) ) . '</span>
-						<span class="label label-errored">' . sprintf( esc_html_x( '%s errored', '%s contains the number of errored dataset.', 'ogdch' ), esc_html( $harvest_source_status['last_job']['stats']['errored'] ) ) . '</span>
-					</div>';
-				$status_text .= '</div>';
-			} else {
-				$status_text .= esc_html__( 'No jobs yet', 'ogdch' );
-			}
+			if ( $harvest_source_status ) {
+				$status_text = '';
+				if ( $harvest_source_status['status']['job_count'] > 0 ) {
+					$created_date = Ckan_Backend_Helper::convert_date_to_readable_format( $harvest_source_status['last_job_status']['created'] );
+					$started_date = Ckan_Backend_Helper::convert_date_to_readable_format( $harvest_source_status['last_job_status']['gather_started'] );
+					$finished_date = Ckan_Backend_Helper::convert_date_to_readable_format( $harvest_source_status['last_job_status']['finished'] );
+					$status_text .= '<div class="harvester-status">';
+					$status_text .= sprintf( esc_html_x( 'Job count: %s', '%s contains job count of harvester', 'ogdch' ), $harvest_source_status['status']['job_count'] ) . '<br />';
+					$status_text .= '
+						<div class="last-harvest">
+							' . sprintf( esc_html_x( 'Last job created: %s', '%s contains the date when the last job was created', 'ogdch' ), $created_date ) . '<br />
+							' . sprintf( esc_html_x( 'Last job started: %s', '%s contains the date when the last job started', 'ogdch' ), $started_date ) . '<br />
+							' . sprintf( esc_html_x( 'Last job finished: %s', '%s contains the date when the last job finished', 'ogdch' ), $finished_date ) . '<br />
+							<span class="label label-added">' . sprintf( esc_html_x( '%s added', '%s contains the number of added datasets.', 'ogdch' ), esc_html( $harvest_source_status['last_job_status']['stats']['added'] ) ) . '</span>
+							<span class="label label-updated">' . sprintf( esc_html_x( '%s updated', '%s contains the number of updated datasets.', 'ogdch' ), esc_html( $harvest_source_status['last_job_status']['stats']['updated'] ) ) . '</span>
+							<span class="label label-deleted">' . sprintf( esc_html_x( '%s deleted', '%s contains the number of deleted datasets.', 'ogdch' ), esc_html( $harvest_source_status['last_job_status']['stats']['deleted'] ) ) . '</span>
+							<span class="label label-errored">' . sprintf( esc_html_x( '%s errored', '%s contains the number of errored dataset.', 'ogdch' ), esc_html( $harvest_source_status['last_job_status']['stats']['errored'] ) ) . '</span>
+						</div>';
+					$status_text .= '</div>';
+				} else {
+					$status_text .= esc_html__( 'No jobs yet', 'ogdch' );
+				}
 
-			// @codingStandardsIgnoreStart
-			echo $status_text;
-			// @codingStandardsIgnoreEnd
+				// @codingStandardsIgnoreStart
+				echo $status_text;
+				// @codingStandardsIgnoreEnd
+			} else {
+				esc_html_e( 'Could not retrieve harvest source status', 'ogdch' );
+			}
 		} else if ( self::FIELD_PREFIX . 'dashboard' === $column ) {
 			// @codingStandardsIgnoreStart
 			echo '<a href="edit.php?post_type=' . esc_attr( self::POST_TYPE ) . '&page=ckan-local-harvester-dashboard-page&harvester_id=' . esc_attr( $ckan_id ) . '""><span class="dashicons dashicons-dashboard"></span> ' . esc_html__( 'Dashboard', 'ogdch' ) . '</a>';
@@ -159,29 +163,34 @@ class Ckan_Backend_Local_Harvester {
 	}
 
 	/**
-	 * Returns status of given harvester. Warning: Status should never be saved in transient because we have no control over it!
+	 * Retrieves last job status of given harvest source. Warning: Status should never be saved in transient because we have no control over it!
 	 *
-	 * @param int $harvester_id ID of harvester to get status from.
+	 * @param int $harvest_id ID of harvest source to get status from.
 	 *
-	 * @return array
+	 * @return array|bool Last job status of given harvest source.
 	 */
-	public function get_harvest_source_status( $harvester_id ) {
-		$harvester_status = array();
+	protected function get_harvest_source_status( $harvest_id ) {
+		if ( empty( self::$harvest_sources ) ) {
+			$endpoint = CKAN_API_ENDPOINT . 'harvest_source_list';
+			$data     = array( 'return_last_job_status' => true );
 
-		$endpoint = CKAN_API_ENDPOINT . 'harvest_source_show_status';
-		$data     = array( 'id' => $harvester_id );
-		$data     = wp_json_encode( $data );
+			$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
+			$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
 
-		$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
-		$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
-
-		if ( 0 === count( $errors ) ) {
-			$harvester_status = $response['result'];
-		} else {
-			Ckan_Backend_Helper::print_error_messages( $errors );
+			if ( 0 === count( $errors ) ) {
+				self::$harvest_sources = $response['result'];
+			} else {
+				Ckan_Backend_Helper::print_error_messages( $errors );
+			}
 		}
 
-		return $harvester_status;
+		foreach ( self::$harvest_sources as $harvest_source ) {
+			if ( $harvest_id === $harvest_source['id'] ) {
+				return $harvest_source;
+			}
+		}
+
+		return false;
 	}
 
 	/**
