@@ -23,6 +23,8 @@
 
 .post-type-ckan-local-harvester #view-post-btn {
   display: none; }
+.post-type-ckan-local-harvester th#_ckan_local_harvester_dashboard {
+  width: 120px; }
 
 /* CMB2 style changes */
 .cmb2-wrap input.regular-text,
@@ -68,17 +70,8 @@
     background-color: #cc0000;
     padding: 5px; }
 
-/* Harvester Dashboar */
-.harvester_dashboard .inside {
-  padding-bottom: 0; }
-.harvester_dashboard .collapsible h4 {
-  cursor: pointer; }
-.harvester_dashboard h5 {
-  font-size: 1em;
-  margin-bottom: 5px; }
-.harvester_dashboard .actions {
-  margin: 10px 0; }
-.harvester_dashboard .label {
+/* Harvester Dashboard */
+.harvester-status .label {
   display: inline;
   padding: .2em .6em .3em;
   font-size: 0.8em;
@@ -88,14 +81,24 @@
   white-space: nowrap;
   vertical-align: baseline;
   border-radius: .25em; }
-.harvester_dashboard .label-errored {
+.harvester-status .label-errored {
   background-color: #d23900; }
-.harvester_dashboard .label-added {
+.harvester-status .label-added {
   background-color: #5cb85c; }
-.harvester_dashboard .label-updated {
+.harvester-status .label-updated {
   background-color: #337ab7; }
-.harvester_dashboard .label-deleted {
+.harvester-status .label-deleted {
   background-color: #f0ad4e; }
+
+.harvester_dashboard .inside {
+  padding-bottom: 0; }
+.harvester_dashboard .collapsible h4 {
+  cursor: pointer; }
+.harvester_dashboard h5 {
+  font-size: 1em;
+  margin-bottom: 5px; }
+.harvester_dashboard .actions {
+  margin: 10px 0; }
 .harvester_dashboard .button.delete {
   color: #fff;
   background: #d23900;

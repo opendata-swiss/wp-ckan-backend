@@ -16,7 +16,6 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 	 */
 	public $menu_slug = 'ckan-local-harvester-dashboard-page';
 
-
 	/**
 	 * Page suffix.
 	 * @var string
@@ -294,7 +293,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 	 * @param bool  $show_detail_button Add show detail button at the bottom.
 	 */
 	public function render_job_table( $job, $collapsed = true, $show_detail_button = true ) {
-		$job_created = $this->convert_datetime_to_readable_format( $job['created'] );
+		$job_created = Ckan_Backend_Helper::convert_date_to_readable_format( $job['created'] );
 		$collapsed_class = ( $collapsed ? 'collapsed' : 'open' );
 		?>
 		<div class="postbox">
@@ -304,11 +303,11 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 					<?php
 					if ( ! empty( $job['stats'] ) ) {
 						?>
-						<div class="status">
-							<span class="label label-errored"><?php printf( esc_html_x( '%s errors', '%s contains the number of errors.', 'ogdch' ), esc_html( ( array_key_exists( 'errored', $job['stats'] ) ) ? $job['stats']['errored'] : 0 ) ); ?></span>
+						<div class="harvester-status">
 							<span class="label label-added"><?php printf( esc_html_x( '%s added', '%s contains the number of added datasets.', 'ogdch' ), esc_html( ( array_key_exists( 'added', $job['stats'] ) ? $job['stats']['added'] : 0 ) ) ); ?></span>
 							<span class="label label-updated"><?php printf( esc_html_x( '%s updated', '%s contains the number of updated datasets.', 'ogdch' ), esc_html( ( array_key_exists( 'updated', $job['stats'] ) ? $job['stats']['updated'] : 0 ) ) ); ?></span>
 							<span class="label label-deleted"><?php printf( esc_html_x( '%s deleted', '%s contains the number of deleted datasets.', 'ogdch' ), esc_html( ( array_key_exists( 'deleted', $job['stats'] ) ? $job['stats']['deleted'] : 0 ) ) ); ?></span>
+							<span class="label label-errored"><?php printf( esc_html_x( '%s errors', '%s contains the number of errors.', 'ogdch' ), esc_html( ( array_key_exists( 'errored', $job['stats'] ) ) ? $job['stats']['errored'] : 0 ) ); ?></span>
 						</div>
 						<?php
 					}
@@ -320,15 +319,15 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 						</tr>
 						<tr>
 							<th><?php esc_html_e( 'Created', 'ogdch' ); ?></th>
-							<td><?php echo esc_html( $this->convert_datetime_to_readable_format( $job['created'] ) ); ?></td>
+							<td><?php echo esc_html( Ckan_Backend_Helper::convert_date_to_readable_format( $job['created'] ) ); ?></td>
 						</tr>
 						<tr>
 							<th><?php esc_html_e( 'Started', 'ogdch' ); ?></th>
-							<td><?php echo esc_html( $this->convert_datetime_to_readable_format( $job['gather_started'] ) ); ?></td>
+							<td><?php echo esc_html( Ckan_Backend_Helper::convert_date_to_readable_format( $job['gather_started'] ) ); ?></td>
 						</tr>
 						<tr>
 							<th><?php esc_html_e( 'Finished', 'ogdch' ); ?></th>
-							<td><?php echo esc_html( $this->convert_datetime_to_readable_format( $job['finished'] ) ); ?></td>
+							<td><?php echo esc_html( Ckan_Backend_Helper::convert_date_to_readable_format( $job['finished'] ) ); ?></td>
 						</tr>
 						<tr>
 							<th><?php esc_html_e( 'Status', 'ogdch' ); ?></th>
@@ -616,23 +615,4 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 
 		return $job_report;
 	}
-
-	/**
-	 * Converts datetime from harvester extension into readable format
-	 *
-	 * @param string $datetime Given datetime from harvester extension.
-	 * @param string $date_format Output date gets formatted with this format.
-	 *
-	 * @return string
-	 */
-	public function convert_datetime_to_readable_format( $datetime, $date_format = 'd.m.Y H:i:s' ) {
-		$formatted_datetime = '-';
-
-		if ( ! empty( $datetime ) ) {
-			$formatted_datetime = date( $date_format, strtotime( $datetime ) );
-		}
-
-		return $formatted_datetime;
-	}
-
 }

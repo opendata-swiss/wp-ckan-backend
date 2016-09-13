@@ -33,6 +33,9 @@
   #view-post-btn {
     display: none;
   }
+  th#_ckan_local_harvester_dashboard {
+    width: 120px;
+  }
 }
 
 /* CMB2 style changes */
@@ -99,22 +102,8 @@
   }
 }
 
-/* Harvester Dashboar */
-.harvester_dashboard {
-  .inside {
-    padding-bottom: 0;
-  }
-  .collapsible h4 {
-    cursor: pointer;
-  }
-  h5 {
-    font-size: 1em;
-    margin-bottom: 5px;
-  }
-  .actions {
-    margin: 10px 0;
-  }
-
+/* Harvester Dashboard */
+.harvester-status {
   .label {
     display: inline;
     padding: .2em .6em .3em;
@@ -137,6 +126,21 @@
   }
   .label-deleted {
     background-color: #f0ad4e;
+  }
+}
+.harvester_dashboard {
+  .inside {
+    padding-bottom: 0;
+  }
+  .collapsible h4 {
+    cursor: pointer;
+  }
+  h5 {
+    font-size: 1em;
+    margin-bottom: 5px;
+  }
+  .actions {
+    margin: 10px 0;
   }
 
   .button.delete {
