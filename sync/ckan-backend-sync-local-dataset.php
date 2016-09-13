@@ -135,15 +135,15 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 						'description'  => $descriptions,
 						'issued'       => $issued,
 						'modified'     => $modified,
-						'language'     => $resource['languages'],
+						'language'     => key_exists( 'languages', $resource ) ? $resource['languages'] : array(),
 						'url'          => $resource['access_url'],
 						'download_url' => $resource['download_url'],
 						'rights'       => $resource['rights'],
 						'license'      => '',
 						'byte_size'    => $resource['byte_size'],
 						'media_type'   => $resource['media_type'],
-						'format'       => $resource['format'],
-						'coverage'     => $resource['coverage'],
+						'format'       => key_exists( 'format', $resource ) ? $resource['format'] : '',
+						'coverage'     => key_exists( 'coverage', $resource ) ? $resource['coverage'] : '',
 					);
 				}
 			}
@@ -232,7 +232,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 		if ( is_array( $resources ) ) {
 			foreach ( $resources as $resource ) {
 				// Check if at least one mandatory field (access_url) is filled out. Because we don't want to add empty repeatable fields.
-				if ( ! empty( $resource['access_url'] ) ) {
+				if ( ! empty( $resource['access_url'] ) && key_exists( 'languages', $resource ) ) {
 					$languages = array_merge( $languages, $resource['languages'] );
 				}
 			}
