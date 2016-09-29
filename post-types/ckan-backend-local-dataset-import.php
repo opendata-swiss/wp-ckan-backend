@@ -638,7 +638,7 @@ class Ckan_Backend_Local_Dataset_Import {
 		foreach ( $download_urls as $download_url ) {
 			$distribution->add_download_url( (string) $download_url );
 		}
-		$rights = (string) $this->get_single_element_from_xpath( $xml, './dct:rights' );
+		$rights = trim( (string) $this->get_single_element_from_xpath( $xml, './dct:rights' ) );
 		if ( empty( $rights ) ) {
 			// Fallback for old license-format (which never worked?)
 			$rights = (string) $this->get_single_element_from_xpath( $xml, './dct:rights/odrs:dataLicence' );
