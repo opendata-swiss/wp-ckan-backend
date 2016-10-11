@@ -302,8 +302,7 @@ class Ckan_Backend_Local_Dataset_Export {
 			}
 
 			if ( ! empty( $distribution['rights'] ) ) {
-				$distribution_rights_xml = $distribution_xml->addChild( 'rights', null, $this->namespaces['dct'] );
-				$distribution_rights_xml->addChild( 'dataLicence', $distribution['rights'], $this->namespaces['odrs'] );
+				$distribution_xml->addChild( 'rights', $distribution['rights'], $this->namespaces['dct'] );
 			}
 
 			if ( ! empty( $distribution['license'] ) ) {
