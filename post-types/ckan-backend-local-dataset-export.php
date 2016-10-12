@@ -128,18 +128,18 @@ class Ckan_Backend_Local_Dataset_Export {
 
 		$dataset_rdf_uri = esc_url( 'http://' . $identifier['organisation'] . '/' . $identifier['original_identifier'] );
 		$dataset_xml->addAttribute( 'rdf:about', $dataset_rdf_uri, $this->namespaces['rdf'] );
-		$dataset_xml->addChild( 'identifier', $identifier['original_identifier'] . '@' . $identifier['organisation'], $this->namespaces['dct'] );
+		Ckan_Backend_Helper::add_child_with_cdata( $dataset_xml, 'identifier', $identifier['original_identifier'] . '@' . $identifier['organisation'], $this->namespaces['dct'] );
 
 		foreach ( $language_priority as $lang ) {
 			$title = get_post_meta( $post->ID, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'title_' . $lang, true );
 			if ( ! empty( $title ) ) {
-				$title_xml = $dataset_xml->addChild( 'title', $title, $this->namespaces['dct'] );
+				$title_xml = Ckan_Backend_Helper::add_child_with_cdata( $dataset_xml, 'title', $title, $this->namespaces['dct'] );
 				$title_xml->addAttribute( 'xml:lang', $lang, 'xml' );
 			}
 			$description = get_post_meta( $post->ID, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'description_' . $lang, true );
 			if ( ! empty( $description ) ) {
-				$title_xml = $dataset_xml->addChild( 'description', $description, $this->namespaces['dct'] );
-				$title_xml->addAttribute( 'xml:lang', $lang, 'xml' );
+				$description_xml = Ckan_Backend_Helper::add_child_with_cdata( $dataset_xml, 'description', $description, $this->namespaces['dct'] );
+				$description_xml->addAttribute( 'xml:lang', $lang, 'xml' );
 			}
 		}
 
@@ -161,7 +161,7 @@ class Ckan_Backend_Local_Dataset_Export {
 			if ( ! empty( $publisher['termdat_reference'] ) ) {
 				$publisher_description_xml->addAttribute( 'rdf:about', $publisher['termdat_reference'], $this->namespaces['rdf'] );
 			}
-			$publisher_description_xml->addChild( 'label', $publisher['label'], $this->namespaces['rdfs'] );
+			Ckan_Backend_Helper::add_child_with_cdata( $publisher_description_xml, 'label', $publisher['label'], $this->namespaces['rdfs'] );
 		}
 
 		$contact_points = get_post_meta( $post->ID, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'contact_points', true );
@@ -169,7 +169,7 @@ class Ckan_Backend_Local_Dataset_Export {
 			$contact_point_xml = $dataset_xml->addChild( 'contactPoint', null, $this->namespaces['dcat'] );
 			$contact_point_organization_xml = $contact_point_xml->addChild( 'Organization', null, $this->namespaces['vcard'] );
 			if ( ! empty( $contact_point['name'] ) ) {
-				$contact_point_organization_xml->addChild( 'fn', $contact_point['name'], $this->namespaces['vcard'] );
+				Ckan_Backend_Helper::add_child_with_cdata( $contact_point_organization_xml, 'fn', $contact_point['name'], $this->namespaces['vcard'] );
 			}
 			if ( ! empty( $contact_point['email'] ) ) {
 				$contact_point_organization_email_xml = $contact_point_organization_xml->addChild( 'hasEmail', null, $this->namespaces['vcard'] );
@@ -200,7 +200,7 @@ class Ckan_Backend_Local_Dataset_Export {
 				$relation_description_xml->addAttribute( 'rdf:about', $relation['url'], $this->namespaces['rdf'] );
 			}
 			if ( ! empty( $relation['label'] ) ) {
-				$relation_description_xml->addChild( 'label', $relation['label'], $this->namespaces['rdfs'] );
+				Ckan_Backend_Helper::add_child_with_cdata( $relation_description_xml, 'label', $relation['label'], $this->namespaces['rdfs'] );
 			}
 		}
 
@@ -215,16 +215,16 @@ class Ckan_Backend_Local_Dataset_Export {
 
 		$landing_page = get_post_meta( $post->ID, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'landing_page', true );
 		if ( ! empty( $landing_page ) ) {
-			$dataset_xml->addChild( 'landingPage', $landing_page, $this->namespaces['dcat'] );
+			Ckan_Backend_Helper::add_child_with_cdata( $dataset_xml, 'landingPage', $landing_page, $this->namespaces['dcat'] );
 		}
 
 		$spatial = get_post_meta( $post->ID, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'spatial', true );
 		if ( ! empty( $spatial ) ) {
-			$dataset_xml->addChild( 'spatial', $spatial, $this->namespaces['dct'] );
+			Ckan_Backend_Helper::add_child_with_cdata( $dataset_xml, 'spatial', $spatial, $this->namespaces['dct'] );
 		}
 		$coverage = get_post_meta( $post->ID, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'coverage', true );
 		if ( ! empty( $coverage ) ) {
-			$dataset_xml->addChild( 'coverage', $coverage, $this->namespaces['dct'] );
+			Ckan_Backend_Helper::add_child_with_cdata( $dataset_xml, 'coverage', $coverage, $this->namespaces['dct'] );
 		}
 
 		$temporals = get_post_meta( $post->ID, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'temporals', true );
@@ -249,7 +249,7 @@ class Ckan_Backend_Local_Dataset_Export {
 
 		$see_alsos = get_post_meta( $post->ID, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'see_alsos', true );
 		foreach ( $see_alsos as $see_also ) {
-			$dataset_xml->addChild( 'seeAlso', $see_also['dataset_identifier'], $this->namespaces['rdfs'] );
+			Ckan_Backend_Helper::add_child_with_cdata( $dataset_xml, 'seeAlso', $see_also['dataset_identifier'], $this->namespaces['rdfs'] );
 		}
 
 		$distributions = get_post_meta( $post->ID, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'distributions', true );
@@ -261,7 +261,7 @@ class Ckan_Backend_Local_Dataset_Export {
 
 			if ( ! empty( $distribution['identifier'] ) ) {
 				$distribution_rdf_uri = esc_url( $dataset_rdf_uri . '/' . $distribution['identifier'] );
-				$distribution_xml->addChild( 'identifier', $distribution['identifier'], $this->namespaces['dct'] );
+				Ckan_Backend_Helper::add_child_with_cdata( $distribution_xml, 'identifier', $distribution['identifier'], $this->namespaces['dct'] );
 			} else {
 				$distribution_rdf_uri = esc_url( $dataset_rdf_uri . '/' . $distribution_count );
 			}
@@ -269,11 +269,11 @@ class Ckan_Backend_Local_Dataset_Export {
 
 			foreach ( $language_priority as $lang ) {
 				if ( ! empty( $distribution[ 'title_' . $lang ] ) ) {
-					$distribution_title_xml = $distribution_xml->addChild( 'title', $distribution[ 'title_' . $lang ], $this->namespaces['dct'] );
+					$distribution_title_xml = Ckan_Backend_Helper::add_child_with_cdata( $distribution_xml, 'title', $distribution[ 'title_' . $lang ], $this->namespaces['dct'] );
 					$distribution_title_xml->addAttribute( 'xml:lang', $lang, 'xml' );
 				}
 				if ( ! empty( $distribution[ 'description_' . $lang ] ) ) {
-					$distribution_description_xml = $distribution_xml->addChild( 'description', $distribution[ 'description_' . $lang ], $this->namespaces['dct'] );
+					$distribution_description_xml = Ckan_Backend_Helper::add_child_with_cdata( $distribution_xml, 'description', $distribution[ 'description_' . $lang ], $this->namespaces['dct'] );
 					$distribution_description_xml->addAttribute( 'xml:lang', $lang, 'xml' );
 				}
 			}
@@ -293,11 +293,11 @@ class Ckan_Backend_Local_Dataset_Export {
 			}
 
 			if ( ! empty( $distribution['access_url'] ) ) {
-				$distribution_accessurl_xml = $distribution_xml->addChild( 'accessURL', $distribution['access_url'], $this->namespaces['dcat'] );
+				$distribution_accessurl_xml = Ckan_Backend_Helper::add_child_with_cdata( $distribution_xml, 'accessURL', $distribution['access_url'], $this->namespaces['dcat'] );
 				$distribution_accessurl_xml->addAttribute( 'rdf:datatype', 'http://www.w3.org/2001/XMLSchema#anyURI', $this->namespaces['rdf'] );
 			}
 			if ( ! empty( $distribution['download_url'] ) ) {
-				$distribution_downloadurl_xml = $distribution_xml->addChild( 'downloadURL', $distribution['download_url'], $this->namespaces['dcat'] );
+				$distribution_downloadurl_xml = Ckan_Backend_Helper::add_child_with_cdata( $distribution_xml, 'downloadURL', $distribution['download_url'], $this->namespaces['dcat'] );
 				$distribution_downloadurl_xml->addAttribute( 'rdf:datatype', 'http://www.w3.org/2001/XMLSchema#anyURI', $this->namespaces['rdf'] );
 			}
 
@@ -314,15 +314,15 @@ class Ckan_Backend_Local_Dataset_Export {
 			}
 
 			if ( ! empty( $distribution['media_type'] ) ) {
-				$distribution_xml->addChild( 'mediaType', $distribution['media_type'], $this->namespaces['dcat'] );
+				Ckan_Backend_Helper::add_child_with_cdata( $distribution_xml, 'mediaType', $distribution['media_type'], $this->namespaces['dcat'] );
 			}
 
 			if ( ! empty( $distribution['format'] ) ) {
-				$distribution_xml->addChild( 'format', $distribution['format'], $this->namespaces['dct'] );
+				Ckan_Backend_Helper::add_child_with_cdata( $distribution_xml, 'format', $distribution['format'], $this->namespaces['dct'] );
 			}
 
 			if ( ! empty( $distribution['coverage'] ) ) {
-				$distribution_xml->addChild( 'coverage', $distribution['coverage'], $this->namespaces['dct'] );
+				Ckan_Backend_Helper::add_child_with_cdata( $distribution_xml, 'coverage', $distribution['coverage'], $this->namespaces['dct'] );
 			}
 		}
 
