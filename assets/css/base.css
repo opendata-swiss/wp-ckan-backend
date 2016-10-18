@@ -8,6 +8,12 @@
 .post-type-ckan-local-harvester .submitbox #preview-action {
   display: none; }
 
+.post-type-ckan-local-dataset select#post_status option[value="pending"],
+.post-type-ckan-local-dataset select#post_status option[value="private"],
+.post-type-ckan-local-dataset .inline-edit-status select[name="_status"] option[value="pending"],
+.post-type-ckan-local-dataset .inline-edit-status select[name="_status"] option[value="private"] {
+  display: none; }
+
 .post-type-ckan-local-group #minor-publishing,
 .post-type-ckan-local-org #minor-publishing,
 .post-type-ckan-local-harvester #minor-publishing {

@@ -11,6 +11,18 @@
     }
   }
 }
+
+// Disable status pending / private on datasets
+.post-type-ckan-local-dataset {
+  select#post_status,
+  .inline-edit-status select[name="_status"]{
+    option[value="pending"],
+    option[value="private"] {
+      display: none;
+    }
+  }
+}
+
 .post-type-ckan-local-group,
 .post-type-ckan-local-org,
 .post-type-ckan-local-harvester {
@@ -18,10 +30,11 @@
   #minor-publishing {
     display: none;
   }
+
+  // hide post slug editing box for non-admin users
   #edit-slug-box {
     display: none;
   }
-
   &.can_edit_data_of_all_organisations {
     #edit-slug-box {
       display: block;
