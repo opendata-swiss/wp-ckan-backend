@@ -130,9 +130,10 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 				return $allcaps;
 			}
 
-			// On save there is a call without a post id. Why?
+			// On the list view there is a call without a post id
 			if ( in_array( $requested_cap, array( 'edit_others_datasets', 'edit_others_organisations' ) ) && empty( $args[2] ) ) {
 				$allcaps[ $requested_cap ] = true;
+				return $allcaps;
 			}
 
 			if ( 'edit_others_organisations' === $required_cap ) {
@@ -181,9 +182,8 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 
 			// only remove capability if user is a non-admin user
 			if ( ! members_current_user_has_role( 'administrator' ) ) {
-				$other_user_id = $args[2];
-
-				if ( ! empty( $other_user_id ) ) {
+				if ( ! empty( $args[2] ) ) {
+					$other_user_id = $args[2];
 					$user_organisation       = get_the_author_meta( self::$plugin_slug . '_organisation', $current_user_id );
 					$other_user_organisation = get_user_meta( $other_user_id, self::$plugin_slug . '_organisation', true );
 					if ( $user_organisation !== $other_user_organisation || members_user_has_role( $other_user_id, 'administrator' ) || members_user_has_role( $other_user_id, 'content_manager' ) ) {
