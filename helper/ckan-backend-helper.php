@@ -313,7 +313,7 @@ class Ckan_Backend_Helper {
 	 */
 	public static function print_error_messages( $errors ) {
 		// wrap in array
-		if ( ! is_array( $errors ) && ! empty( $errors )) {
+		if ( ! is_array( $errors ) && ! empty( $errors ) ) {
 			$errors = array( $errors );
 		}
 		//print the message
@@ -337,7 +337,7 @@ class Ckan_Backend_Helper {
 	 */
 	public static function print_messages( $msgs ) {
 		// wrap in array
-		if ( ! is_array( $msgs ) && ! empty( $msgs )) {
+		if ( ! is_array( $msgs ) && ! empty( $msgs ) ) {
 			$msgs = array( $msgs );
 		}
 		//print the message
