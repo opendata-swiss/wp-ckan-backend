@@ -277,6 +277,16 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		 * @return void
 		 */
 		public function bootstrap() {
+			//check if constants are defined in wp config
+			if ( ! defined( "CKAN_API_ENDPOINT" ) ) {
+				wp_die( "Please define CKAN_API_ENDPOINT in your WP config." );
+				return;
+			}
+			if ( ! defined( "CKAN_API_KEY" ) ) {
+				wp_die( "Please define CKAN_API_KEY in your WP config.") ;
+				return;
+			}
+
 			$this->load_dependencies();
 
 			self::$keywords_tax_mapping = array(
