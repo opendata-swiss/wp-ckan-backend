@@ -124,12 +124,15 @@ class Ckan_Backend_Helper {
 				// if title in current language is not set -> find fallback title in other language
 				if ( empty( $title ) ) {
 					global $language_priority;
-					foreach ( $language_priority as $lang ) {
-						$title = get_post_meta( $post->ID, $field_prefix . 'title_' . $lang, true );
-						if ( ! empty( $title ) ) {
-							break;
+					if ( isset( $language_priority ) ) {
+						foreach ( $language_priority as $lang ) {
+							$title = get_post_meta( $post->ID, $field_prefix . 'title_' . $lang, true );
+							if ( ! empty( $title ) ) {
+								break;
+							}
 						}
 					}
+
 				}
 				// if title in all languages is empty use post title
 				if ( empty( $title ) ) {
@@ -230,10 +233,12 @@ class Ckan_Backend_Helper {
 				// if title in current language is not set -> find fallback title in other language
 				if ( empty( $organization_title ) ) {
 					global $language_priority;
-					foreach ( $language_priority as $lang ) {
-						$organization_title = get_post_meta( $organisations[0]->ID, Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'title_' . $lang, true );
-						if ( ! empty( $organization_title ) ) {
-							break;
+					if ( isset( $language_priority ) ) {
+						foreach ($language_priority as $lang) {
+							$organization_title = get_post_meta($organisations[0]->ID, Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'title_' . $lang, true);
+							if (!empty($organization_title)) {
+								break;
+							}
 						}
 					}
 				}
@@ -376,7 +381,6 @@ class Ckan_Backend_Helper {
 	 * @return string
 	 */
 	public static function get_localized_text( $multilingual_text, $default = '' ) {
-		global $language_priority;
 		if ( ! is_array( $multilingual_text ) ) {
 			$multilingual_text = json_decode( $multilingual_text, true );
 		}
@@ -386,9 +390,12 @@ class Ckan_Backend_Helper {
 			return $localized_text;
 		}
 
-		foreach ( $language_priority as $lang ) {
-			if ( ! empty( $multilingual_text[ $lang ] ) ) {
-				return $multilingual_text[ $lang ];
+		global $language_priority;
+		if ( isset( $language_priority ) ) {
+			foreach ($language_priority as $lang) {
+				if (!empty($multilingual_text[$lang])) {
+					return $multilingual_text[$lang];
+				}
 			}
 		}
 
