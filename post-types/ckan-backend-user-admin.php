@@ -79,7 +79,9 @@ class Ckan_Backend_User_Admin {
 				wp_new_user_notification( $user_id, null, 'both' );
 
 				if ( ! is_wp_error( $user_id ) ) {
-					update_user_meta( $user_id, Ckan_Backend::$plugin_slug . '_organisation', $_REQUEST[ Ckan_Backend::$plugin_slug . '_organisation' ] );
+					// do not use the organization value from $_REQUEST but rather use the value from the current user
+					$organisation = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
+					update_user_meta( $user_id, Ckan_Backend::$plugin_slug . '_organisation', $organisation );
 					Ckan_Backend_Helper::print_messages( sprintf( esc_html__( 'User %s successfully created. An e-mail to set the password has been sent to the user.', 'ogdch' ), $userdata['user_login'] ) );
 					$success = true;
 				} else {
