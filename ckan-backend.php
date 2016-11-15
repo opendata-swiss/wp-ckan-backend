@@ -117,7 +117,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		 * @param PHPMailer $mailer The mailer instance
 		 */
 		public function mailer_config(PHPMailer $mailer) {
-			if ( WP_DEBUG ) {
+			if ( defined( 'WP_LOCAL_DEV' ) && WP_LOCAL_DEV ) {
 				$mailer->IsSMTP();
 				$mailer->Host = "localhost"; // your SMTP server
 				$mailer->Port = 1025;
