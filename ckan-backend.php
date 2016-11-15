@@ -104,6 +104,26 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 
 			// filter slug generation
 			add_filter( 'sanitize_title', array( $this, 'slug_must_be_string' ) );
+
+			// use custom mailer when debugging
+			add_action( 'phpmailer_init', array( $this, 'mailer_config' ) );
+		}
+
+		/**
+		 * Configures the PHPMailer of WordPress
+		 *
+		 * This function is used for debugging purposes on local setups
+		 *
+		 * @param PHPMailer $mailer The mailer instance.
+		 */
+		public function mailer_config(PHPMailer $mailer) {
+			if ( defined( 'WP_LOCAL_DEV' ) && WP_LOCAL_DEV ) {
+				$mailer->IsSMTP();
+				$mailer->Host = 'localhost'; // your SMTP server
+				$mailer->Port = 1025;
+				$mailer->SMTPDebug = 0; // write 2 if you want to see client/server communication in page
+				$mailer->CharSet = 'utf-8';
+			}
 		}
 
 		/**
