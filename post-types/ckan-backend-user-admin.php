@@ -37,7 +37,7 @@ class Ckan_Backend_User_Admin {
 	public function register_submenu_page() {
 		$this->page_suffix = add_submenu_page(
 			'users.php',
-			__( 'Add Organization User', 'ogdch' ),
+			__( 'Add New Organization User', 'ogdch' ),
 			__( 'Organization User', 'ogdch' ),
 			'edit_organisations',
 			$this->menu_slug,
@@ -65,7 +65,7 @@ class Ckan_Backend_User_Admin {
 				'first_name'  => $_REQUEST['first_name'],
 				'role'        => $_REQUEST['role'],
 			);
-
+			$success = false;
 			if ( empty( $userdata['user_login'] ) ) {
 				Ckan_Backend_Helper::print_error_messages( __( 'Username is mandatory' ) );
 			} elseif ( empty( $userdata['user_email'] ) ) {
@@ -76,18 +76,21 @@ class Ckan_Backend_User_Admin {
 				Ckan_Backend_Helper::print_error_messages( __( 'User with this e-mail address already exists, choose a different one.' ) );
 			} else {
 				$user_id = wp_insert_user( $userdata );
+				wp_new_user_notification( $user_id, null, 'both' );
+
 				if ( ! is_wp_error( $user_id ) ) {
 					update_user_meta( $user_id, Ckan_Backend::$plugin_slug . '_organisation', $_REQUEST[ Ckan_Backend::$plugin_slug . '_organisation' ] );
-					Ckan_Backend_Helper::print_messages( sprintf( esc_html__( 'User %s successfully created', 'ogdch' ), $user_id ) );
+					Ckan_Backend_Helper::print_messages( sprintf( esc_html__( 'User %s successfully created. An e-mail to set the password has been sent to the user.', 'ogdch' ), $userdata['user_login'] ) );
+					$success = true;
 				} else {
 					Ckan_Backend_Helper::print_error_messages( sprintf( esc_html__( 'Error while creating user: %s', 'ogdch' ), $user_id->get_error_message() ) );
 				}
 			}
-			$login = (isset( $_REQUEST['user_login'] ) ? $_REQUEST['user_login'] : '' );
-			$email = (isset( $_REQUEST['email'] ) ? $_REQUEST['email'] : '' );
-			$first_name = ( isset( $_REQUEST['first_name'] ) ? $_REQUEST['first_name'] : '' );
-			$last_name = ( isset( $_REQUEST['last_name'] ) ? $_REQUEST['last_name'] : '' );
-			$role = (isset( $_REQUEST['role'] ) ? $_REQUEST['role'] : '' );
+			$login = ( ! $success && isset( $_REQUEST['user_login'] ) ? $_REQUEST['user_login'] : '' );
+			$email = ( ! $success && isset( $_REQUEST['email'] ) ? $_REQUEST['email'] : '' );
+			$first_name = ( ! $success &&  isset( $_REQUEST['first_name'] ) ? $_REQUEST['first_name'] : '' );
+			$last_name = ( ! $success &&  isset( $_REQUEST['last_name'] ) ? $_REQUEST['last_name'] : '' );
+			$role = ( ! $success && isset( $_REQUEST['role'] ) ? $_REQUEST['role'] : '' );
 		} else {
 			$login = '';
 			$email = '';
