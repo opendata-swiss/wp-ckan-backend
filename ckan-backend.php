@@ -1,10 +1,12 @@
 <?php
 /**
  * Plugin Name: CKAN Backend
- * Description: Plugin to create manual datasets, organizations, groups and harvesters in CKAN via API.
- * Author: Team Jazz <jazz@liip.ch>
+ * Description: Manages datasets, organizations, groups and harvesters in CKAN via its API. It is required to install the <strong>CMB2</strong> plugin as well to use all the features of this plugin.
+ * Author: Liip - Team Jazz <jazz@liip.ch>
+ * Author URI:   https://liip.ch
+ * Plugin URI:   https://github.com/opendata-swiss/wp-ckan-backend
  * Version: 1.0.0
- * Date: 17.06.2015
+ * Date: 01.12.2016
  *
  * @package CKAN\Backend
  */
