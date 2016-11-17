@@ -1,0 +1,1505 @@
+# SOME DESCRIPTIVE TITLE.
+# This file is put in the public domain.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: wp-ckan-backend 1.0.0\n"
+"Report-Msgid-Bugs-To: jazz@liip.ch\n"
+"POT-Creation-Date: 2016-11-15 17:28+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Stefan Oderbolz <oderbolz@gmail.com>, 2016\n"
+"Language-Team: French (https://www.transifex.com/opendataswiss/teams/54778/fr/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: fr\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: ckan-backend.php:224
+msgid "Filter"
+msgstr "filtre"
+
+#: ckan-backend.php:316
+msgid "Search dataset..."
+msgstr "Rechercher les jeux de données..."
+
+#: ckan-backend.php:319
+msgid "No media type"
+msgstr "Pas de format"
+
+#: ckan-backend.php:343 ckan-backend.php:348 ckan-backend.php:412
+#: post-types/ckan-backend-local-dataset.php:205
+#: post-types/ckan-backend-local-harvester.php:245
+#: post-types/ckan-backend-local-organisation.php:47
+#: post-types/ckan-backend-local-organisation.php:113
+msgid "Organization"
+msgstr "Organisations"
+
+#: ckan-backend.php:386
+msgid "Please choose an organization for this user."
+msgstr "Veuillez choisir une organisation pour cet utilisateur."
+
+#: ckan-backend.php:487
+msgid "All good!"
+msgstr "Tout est en ordre!"
+
+#: ckan-backend.php:489
+msgid "Not synchronized! Please fix data and save the element again."
+msgstr ""
+"Pas de synchronisation! Veuillez corriger les données et sauvegarder à "
+"nouveau l'élément."
+
+#: post-types/ckan-backend-user-admin.php:40
+msgid "Add Organization User"
+msgstr ""
+
+#: post-types/ckan-backend-user-admin.php:41
+msgid "Organization User"
+msgstr ""
+
+#: post-types/ckan-backend-user-admin.php:54
+#: post-types/ckan-backend-local-dataset-import.php:50
+#: post-types/ckan-backend-local-harvester-dashboard.php:83
+msgid "You do not have sufficient permissions to access this page."
+msgstr ""
+
+#: post-types/ckan-backend-user-admin.php:70
+msgid "Username is mandatory"
+msgstr ""
+
+#: post-types/ckan-backend-user-admin.php:72
+msgid "E-Mail is mandatory"
+msgstr ""
+
+#: post-types/ckan-backend-user-admin.php:74
+msgid "User with this username already exists, choose a different one."
+msgstr ""
+
+#: post-types/ckan-backend-user-admin.php:76
+msgid "User with this e-mail address already exists, choose a different one."
+msgstr ""
+
+#: post-types/ckan-backend-user-admin.php:81
+#, php-format
+msgid "User %s successfully created"
+msgstr ""
+
+#: post-types/ckan-backend-user-admin.php:83
+#, php-format
+msgid "Error while creating user: %s"
+msgstr ""
+
+#: post-types/ckan-backend-user-admin.php:110
+msgid "Username"
+msgstr ""
+
+#: post-types/ckan-backend-user-admin.php:110
+#: post-types/ckan-backend-user-admin.php:114
+#: post-types/ckan-backend-user-admin.php:137
+msgid "required"
+msgstr ""
+
+#: post-types/ckan-backend-user-admin.php:114
+msgid "E-Mail"
+msgstr ""
+
+#: post-types/ckan-backend-user-admin.php:118
+msgid "First name"
+msgstr ""
+
+#: post-types/ckan-backend-user-admin.php:122
+msgid "Last name"
+msgstr ""
+
+#: post-types/ckan-backend-user-admin.php:126
+msgid "Role"
+msgstr ""
+
+#: post-types/ckan-backend-user-admin.php:136
+msgid "Organisation"
+msgstr ""
+
+#: post-types/ckan-backend-user-admin.php:151
+msgid "Add new user"
+msgstr ""
+
+#: post-types/ckan-backend-local-dataset.php:188
+#: post-types/ckan-backend-local-harvester-dashboard.php:157
+msgid "- Please choose -"
+msgstr "- Veuillez choisir -"
+
+#: post-types/ckan-backend-local-dataset.php:308
+msgid "This dataset is disabled and will not be published on the website."
+msgstr "Ce jeu de données est désactivé et ne sera pas publié sur le site."
+
+#: post-types/ckan-backend-local-dataset.php:320
+#: post-types/ckan-backend-local-dataset.php:322
+#: post-types/ckan-backend-local-dataset.php:323
+#: post-types/ckan-backend-local-dataset.php:343
+msgid "Datasets"
+msgstr "Jeux de données"
+
+#: post-types/ckan-backend-local-dataset.php:321
+#: post-types/ckan-backend-local-dataset.php:395
+#: post-types/ckan-backend-local-dataset.php:623
+msgid "Dataset"
+msgstr "Jeu de données"
+
+#: post-types/ckan-backend-local-dataset.php:324
+msgid "All Datasets"
+msgstr "Tous les jeux de données"
+
+#: post-types/ckan-backend-local-dataset.php:325
+msgid "Add New Dataset"
+msgstr "Ajouter un jeu de données"
+
+#: post-types/ckan-backend-local-dataset.php:326
+#: post-types/ckan-backend-local-harvester.php:53
+#: post-types/ckan-backend-local-organisation.php:52
+#: post-types/ckan-backend-local-group.php:52
+msgid "Add New"
+msgstr "Ajouter nouveau"
+
+#: post-types/ckan-backend-local-dataset.php:327
+msgid "New Dataset"
+msgstr "Nouveau jeu de données"
+
+#: post-types/ckan-backend-local-dataset.php:328
+msgid "Edit Dataset"
+msgstr "Modifer le jeu de données"
+
+#: post-types/ckan-backend-local-dataset.php:329
+msgid "Update Dataset"
+msgstr "Mettre à jour le jeu de données"
+
+#: post-types/ckan-backend-local-dataset.php:330
+msgid "View Dataset"
+msgstr "Voir le jeu de données"
+
+#: post-types/ckan-backend-local-dataset.php:331
+msgid "Search Datasets"
+msgstr "Rechercher les jeux de données"
+
+#: post-types/ckan-backend-local-dataset.php:332
+msgid "No Datasets found"
+msgstr "Aucun jeu de données trouvé"
+
+#: post-types/ckan-backend-local-dataset.php:333
+msgid "No Datasets found in Trash"
+msgstr "Aucun jeu de données trouvé dans la corbeille"
+
+#: post-types/ckan-backend-local-dataset.php:344
+msgid "Datasets which get synced with CKAN"
+msgstr "Jeux de données synchronisés avec CKAN"
+
+#: post-types/ckan-backend-local-dataset.php:404
+msgid "Dataset Identifier"
+msgstr "Identifiant du jeu de données"
+
+#: post-types/ckan-backend-local-dataset.php:406
+msgid ""
+"Unique identifier of the dataset linked with the publisher. A good way to "
+"make sure this identifier is unique is to use the source system ID."
+msgstr ""
+"Identifiant unique du jeu de données lié à l'éditeur. Utiliser "
+"l'identification du système source est un bon moyen de s'assurer que cet "
+"identifiant est unique."
+
+#: post-types/ckan-backend-local-dataset.php:415
+msgid "Dataset Information"
+msgstr "Informations relatives au jeu de données"
+
+#: post-types/ckan-backend-local-dataset.php:423
+#: post-types/ckan-backend-local-dataset.php:598
+#: post-types/ckan-backend-local-dataset.php:654
+#: post-types/ckan-backend-local-organisation.php:129
+#: post-types/ckan-backend-local-group.php:129
+msgid "Title"
+msgstr "Titre"
+
+#: post-types/ckan-backend-local-dataset.php:430
+#: post-types/ckan-backend-local-dataset.php:661
+#: post-types/ckan-backend-local-harvester.php:228
+#: post-types/ckan-backend-local-organisation.php:135
+#: post-types/ckan-backend-local-group.php:135
+msgid "Description"
+msgstr "Description"
+
+#: post-types/ckan-backend-local-dataset.php:439
+msgid "Dates"
+msgstr "Dates"
+
+#: post-types/ckan-backend-local-dataset.php:445
+#: post-types/ckan-backend-local-dataset.php:684
+msgid "Issued"
+msgstr "Publié"
+
+#: post-types/ckan-backend-local-dataset.php:447
+msgid ""
+"Date of the first publication of this dataset. If this date is unknown, the "
+"date of the first publication on this portal can be used."
+msgstr ""
+"Date de la première publication de ce jeu de données. Si la date est "
+"inconnue, elle peut être remplacée par la date de la première publication "
+"sur le présent portail."
+
+#: post-types/ckan-backend-local-dataset.php:452
+#: post-types/ckan-backend-local-dataset.php:460
+#: post-types/ckan-backend-local-dataset.php:488
+#: post-types/ckan-backend-local-dataset.php:495
+#: post-types/ckan-backend-local-dataset.php:691
+#: post-types/ckan-backend-local-dataset.php:699
+msgctxt "Valid date format string for date field"
+msgid "m/d/Y"
+msgstr "d.m.Y"
+
+#: post-types/ckan-backend-local-dataset.php:456
+#: post-types/ckan-backend-local-dataset.php:695
+msgid "Modified"
+msgstr "Modifié"
+
+#: post-types/ckan-backend-local-dataset.php:458
+msgid ""
+"Date when dataset was last modified (since the first publication on the "
+"portal)."
+msgstr ""
+"Date de la dernière modification du jeu de données (depuis la première "
+"publication sur le portail)"
+
+#: post-types/ckan-backend-local-dataset.php:464
+msgid "Update interval"
+msgstr "Rythme de mise à jour"
+
+#: post-types/ckan-backend-local-dataset.php:466
+msgid "The interval in which this dataset is updated."
+msgstr "Le rythme auquel le jeu de données est mis à jour."
+
+#: post-types/ckan-backend-local-dataset.php:475
+msgid "Temporal coverage"
+msgstr "Période"
+
+#: post-types/ckan-backend-local-dataset.php:476
+msgid "One or more time period(s) that this dataset covers."
+msgstr "Période ou périodes couverte(s) par ce jeu données"
+
+#: post-types/ckan-backend-local-dataset.php:478
+msgid "Temporal coverage {#}"
+msgstr "Période {#}"
+
+#: post-types/ckan-backend-local-dataset.php:479
+msgid "Add another Temporal coverage"
+msgstr "Ajouter une autre période"
+
+#: post-types/ckan-backend-local-dataset.php:480
+msgid "Remove Temporal coverage"
+msgstr "Supprimer la période"
+
+#: post-types/ckan-backend-local-dataset.php:485
+msgid "Start Date"
+msgstr "Date de début"
+
+#: post-types/ckan-backend-local-dataset.php:492
+msgid "End Date"
+msgstr "Date de fin"
+
+#: post-types/ckan-backend-local-dataset.php:500
+msgid "Publisher Information"
+msgstr "Informations relatives à l'éditeur"
+
+#: post-types/ckan-backend-local-dataset.php:508
+msgid "Publishers"
+msgstr "Editeurs"
+
+#: post-types/ckan-backend-local-dataset.php:509
+msgid ""
+"The actual publisher(s) of this dataset. This can be the same as the "
+"organization which publishes this dataset. At least one publisher is "
+"required."
+msgstr ""
+"L'/Les éditeur(s) du jeu de données. Il peut s'agir de l'organisation "
+"publiant le jeu de données. Vous devez indiquer au moins un éditeur."
+
+#: post-types/ckan-backend-local-dataset.php:511
+msgid "Publisher {#}"
+msgstr "Editeur{#}"
+
+#: post-types/ckan-backend-local-dataset.php:512
+msgid "Add another Publisher"
+msgstr "Ajouter un éditeur"
+
+#: post-types/ckan-backend-local-dataset.php:513
+msgid "Remove Publisher"
+msgstr "Supprimer l'éditeur"
+
+#: post-types/ckan-backend-local-dataset.php:518
+#: post-types/ckan-backend-local-dataset.php:539
+msgid "Name"
+msgstr "Nom"
+
+#: post-types/ckan-backend-local-dataset.php:529
+msgid "Contact points"
+msgstr "Contact"
+
+#: post-types/ckan-backend-local-dataset.php:530
+msgid ""
+"The contact point if there are questions about this dataset. At least one "
+"contact point is required."
+msgstr ""
+"L'interlocuteur en cas de questions au sujet du jeu de données. Vous devez "
+"indiquer au minimum un contact."
+
+#: post-types/ckan-backend-local-dataset.php:532
+msgid "Contact Point {#}"
+msgstr "Contact {#}"
+
+#: post-types/ckan-backend-local-dataset.php:533
+msgid "Add another Contact Point"
+msgstr "Ajouter un contact"
+
+#: post-types/ckan-backend-local-dataset.php:534
+msgid "Remove Contact Point"
+msgstr "Supprimer le contact"
+
+#: post-types/ckan-backend-local-dataset.php:548
+msgid "Email"
+msgstr "Courriel"
+
+#: post-types/ckan-backend-local-dataset.php:557
+#: post-types/ckan-backend-local-dataset.php:573
+msgid "Further Information"
+msgstr "Informations complémentaires"
+
+#: post-types/ckan-backend-local-dataset.php:564
+#: post-types/ckan-backend-local-group.php:46
+#: post-types/ckan-backend-local-group.php:48
+#: post-types/ckan-backend-local-group.php:49
+#: post-types/ckan-backend-local-group.php:63
+msgid "Categories"
+msgstr "Catégories"
+
+#: post-types/ckan-backend-local-dataset.php:579
+msgid "Landing Page"
+msgstr "Landing Page"
+
+#: post-types/ckan-backend-local-dataset.php:581
+msgid "Website with further information about the dataset."
+msgstr ""
+"Site internet donnant les informations complémentaires sur le jeu de "
+"données."
+
+#: post-types/ckan-backend-local-dataset.php:588
+msgid "Relations"
+msgstr "Relations"
+
+#: post-types/ckan-backend-local-dataset.php:589
+msgid "Further information related to this dataset."
+msgstr "Informations complémentaires sur le jeu de données."
+
+#: post-types/ckan-backend-local-dataset.php:591
+msgid "Relation {#}"
+msgstr "Relation {#}"
+
+#: post-types/ckan-backend-local-dataset.php:592
+msgid "Add another Relation"
+msgstr "Ajouter une relation"
+
+#: post-types/ckan-backend-local-dataset.php:593
+msgid "Remove Relation"
+msgstr "Supprimer la relation"
+
+#: post-types/ckan-backend-local-dataset.php:599
+msgid ""
+"Use the title 'legal_basis' to provide a link to the legal basis of this "
+"dataset."
+msgstr ""
+"Use the title 'legal_basis' pour fournir un lien vers la base légale du jeu "
+"de données."
+
+#: post-types/ckan-backend-local-dataset.php:605
+#: post-types/ckan-backend-local-harvester.php:219
+#: post-types/ckan-backend-local-organisation.php:164
+msgid "URL"
+msgstr "URL"
+
+#: post-types/ckan-backend-local-dataset.php:613
+msgid "Dataset Relations"
+msgstr "Relations du jeu de données"
+
+#: post-types/ckan-backend-local-dataset.php:614
+msgid "Relations to other datasets."
+msgstr "Relations avec d'autres jeux de données"
+
+#: post-types/ckan-backend-local-dataset.php:616
+msgid "Dataset Relation {#}"
+msgstr "Relation du jeu de données {#}"
+
+#: post-types/ckan-backend-local-dataset.php:617
+msgid "Add another Dataset Relation"
+msgstr "Ajouter une relation du jeu de données"
+
+#: post-types/ckan-backend-local-dataset.php:618
+msgid "Remove Dataset Relation"
+msgstr "Supprimer la relation du jeu de données"
+
+#: post-types/ckan-backend-local-dataset.php:630
+msgid "Distributions"
+msgstr "Ressources"
+
+#: post-types/ckan-backend-local-dataset.php:639
+msgid "Distribution {#}"
+msgstr "Ressource {#}"
+
+#: post-types/ckan-backend-local-dataset.php:640
+msgid "Add another Distribution"
+msgstr "Ajouter une ressource"
+
+#: post-types/ckan-backend-local-dataset.php:641
+msgid "Remove Distribution"
+msgstr "Supprimer la ressource"
+
+#: post-types/ckan-backend-local-dataset.php:646
+msgid "Identifier"
+msgstr "Identifiant"
+
+#: post-types/ckan-backend-local-dataset.php:647
+msgid "Identifier of the distribution in the source system of the publisher."
+msgstr "Identifiant de la ressource dans le système d'origine de l'éditeur"
+
+#: post-types/ckan-backend-local-dataset.php:657
+msgid "If the title is left empty, the title of the dataset is used instead."
+msgstr ""
+"Si le titre n'est pas saisi, le titre du jeu de données sera utilisé à la "
+"place."
+
+#: post-types/ckan-backend-local-dataset.php:664
+msgid ""
+"If the description is left empty, the description of the dataset is used "
+"instead."
+msgstr ""
+"Si la description n'est pas saisie, la description du jeu de données sera "
+"utilisée à la place."
+
+#: post-types/ckan-backend-local-dataset.php:670
+msgid "Language"
+msgstr "Langue"
+
+#: post-types/ckan-backend-local-dataset.php:672
+msgid ""
+"Languages in which this distribution is available. If the distribution is "
+"language-independent do not check anything."
+msgstr ""
+"Langues disponibles pour la ressource. Si la ressource est indépendante de "
+"la langue, ne cochez rien."
+
+#: post-types/ckan-backend-local-dataset.php:676
+msgid "English"
+msgstr "Anglais"
+
+#: post-types/ckan-backend-local-dataset.php:677
+msgid "German"
+msgstr "Allemand"
+
+#: post-types/ckan-backend-local-dataset.php:678
+msgid "French"
+msgstr "Français"
+
+#: post-types/ckan-backend-local-dataset.php:679
+msgid "Italian"
+msgstr "Italien"
+
+#: post-types/ckan-backend-local-dataset.php:686
+msgid "Date of the publication of this distribution."
+msgstr "Date de publication de la ressource"
+
+#: post-types/ckan-backend-local-dataset.php:697
+msgid "Date of the last change of the distribution."
+msgstr "Date de la dernière modification de la ressource"
+
+#: post-types/ckan-backend-local-dataset.php:703
+msgid "Terms of use"
+msgstr "Conditions d'utilisation"
+
+#: post-types/ckan-backend-local-dataset.php:705
+msgid ""
+"All terms of use which are not marked with an asterisk (*) are declared as "
+"closed data."
+msgstr ""
+"Toutes les conditions d'utilisation qui ne sont pas assorties d'un "
+"astérisque (*) sont déclarées 'closed data'."
+
+#: post-types/ckan-backend-local-dataset.php:712
+msgid "Access URL"
+msgstr "URL d'accès"
+
+#: post-types/ckan-backend-local-dataset.php:714
+msgid ""
+"URL where the distribution can be found. This could be either a download "
+"URL, an API url or a landing page URL. If the distribution is only available"
+" through a landing page, this field must contain the URL of the landing "
+"page. If a download URL was given for this distribution, this field has to "
+"contain the same value."
+msgstr ""
+"URL permettant d'accéder à la ressource. Il peut s'agir d'une URL de "
+"téléchargement, de l'URL d'une API ou de l'URL d'une 'landing page'. Si la "
+"ressource est uniquement accessible via une 'landing page', le champ doit "
+"contenir l'URL de la 'landing page'. Si une URL de téléchargement a été "
+"indiquée pour cette resource, le champ doit contenir la même valeur."
+
+#: post-types/ckan-backend-local-dataset.php:722
+msgid "Download URL"
+msgstr "URL de téléchargement"
+
+#: post-types/ckan-backend-local-dataset.php:724
+msgid "URL of a file, if the distribution can be downloaded."
+msgstr "URL d'un fichier, si la ressource peut être téléchargée."
+
+#: post-types/ckan-backend-local-dataset.php:729
+msgid "Size (in Bytes)"
+msgstr "Taille (en bytes)"
+
+#: post-types/ckan-backend-local-dataset.php:735
+#: taxonomies/ckan-backend-mediatype.php:31
+msgid "Format"
+msgstr "Format"
+
+#: post-types/ckan-backend-local-dataset.php:743
+#: post-types/ckan-backend-local-dataset.php:751
+msgid "Disable Dataset"
+msgstr "Désactiver le jeu de données"
+
+#: post-types/ckan-backend-local-dataset.php:760
+#: post-types/ckan-backend-local-harvester.php:281
+#: post-types/ckan-backend-local-organisation.php:178
+#: post-types/ckan-backend-local-group.php:151
+msgid "CKAN Data"
+msgstr "Données CKAN"
+
+#: post-types/ckan-backend-local-dataset.php:769
+#: post-types/ckan-backend-local-harvester.php:290
+#: post-types/ckan-backend-local-organisation.php:187
+#: post-types/ckan-backend-local-group.php:160
+msgid "ID"
+msgstr "Identification"
+
+#: post-types/ckan-backend-local-dataset.php:779
+#: post-types/ckan-backend-local-harvester.php:300
+#: post-types/ckan-backend-local-organisation.php:197
+#: post-types/ckan-backend-local-group.php:170
+msgid "Name (Slug)"
+msgstr "Nom (Slug)"
+
+#: post-types/ckan-backend-local-dataset.php:788
+#: post-types/ckan-backend-local-harvester.php:309
+#: post-types/ckan-backend-local-organisation.php:206
+#: post-types/ckan-backend-local-group.php:179
+msgid "Sync Status"
+msgstr "Etat de la synchronisation"
+
+#: post-types/ckan-backend-local-harvester.php:47
+#: post-types/ckan-backend-local-harvester.php:49
+#: post-types/ckan-backend-local-harvester.php:50
+#: post-types/ckan-backend-local-harvester.php:64
+msgid "Harvesters"
+msgstr "Harvesters"
+
+#: post-types/ckan-backend-local-harvester.php:48
+#: post-types/ckan-backend-local-harvester.php:204
+msgid "Harvester"
+msgstr "Harvester"
+
+#: post-types/ckan-backend-local-harvester.php:51
+msgid "All Harvesters"
+msgstr "Tous les 'harvesters'"
+
+#: post-types/ckan-backend-local-harvester.php:52
+msgid "Add New Harvester"
+msgstr "Ajouter un 'harvester'"
+
+#: post-types/ckan-backend-local-harvester.php:54
+msgid "New Harvester"
+msgstr "Nouveau 'harvester'"
+
+#: post-types/ckan-backend-local-harvester.php:55
+msgid "Edit Harvester"
+msgstr "Modifier le 'harvester'"
+
+#: post-types/ckan-backend-local-harvester.php:56
+msgid "Update Harvester"
+msgstr "Mettre à jour le 'harvester'"
+
+#: post-types/ckan-backend-local-harvester.php:57
+msgid "View Harvester"
+msgstr "Afficher le 'harvester'"
+
+#: post-types/ckan-backend-local-harvester.php:58
+msgid "Search Harvesters"
+msgstr "Rechercher les 'harvesters'"
+
+#: post-types/ckan-backend-local-harvester.php:59
+msgid "No Harvesters found"
+msgstr "Aucun 'harvester' trouvé"
+
+#: post-types/ckan-backend-local-harvester.php:60
+msgid "No Harvesters found in Trash"
+msgstr "Aucun 'harvester' trouvé dans la corbeille"
+
+#: post-types/ckan-backend-local-harvester.php:65
+msgid "Harvesters which get synced with CKAN"
+msgstr "Harvesters synchronisés avec CKAN"
+
+#: post-types/ckan-backend-local-harvester.php:112
+#: post-types/ckan-backend-local-harvester-dashboard.php:333
+msgid "Status"
+msgstr "État"
+
+#: post-types/ckan-backend-local-harvester.php:113
+#: post-types/ckan-backend-local-harvester.php:160
+#: post-types/ckan-backend-local-harvester-dashboard.php:57
+msgid "Dashboard"
+msgstr "Tableau de bord"
+
+#: post-types/ckan-backend-local-harvester.php:136
+#, php-format
+msgctxt "%s contains job count of harvester"
+msgid "Job count: %s"
+msgstr ""
+
+#: post-types/ckan-backend-local-harvester.php:139
+#, php-format
+msgctxt "%s contains the date when the last job was created"
+msgid "Last job created: %s"
+msgstr ""
+
+#: post-types/ckan-backend-local-harvester.php:140
+#, php-format
+msgctxt "%s contains the date when the last job started"
+msgid "Last job started: %s"
+msgstr ""
+
+#: post-types/ckan-backend-local-harvester.php:141
+#, php-format
+msgctxt "%s contains the date when the last job finished"
+msgid "Last job finished: %s"
+msgstr ""
+
+#: post-types/ckan-backend-local-harvester.php:142
+#: post-types/ckan-backend-local-harvester-dashboard.php:307
+#, php-format
+msgctxt "%s contains the number of added datasets."
+msgid "%s added"
+msgstr "%s ajoutés"
+
+#: post-types/ckan-backend-local-harvester.php:143
+#: post-types/ckan-backend-local-harvester-dashboard.php:308
+#, php-format
+msgctxt "%s contains the number of updated datasets."
+msgid "%s updated"
+msgstr "%s mis à jour"
+
+#: post-types/ckan-backend-local-harvester.php:144
+#: post-types/ckan-backend-local-harvester-dashboard.php:309
+#, php-format
+msgctxt "%s contains the number of deleted datasets."
+msgid "%s deleted"
+msgstr "%s supprimés"
+
+#: post-types/ckan-backend-local-harvester.php:145
+#, php-format
+msgctxt "%s contains the number of errored dataset."
+msgid "%s errored"
+msgstr ""
+
+#: post-types/ckan-backend-local-harvester.php:149
+msgid "No jobs yet"
+msgstr ""
+
+#: post-types/ckan-backend-local-harvester.php:156
+msgid "Could not retrieve harvest source status"
+msgstr ""
+
+#: post-types/ckan-backend-local-harvester.php:213
+msgid "Harvester Information"
+msgstr "Informations relatives au 'harvester'"
+
+#: post-types/ckan-backend-local-harvester.php:235
+msgid "Source type"
+msgstr "Type de source"
+
+#: post-types/ckan-backend-local-harvester.php:255
+msgid "Update frequency"
+msgstr "Rythme de mise à jour"
+
+#: post-types/ckan-backend-local-harvester.php:259
+msgid "Manual"
+msgstr "Manuelle"
+
+#: post-types/ckan-backend-local-harvester.php:260
+#: taxonomies/ckan-backend-frequency.php:34
+msgid "Monthly"
+msgstr "1 fois par mois"
+
+#: post-types/ckan-backend-local-harvester.php:261
+#: taxonomies/ckan-backend-frequency.php:30
+msgid "Weekly"
+msgstr "1 fois par semaine"
+
+#: post-types/ckan-backend-local-harvester.php:262
+#: taxonomies/ckan-backend-frequency.php:32
+msgid "Biweekly"
+msgstr "Toutes les 2 semaines"
+
+#: post-types/ckan-backend-local-harvester.php:263
+#: taxonomies/ckan-backend-frequency.php:27
+msgid "Daily"
+msgstr "1 fois par jour"
+
+#: post-types/ckan-backend-local-harvester.php:264
+msgid "Always"
+msgstr "Toujours"
+
+#: post-types/ckan-backend-local-harvester.php:272
+msgid "Configuration"
+msgstr "Configuration"
+
+#: post-types/ckan-backend-local-harvester.php:274
+msgid "Only a valid JSON object is allowed. Eg. { \"option\": \"value\" }"
+msgstr "Seul un objet JSON valide est autorisé. P. ex. { \"option\": \"value\" }"
+
+#: post-types/ckan-backend-local-organisation.php:46
+#: post-types/ckan-backend-local-organisation.php:48
+#: post-types/ckan-backend-local-organisation.php:49
+#: post-types/ckan-backend-local-organisation.php:63
+msgid "Organizations"
+msgstr "Organisations"
+
+#: post-types/ckan-backend-local-organisation.php:50
+msgid "All Organizations"
+msgstr "Toutes les organisations"
+
+#: post-types/ckan-backend-local-organisation.php:51
+msgid "Add New Organization"
+msgstr "Ajouter une organisation"
+
+#: post-types/ckan-backend-local-organisation.php:53
+msgid "New Organization"
+msgstr "Nouvelle organisation"
+
+#: post-types/ckan-backend-local-organisation.php:54
+msgid "Edit Organization"
+msgstr "Modifier l'organisation"
+
+#: post-types/ckan-backend-local-organisation.php:55
+msgid "Update Organization"
+msgstr "Mettre à jour l'organisation"
+
+#: post-types/ckan-backend-local-organisation.php:56
+msgid "View Organization"
+msgstr "Afficher l'organisation"
+
+#: post-types/ckan-backend-local-organisation.php:57
+msgid "Search Organizations"
+msgstr "Rechercher les organisations"
+
+#: post-types/ckan-backend-local-organisation.php:58
+msgid "No Organizations found"
+msgstr "Aucune organisation trouvée"
+
+#: post-types/ckan-backend-local-organisation.php:59
+msgid "No Organizations found in Trash"
+msgstr "Aucune organisation trouvée dans la corbeille"
+
+#: post-types/ckan-backend-local-organisation.php:64
+msgid "Organizations which get synced with CKAN"
+msgstr "Organisation synchronisées avec CKAN"
+
+#: post-types/ckan-backend-local-organisation.php:122
+msgid "Organization Information"
+msgstr "Informations relatives à l'organisation"
+
+#: post-types/ckan-backend-local-organisation.php:145
+msgid "Parent Organization"
+msgstr "Organisation parent"
+
+#: post-types/ckan-backend-local-organisation.php:148
+msgid "None - top level"
+msgstr "Aucune - niveau le plus élevé"
+
+#: post-types/ckan-backend-local-organisation.php:154
+msgid "Political level"
+msgstr "Entité politique"
+
+#: post-types/ckan-backend-local-organisation.php:171
+#: post-types/ckan-backend-local-group.php:144
+msgid "Image"
+msgstr "Image"
+
+#: post-types/ckan-backend-local-dataset-import.php:34
+msgid "Import Catalog"
+msgstr "Importer le catalogue"
+
+#: post-types/ckan-backend-local-dataset-import.php:35
+#: post-types/ckan-backend-local-dataset-import.php:157
+msgid "Import"
+msgstr "Importer"
+
+#: post-types/ckan-backend-local-dataset-import.php:69
+msgid "No datasets found in given import file"
+msgstr "Aucun jeu de données trouvé dans le fichier d'importation en question"
+
+#: post-types/ckan-backend-local-dataset-import.php:82
+#, php-format
+msgctxt "%s contains the id of the dataset."
+msgid "Successfully inserted new dataset %s"
+msgstr "Nouveau jeu de données inséré avec succès %s"
+
+#: post-types/ckan-backend-local-dataset-import.php:87
+#, php-format
+msgctxt "%s contains the title of the dataset."
+msgid "Successfully updated dataset %s"
+msgstr "Jeu de données mis à jour avec succès %s"
+
+#: post-types/ckan-backend-local-dataset-import.php:96
+#, php-format
+msgctxt ""
+"%1$s contains the url to edit the dataset. %2$s contains the title of the "
+"dataset."
+msgid ""
+"The dataset is already published. You can edit it here: <a "
+"href=\"%1$s\">%2$s</a>."
+msgstr ""
+"Ce jeu de données est déjà publié. Vous pouvez le modifier ici: <a "
+"href=\"%1$s\">%2$s</a>."
+
+#: post-types/ckan-backend-local-dataset-import.php:104
+#, php-format
+msgctxt ""
+"%1$s contains the url to edit the dataset. %2$s contains the title of the "
+"dataset."
+msgid ""
+"The dataset is not yet published. You can edit and publish it here: <a "
+"href=\"%1$s\">%2$s</a>."
+msgstr ""
+"Ce jeu de données n'est pas encore publié. Vous pouvez le modifier et le "
+"publier ici: <a href=\"%1$s\">%2$s</a>."
+
+#: post-types/ckan-backend-local-dataset-import.php:142
+msgid "DCAT-AP Catalog File:"
+msgstr "DCAT-AP Catalog File:"
+
+#: post-types/ckan-backend-local-dataset-import.php:148
+msgid "File has to be a DCAT-AP Switzerland catalog."
+msgstr "Le fichier doit être un catalogue DCAT-AP Switzerland."
+
+#: post-types/ckan-backend-local-dataset-import.php:181
+msgid "Invalid parameters."
+msgstr "Paramètres non valides."
+
+#: post-types/ckan-backend-local-dataset-import.php:189
+msgid "Missing import file."
+msgstr "Fichier d'importation manquant."
+
+#: post-types/ckan-backend-local-dataset-import.php:192
+msgid "Exceeded filesize limit."
+msgstr "Le fichier dépasse la taille limite."
+
+#: post-types/ckan-backend-local-dataset-import.php:194
+msgid "Unknown errors."
+msgstr "Erreurs inconnues"
+
+#: post-types/ckan-backend-local-dataset-import.php:199
+msgid "Uploaded file is not a vaild XML file."
+msgstr "Le fichier téléversé n'est pas un fichier XML valide."
+
+#: post-types/ckan-backend-local-dataset-import.php:407
+msgid ""
+"Please provide an identifier for the dataset (eg. "
+"<dct:identifier>[original_dataset_id]@[organization_id]</dct:identifier>).  "
+"Dataset [no identifier] not imported."
+msgstr ""
+"Veuillez fournir un identifiant pour le jeu de données (p. ex.. "
+"<dct:identifier>[original_dataset_id]@[organization_id]</dct:identifier>).  "
+"Le jeu de données [no identifier] n'a pas été importé."
+
+#: post-types/ckan-backend-local-dataset-import.php:412
+#, php-format
+msgctxt "%s contains the identifier of the dataset."
+msgid ""
+"The original identifier of your dataset is missing. Please provide the "
+"dataset identifier in the following form "
+"<dct:identifier>[original_dataset_id]@[organization_id]</dct:identifier>. "
+"Dataset %s not imported."
+msgstr ""
+"L'identifiant original de votre jeu de données est manquant. Veuillez "
+"indiquer l'identifiant du jeu de données dans le champ "
+"<dct:identifier>[original_dataset_id]@[organization_id]</dct:identifier>. Le"
+" jeu de données %s n'a pas été importé."
+
+#: post-types/ckan-backend-local-dataset-import.php:425
+#, php-format
+msgctxt "%s contains the identifier of the dataset."
+msgid ""
+"Please provide a title in at least one language for the dataset (eg. "
+"<dct:title xml:lang=\"en\">My Dataset</dct:title>). Dataset %s not imported."
+msgstr ""
+"Veuillez fournir un titre pour le jeu de données dans au moins une langue "
+"(p. ex. <dct:title xml:lang=\"en\">Mon jeu de données</dct:title>). Le jeu "
+"de données %s n'a pas été importé."
+
+#: post-types/ckan-backend-local-dataset-import.php:436
+#, php-format
+msgctxt "%s contains the identifier of the dataset."
+msgid ""
+"Please provide at least one publisher for the dataset (eg. "
+"<dct:publisher><rdf:Description><rdfs:label>Publisher</rdfs:label></rdf:Description></dct:publisher>)."
+" Dataset %s not imported."
+msgstr ""
+"Veuillez indiquer au moins un éditeur pour le jeu d données (p. ex. "
+"<dct:publisher><rdf:Description><rdfs:label>éditeur</rdfs:label></rdf:Description></dct:publisher>)."
+" Le jeu de données %s n'a pas été importé."
+
+#: post-types/ckan-backend-local-dataset-import.php:446
+#, php-format
+msgctxt "%s contains the identifier of the dataset."
+msgid ""
+"Please provide at least one contact point for the dataset (eg. "
+"<dcat:contactPoint><vcard:Organization><vcard:fn>Contact "
+"Point</vcard:fn><vcard:hasEmail "
+"rdf:resource=\"mailto:contact.point@swiss.ch\"/></vcard:Organization></dcat:contactPoint>)."
+" Dataset %s not imported."
+msgstr ""
+"Veuillez fournir au moins un contact pour le jeu de données (p. ex. "
+"<dcat:contactPoint><vcard:Organization><vcard:fn>Contact</vcard:fn><vcard:hasEmail"
+" "
+"rdf:resource=\"mailto:contact.point@swiss.ch\"/></vcard:Organization></dcat:contactPoint>)."
+" Le jeu de données %s n'a pas été importé."
+
+#: post-types/ckan-backend-local-dataset-import.php:513
+#, php-format
+msgctxt "%s contains the identifier of the dataset."
+msgid ""
+"The organization id is missing in the identifier. Please provide the dataset"
+" identifier in the following form "
+"<dct:identifier>[original_dataset_id]@[organization_id]</dct:identifier>. "
+"Dataset %s not imported."
+msgstr ""
+"L'identification de l'organisation manque dans l'identifiant. Veuillez "
+"inscrire l'identifiant du jeu de données dans le formulaire "
+"suivant<dct:identifier>[original_dataset_id]@[organization_id]</dct:identifier>."
+" Le jeu de données %s n'a pas été importé."
+
+#: post-types/ckan-backend-local-dataset-import.php:522
+#, php-format
+msgctxt "%s contains the identifier of the dataset."
+msgid ""
+"You are not allowed to add a dataset for another organistaion. Please "
+"provide the dataset identifier in the following form "
+"<dct:identifier>[original_dataset_id]@[your_organization_id]</dct:identifier>."
+" Dataset %s not imported."
+msgstr ""
+"Vous ne pouvez pas ajouter un jeu de données pour une autre organisation. "
+"Veuillez indiquer l'identifiant du jeu de données dans le champ "
+"suivant<dct:identifier>[original_dataset_id]@[your_organization_id]</dct:identifier>."
+" Le jeu de données %s n'a pas été importé."
+
+#: post-types/ckan-backend-local-dataset-import.php:530
+#, php-format
+msgctxt ""
+"%1$s contains the organisation id of the dataset. %2$s contains the "
+"identifier of the dataset."
+msgid "Organization %1$s does not exist. Dataset %2$s not imported."
+msgstr ""
+"L'organisation %1$s n'existe pas. Le jeu de données %2$s n'a pas été "
+"importé."
+
+#: post-types/ckan-backend-local-dataset-import.php:648
+#, php-format
+msgctxt ""
+"%1$s contains the rights of the dataset. %2$s contains the identifier of the"
+" dataset."
+msgid "Term of use %1$s does not exist. Dataset %2$s not imported."
+msgstr ""
+"La condition d'utilisation %1$s n'existe pas. Le jeu de données %2$s n'a pas"
+" été importé."
+
+#: post-types/ckan-backend-local-dataset-import.php:705
+#: post-types/ckan-backend-local-dataset-import.php:715
+#, php-format
+msgctxt ""
+"%1$s contains the theme uri. %2$s contains the identifier of the dataset."
+msgid "Category %1$s does not exist. Dataset %2$s not imported."
+msgstr ""
+"La catégorie %1$s n'existe pas. Le jeu de données %2$s n'a pas été importé.."
+
+#: post-types/ckan-backend-local-group.php:47
+#: post-types/ckan-backend-local-group.php:113
+msgid "Category"
+msgstr "Catégorie"
+
+#: post-types/ckan-backend-local-group.php:50
+msgid "All Categories"
+msgstr "Toutes les catégories"
+
+#: post-types/ckan-backend-local-group.php:51
+msgid "Add New Category"
+msgstr "Ajouter une catégorie"
+
+#: post-types/ckan-backend-local-group.php:53
+msgid "New Category"
+msgstr "Nouvelle catégorie"
+
+#: post-types/ckan-backend-local-group.php:54
+msgid "Edit Category"
+msgstr "Modifier la catégorie"
+
+#: post-types/ckan-backend-local-group.php:55
+msgid "Update Category"
+msgstr "Mettre à jour la catégorie"
+
+#: post-types/ckan-backend-local-group.php:56
+msgid "View Category"
+msgstr "Voir la catégorie"
+
+#: post-types/ckan-backend-local-group.php:57
+msgid "Search Categories"
+msgstr "Rechercher les catégories"
+
+#: post-types/ckan-backend-local-group.php:58
+msgid "No Categories found"
+msgstr "Aucune catégorie trouvée"
+
+#: post-types/ckan-backend-local-group.php:59
+msgid "No Categories found in Trash"
+msgstr "Aucune catégorie trouvée dans la corbeille"
+
+#: post-types/ckan-backend-local-group.php:64
+msgid "Categories which get synced with CKAN"
+msgstr "Catégories synchronisées avec CKAN"
+
+#: post-types/ckan-backend-local-group.php:122
+msgid "Category Information"
+msgstr "Informations relatives à la catégorie"
+
+#: post-types/ckan-backend-local-group.php:187
+msgid "RDF Reference"
+msgstr "Référence RDF "
+
+#: post-types/ckan-backend-local-group.php:196
+msgid "RDF URI"
+msgstr "RDF URI"
+
+#: post-types/ckan-backend-local-dataset-export.php:39
+msgid "Export"
+msgstr "Exporter"
+
+#: post-types/ckan-backend-local-dataset-export.php:40
+msgid "Datasets exported"
+msgstr "Jeux de données exportés"
+
+#: post-types/ckan-backend-local-dataset-export.php:124
+#, php-format
+msgctxt "%s contains the post_id of the dataset."
+msgid "Could not read identifier of dataset %s."
+msgstr ""
+
+#: post-types/ckan-backend-local-harvester-dashboard.php:56
+msgid "Harvester Dashboard"
+msgstr ""
+
+#: post-types/ckan-backend-local-harvester-dashboard.php:105
+msgid "Successfully created new harvester job."
+msgstr ""
+
+#: post-types/ckan-backend-local-harvester-dashboard.php:119
+msgid "Current harvester job successfully aborted."
+msgstr "Tâche 'harvester' en cours interrompu avec succès"
+
+#: post-types/ckan-backend-local-harvester-dashboard.php:133
+msgid "Successfully cleared all harvester datasets."
+msgstr "Tous les jeux de données 'harvester' ont été effacés avec succès."
+
+#: post-types/ckan-backend-local-harvester-dashboard.php:153
+msgid "Choose Harvester:"
+msgstr "Choisir un 'harvester':"
+
+#: post-types/ckan-backend-local-harvester-dashboard.php:164
+msgid "Show"
+msgstr "Afficher"
+
+#: post-types/ckan-backend-local-harvester-dashboard.php:175
+msgid "Please select a harvester first."
+msgstr "Veuillez d'abord sélectionner un 'harvester'."
+
+#: post-types/ckan-backend-local-harvester-dashboard.php:191
+msgid "Refresh page"
+msgstr "Rafraîchir la page"
+
+#: post-types/ckan-backend-local-harvester-dashboard.php:192
+#, php-format
+msgctxt "%s contains the id of the harvester"
+msgid "Harvester ID: %s"
+msgstr "Harvester ID: %s"
+
+#: post-types/ckan-backend-local-harvester-dashboard.php:205
+msgid "(edit)"
+msgstr "(modifier)"
+
+#: post-types/ckan-backend-local-harvester-dashboard.php:227
+msgid "Show all jobs"
+msgstr "Afficher toutes commandes "
+
+#: post-types/ckan-backend-local-harvester-dashboard.php:229
+msgid "Show less jobs"
+msgstr "Afficher moins de tâches"
+
+#: post-types/ckan-backend-local-harvester-dashboard.php:252
+msgid "Are you sure you want to abort the current job of this harvester?"
+msgstr ""
+"Êtes-vous sûr(e) de vouloir interrompre la tâche en cours de ce 'harvester'?"
+
+#: post-types/ckan-backend-local-harvester-dashboard.php:253
+msgid "Abort unfinished job"
+msgstr "Interrompre la tâche en cours"
+
+#: post-types/ckan-backend-local-harvester-dashboard.php:255
+msgid "Reharvest"
+msgstr "Reharvest"
+
+#: post-types/ckan-backend-local-harvester-dashboard.php:259
+msgid "Are you sure you want to clear all data of this harvester?"
+msgstr ""
+"Êtes-vous sûr(e) de vouloir supprimer toutes les données de ce 'harvester'?"
+
+#: post-types/ckan-backend-local-harvester-dashboard.php:260
+msgid "Clear"
+msgstr "Réinitialiser"
+
+#: post-types/ckan-backend-local-harvester-dashboard.php:267
+msgid "All Harvest Jobs"
+msgstr "Toutes les tâches de \"harvest\""
+
+#: post-types/ckan-backend-local-harvester-dashboard.php:269
+msgid "Latest Harvest Job"
+msgstr "Dernière tâche de \"harvest\""
+
+#: post-types/ckan-backend-local-harvester-dashboard.php:275
+msgid "No Jobs found for this harvester."
+msgstr "Aucune tâche trouvée pour ce 'harvester'."
+
+#: post-types/ckan-backend-local-harvester-dashboard.php:301
+#, php-format
+msgctxt "%s contains the date and time when the jobs was created."
+msgid "Job created at %s"
+msgstr "Tâche créée à %s"
+
+#: post-types/ckan-backend-local-harvester-dashboard.php:310
+#, php-format
+msgctxt "%s contains the number of errors."
+msgid "%s errors"
+msgstr "%s erreurs"
+
+#: post-types/ckan-backend-local-harvester-dashboard.php:317
+msgid "Job ID"
+msgstr "Identifcation de la tâche"
+
+#: post-types/ckan-backend-local-harvester-dashboard.php:321
+msgid "Created"
+msgstr "Créé"
+
+#: post-types/ckan-backend-local-harvester-dashboard.php:325
+msgid "Started"
+msgstr "Débuté"
+
+#: post-types/ckan-backend-local-harvester-dashboard.php:329
+msgid "Finished"
+msgstr "Terminé"
+
+#: post-types/ckan-backend-local-harvester-dashboard.php:339
+msgid "Show Job details"
+msgstr "Afficher les détails de la tâche"
+
+#: post-types/ckan-backend-local-harvester-dashboard.php:356
+msgid "Job detail"
+msgstr "Détails de la tâche"
+
+#: post-types/ckan-backend-local-harvester-dashboard.php:357
+msgid "Back to Job list"
+msgstr "Retour à la liste des tâches"
+
+#: post-types/ckan-backend-local-harvester-dashboard.php:374
+msgid "Error summary"
+msgstr "Résumé des erreurs"
+
+#: post-types/ckan-backend-local-harvester-dashboard.php:384
+msgid "No errors for this job"
+msgstr "Aucune erreur pour cette tâche"
+
+#: post-types/ckan-backend-local-harvester-dashboard.php:388
+#: post-types/ckan-backend-local-harvester-dashboard.php:419
+msgid "Job Errors"
+msgstr "Erreurs de la tâche"
+
+#: post-types/ckan-backend-local-harvester-dashboard.php:394
+#: post-types/ckan-backend-local-harvester-dashboard.php:429
+msgid "Document Errors"
+msgstr "Erreurs du document"
+
+#: post-types/ckan-backend-local-harvester-dashboard.php:413
+msgid "Error Report"
+msgstr "Rapport d'erreurs"
+
+#: post-types/ckan-backend-local-harvester-dashboard.php:438
+#, php-format
+msgctxt "%s contains the line number of the error."
+msgid "(Line: %s)"
+msgstr "(Ligne: %s)"
+
+#: post-types/ckan-backend-local-harvester-dashboard.php:465
+msgid "Count"
+msgstr "Nombre"
+
+#: post-types/ckan-backend-local-harvester-dashboard.php:466
+msgid "Message"
+msgstr "Message"
+
+#: sync/ckan-backend-sync-abstract.php:86
+msgid "CKAN Sync aborted! Please provide a title."
+msgstr "Synchronisation CKAN interrompue! Veuillez fournir un titre."
+
+#: taxonomies/ckan-backend-frequency.php:25
+msgid "Irregular"
+msgstr "Irrégulier"
+
+#: taxonomies/ckan-backend-frequency.php:26
+msgid "Continuous"
+msgstr "Continu"
+
+#: taxonomies/ckan-backend-frequency.php:28
+msgid "Three times a week"
+msgstr "3 fois par semaine"
+
+#: taxonomies/ckan-backend-frequency.php:29
+msgid "Semi weekly"
+msgstr "2 fois par semaine"
+
+#: taxonomies/ckan-backend-frequency.php:31
+msgid "Three times a month"
+msgstr "3 fois par mois"
+
+#: taxonomies/ckan-backend-frequency.php:33
+msgid "Semimonthly"
+msgstr "2 fois par mois"
+
+#: taxonomies/ckan-backend-frequency.php:35
+msgid "Bimonthly"
+msgstr ""
+
+#: taxonomies/ckan-backend-frequency.php:36
+msgid "Quarterly"
+msgstr "1 fois par trimestre"
+
+#: taxonomies/ckan-backend-frequency.php:37
+msgid "Three times a year"
+msgstr "3 fois par an"
+
+#: taxonomies/ckan-backend-frequency.php:38
+msgid "Semi Annual"
+msgstr "2 fois par an"
+
+#: taxonomies/ckan-backend-frequency.php:39
+msgid "Annual"
+msgstr "1 fois par an"
+
+#: taxonomies/ckan-backend-frequency.php:40
+msgid "Biennial"
+msgstr "Tous les 2 ans"
+
+#: taxonomies/ckan-backend-frequency.php:41
+msgid "Triennial"
+msgstr "Tous les 3 ans"
+
+#: taxonomies/ckan-backend-mediatype.php:30
+#: taxonomies/ckan-backend-mediatype.php:48
+msgid "Formats"
+msgstr "Formats"
+
+#: taxonomies/ckan-backend-mediatype.php:32
+msgid "All Formats"
+msgstr "Tous les formats"
+
+#: taxonomies/ckan-backend-mediatype.php:33
+msgid "Edit Formats"
+msgstr "Modifier les formats"
+
+#: taxonomies/ckan-backend-mediatype.php:34
+msgid "View Format"
+msgstr "Afficher le format"
+
+#: taxonomies/ckan-backend-mediatype.php:35
+msgid "Update Format"
+msgstr "Mettre à jour le format"
+
+#: taxonomies/ckan-backend-mediatype.php:36
+msgid "Add New Format"
+msgstr "Ajouter un format"
+
+#: taxonomies/ckan-backend-mediatype.php:37
+msgid "New Format Name"
+msgstr "Nom du nouveau format"
+
+#: taxonomies/ckan-backend-mediatype.php:50
+msgid "Formats for CKAN datasets"
+msgstr "Formats des jeux de données CKAN"
+
+#: taxonomies/ckan-backend-politicallevel.php:25
+msgid "Confederation"
+msgstr "Confédération"
+
+#: taxonomies/ckan-backend-politicallevel.php:26
+msgid "Canton"
+msgstr "Canton"
+
+#: taxonomies/ckan-backend-politicallevel.php:27
+msgid "Commune"
+msgstr "Commune"
+
+#: taxonomies/ckan-backend-politicallevel.php:28
+msgid "Other"
+msgstr "Autre"
+
+#: taxonomies/ckan-backend-keyword.php:27
+#: taxonomies/ckan-backend-keyword.php:45
+#, php-format
+msgctxt "%s contains the language of this keyword."
+msgid "Keywords (%s)"
+msgstr "Mots-clés (%s)"
+
+#: taxonomies/ckan-backend-keyword.php:28
+#, php-format
+msgctxt "%s contains the language of this keyword."
+msgid "Keyword (%s)"
+msgstr "Mot-clé (%s)"
+
+#: taxonomies/ckan-backend-keyword.php:29
+#, php-format
+msgctxt "%s contains the language of this keyword."
+msgid "All Keywords (%s)"
+msgstr "Tous les mots-clés (%s)"
+
+#: taxonomies/ckan-backend-keyword.php:30
+#, php-format
+msgctxt "%s contains the language of this keyword."
+msgid "Edit Keywords (%s)"
+msgstr "Modifier les mots-clés (%s)"
+
+#: taxonomies/ckan-backend-keyword.php:31
+#, php-format
+msgctxt "%s contains the language of this keyword."
+msgid "View Keyword (%s)"
+msgstr "Afficher les mots-clés (%s)"
+
+#: taxonomies/ckan-backend-keyword.php:32
+#, php-format
+msgctxt "%s contains the language of this keyword."
+msgid "Update Keyword (%s)"
+msgstr "Mettre à jour les mots-clés (%s)"
+
+#: taxonomies/ckan-backend-keyword.php:33
+#, php-format
+msgctxt "%s contains the language of this keyword."
+msgid "Add New Keyword (%s)"
+msgstr "Ajouter un mot-clé (%s)"
+
+#: taxonomies/ckan-backend-keyword.php:34
+#, php-format
+msgctxt "%s contains the language of this keyword."
+msgid "New Keyword Name (%s)"
+msgstr "Nom du nouveau mot-clé (%s)"
+
+#: taxonomies/ckan-backend-keyword.php:47
+#, php-format
+msgctxt "%s contains the language of this keyword."
+msgid "Keywords (%s) for CKAN datasets"
+msgstr "Mots-clés (%s) pour les jeux de données CKAN"
+
+#: taxonomies/ckan-backend-rights.php:25
+msgid "* Non-commercial Allowed / Commercial Allowed / Reference Not Required"
+msgstr ""
+"*non commercial autorisé / commercial autorisé / référence non requise"
+
+#: taxonomies/ckan-backend-rights.php:26
+msgid "* Non-commercial Allowed / Commercial Allowed / Reference Required"
+msgstr "* non commercial autorisé / commercial autorisé / référence requise"
+
+#: taxonomies/ckan-backend-rights.php:27
+msgid ""
+"* Non-commercial Allowed / Commercial With Permission Allowed / Reference "
+"Not Required"
+msgstr ""
+"* non commercial autorisé / commercial avec autorisation autorisé / "
+"référence non requise"
+
+#: taxonomies/ckan-backend-rights.php:28
+msgid ""
+"* Non-commercial Allowed / Commercial With Permission Allowed / Reference "
+"Required"
+msgstr ""
+"* non commercial autorisé / commercial avec autorisation autorisé / "
+"référence requise"
+
+#: taxonomies/ckan-backend-rights.php:29
+msgid ""
+"Non-commercial Allowed / Commercial Not Allowed / Reference Not Required"
+msgstr "Non commercial autorisé / commercial interdit / référence non requise"
+
+#: taxonomies/ckan-backend-rights.php:30
+msgid "Non-commercial Allowed / Commercial Not Allowed / Reference Required"
+msgstr "Non commercial autorisé / commercial interdit / référence requise"
+
+#: taxonomies/ckan-backend-rights.php:31
+msgid ""
+"Non-commercial Not Allowed / Commercial Not Allowed / Reference Not Required"
+msgstr "Non commercial interdit / commercial interdit / référence non requise"
+
+#: taxonomies/ckan-backend-rights.php:32
+msgid ""
+"Non-commercial Not Allowed / Commercial Not Allowed / Reference Required"
+msgstr "Non commercial interdit / commercial interdit / référence requise"
+
+#: taxonomies/ckan-backend-rights.php:33
+msgid ""
+"Non-commercial Not Allowed / Commercial Allowed / Reference Not Required"
+msgstr "Non commercial interdit / commercial autorisé / référence non requise"
+
+#: taxonomies/ckan-backend-rights.php:34
+msgid "Non-commercial Not Allowed / Commercial Allowed / Reference Required"
+msgstr "Non commercial interdit / commercial autorisé / référence requise"
+
+#: taxonomies/ckan-backend-rights.php:35
+msgid ""
+"Non-commercial Not Allowed / Commercial With Permission Allowed / Reference "
+"Not Required"
+msgstr ""
+"Non commercial interdit / commercial avec autorisation autorisé / référence "
+"non requise"
+
+#: taxonomies/ckan-backend-rights.php:36
+msgid ""
+"Non-commercial Not Allowed / Commercial With Permission Allowed / Reference "
+"Required"
+msgstr ""
+"Non commercial interdit / commercial avec autorisation autorisé / référence "
+"non requise"
+
+#: helper/ckan-backend-helper.php:54
+msgid "There was a problem sending the request."
+msgstr "La requête n'a pas pu être envoyée."
+
+#: helper/ckan-backend-helper.php:75
+msgid "API responded with unknown error."
+msgstr "L'API a renvoyé une erreur inconnue."
+
+#: helper/ckan-backend-helper.php:447
+msgid "All organizations"
+msgstr "Toutes les organisations"
