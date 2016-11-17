@@ -31,8 +31,8 @@ class Ckan_Backend_Local_Dataset_Import {
 	public function register_submenu_page() {
 		add_submenu_page(
 			'edit.php?post_type=' . Ckan_Backend_Local_Dataset::POST_TYPE,
-			__( 'Import Catalog', 'ogdch' ),
-			__( 'Import', 'ogdch' ),
+			__( 'Import Catalog', 'ogdch-backend' ),
+			__( 'Import', 'ogdch-backend' ),
 			'create_datasets',
 			$this->menu_slug,
 			array( $this, 'import_page_callback' )
@@ -66,7 +66,7 @@ class Ckan_Backend_Local_Dataset_Import {
 			} else {
 				if ( is_array( $imported_datasets ) && 0 === count( $imported_datasets ) ) {
 					echo '<div class="error"><p>';
-					esc_html_e( 'No datasets found in given import file', 'ogdch' );
+					esc_html_e( 'No datasets found in given import file', 'ogdch-backend' );
 					echo '</p></div>';
 				} else {
 					foreach ( $imported_datasets as $dataset_information ) {
@@ -79,12 +79,12 @@ class Ckan_Backend_Local_Dataset_Import {
 							echo '<p><strong>';
 							if ( $dataset_information['new'] ) {
 								printf(
-									esc_html_x( 'Successfully inserted new dataset %s', '%s contains the id of the dataset.', 'ogdch' ),
+									esc_html_x( 'Successfully inserted new dataset %s', '%s contains the id of the dataset.', 'ogdch-backend' ),
 									get_the_title( $dataset_information['id'] )
 								);
 							} else {
 								printf(
-									esc_html_x( 'Successfully updated dataset %s', '%s contains the title of the dataset.', 'ogdch' ),
+									esc_html_x( 'Successfully updated dataset %s', '%s contains the title of the dataset.', 'ogdch-backend' ),
 									get_the_title( $dataset_information['id'] )
 								);
 							}
@@ -93,7 +93,7 @@ class Ckan_Backend_Local_Dataset_Import {
 							if ( 'publish' === $dataset_information['post_status'] ) {
 								// @codingStandardsIgnoreStart
 								printf(
-									_x( 'The dataset is already published. You can edit it here: <a href="%1$s">%2$s</a>.', '%1$s contains the url to edit the dataset. %2$s contains the title of the dataset.', 'ogdch' ),
+									_x( 'The dataset is already published. You can edit it here: <a href="%1$s">%2$s</a>.', '%1$s contains the url to edit the dataset. %2$s contains the title of the dataset.', 'ogdch-backend' ),
 									esc_url( admin_url( 'post.php?post=' . esc_attr( $dataset_information['id'] ) . '&action=edit' ) ),
 									get_the_title( $dataset_information['id'] )
 								);
@@ -101,7 +101,7 @@ class Ckan_Backend_Local_Dataset_Import {
 							} else {
 								// @codingStandardsIgnoreStart
 								printf(
-									_x( 'The dataset is not yet published. You can edit and publish it here: <a href="%1$s">%2$s</a>.', '%1$s contains the url to edit the dataset. %2$s contains the title of the dataset.', 'ogdch' ),
+									_x( 'The dataset is not yet published. You can edit and publish it here: <a href="%1$s">%2$s</a>.', '%1$s contains the url to edit the dataset. %2$s contains the title of the dataset.', 'ogdch-backend' ),
 									esc_url( admin_url( 'post.php?post=' . esc_attr( $dataset_information['id'] ) . '&action=edit' ) ),
 									get_the_title( $dataset_information['id'] )
 								);
@@ -139,13 +139,13 @@ class Ckan_Backend_Local_Dataset_Import {
 							<tbody>
 								<tr>
 									<th scope="row">
-										<label for="import_file"><?php esc_html_e( __( 'DCAT-AP Catalog File:', 'ogdch' ) ); ?></label>
+										<label for="import_file"><?php esc_html_e( __( 'DCAT-AP Catalog File:', 'ogdch-backend' ) ); ?></label>
 									</th>
 
 									<td>
 										<input type="file" id="import_file" name="<?php echo esc_attr( $file_field_name ); ?>"/>
 										<br/>
-										<span class="description"><?php esc_html_e( __( 'File has to be a DCAT-AP Switzerland catalog.', 'ogdch' ) ); ?></span>
+										<span class="description"><?php esc_html_e( __( 'File has to be a DCAT-AP Switzerland catalog.', 'ogdch-backend' ) ); ?></span>
 									</td>
 								</tr>
 							</tbody>
@@ -154,7 +154,7 @@ class Ckan_Backend_Local_Dataset_Import {
 						<hr/>
 
 						<p class="submit">
-							<input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e( 'Import', 'ogdch' ); ?>"/>
+							<input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e( 'Import', 'ogdch-backend' ); ?>"/>
 						</p>
 					</div>
 				</div>
@@ -178,7 +178,7 @@ class Ckan_Backend_Local_Dataset_Import {
 			! isset( $file['error'] ) ||
 			is_array( $file['error'] )
 		) {
-			return new WP_Error( 'invalid_parameters', __( 'Invalid parameters.', 'ogdch' ) );
+			return new WP_Error( 'invalid_parameters', __( 'Invalid parameters.', 'ogdch-backend' ) );
 		}
 
 		// Check $file['error'] value.
@@ -186,17 +186,17 @@ class Ckan_Backend_Local_Dataset_Import {
 			case UPLOAD_ERR_OK:
 				break;
 			case UPLOAD_ERR_NO_FILE:
-				return new WP_Error( 'missing_file', __( 'Missing import file.', 'ogdch' ) );
+				return new WP_Error( 'missing_file', __( 'Missing import file.', 'ogdch-backend' ) );
 			case UPLOAD_ERR_INI_SIZE:
 			case UPLOAD_ERR_FORM_SIZE:
-				return new WP_Error( 'exceeded_filesize', __( 'Exceeded filesize limit.', 'ogdch' ) );
+				return new WP_Error( 'exceeded_filesize', __( 'Exceeded filesize limit.', 'ogdch-backend' ) );
 			default:
-				return new WP_Error( 'unknown_errors', __( 'Unknown errors.', 'ogdch' ) );
+				return new WP_Error( 'unknown_errors', __( 'Unknown errors.', 'ogdch-backend' ) );
 		}
 
 		$xml = simplexml_load_file( $file['tmp_name'] );
 		if ( ! is_object( $xml ) ) {
-			return new WP_Error( 'invalid_xml', __( 'Uploaded file is not a vaild XML file.', 'ogdch' ) );
+			return new WP_Error( 'invalid_xml', __( 'Uploaded file is not a vaild XML file.', 'ogdch-backend' ) );
 		}
 		$xml->registerXPathNamespace( 'dcat', 'http://www.w3.org/ns/dcat#' );
 		$xml->registerXPathNamespace( 'dct', 'http://purl.org/dc/terms/' );
@@ -404,12 +404,12 @@ class Ckan_Backend_Local_Dataset_Import {
 			$dataset = new Ckan_Backend_Dataset_Model();
 			$identifier = (string) $this->get_single_element_from_xpath( $xml, './dct:identifier' );
 			if ( '' === $identifier ) {
-				throw new Exception( esc_html__( 'Please provide an identifier for the dataset (eg. <dct:identifier>[original_dataset_id]@[organization_id]</dct:identifier>).  Dataset [no identifier] not imported.', 'ogdch' ) );
+				throw new Exception( esc_html__( 'Please provide an identifier for the dataset (eg. <dct:identifier>[original_dataset_id]@[organization_id]</dct:identifier>).  Dataset [no identifier] not imported.', 'ogdch-backend' ) );
 			}
 			$splitted_identifier = Ckan_Backend_Helper::split_identifier( $identifier );
 			if ( empty( $splitted_identifier['original_identifier'] ) ) {
 				throw new Exception( sprintf(
-					esc_html_x( 'The original identifier of your dataset is missing. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[organization_id]</dct:identifier>. Dataset %s not imported.', '%s contains the identifier of the dataset.', 'ogdch' ),
+					esc_html_x( 'The original identifier of your dataset is missing. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[organization_id]</dct:identifier>. Dataset %s not imported.', '%s contains the identifier of the dataset.', 'ogdch-backend' ),
 					$identifier
 				) );
 			}
@@ -422,7 +422,7 @@ class Ckan_Backend_Local_Dataset_Import {
 			}
 			if ( '' === $dataset->get_main_title() ) {
 				throw new Exception( sprintf(
-					esc_attr_x( 'Please provide a title in at least one language for the dataset (eg. <dct:title xml:lang="en">My Dataset</dct:title>). Dataset %s not imported.', '%s contains the identifier of the dataset.', 'ogdch' ),
+					esc_attr_x( 'Please provide a title in at least one language for the dataset (eg. <dct:title xml:lang="en">My Dataset</dct:title>). Dataset %s not imported.', '%s contains the identifier of the dataset.', 'ogdch-backend' ),
 					$identifier
 				) );
 			}
@@ -433,7 +433,7 @@ class Ckan_Backend_Local_Dataset_Import {
 			$publishers = $xml->xpath( './dct:publisher' );
 			if ( empty( $publishers ) ) {
 				throw new Exception( sprintf(
-					esc_attr_x( 'Please provide at least one publisher for the dataset (eg. <dct:publisher><rdf:Description><rdfs:label>Publisher</rdfs:label></rdf:Description></dct:publisher>). Dataset %s not imported.', '%s contains the identifier of the dataset.', 'ogdch' ),
+					esc_attr_x( 'Please provide at least one publisher for the dataset (eg. <dct:publisher><rdf:Description><rdfs:label>Publisher</rdfs:label></rdf:Description></dct:publisher>). Dataset %s not imported.', '%s contains the identifier of the dataset.', 'ogdch-backend' ),
 					$identifier
 				) );
 			}
@@ -443,7 +443,7 @@ class Ckan_Backend_Local_Dataset_Import {
 			$contact_points = $xml->xpath( './dcat:contactPoint/*' );
 			if ( empty( $contact_points ) ) {
 				throw new Exception( sprintf(
-					esc_attr_x( 'Please provide at least one contact point for the dataset (eg. <dcat:contactPoint><vcard:Organization><vcard:fn>Contact Point</vcard:fn><vcard:hasEmail rdf:resource="mailto:contact.point@swiss.ch"/></vcard:Organization></dcat:contactPoint>). Dataset %s not imported.', '%s contains the identifier of the dataset.', 'ogdch' ),
+					esc_attr_x( 'Please provide at least one contact point for the dataset (eg. <dcat:contactPoint><vcard:Organization><vcard:fn>Contact Point</vcard:fn><vcard:hasEmail rdf:resource="mailto:contact.point@swiss.ch"/></vcard:Organization></dcat:contactPoint>). Dataset %s not imported.', '%s contains the identifier of the dataset.', 'ogdch-backend' ),
 					$identifier
 				) );
 			}
@@ -510,7 +510,7 @@ class Ckan_Backend_Local_Dataset_Import {
 		// Check if organisation is set
 		if ( empty( $organisation ) ) {
 			throw new Exception( sprintf(
-				esc_attr_x( 'The organization id is missing in the identifier. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[organization_id]</dct:identifier>. Dataset %s not imported.', '%s contains the identifier of the dataset.', 'ogdch' ),
+				esc_attr_x( 'The organization id is missing in the identifier. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[organization_id]</dct:identifier>. Dataset %s not imported.', '%s contains the identifier of the dataset.', 'ogdch-backend' ),
 				$identifier
 			) );
 		}
@@ -519,7 +519,7 @@ class Ckan_Backend_Local_Dataset_Import {
 			$user_organisation = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
 			if ( $user_organisation !== $organisation ) {
 				throw new Exception( sprintf(
-					esc_html_x( 'You are not allowed to add a dataset for another organistaion. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[your_organization_id]</dct:identifier>. Dataset %s not imported.', '%s contains the identifier of the dataset.', 'ogdch' ),
+					esc_html_x( 'You are not allowed to add a dataset for another organistaion. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[your_organization_id]</dct:identifier>. Dataset %s not imported.', '%s contains the identifier of the dataset.', 'ogdch-backend' ),
 					$identifier
 				) );
 			}
@@ -527,7 +527,7 @@ class Ckan_Backend_Local_Dataset_Import {
 		// Check if organisation exists in CKAN
 		if ( ! Ckan_Backend_Helper::organisation_exists( $organisation ) ) {
 			throw new Exception( sprintf(
-				esc_html_x( 'Organization %1$s does not exist. Dataset %2$s not imported.', '%1$s contains the organisation id of the dataset. %2$s contains the identifier of the dataset.', 'ogdch' ),
+				esc_html_x( 'Organization %1$s does not exist. Dataset %2$s not imported.', '%1$s contains the organisation id of the dataset. %2$s contains the identifier of the dataset.', 'ogdch-backend' ),
 				$organisation,
 				$identifier
 			) );
@@ -645,7 +645,7 @@ class Ckan_Backend_Local_Dataset_Import {
 		}
 		if ( ! array_key_exists( $rights, Ckan_Backend_Rights::get_rights() ) ) {
 			throw new Exception( sprintf(
-				esc_html_x( 'Term of use %1$s does not exist. Dataset %2$s not imported.', '%1$s contains the rights of the dataset. %2$s contains the identifier of the dataset.', 'ogdch' ),
+				esc_html_x( 'Term of use %1$s does not exist. Dataset %2$s not imported.', '%1$s contains the rights of the dataset. %2$s contains the identifier of the dataset.', 'ogdch-backend' ),
 				$rights,
 				$identifier
 			) );
@@ -702,7 +702,7 @@ class Ckan_Backend_Local_Dataset_Import {
 				$theme_name = get_post_meta( $groups[0]->ID, Ckan_Backend_Local_Group::FIELD_PREFIX . 'ckan_name', true );
 				if ( empty( $theme_name ) || ! Ckan_Backend_Helper::group_exists( $theme_name ) ) {
 					throw new Exception( sprintf(
-						esc_html_x( 'Category %1$s does not exist. Dataset %2$s not imported.', '%1$s contains the theme uri. %2$s contains the identifier of the dataset.', 'ogdch' ),
+						esc_html_x( 'Category %1$s does not exist. Dataset %2$s not imported.', '%1$s contains the theme uri. %2$s contains the identifier of the dataset.', 'ogdch-backend' ),
 						$theme_uri,
 						$identifier
 					) );
@@ -712,7 +712,7 @@ class Ckan_Backend_Local_Dataset_Import {
 				set_transient( $transient_name, $theme_name, 1 * HOUR_IN_SECONDS );
 			} else {
 				throw new Exception( sprintf(
-					esc_html_x( 'Category %1$s does not exist. Dataset %2$s not imported.', '%1$s contains the theme uri. %2$s contains the identifier of the dataset.', 'ogdch' ),
+					esc_html_x( 'Category %1$s does not exist. Dataset %2$s not imported.', '%1$s contains the theme uri. %2$s contains the identifier of the dataset.', 'ogdch-backend' ),
 					$theme_uri,
 					$identifier
 				) );

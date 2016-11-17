@@ -283,7 +283,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		 */
 		public function bootstrap() {
 			// Load translations
-			load_plugin_textdomain( 'ogdch', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+			load_plugin_textdomain( 'ogdch-backend', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 
 			$this->load_dependencies();
 
@@ -330,10 +330,10 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 					'datasetSearch' => array(
 						'CKAN_API_ENDPOINT' => CKAN_API_ENDPOINT,
 						'currentLanguage'   => Ckan_Backend_Helper::get_current_language(),
-						'placeholder'       => __( 'Search dataset...', 'ogdch' ),
+						'placeholder'       => __( 'Search dataset...', 'ogdch-backend' ),
 					),
 					'mediatypeSearch' => array(
-						'placeholder' => __( 'No media type', 'ogdch' ),
+						'placeholder' => __( 'No media type', 'ogdch-backend' ),
 					),
 				)
 			);
@@ -357,19 +357,19 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 
 			$organisation_field_name = self::$plugin_slug . '_organisation';
 			?>
-			<h3><?php esc_attr_e( 'Organization', 'ogdch' ); ?></h3>
+			<h3><?php esc_attr_e( 'Organization', 'ogdch-backend' ); ?></h3>
 
 			<table class="form-table">
 				<tr class="form-field form-required">
 					<th scope="row">
-						<label for="<?php echo esc_attr( $organisation_field_name ); ?>"><?php esc_attr_e( 'Organization', 'ogdch' ); ?></label>
+						<label for="<?php echo esc_attr( $organisation_field_name ); ?>"><?php esc_attr_e( 'Organization', 'ogdch-backend' ); ?></label>
 						<span class="description">(required)</span>
 					</th>
 					<td>
 						<select name="<?php echo esc_attr( $organisation_field_name ); ?>"
 						        id="<?php echo esc_attr( $organisation_field_name ); ?>" aria-required="true">
 							<?php
-							echo '<option value="">' . esc_attr( '- Please choose -', 'ogdch' ) . '</option>';
+							echo '<option value="">' . esc_attr( '- Please choose -', 'ogdch-backend' ) . '</option>';
 							$organisation_options = Ckan_Backend_Helper::get_organisation_form_field_options();
 							foreach ( $organisation_options as $value => $title ) {
 								echo '<option value="' . esc_attr( $value ) . '"';
@@ -426,7 +426,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		 */
 		public function add_user_organisation_column( $columns ) {
 			$new_columns = array(
-				'user_organisation' => __( 'Organization', 'ogdch' ),
+				'user_organisation' => __( 'Organization', 'ogdch-backend' ),
 			);
 
 			return array_merge( $columns, $new_columns );
@@ -501,9 +501,9 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			$meta_key = $field->id();
 			$synced = get_post_meta( $object_id, $meta_key, true );
 			if ( $synced ) {
-				echo '<p class="ckan-synced success"><span class="dashicons dashicons-yes"></span>' . esc_attr__( 'All good!', 'ogdch' ) . '</p>';
+				echo '<p class="ckan-synced success"><span class="dashicons dashicons-yes"></span>' . esc_attr__( 'All good!', 'ogdch-backend' ) . '</p>';
 			} else {
-				echo '<p class="ckan-synced error"><span class="dashicons dashicons-no"></span>' . esc_attr__( 'Not synchronized! Please fix data and save the element again.', 'ogdch' ) . '</p>';
+				echo '<p class="ckan-synced error"><span class="dashicons dashicons-no"></span>' . esc_attr__( 'Not synchronized! Please fix data and save the element again.', 'ogdch-backend' ) . '</p>';
 			}
 		}
 

@@ -53,8 +53,8 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 	public function register_submenu_page() {
 		$this->page_suffix = add_submenu_page(
 			'edit.php?post_type=' . Ckan_Backend_Local_Harvester::POST_TYPE,
-			__( 'Harvester Dashboard', 'ogdch' ),
-			__( 'Dashboard', 'ogdch' ),
+			__( 'Harvester Dashboard', 'ogdch-backend' ),
+			__( 'Dashboard', 'ogdch-backend' ),
 			'create_harvesters',
 			$this->menu_slug,
 			array( $this, 'dashboard_page_callback' )
@@ -102,7 +102,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 			$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
 
 			if ( 0 === count( $errors ) ) {
-				echo '<div class="updated"><p>' . esc_html__( 'Successfully created new harvester job.', 'ogdch' ) . '</p></div>';
+				echo '<div class="updated"><p>' . esc_html__( 'Successfully created new harvester job.', 'ogdch-backend' ) . '</p></div>';
 			} else {
 				Ckan_Backend_Helper::print_error_messages( $errors );
 			}
@@ -116,7 +116,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 			$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
 
 			if ( 0 === count( $errors ) ) {
-				echo '<div class="updated"><p>' . esc_html__( 'Current harvester job successfully aborted.', 'ogdch' ) . '</p></div>';
+				echo '<div class="updated"><p>' . esc_html__( 'Current harvester job successfully aborted.', 'ogdch-backend' ) . '</p></div>';
 			} else {
 				Ckan_Backend_Helper::print_error_messages( $errors );
 			}
@@ -130,7 +130,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 			$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
 
 			if ( 0 === count( $errors ) ) {
-				echo '<div class="updated"><p>' . esc_html__( 'Successfully cleared all harvester datasets.', 'ogdch' ) . '</p></div>';
+				echo '<div class="updated"><p>' . esc_html__( 'Successfully cleared all harvester datasets.', 'ogdch-backend' ) . '</p></div>';
 			} else {
 				Ckan_Backend_Helper::print_error_messages( $errors );
 			}
@@ -150,18 +150,18 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 							<tbody>
 								<tr>
 									<th scope="row">
-										<label for="harvester_selection"><?php esc_html_e( __( 'Choose Harvester:', 'ogdch' ) ); ?></label>
+										<label for="harvester_selection"><?php esc_html_e( __( 'Choose Harvester:', 'ogdch-backend' ) ); ?></label>
 									</th>
 									<td>
 										<select id="harvester_selection" name="<?php echo esc_attr( $harvester_selection_field_name ); ?>">
-											<option value=""><?php esc_html_e( '- Please choose -', 'ogdch' ); ?></option>
+											<option value=""><?php esc_html_e( '- Please choose -', 'ogdch-backend' ); ?></option>
 											<?php
 											foreach ( $harvesters as $id => $title ) {
 												echo '<option value="' . esc_attr( $id ) . '"' . ( $id === $selected_harvester_id ? 'selected="selected"' : '' ) . '>' . esc_html( $title ) . '</option>';
 											}
 											?>
 										</select>
-										<?php submit_button( __( 'Show', 'ogdch' ), 'primary', 'show', false ); ?>
+										<?php submit_button( __( 'Show', 'ogdch-backend' ), 'primary', 'show', false ); ?>
 									</td>
 								</tr>
 							</tbody>
@@ -172,7 +172,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 				if ( ! empty( $selected_harvester_id ) && array_key_exists( $selected_harvester_id, $harvesters ) ) {
 					$this->render_harvester_detail( $selected_harvester_id, $harvesters[ $selected_harvester_id ] );
 				} else {
-					echo '<p>' . esc_html__( 'Please select a harvester first.', 'ogdch' ) . '</p>';
+					echo '<p>' . esc_html__( 'Please select a harvester first.', 'ogdch-backend' ) . '</p>';
 				}
 				?>
 			</form>
@@ -188,8 +188,8 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 	 */
 	public function render_harvester_detail( $harvester_id, $harvester_title ) {
 		echo '<h2>' . esc_html( $harvester_title ) . '</h2>';
-		echo '<p><span class="dashicons dashicons-image-rotate"></span> <a href="' . esc_url( $this->current_url_without_action ) . '">' . esc_html( __( 'Refresh page', 'ogdch' ) ) . '</a></p>';
-		printf( esc_html_x( 'Harvester ID: %s', '%s contains the id of the harvester', 'ogdch' ), esc_html( $harvester_id ) );
+		echo '<p><span class="dashicons dashicons-image-rotate"></span> <a href="' . esc_url( $this->current_url_without_action ) . '">' . esc_html( __( 'Refresh page', 'ogdch-backend' ) ) . '</a></p>';
+		printf( esc_html_x( 'Harvester ID: %s', '%s contains the id of the harvester', 'ogdch-backend' ), esc_html( $harvester_id ) );
 
 		$harvester_search_args = array(
 			// @codingStandardsIgnoreStart
@@ -202,7 +202,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 		);
 		$harvesters            = get_posts( $harvester_search_args );
 		if ( is_array( $harvesters ) && count( $harvesters ) > 0 ) {
-			echo ' <a href="' . esc_url( admin_url( 'post.php?post=' . esc_attr( $harvesters[0]->ID ) . '&action=edit' ) ) . '">' . esc_html__( '(edit)', 'ogdch' ) . '</a>';
+			echo ' <a href="' . esc_url( admin_url( 'post.php?post=' . esc_attr( $harvesters[0]->ID ) . '&action=edit' ) ) . '">' . esc_html__( '(edit)', 'ogdch-backend' ) . '</a>';
 		}
 
 		if ( isset( $_GET['job_id'] ) ) {
@@ -224,9 +224,9 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 			$this->render_harvester_job_list( $harvester_jobs, $show_all_jobs );
 
 			if ( ! $show_all_jobs ) {
-				echo '<a href="' . esc_url( add_query_arg( 'show_more', 1, $this->current_url_without_action ) ) .'" class="button button-secondary">' . esc_html__( 'Show all jobs', 'ogdch' ) . '</a>';
+				echo '<a href="' . esc_url( add_query_arg( 'show_more', 1, $this->current_url_without_action ) ) .'" class="button button-secondary">' . esc_html__( 'Show all jobs', 'ogdch-backend' ) . '</a>';
 			} else {
-				echo '<a href="' . esc_url( remove_query_arg( 'show_more', $this->current_url_without_action ) ) .'" class="button button-secondary">' . esc_html__( 'Show less jobs', 'ogdch' ) . '</a>';
+				echo '<a href="' . esc_url( remove_query_arg( 'show_more', $this->current_url_without_action ) ) .'" class="button button-secondary">' . esc_html__( 'Show less jobs', 'ogdch-backend' ) . '</a>';
 			}
 		}
 	}
@@ -249,30 +249,30 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 		<div class="actions">
 			<?php
 			if ( $has_unfinished_job ) {
-				$abort_onclick_confirm = "if( !confirm('" . esc_attr__( 'Are you sure you want to abort the current job of this harvester?', 'ogdch' ) . "') ) return false;";
-				echo '<a href="' . esc_url( add_query_arg( 'action', 'abort' ) ) . '" class="button delete" onclick="' . esc_attr( $abort_onclick_confirm ) . '">' . esc_html__( 'Abort unfinished job', 'ogdch' ) . '</a>';
+				$abort_onclick_confirm = "if( !confirm('" . esc_attr__( 'Are you sure you want to abort the current job of this harvester?', 'ogdch-backend' ) . "') ) return false;";
+				echo '<a href="' . esc_url( add_query_arg( 'action', 'abort' ) ) . '" class="button delete" onclick="' . esc_attr( $abort_onclick_confirm ) . '">' . esc_html__( 'Abort unfinished job', 'ogdch-backend' ) . '</a>';
 			} else {
-				echo '<a href="' . esc_url( add_query_arg( 'action', 'reharvest' ) ) . '" class="button button-secondary">' . esc_html__( 'Reharvest', 'ogdch' ) . '</a>';
+				echo '<a href="' . esc_url( add_query_arg( 'action', 'reharvest' ) ) . '" class="button button-secondary">' . esc_html__( 'Reharvest', 'ogdch-backend' ) . '</a>';
 			}
 
 			echo ' ';
-			$clear_onclick_confirm = "if( !confirm('" . esc_attr__( 'Are you sure you want to clear all data of this harvester?', 'ogdch' ) . "') ) return false;";
-			echo '<a href="' . esc_url( add_query_arg( 'action', 'clear' ) ) . '" class="button delete" onclick="' . esc_attr( $clear_onclick_confirm ) . '">' . esc_html__( 'Clear', 'ogdch' ) . '</a>';
+			$clear_onclick_confirm = "if( !confirm('" . esc_attr__( 'Are you sure you want to clear all data of this harvester?', 'ogdch-backend' ) . "') ) return false;";
+			echo '<a href="' . esc_url( add_query_arg( 'action', 'clear' ) ) . '" class="button delete" onclick="' . esc_attr( $clear_onclick_confirm ) . '">' . esc_html__( 'Clear', 'ogdch-backend' ) . '</a>';
 			?>
 		</div>
 		<div class="all-jobs">
 			<h3>
 				<?php
 				if ( $show_all_jobs ) {
-					esc_html_e( 'All Harvest Jobs', 'ogdch' );
+					esc_html_e( 'All Harvest Jobs', 'ogdch-backend' );
 				} else {
-					esc_html_e( 'Latest Harvest Job', 'ogdch' );
+					esc_html_e( 'Latest Harvest Job', 'ogdch-backend' );
 				}
 				?>
 			</h3>
 			<?php
 			if ( empty( $jobs ) ) {
-				echo '<p>' . esc_html__( 'No Jobs found for this harvester.', 'ogdch' ) . '</p>';
+				echo '<p>' . esc_html__( 'No Jobs found for this harvester.', 'ogdch-backend' ) . '</p>';
 			} else {
 				$collapsed = false;
 				foreach ( $jobs as $job ) {
@@ -298,45 +298,45 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 		?>
 		<div class="postbox">
 			<div class="inside collapsible <?php echo esc_attr( $collapsed_class ); ?>">
-				<h4><?php printf( esc_html_x( 'Job created at %s', '%s contains the date and time when the jobs was created.', 'ogdch' ), esc_html( $job_created ) ); ?></h4>
+				<h4><?php printf( esc_html_x( 'Job created at %s', '%s contains the date and time when the jobs was created.', 'ogdch-backend' ), esc_html( $job_created ) ); ?></h4>
 				<div>
 					<?php
 					if ( ! empty( $job['stats'] ) ) {
 						?>
 						<div class="harvester-status">
-							<span class="label label-added"><?php printf( esc_html_x( '%s added', '%s contains the number of added datasets.', 'ogdch' ), esc_html( ( array_key_exists( 'added', $job['stats'] ) ? $job['stats']['added'] : 0 ) ) ); ?></span>
-							<span class="label label-updated"><?php printf( esc_html_x( '%s updated', '%s contains the number of updated datasets.', 'ogdch' ), esc_html( ( array_key_exists( 'updated', $job['stats'] ) ? $job['stats']['updated'] : 0 ) ) ); ?></span>
-							<span class="label label-deleted"><?php printf( esc_html_x( '%s deleted', '%s contains the number of deleted datasets.', 'ogdch' ), esc_html( ( array_key_exists( 'deleted', $job['stats'] ) ? $job['stats']['deleted'] : 0 ) ) ); ?></span>
-							<span class="label label-errored"><?php printf( esc_html_x( '%s errors', '%s contains the number of errors.', 'ogdch' ), esc_html( ( array_key_exists( 'errored', $job['stats'] ) ) ? $job['stats']['errored'] : 0 ) ); ?></span>
+							<span class="label label-added"><?php printf( esc_html_x( '%s added', '%s contains the number of added datasets.', 'ogdch-backend' ), esc_html( ( array_key_exists( 'added', $job['stats'] ) ? $job['stats']['added'] : 0 ) ) ); ?></span>
+							<span class="label label-updated"><?php printf( esc_html_x( '%s updated', '%s contains the number of updated datasets.', 'ogdch-backend' ), esc_html( ( array_key_exists( 'updated', $job['stats'] ) ? $job['stats']['updated'] : 0 ) ) ); ?></span>
+							<span class="label label-deleted"><?php printf( esc_html_x( '%s deleted', '%s contains the number of deleted datasets.', 'ogdch-backend' ), esc_html( ( array_key_exists( 'deleted', $job['stats'] ) ? $job['stats']['deleted'] : 0 ) ) ); ?></span>
+							<span class="label label-errored"><?php printf( esc_html_x( '%s errors', '%s contains the number of errors.', 'ogdch-backend' ), esc_html( ( array_key_exists( 'errored', $job['stats'] ) ) ? $job['stats']['errored'] : 0 ) ); ?></span>
 						</div>
 						<?php
 					}
 					?>
 					<table class="job-table table-striped">
 						<tr>
-							<th><?php esc_html_e( 'Job ID', 'ogdch' ); ?></th>
+							<th><?php esc_html_e( 'Job ID', 'ogdch-backend' ); ?></th>
 							<td><?php echo esc_html( $job['id'] ); ?></td>
 						</tr>
 						<tr>
-							<th><?php esc_html_e( 'Created', 'ogdch' ); ?></th>
+							<th><?php esc_html_e( 'Created', 'ogdch-backend' ); ?></th>
 							<td><?php echo esc_html( Ckan_Backend_Helper::convert_date_to_readable_format( $job['created'] ) ); ?></td>
 						</tr>
 						<tr>
-							<th><?php esc_html_e( 'Started', 'ogdch' ); ?></th>
+							<th><?php esc_html_e( 'Started', 'ogdch-backend' ); ?></th>
 							<td><?php echo esc_html( Ckan_Backend_Helper::convert_date_to_readable_format( $job['gather_started'] ) ); ?></td>
 						</tr>
 						<tr>
-							<th><?php esc_html_e( 'Finished', 'ogdch' ); ?></th>
+							<th><?php esc_html_e( 'Finished', 'ogdch-backend' ); ?></th>
 							<td><?php echo esc_html( Ckan_Backend_Helper::convert_date_to_readable_format( $job['finished'] ) ); ?></td>
 						</tr>
 						<tr>
-							<th><?php esc_html_e( 'Status', 'ogdch' ); ?></th>
+							<th><?php esc_html_e( 'Status', 'ogdch-backend' ); ?></th>
 							<td><?php echo esc_html( $job['status'] ); ?></td>
 						</tr>
 					</table>
 					<?php
 					if ( $show_detail_button ) {
-						echo '<p><a href="' . esc_url( add_query_arg( 'job_id', $job['id'], $this->current_url_without_action ) ) . '">' . esc_html( __( 'Show Job details', 'ogdch' ) ) . '</a></p>';
+						echo '<p><a href="' . esc_url( add_query_arg( 'job_id', $job['id'], $this->current_url_without_action ) ) . '">' . esc_html( __( 'Show Job details', 'ogdch-backend' ) ) . '</a></p>';
 					}
 					?>
 				</div>
@@ -353,8 +353,8 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 	public function render_job_detail( $job_id ) {
 		$job = $this->get_job( $job_id );
 
-		echo '<h3>' . esc_html( __( 'Job detail', 'ogdch' ) ) . '</h3>';
-		echo '<p><span class="dashicons dashicons-arrow-left-alt2"></span> <a href="' . esc_url( remove_query_arg( 'job_id' ), $this->current_url_without_action ) . '">' . esc_html( __( 'Back to Job list', 'ogdch' ) ) . '</a></p>';
+		echo '<h3>' . esc_html( __( 'Job detail', 'ogdch-backend' ) ) . '</h3>';
+		echo '<p><span class="dashicons dashicons-arrow-left-alt2"></span> <a href="' . esc_url( remove_query_arg( 'job_id' ), $this->current_url_without_action ) . '">' . esc_html( __( 'Back to Job list', 'ogdch-backend' ) ) . '</a></p>';
 		if ( ! empty( $job ) ) {
 			$this->render_job_table( $job, false, false );
 			if ( 'Finished' === $job['status'] ) {
@@ -371,7 +371,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 	 */
 	public function render_job_error_summary( $job ) {
 		?>
-		<h3><?php esc_html_e( 'Error summary', 'ogdch' ); ?></h3>
+		<h3><?php esc_html_e( 'Error summary', 'ogdch-backend' ); ?></h3>
 		<div class="postbox">
 			<div class="inside">
 				<?php
@@ -381,17 +381,17 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 					isset( $job['gather_error_summary'] ) &&
 					0 === count( $job['gather_error_summary'] )
 				) {
-					echo '<p>' . esc_html__( 'No errors for this job', 'ogdch' ) . '</p>';
+					echo '<p>' . esc_html__( 'No errors for this job', 'ogdch-backend' ) . '</p>';
 				} else {
 					if ( isset( $job['gather_error_summary'] ) && 0 < count( $job['gather_error_summary'] ) ) {
 						?>
-						<h4><?php esc_html_e( 'Job Errors', 'ogdch' ); ?></h4>
+						<h4><?php esc_html_e( 'Job Errors', 'ogdch-backend' ); ?></h4>
 						<?php
 						$this->render_job_error_table( $job['gather_error_summary'] );
 					}
 					if ( isset( $job['object_error_summary'] ) && 0 < count( $job['object_error_summary'] ) ) {
 						?>
-						<h4><?php esc_html_e( 'Document Errors', 'ogdch' ); ?></h4>
+						<h4><?php esc_html_e( 'Document Errors', 'ogdch-backend' ); ?></h4>
 						<?php
 						$this->render_job_error_table( $job['object_error_summary'] );
 					}
@@ -410,13 +410,13 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 	public function render_job_report( $job_report ) {
 		if ( count( $job_report['gather_errors'] ) > 0 || count( $job_report['object_errors'] ) > 0 ) {
 			?>
-			<h3><?php esc_html_e( 'Error Report', 'ogdch' ); ?></h3>
+			<h3><?php esc_html_e( 'Error Report', 'ogdch-backend' ); ?></h3>
 			<div class="postbox">
 				<div class="inside">
 					<?php
 					if ( count( $job_report['gather_errors'] ) > 0 ) {
 						?>
-						<h4><?php esc_html_e( 'Job Errors', 'ogdch' ); ?></h4>
+						<h4><?php esc_html_e( 'Job Errors', 'ogdch-backend' ); ?></h4>
 						<ul>
 							<?php foreach ( $job_report['gather_errors'] as $gather_error ) { ?>
 								<li><?php echo esc_html( $gather_error['message'] ); ?></li>
@@ -426,7 +426,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 					}
 					if ( count( $job_report['object_errors'] ) > 0 ) {
 						?>
-						<h4><?php esc_html_e( 'Document Errors', 'ogdch' ); ?></h4>
+						<h4><?php esc_html_e( 'Document Errors', 'ogdch-backend' ); ?></h4>
 						<ul>
 							<?php foreach ( $job_report['object_errors'] as $object_error ) { ?>
 								<li>
@@ -435,7 +435,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 									foreach ( $object_error['errors'] as $error ) {
 										$line = '';
 										if ( ! empty( $error['line'] ) ) {
-											$line = ' <span>' . printf( esc_html_x( '(Line: %s)', '%s contains the line number of the error.', 'ogdch' ), esc_html( $error['line'] ) ) . '</span>';
+											$line = ' <span>' . printf( esc_html_x( '(Line: %s)', '%s contains the line number of the error.', 'ogdch-backend' ), esc_html( $error['line'] ) ) . '</span>';
 										}
 										echo '<p>' . esc_html( $error['message'] . $line ) . '</p>';
 									}
@@ -462,8 +462,8 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 		<table class="error-table table-striped">
 			<thead>
 			<tr>
-				<th class="count"><?php esc_html_e( 'Count', 'ogdch' ); ?></th>
-				<th><?php esc_html_e( 'Message', 'ogdch' ); ?></th>
+				<th class="count"><?php esc_html_e( 'Count', 'ogdch-backend' ); ?></th>
+				<th><?php esc_html_e( 'Message', 'ogdch-backend' ); ?></th>
 			</tr>
 			</thead>
 			<tbody>
