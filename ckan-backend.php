@@ -63,7 +63,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		 * Constructor
 		 */
 		public function __construct() {
-			register_activation_hook(__FILE__,  array( $this, 'activate_plugin' ));
+			register_activation_hook( __FILE__,  array( $this, 'activate_plugin' ) );
 			add_action( 'init', array( $this, 'bootstrap' ), 0 );
 			add_action( 'admin_enqueue_scripts', array( $this, 'add_scripts' ), 999, 1 );
 			// add custom user profile fields
@@ -261,18 +261,18 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		 */
 		public function activate_plugin() {
 			//check if constants are defined in wp config
-			if ( is_admin() && ! defined( "CKAN_API_ENDPOINT" ) ) {
-				wp_die( 'Please define CKAN_API_ENDPOINT in your WP config. <br><a href="' . admin_url( 'plugins.php' ) . '">&laquo; Return to Plugins</a>' );
+			if ( is_admin() && ! defined( 'CKAN_API_ENDPOINT' ) ) {
+				wp_die( 'Please define CKAN_API_ENDPOINT in your WP config.' );
 				return;
 			}
-			if ( is_admin() && ! defined( "CKAN_API_KEY" ) ) {
-				wp_die( 'Please define CKAN_API_KEY in your WP config. <br><a href="' . admin_url( 'plugins.php' ) . '">&laquo; Return to Plugins</a>') ;
+			if ( is_admin() && ! defined( 'CKAN_API_KEY' ) ) {
+				wp_die( 'Please define CKAN_API_KEY in your WP config.' ) ;
 				return;
 			}
 			// Require CMB2 plugin
 			if ( ! is_plugin_active( 'cmb2/init.php' ) && current_user_can( 'activate_plugins' ) ) {
 				// Stop activation redirect and show error
-				wp_die('Sorry, but this plugin requires <a href="https://github.com/WebDevStudios/CMB2">CMB2</a> to be installed and active. <br><a href="' . admin_url( 'plugins.php' ) . '">&laquo; Return to Plugins</a>');
+				wp_die( 'Sorry, but this plugin requires CMB2 to be installed and active.' );
 			}
 		}
 
