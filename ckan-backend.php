@@ -269,6 +269,15 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 				return;
 			}
 
+		/**
+		 * Bootstrap all post types.
+		 *
+		 * @return void
+		 */
+		public function bootstrap() {
+			// Load translations
+			load_plugin_textdomain( 'ogdch', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+
 			$this->load_dependencies();
 
 			self::$keywords_tax_mapping = array(
