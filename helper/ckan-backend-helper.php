@@ -132,7 +132,6 @@ class Ckan_Backend_Helper {
 							}
 						}
 					}
-
 				}
 				// if title in all languages is empty use post title
 				if ( empty( $title ) ) {
@@ -234,9 +233,9 @@ class Ckan_Backend_Helper {
 				if ( empty( $organization_title ) ) {
 					global $language_priority;
 					if ( isset( $language_priority ) ) {
-						foreach ($language_priority as $lang) {
-							$organization_title = get_post_meta($organisations[0]->ID, Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'title_' . $lang, true);
-							if (!empty($organization_title)) {
+						foreach ( $language_priority as $lang ) {
+							$organization_title = get_post_meta( $organisations[0]->ID, Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'title_' . $lang, true );
+							if ( ! empty( $organization_title ) ) {
 								break;
 							}
 						}
@@ -392,9 +391,9 @@ class Ckan_Backend_Helper {
 
 		global $language_priority;
 		if ( isset( $language_priority ) ) {
-			foreach ($language_priority as $lang) {
-				if (!empty($multilingual_text[$lang])) {
-					return $multilingual_text[$lang];
+			foreach ( $language_priority as $lang ) {
+				if (! empty( $multilingual_text[ $lang ] ) ) {
+					return $multilingual_text[ $lang ];
 				}
 			}
 		}
