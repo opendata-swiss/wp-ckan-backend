@@ -51,7 +51,7 @@ class Ckan_Backend_Helper {
 	public static function check_response_for_errors( $response ) {
 		$errors = array();
 		if ( ! is_array( $response ) ) {
-			$errors[] = __( 'There was a problem sending the request.', 'ogdch' );
+			$errors[] = __( 'There was a problem sending the request.', 'ogdch-backend' );
 		}
 
 		if ( isset( $response['success'] ) && false === $response['success'] ) {
@@ -72,7 +72,7 @@ class Ckan_Backend_Helper {
 				}
 				$errors[] = $error;
 			} else {
-				$errors[] = __( 'API responded with unknown error.', 'ogdch' );
+				$errors[] = __( 'API responded with unknown error.', 'ogdch-backend' );
 			}
 		}
 
@@ -444,7 +444,7 @@ class Ckan_Backend_Helper {
 		$organisations = get_posts( $args );
 		?>
 		<select name="organisation_filter" <?php echo ($disable_floating) ? 'style="float: none;"' : ''; ?>>
-			<option value=""><?php esc_attr_e( 'All organizations', 'ogdch' ); ?></option>
+			<option value=""><?php esc_attr_e( 'All organizations', 'ogdch-backend' ); ?></option>
 			<?php
 			$organisation_filter   = '';
 			if ( isset( $_GET['organisation_filter'] ) ) {

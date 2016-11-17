@@ -22,10 +22,10 @@ class Ckan_Backend_PoliticalLevel {
 	 */
 	public static function init() {
 		self::$political_levels = array(
-			'confederation' => __( 'Confederation', 'ogdch' ),
-			'canton' => __( 'Canton', 'ogdch' ),
-			'commune' => __( 'Commune', 'ogdch' ),
-			'other' => __( 'Other', 'ogdch' ),
+			'confederation' => __( 'Confederation', 'ogdch-backend' ),
+			'canton' => __( 'Canton', 'ogdch-backend' ),
+			'commune' => __( 'Commune', 'ogdch-backend' ),
+			'other' => __( 'Other', 'ogdch-backend' ),
 		);
 	}
 
