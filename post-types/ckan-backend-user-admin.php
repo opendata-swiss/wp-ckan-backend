@@ -65,16 +65,24 @@ class Ckan_Backend_User_Admin {
 				'first_name'  => $_REQUEST['first_name'],
 				'role'        => $_REQUEST['role'],
 			);
-			$success = false;
+			$success = true;
 			if ( empty( $userdata['user_login'] ) ) {
 				Ckan_Backend_Helper::print_error_messages( __( 'Username is mandatory' ) );
-			} elseif ( empty( $userdata['user_email'] ) ) {
+				$success = false;
+			}
+			if ( empty( $userdata['user_email'] ) ) {
 				Ckan_Backend_Helper::print_error_messages( __( 'E-Mail is mandatory' ) );
-			} elseif ( username_exists( $userdata['user_login'] ) ) {
+				$success = false;
+			}
+			if ( username_exists( $userdata['user_login'] ) ) {
 				Ckan_Backend_Helper::print_error_messages( __( 'User with this username already exists, choose a different one.' ) );
-			} elseif ( email_exists( $userdata['user_email'] ) ) {
+				$success = false;
+			}
+			if ( email_exists( $userdata['user_email'] ) ) {
 				Ckan_Backend_Helper::print_error_messages( __( 'User with this e-mail address already exists, choose a different one.' ) );
-			} else {
+				$success = false;
+			}
+			if ( $success ) {
 				$user_id = wp_insert_user( $userdata );
 				wp_new_user_notification( $user_id, null, 'both' );
 
@@ -83,9 +91,10 @@ class Ckan_Backend_User_Admin {
 					$organisation = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
 					update_user_meta( $user_id, Ckan_Backend::$plugin_slug . '_organisation', $organisation );
 					Ckan_Backend_Helper::print_messages( sprintf( esc_html__( 'User %s successfully created. An e-mail to set the password has been sent to the user.', 'ogdch' ), $userdata['user_login'] ) );
-					$success = true;
+
 				} else {
 					Ckan_Backend_Helper::print_error_messages( sprintf( esc_html__( 'Error while creating user: %s', 'ogdch' ), $user_id->get_error_message() ) );
+					$success = false;
 				}
 			}
 			$login = ( ! $success && isset( $_REQUEST['user_login'] ) ? $_REQUEST['user_login'] : '' );
