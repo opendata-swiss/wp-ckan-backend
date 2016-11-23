@@ -56,7 +56,7 @@ class Ckan_Backend_User_Admin {
 
 		// check if the form was sent
 		if ( isset( $_REQUEST['action'] ) && 'add_user' === $_REQUEST['action'] ) {
-			$random_password = wp_generate_password( 8, false );
+			$random_password = wp_generate_password();
 			$userdata = array(
 				'user_login'  => $_REQUEST['user_login'],
 				'user_pass'   => $random_password,
