@@ -8,7 +8,7 @@ In order to use this plugin you need to define two constants in your wp-config f
 
 ```php 
 define( 'CKAN_API_ENDPOINT', 'http://ckan.example.com/api/3/action/' );
-define( 'CKAN_API_KEY', 'f359d6af-a3e8-4c35-aab2-17f6d4198b42' ); // adminsuer key
+define( 'CKAN_API_KEY', 'f359d6af-a3e8-4c35-aab2-17f6d4198b42' ); // adminuser key
 ```
 
 And it's recommended to set the language priority using a variable in wp-config file:
