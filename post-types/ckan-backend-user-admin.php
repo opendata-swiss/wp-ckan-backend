@@ -154,10 +154,8 @@ class Ckan_Backend_User_Admin {
 						<?php
 						$organisation = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
 						$org_title = Ckan_Backend_Helper::get_organization_title( $organisation );
+						echo esc_html( $org_title );
 						?>
-						<select name="ckan-backend_organisation" id="ckan-backend_organisation" aria-required="true">
-							<option value="<?php echo esc_attr( $organisation ); ?>" selected="selected"><?php echo esc_html( $org_title ); ?></option>
-						</select>
 					</td>
 				</tr>
 			</table>
