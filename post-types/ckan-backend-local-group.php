@@ -43,25 +43,25 @@ class Ckan_Backend_Local_Group {
 	 */
 	public function register_post_type() {
 		$labels = array(
-			'name'               => __( 'Categories', 'ogdch' ),
-			'singular_name'      => __( 'Category', 'ogdch' ),
-			'menu_name'          => __( 'Categories', 'ogdch' ),
-			'name_admin_bar'     => __( 'Categories', 'ogdch' ),
-			'all_items'          => __( 'All Categories', 'ogdch' ),
-			'add_new_item'       => __( 'Add New Category', 'ogdch' ),
-			'add_new'            => __( 'Add New', 'ogdch' ),
-			'new_item'           => __( 'New Category', 'ogdch' ),
-			'edit_item'          => __( 'Edit Category', 'ogdch' ),
-			'update_item'        => __( 'Update Category', 'ogdch' ),
-			'view_item'          => __( 'View Category', 'ogdch' ),
-			'search_items'       => __( 'Search Categories', 'ogdch' ),
-			'not_found'          => __( 'No Categories found', 'ogdch' ),
-			'not_found_in_trash' => __( 'No Categories found in Trash', 'ogdch' ),
+			'name'               => __( 'Categories', 'ogdch-backend' ),
+			'singular_name'      => __( 'Category', 'ogdch-backend' ),
+			'menu_name'          => __( 'Categories', 'ogdch-backend' ),
+			'name_admin_bar'     => __( 'Categories', 'ogdch-backend' ),
+			'all_items'          => __( 'All Categories', 'ogdch-backend' ),
+			'add_new_item'       => __( 'Add New Category', 'ogdch-backend' ),
+			'add_new'            => __( 'Add New', 'ogdch-backend' ),
+			'new_item'           => __( 'New Category', 'ogdch-backend' ),
+			'edit_item'          => __( 'Edit Category', 'ogdch-backend' ),
+			'update_item'        => __( 'Update Category', 'ogdch-backend' ),
+			'view_item'          => __( 'View Category', 'ogdch-backend' ),
+			'search_items'       => __( 'Search Categories', 'ogdch-backend' ),
+			'not_found'          => __( 'No Categories found', 'ogdch-backend' ),
+			'not_found_in_trash' => __( 'No Categories found in Trash', 'ogdch-backend' ),
 		);
 
 		$args = array(
-			'label'               => __( 'Categories', 'ogdch' ),
-			'description'         => __( 'Categories which get synced with CKAN', 'ogdch' ),
+			'label'               => __( 'Categories', 'ogdch-backend' ),
+			'description'         => __( 'Categories which get synced with CKAN', 'ogdch-backend' ),
 			'labels'              => $labels,
 			'supports'            => array( 'title' ),
 			'hierarchical'        => false,
@@ -110,7 +110,7 @@ class Ckan_Backend_Local_Group {
 
 		$cmb = new_cmb2_box( array(
 			'id'           => self::POST_TYPE . '-box',
-			'title'        => __( 'Category', 'ogdch' ),
+			'title'        => __( 'Category', 'ogdch-backend' ),
 			'object_types' => array( self::POST_TYPE ),
 			'context'      => 'normal',
 			'priority'     => 'high',
@@ -119,20 +119,20 @@ class Ckan_Backend_Local_Group {
 
 		/* Category Information */
 		$cmb->add_field( array(
-			'name' => __( 'Category Information', 'ogdch' ),
+			'name' => __( 'Category Information', 'ogdch-backend' ),
 			'type' => 'title',
 			'id'   => 'category_information_title',
 		) );
 
 		foreach ( $language_priority as $lang ) {
 			$cmb->add_field( array(
-				'name'       => __( 'Title', 'ogdch' ) . ' (' . strtoupper( $lang ) . ')',
+				'name'       => __( 'Title', 'ogdch-backend' ) . ' (' . strtoupper( $lang ) . ')',
 				'id'         => self::FIELD_PREFIX . 'title_' . $lang,
 				'type'       => 'text',
 			) );
 
 			$cmb->add_field( array(
-				'name'       => __( 'Description', 'ogdch' ) . ' (' . strtoupper( $lang ) . ')',
+				'name'       => __( 'Description', 'ogdch-backend' ) . ' (' . strtoupper( $lang ) . ')',
 				'id'         => self::FIELD_PREFIX . 'description_' . $lang,
 				'type'       => 'textarea_code',
 				'attributes' => array( 'rows' => 3 ),
@@ -141,14 +141,14 @@ class Ckan_Backend_Local_Group {
 
 		/* Image */
 		$cmb->add_field( array(
-			'name'       => __( 'Image', 'ogdch' ),
+			'name'       => __( 'Image', 'ogdch-backend' ),
 			'id'         => self::FIELD_PREFIX . 'image',
 			'type'    => 'file',
 		) );
 
 		$cmb_side_ckan = new_cmb2_box( array(
 			'id'           => self::POST_TYPE . '-sidebox',
-			'title'        => __( 'CKAN Data', 'ogdch' ),
+			'title'        => __( 'CKAN Data', 'ogdch-backend' ),
 			'object_types' => array( self::POST_TYPE ),
 			'context'      => 'side',
 			'priority'     => 'low',
@@ -157,7 +157,7 @@ class Ckan_Backend_Local_Group {
 
 		/* Ckan id (If Set -> update. Set on first save) */
 		$cmb_side_ckan->add_field( array(
-			'name'       => __( 'ID', 'ogdch' ),
+			'name'       => __( 'ID', 'ogdch-backend' ),
 			'id'         => self::FIELD_PREFIX . 'ckan_id',
 			'type'       => 'text',
 			'attributes' => array(
@@ -167,7 +167,7 @@ class Ckan_Backend_Local_Group {
 
 		/* Ckan name */
 		$cmb_side_ckan->add_field( array(
-			'name'       => __( 'Name (Slug)', 'ogdch' ),
+			'name'       => __( 'Name (Slug)', 'ogdch-backend' ),
 			'id'         => self::FIELD_PREFIX . 'ckan_name',
 			'type'       => 'text',
 			'attributes' => array(
@@ -176,7 +176,7 @@ class Ckan_Backend_Local_Group {
 		) );
 
 		$cmb_side_ckan->add_field( array(
-			'name' => __( 'Sync Status', 'ogdch' ),
+			'name' => __( 'Sync Status', 'ogdch-backend' ),
 			'type' => 'ckan_synced',
 			'id'   => self::FIELD_PREFIX . 'ckan_synced',
 		) );
@@ -184,7 +184,7 @@ class Ckan_Backend_Local_Group {
 		/* CMB Sidebox for RDF Reference */
 		$cmb_side_ckan = new_cmb2_box( array(
 			'id'           => self::POST_TYPE . '-sidebox-rdf',
-			'title'        => __( 'RDF Reference', 'ogdch' ),
+			'title'        => __( 'RDF Reference', 'ogdch-backend' ),
 			'object_types' => array( self::POST_TYPE ),
 			'context'      => 'side',
 			'priority'     => 'low',
@@ -193,7 +193,7 @@ class Ckan_Backend_Local_Group {
 
 		/* RDF URI */
 		$cmb_side_ckan->add_field( array(
-			'name'       => __( 'RDF URI', 'ogdch' ),
+			'name'       => __( 'RDF URI', 'ogdch-backend' ),
 			'id'         => self::FIELD_PREFIX . 'rdf_uri',
 			'type'       => 'text',
 		) );

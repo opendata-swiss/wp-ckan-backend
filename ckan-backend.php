@@ -1,10 +1,12 @@
 <?php
 /**
  * Plugin Name: CKAN Backend
- * Description: Plugin to create manual datasets, organizations, groups and harvesters in CKAN via API.
- * Author: Team Jazz <jazz@liip.ch>
+ * Description: Manages datasets, organizations, groups and harvesters in CKAN via its API. It is required to install the <strong>CMB2</strong> plugin as well to use all the features of this plugin.
+ * Author: Liip - Team Jazz <jazz@liip.ch>
+ * Author URI:   https://liip.ch
+ * Plugin URI:   https://github.com/opendata-swiss/wp-ckan-backend
  * Version: 1.0.0
- * Date: 17.06.2015
+ * Date: 01.12.2016
  *
  * @package CKAN\Backend
  */
@@ -61,6 +63,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		 * Constructor
 		 */
 		public function __construct() {
+			register_activation_hook( __FILE__,  array( $this, 'activate_plugin' ) );
 			add_action( 'init', array( $this, 'bootstrap' ), 0 );
 			add_action( 'admin_enqueue_scripts', array( $this, 'add_scripts' ), 999, 1 );
 			// add custom user profile fields
@@ -272,11 +275,36 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		}
 
 		/**
+		 * Activation hook, check if we can actually use this plugin
+		 *
+		 * @return void
+		 */
+		public function activate_plugin() {
+			//check if constants are defined in wp config
+			if ( is_admin() && ! defined( 'CKAN_API_ENDPOINT' ) ) {
+				wp_die( 'Please define CKAN_API_ENDPOINT in your WP config.' );
+				return;
+			}
+			if ( is_admin() && ! defined( 'CKAN_API_KEY' ) ) {
+				wp_die( 'Please define CKAN_API_KEY in your WP config.' );
+				return;
+			}
+			// Require CMB2 plugin
+			if ( ! is_plugin_active( 'cmb2/init.php' ) && current_user_can( 'activate_plugins' ) ) {
+				// Stop activation redirect and show error
+				wp_die( 'Sorry, but this plugin requires CMB2 to be installed and active.' );
+			}
+		}
+
+		/**
 		 * Bootstrap all post types.
 		 *
 		 * @return void
 		 */
 		public function bootstrap() {
+			// Load translations
+			load_plugin_textdomain( 'ogdch-backend', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+
 			$this->load_dependencies();
 
 			self::$keywords_tax_mapping = array(
@@ -323,10 +351,10 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 					'datasetSearch' => array(
 						'CKAN_API_ENDPOINT' => CKAN_API_ENDPOINT,
 						'currentLanguage'   => Ckan_Backend_Helper::get_current_language(),
-						'placeholder'       => __( 'Search dataset...', 'ogdch' ),
+						'placeholder'       => __( 'Search dataset...', 'ogdch-backend' ),
 					),
 					'mediatypeSearch' => array(
-						'placeholder' => __( 'No media type', 'ogdch' ),
+						'placeholder' => __( 'No media type', 'ogdch-backend' ),
 					),
 				)
 			);
@@ -350,19 +378,19 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 
 			$organisation_field_name = self::$plugin_slug . '_organisation';
 			?>
-			<h3><?php esc_attr_e( 'Organization', 'ogdch' ); ?></h3>
+			<h3><?php esc_attr_e( 'Organization', 'ogdch-backend' ); ?></h3>
 
 			<table class="form-table">
 				<tr class="form-field form-required">
 					<th scope="row">
-						<label for="<?php echo esc_attr( $organisation_field_name ); ?>"><?php esc_attr_e( 'Organization', 'ogdch' ); ?></label>
+						<label for="<?php echo esc_attr( $organisation_field_name ); ?>"><?php esc_attr_e( 'Organization', 'ogdch-backend' ); ?></label>
 						<span class="description">(required)</span>
 					</th>
 					<td>
 						<select name="<?php echo esc_attr( $organisation_field_name ); ?>"
 						        id="<?php echo esc_attr( $organisation_field_name ); ?>" aria-required="true">
 							<?php
-							echo '<option value="">' . esc_attr( '- Please choose -', 'ogdch' ) . '</option>';
+							echo '<option value="">' . esc_attr( '- Please choose -', 'ogdch-backend' ) . '</option>';
 							$organisation_options = Ckan_Backend_Helper::get_organisation_form_field_options();
 							foreach ( $organisation_options as $value => $title ) {
 								echo '<option value="' . esc_attr( $value ) . '"';
@@ -419,7 +447,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		 */
 		public function add_user_organisation_column( $columns ) {
 			$new_columns = array(
-				'user_organisation' => __( 'Organization', 'ogdch' ),
+				'user_organisation' => __( 'Organization', 'ogdch-backend' ),
 			);
 
 			return array_merge( $columns, $new_columns );
@@ -494,9 +522,9 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			$meta_key = $field->id();
 			$synced = get_post_meta( $object_id, $meta_key, true );
 			if ( $synced ) {
-				echo '<p class="ckan-synced success"><span class="dashicons dashicons-yes"></span>' . esc_attr__( 'All good!', 'ogdch' ) . '</p>';
+				echo '<p class="ckan-synced success"><span class="dashicons dashicons-yes"></span>' . esc_attr__( 'All good!', 'ogdch-backend' ) . '</p>';
 			} else {
-				echo '<p class="ckan-synced error"><span class="dashicons dashicons-no"></span>' . esc_attr__( 'Not synchronized! Please fix data and save the element again.', 'ogdch' ) . '</p>';
+				echo '<p class="ckan-synced error"><span class="dashicons dashicons-no"></span>' . esc_attr__( 'Not synchronized! Please fix data and save the element again.', 'ogdch-backend' ) . '</p>';
 			}
 		}
 

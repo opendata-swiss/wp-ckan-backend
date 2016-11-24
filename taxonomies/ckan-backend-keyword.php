@@ -24,14 +24,14 @@ abstract class Ckan_Backend_Keyword {
 	 */
 	public function register_taxonomy() {
 		$labels = array(
-			'name'          => sprintf( esc_html_x( 'Keywords (%s)', '%s contains the language of this keyword.', 'ogdch' ), $this->get_language_suffix() ),
-			'singular_name' => sprintf( esc_html_x( 'Keyword (%s)', '%s contains the language of this keyword.', 'ogdch' ), $this->get_language_suffix() ),
-			'all_items'     => sprintf( esc_html_x( 'All Keywords (%s)', '%s contains the language of this keyword.', 'ogdch' ), $this->get_language_suffix() ),
-			'edit_item'     => sprintf( esc_html_x( 'Edit Keywords (%s)', '%s contains the language of this keyword.', 'ogdch' ), $this->get_language_suffix() ),
-			'view_item'     => sprintf( esc_html_x( 'View Keyword (%s)', '%s contains the language of this keyword.', 'ogdch' ), $this->get_language_suffix() ),
-			'update_item'   => sprintf( esc_html_x( 'Update Keyword (%s)', '%s contains the language of this keyword.', 'ogdch' ), $this->get_language_suffix() ),
-			'add_new_item'  => sprintf( esc_html_x( 'Add New Keyword (%s)', '%s contains the language of this keyword.', 'ogdch' ), $this->get_language_suffix() ),
-			'new_item_name' => sprintf( esc_html_x( 'New Keyword Name (%s)', '%s contains the language of this keyword.', 'ogdch' ), $this->get_language_suffix() ),
+			'name'          => sprintf( esc_html_x( 'Keywords (%s)', '%s contains the language of this keyword.', 'ogdch-backend' ), $this->get_language_suffix() ),
+			'singular_name' => sprintf( esc_html_x( 'Keyword (%s)', '%s contains the language of this keyword.', 'ogdch-backend' ), $this->get_language_suffix() ),
+			'all_items'     => sprintf( esc_html_x( 'All Keywords (%s)', '%s contains the language of this keyword.', 'ogdch-backend' ), $this->get_language_suffix() ),
+			'edit_item'     => sprintf( esc_html_x( 'Edit Keywords (%s)', '%s contains the language of this keyword.', 'ogdch-backend' ), $this->get_language_suffix() ),
+			'view_item'     => sprintf( esc_html_x( 'View Keyword (%s)', '%s contains the language of this keyword.', 'ogdch-backend' ), $this->get_language_suffix() ),
+			'update_item'   => sprintf( esc_html_x( 'Update Keyword (%s)', '%s contains the language of this keyword.', 'ogdch-backend' ), $this->get_language_suffix() ),
+			'add_new_item'  => sprintf( esc_html_x( 'Add New Keyword (%s)', '%s contains the language of this keyword.', 'ogdch-backend' ), $this->get_language_suffix() ),
+			'new_item_name' => sprintf( esc_html_x( 'New Keyword Name (%s)', '%s contains the language of this keyword.', 'ogdch-backend' ), $this->get_language_suffix() ),
 		);
 
 		$capabilities = array(
@@ -42,9 +42,9 @@ abstract class Ckan_Backend_Keyword {
 		);
 
 		$args = array(
-			'label'                 => sprintf( esc_html_x( 'Keywords (%s)', '%s contains the language of this keyword.', 'ogdch' ), $this->get_language_suffix() ),
+			'label'                 => sprintf( esc_html_x( 'Keywords (%s)', '%s contains the language of this keyword.', 'ogdch-backend' ), $this->get_language_suffix() ),
 			'labels'                => $labels,
-			'description'           => sprintf( esc_html_x( 'Keywords (%s) for CKAN datasets', '%s contains the language of this keyword.', 'ogdch' ), $this->get_language_suffix() ),
+			'description'           => sprintf( esc_html_x( 'Keywords (%s) for CKAN datasets', '%s contains the language of this keyword.', 'ogdch-backend' ), $this->get_language_suffix() ),
 			'show_ui'               => true,
 			'show_in_menu'          => false,
 			'show_in_nav_menus'     => false,

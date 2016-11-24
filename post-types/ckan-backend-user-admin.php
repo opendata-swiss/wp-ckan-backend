@@ -37,8 +37,8 @@ class Ckan_Backend_User_Admin {
 	public function register_submenu_page() {
 		$this->page_suffix = add_submenu_page(
 			'users.php',
-			__( 'Add New Organization User', 'ogdch' ),
-			__( 'Organization User', 'ogdch' ),
+			__( 'Add New Organization User', 'ogdch-backend' ),
+			__( 'Organization User', 'ogdch-backend' ),
 			'edit_organisations',
 			$this->menu_slug,
 			array( $this, 'user_page_callback' )
@@ -90,10 +90,10 @@ class Ckan_Backend_User_Admin {
 					// do not use the organization value from $_REQUEST but rather use the value from the current user
 					$organisation = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
 					update_user_meta( $user_id, Ckan_Backend::$plugin_slug . '_organisation', $organisation );
-					Ckan_Backend_Helper::print_messages( sprintf( esc_html__( 'User %s successfully created. An e-mail to set the password has been sent to the user.', 'ogdch' ), $userdata['user_login'] ) );
+					Ckan_Backend_Helper::print_messages( sprintf( esc_html__( 'User %s successfully created. An e-mail to set the password has been sent to the user.', 'ogdch-backend' ), $userdata['user_login'] ) );
 
 				} else {
-					Ckan_Backend_Helper::print_error_messages( sprintf( esc_html__( 'Error while creating user: %s', 'ogdch' ), $user_id->get_error_message() ) );
+					Ckan_Backend_Helper::print_error_messages( sprintf( esc_html__( 'Error while creating user: %s', 'ogdch-backend' ), $user_id->get_error_message() ) );
 					$success = false;
 				}
 			}
@@ -121,23 +121,23 @@ class Ckan_Backend_User_Admin {
 
 			<table class="form-table">
 				<tr class="form-field form-required">
-					<th scope="row"><label for="user_login"><?php esc_html_e( 'Username', 'ogdch' ); ?> <span class="description">(<?php esc_html_e( 'required', 'ogdch' ); ?>)</span></label></th>
+					<th scope="row"><label for="user_login"><?php esc_html_e( 'Username', 'ogdch-backend' ); ?> <span class="description">(<?php esc_html_e( 'required', 'ogdch-backend' ); ?>)</span></label></th>
 					<td><input name="user_login" type="text" id="user_login" value="<?php echo esc_attr( $login ); ?>" aria-required="true" autocapitalize="none" autocorrect="off" /></td>
 				</tr>
 				<tr class="form-field form-required">
-					<th scope="row"><label for="email"><?php esc_html_e( 'E-Mail', 'ogdch' ); ?> <span class="description">(<?php esc_html_e( 'required', 'ogdch' ); ?>)</span></label></th>
+					<th scope="row"><label for="email"><?php esc_html_e( 'E-Mail', 'ogdch-backend' ); ?> <span class="description">(<?php esc_html_e( 'required', 'ogdch-backend' ); ?>)</span></label></th>
 					<td><input name="email" type="email" id="email" value="<?php echo esc_attr( $email ); ?>" /></td>
 				</tr>
 				<tr class="form-field">
-					<th scope="row"><label for="first_name"><?php esc_html_e( 'First name', 'ogdch' ); ?></label></th>
+					<th scope="row"><label for="first_name"><?php esc_html_e( 'First name', 'ogdch-backend' ); ?></label></th>
 					<td><input name="first_name" type="text" id="first_name" value="<?php echo esc_attr( $first_name ); ?>" /></td>
 				</tr>
 				<tr class="form-field">
-					<th scope="row"><label for="last_name"><?php esc_html_e( 'Last name', 'ogdch' ); ?></label></th>
+					<th scope="row"><label for="last_name"><?php esc_html_e( 'Last name', 'ogdch-backend' ); ?></label></th>
 					<td><input name="last_name" type="text" id="last_name" value="<?php echo esc_attr( $last_name ); ?>" /></td>
 				</tr>
 				<tr class="form-field">
-					<th scope="row"><label for="role"><?php esc_html_e( 'Role', 'ogdch' ); ?></label></th>
+					<th scope="row"><label for="role"><?php esc_html_e( 'Role', 'ogdch-backend' ); ?></label></th>
 					<td><select name="role" id="role">
 							<?php foreach ( get_editable_roles() as $role_name => $role_info ) : ?>
 								<option value="<?php echo esc_attr( $role_name ) ?>" <?php echo esc_attr( $role_name === $role ? "selected='selected'" : '' ); ?>><?php echo esc_html( $role_info['name'] ); ?></option>
@@ -147,8 +147,8 @@ class Ckan_Backend_User_Admin {
 				</tr>
 				<tr class="form-field form-required">
 					<th scope="row">
-						<label for="ckan-backend_organisation"><?php esc_html_e( 'Organisation', 'ogdch' ); ?></label>
-						<span class="description">(<?php esc_html_e( 'required', 'ogdch' ); ?>)</span>
+						<label for="ckan-backend_organisation"><?php esc_html_e( 'Organisation', 'ogdch-backend' ); ?></label>
+						<span class="description">(<?php esc_html_e( 'required', 'ogdch-backend' ); ?>)</span>
 					</th>
 					<td>
 						<?php
@@ -160,7 +160,7 @@ class Ckan_Backend_User_Admin {
 				</tr>
 			</table>
 
-			<?php submit_button( __( 'Add new user', 'ogdch' ), 'primary', 'show', false ); ?>
+			<?php submit_button( __( 'Add new user', 'ogdch-backend' ), 'primary', 'show', false ); ?>
 			</form>
 		</div>
 		<?php

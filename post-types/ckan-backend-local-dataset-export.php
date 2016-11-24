@@ -36,8 +36,8 @@ class Ckan_Backend_Local_Dataset_Export {
 			$bulk_actions = new Seravo_Custom_Bulk_Action( array( 'post_type' => Ckan_Backend_Local_Dataset::POST_TYPE ) );
 
 			$bulk_actions->register_bulk_action( array(
-				'menu_text'    => __( 'Export', 'ogdch' ),
-				'admin_notice' => __( 'Datasets exported', 'ogdch' ),
+				'menu_text'    => __( 'Export', 'ogdch-backend' ),
+				'admin_notice' => __( 'Datasets exported', 'ogdch-backend' ),
 				'callback'     => array( $this, 'export_datasets' ),
 			));
 
@@ -121,7 +121,7 @@ class Ckan_Backend_Local_Dataset_Export {
 		$identifier = get_post_meta( $post->ID, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'identifier', true );
 		if ( empty( $identifier ) || ! is_array( $identifier ) ) {
 			throw new Exception( sprintf(
-				esc_html_x( 'Could not read identifier of dataset %s.', '%s contains the post_id of the dataset.', 'ogdch' ),
+				esc_html_x( 'Could not read identifier of dataset %s.', '%s contains the post_id of the dataset.', 'ogdch-backend' ),
 				$post_id
 			) );
 		}

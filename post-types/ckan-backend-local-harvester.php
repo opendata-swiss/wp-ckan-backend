@@ -44,25 +44,25 @@ class Ckan_Backend_Local_Harvester {
 	 */
 	public function register_post_type() {
 		$labels = array(
-			'name'               => __( 'Harvesters', 'ogdch' ),
-			'singular_name'      => __( 'Harvester', 'ogdch' ),
-			'menu_name'          => __( 'Harvesters', 'ogdch' ),
-			'name_admin_bar'     => __( 'Harvesters', 'ogdch' ),
-			'all_items'          => __( 'All Harvesters', 'ogdch' ),
-			'add_new_item'       => __( 'Add New Harvester', 'ogdch' ),
-			'add_new'            => __( 'Add New', 'ogdch' ),
-			'new_item'           => __( 'New Harvester', 'ogdch' ),
-			'edit_item'          => __( 'Edit Harvester', 'ogdch' ),
-			'update_item'        => __( 'Update Harvester', 'ogdch' ),
-			'view_item'          => __( 'View Harvester', 'ogdch' ),
-			'search_items'       => __( 'Search Harvesters', 'ogdch' ),
-			'not_found'          => __( 'No Harvesters found', 'ogdch' ),
-			'not_found_in_trash' => __( 'No Harvesters found in Trash', 'ogdch' ),
+			'name'               => __( 'Harvesters', 'ogdch-backend' ),
+			'singular_name'      => __( 'Harvester', 'ogdch-backend' ),
+			'menu_name'          => __( 'Harvesters', 'ogdch-backend' ),
+			'name_admin_bar'     => __( 'Harvesters', 'ogdch-backend' ),
+			'all_items'          => __( 'All Harvesters', 'ogdch-backend' ),
+			'add_new_item'       => __( 'Add New Harvester', 'ogdch-backend' ),
+			'add_new'            => __( 'Add New', 'ogdch-backend' ),
+			'new_item'           => __( 'New Harvester', 'ogdch-backend' ),
+			'edit_item'          => __( 'Edit Harvester', 'ogdch-backend' ),
+			'update_item'        => __( 'Update Harvester', 'ogdch-backend' ),
+			'view_item'          => __( 'View Harvester', 'ogdch-backend' ),
+			'search_items'       => __( 'Search Harvesters', 'ogdch-backend' ),
+			'not_found'          => __( 'No Harvesters found', 'ogdch-backend' ),
+			'not_found_in_trash' => __( 'No Harvesters found in Trash', 'ogdch-backend' ),
 		);
 
 		$args = array(
-			'label'               => __( 'Harvesters', 'ogdch' ),
-			'description'         => __( 'Harvesters which get synced with CKAN', 'ogdch' ),
+			'label'               => __( 'Harvesters', 'ogdch-backend' ),
+			'description'         => __( 'Harvesters which get synced with CKAN', 'ogdch-backend' ),
 			'labels'              => $labels,
 			'supports'            => array( 'title' ),
 			'hierarchical'        => false,
@@ -109,8 +109,8 @@ class Ckan_Backend_Local_Harvester {
 	 */
 	public function add_list_columns( $columns ) {
 		$new_columns = array(
-			self::FIELD_PREFIX . 'status' => __( 'Status', 'ogdch' ),
-			self::FIELD_PREFIX . 'dashboard' => __( 'Dashboard', 'ogdch' ),
+			self::FIELD_PREFIX . 'status' => __( 'Status', 'ogdch-backend' ),
+			self::FIELD_PREFIX . 'dashboard' => __( 'Dashboard', 'ogdch-backend' ),
 		);
 
 		return array_merge( $columns, $new_columns );
@@ -133,31 +133,31 @@ class Ckan_Backend_Local_Harvester {
 					$started_date = Ckan_Backend_Helper::convert_date_to_readable_format( $harvest_source_status['last_job_status']['gather_started'] );
 					$finished_date = Ckan_Backend_Helper::convert_date_to_readable_format( $harvest_source_status['last_job_status']['finished'] );
 					$status_text .= '<div class="harvester-status">';
-					$status_text .= sprintf( esc_html_x( 'Job count: %s', '%s contains job count of harvester', 'ogdch' ), $harvest_source_status['status']['job_count'] ) . '<br />';
+					$status_text .= sprintf( esc_html_x( 'Job count: %s', '%s contains job count of harvester', 'ogdch-backend' ), $harvest_source_status['status']['job_count'] ) . '<br />';
 					$status_text .= '
 						<div class="last-harvest">
-							' . sprintf( esc_html_x( 'Last job created: %s', '%s contains the date when the last job was created', 'ogdch' ), $created_date ) . '<br />
-							' . sprintf( esc_html_x( 'Last job started: %s', '%s contains the date when the last job started', 'ogdch' ), $started_date ) . '<br />
-							' . sprintf( esc_html_x( 'Last job finished: %s', '%s contains the date when the last job finished', 'ogdch' ), $finished_date ) . '<br />
-							<span class="label label-added">' . sprintf( esc_html_x( '%s added', '%s contains the number of added datasets.', 'ogdch' ), esc_html( $harvest_source_status['last_job_status']['stats']['added'] ) ) . '</span>
-							<span class="label label-updated">' . sprintf( esc_html_x( '%s updated', '%s contains the number of updated datasets.', 'ogdch' ), esc_html( $harvest_source_status['last_job_status']['stats']['updated'] ) ) . '</span>
-							<span class="label label-deleted">' . sprintf( esc_html_x( '%s deleted', '%s contains the number of deleted datasets.', 'ogdch' ), esc_html( $harvest_source_status['last_job_status']['stats']['deleted'] ) ) . '</span>
-							<span class="label label-errored">' . sprintf( esc_html_x( '%s errored', '%s contains the number of errored dataset.', 'ogdch' ), esc_html( $harvest_source_status['last_job_status']['stats']['errored'] ) ) . '</span>
+							' . sprintf( esc_html_x( 'Last job created: %s', '%s contains the date when the last job was created', 'ogdch-backend' ), $created_date ) . '<br />
+							' . sprintf( esc_html_x( 'Last job started: %s', '%s contains the date when the last job started', 'ogdch-backend' ), $started_date ) . '<br />
+							' . sprintf( esc_html_x( 'Last job finished: %s', '%s contains the date when the last job finished', 'ogdch-backend' ), $finished_date ) . '<br />
+							<span class="label label-added">' . sprintf( esc_html_x( '%s added', '%s contains the number of added datasets.', 'ogdch-backend' ), esc_html( $harvest_source_status['last_job_status']['stats']['added'] ) ) . '</span>
+							<span class="label label-updated">' . sprintf( esc_html_x( '%s updated', '%s contains the number of updated datasets.', 'ogdch-backend' ), esc_html( $harvest_source_status['last_job_status']['stats']['updated'] ) ) . '</span>
+							<span class="label label-deleted">' . sprintf( esc_html_x( '%s deleted', '%s contains the number of deleted datasets.', 'ogdch-backend' ), esc_html( $harvest_source_status['last_job_status']['stats']['deleted'] ) ) . '</span>
+							<span class="label label-errored">' . sprintf( esc_html_x( '%s errored', '%s contains the number of errored dataset.', 'ogdch-backend' ), esc_html( $harvest_source_status['last_job_status']['stats']['errored'] ) ) . '</span>
 						</div>';
 					$status_text .= '</div>';
 				} else {
-					$status_text .= esc_html__( 'No jobs yet', 'ogdch' );
+					$status_text .= esc_html__( 'No jobs yet', 'ogdch-backend' );
 				}
 
 				// @codingStandardsIgnoreStart
 				echo $status_text;
 				// @codingStandardsIgnoreEnd
 			} else {
-				esc_html_e( 'Could not retrieve harvest source status', 'ogdch' );
+				esc_html_e( 'Could not retrieve harvest source status', 'ogdch-backend' );
 			}
 		} else if ( self::FIELD_PREFIX . 'dashboard' === $column ) {
 			// @codingStandardsIgnoreStart
-			echo '<a href="edit.php?post_type=' . esc_attr( self::POST_TYPE ) . '&page=ckan-local-harvester-dashboard-page&harvester_id=' . esc_attr( $ckan_id ) . '""><span class="dashicons dashicons-dashboard"></span> ' . esc_html__( 'Dashboard', 'ogdch' ) . '</a>';
+			echo '<a href="edit.php?post_type=' . esc_attr( self::POST_TYPE ) . '&page=ckan-local-harvester-dashboard-page&harvester_id=' . esc_attr( $ckan_id ) . '""><span class="dashicons dashicons-dashboard"></span> ' . esc_html__( 'Dashboard', 'ogdch-backend' ) . '</a>';
 			// @codingStandardsIgnoreEnd
 		}
 	}
@@ -201,7 +201,7 @@ class Ckan_Backend_Local_Harvester {
 	public function define_fields() {
 		$cmb = new_cmb2_box( array(
 			'id'           => self::POST_TYPE . '-box',
-			'title'        => __( 'Harvester', 'ogdch' ),
+			'title'        => __( 'Harvester', 'ogdch-backend' ),
 			'object_types' => array( self::POST_TYPE ),
 			'context'      => 'normal',
 			'priority'     => 'high',
@@ -210,13 +210,13 @@ class Ckan_Backend_Local_Harvester {
 
 		/* Harvester Information */
 		$cmb->add_field( array(
-			'name' => __( 'Harvester Information', 'ogdch' ),
+			'name' => __( 'Harvester Information', 'ogdch-backend' ),
 			'type' => 'title',
 			'id'   => 'harvester_information_title',
 		) );
 
 		$cmb->add_field( array(
-			'name'       => __( 'URL', 'ogdch' ) . '*',
+			'name'       => __( 'URL', 'ogdch-backend' ) . '*',
 			'id'         => self::FIELD_PREFIX . 'url',
 			'type'       => 'text_url',
 			'attributes' => array(
@@ -225,14 +225,14 @@ class Ckan_Backend_Local_Harvester {
 		) );
 
 		$cmb->add_field( array(
-			'name'       => __( 'Description', 'ogdch' ),
+			'name'       => __( 'Description', 'ogdch-backend' ),
 			'id'         => self::FIELD_PREFIX . 'description',
 			'type'       => 'textarea_code',
 			'attributes' => array( 'rows' => 3 ),
 		) );
 
 		$cmb->add_field( array(
-			'name'       => __( 'Source type', 'ogdch' ) . '*',
+			'name'       => __( 'Source type', 'ogdch-backend' ) . '*',
 			'id'         => self::FIELD_PREFIX . 'source_type',
 			'type'       => 'select',
 			'options'    => array( $this, 'get_source_type_form_field_options' ),
@@ -242,7 +242,7 @@ class Ckan_Backend_Local_Harvester {
 		) );
 
 		$cmb->add_field( array(
-			'name'       => __( 'Organization', 'ogdch' ) . '*',
+			'name'       => __( 'Organization', 'ogdch-backend' ) . '*',
 			'id'         => self::FIELD_PREFIX . 'organisation',
 			'type'       => 'select',
 			'options'    => array( 'Ckan_Backend_Helper', 'get_organisation_form_field_options' ),
@@ -252,16 +252,16 @@ class Ckan_Backend_Local_Harvester {
 		) );
 
 		$cmb->add_field( array(
-			'name'    => __( 'Update frequency', 'ogdch' ) . '*',
+			'name'    => __( 'Update frequency', 'ogdch-backend' ) . '*',
 			'id'      => self::FIELD_PREFIX . 'update_frequency',
 			'type'    => 'select',
 			'options' => array(
-				'MANUAL'   => __( 'Manual', 'ogdch' ),
-				'MONTHLY'  => __( 'Monthly', 'ogdch' ),
-				'WEEKLY'   => __( 'Weekly', 'ogdch' ),
-				'BIWEEKLY' => __( 'Biweekly', 'ogdch' ),
-				'DAILY'    => __( 'Daily', 'ogdch' ),
-				'ALWAYS'   => __( 'Always', 'ogdch' ),
+				'MANUAL'   => __( 'Manual', 'ogdch-backend' ),
+				'MONTHLY'  => __( 'Monthly', 'ogdch-backend' ),
+				'WEEKLY'   => __( 'Weekly', 'ogdch-backend' ),
+				'BIWEEKLY' => __( 'Biweekly', 'ogdch-backend' ),
+				'DAILY'    => __( 'Daily', 'ogdch-backend' ),
+				'ALWAYS'   => __( 'Always', 'ogdch-backend' ),
 			),
 			'attributes' => array(
 				'required' => 'required',
@@ -269,16 +269,16 @@ class Ckan_Backend_Local_Harvester {
 		) );
 
 		$cmb->add_field( array(
-			'name'       => __( 'Configuration', 'ogdch' ),
+			'name'       => __( 'Configuration', 'ogdch-backend' ),
 			'id'         => self::FIELD_PREFIX . 'config',
-			'desc'       => __( 'Only a valid JSON object is allowed. Eg. { "option": "value" }', 'ogdch' ),
+			'desc'       => __( 'Only a valid JSON object is allowed. Eg. { "option": "value" }', 'ogdch-backend' ),
 			'type'       => 'textarea_code',
 			'attributes' => array( 'rows' => 3 ),
 		) );
 
 		$cmb_side_ckan = new_cmb2_box( array(
 			'id'           => self::POST_TYPE . '-sidebox',
-			'title'        => __( 'CKAN Data', 'ogdch' ),
+			'title'        => __( 'CKAN Data', 'ogdch-backend' ),
 			'object_types' => array( self::POST_TYPE ),
 			'context'      => 'side',
 			'priority'     => 'low',
@@ -287,7 +287,7 @@ class Ckan_Backend_Local_Harvester {
 
 		/* Ckan id (If Set -> update. Set on first save) */
 		$cmb_side_ckan->add_field( array(
-			'name'       => __( 'ID', 'ogdch' ),
+			'name'       => __( 'ID', 'ogdch-backend' ),
 			'id'         => self::FIELD_PREFIX . 'ckan_id',
 			'type'       => 'text',
 			'attributes' => array(
@@ -297,7 +297,7 @@ class Ckan_Backend_Local_Harvester {
 
 		/* Ckan name */
 		$cmb_side_ckan->add_field( array(
-			'name'       => __( 'Name (Slug)', 'ogdch' ),
+			'name'       => __( 'Name (Slug)', 'ogdch-backend' ),
 			'id'         => self::FIELD_PREFIX . 'ckan_name',
 			'type'       => 'text',
 			'attributes' => array(
@@ -306,7 +306,7 @@ class Ckan_Backend_Local_Harvester {
 		) );
 
 		$cmb_side_ckan->add_field( array(
-			'name' => __( 'Sync Status', 'ogdch' ),
+			'name' => __( 'Sync Status', 'ogdch-backend' ),
 			'type' => 'ckan_synced',
 			'id'   => self::FIELD_PREFIX . 'ckan_synced',
 		) );
