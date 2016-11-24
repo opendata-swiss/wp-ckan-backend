@@ -305,18 +305,46 @@ class Ckan_Backend_Helper {
 	}
 
 	/**
-	 * Displays all admin notices
+	 * Displays admin errors
 	 *
-	 * @param array $errors Array of errors.
+	 * @param array|string $errors Array or string of errors.
 	 *
 	 * @return string
 	 */
 	public static function print_error_messages( $errors ) {
+		// wrap in array
+		if ( ! is_array( $errors ) && ! empty( $errors ) ) {
+			$errors = array( $errors );
+		}
 		//print the message
 		if ( is_array( $errors ) && count( $errors ) > 0 ) {
 			foreach ( $errors as $key => $m ) {
 				// @codingStandardsIgnoreStart
 				echo '<div class="error"><p>' . $m . '</p></div>';
+				// @codingStandardsIgnoreEnd
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Displays admin notices
+	 *
+	 * @param array|string $msgs Array or string of messages.
+	 *
+	 * @return string
+	 */
+	public static function print_messages( $msgs ) {
+		// wrap in array
+		if ( ! is_array( $msgs ) && ! empty( $msgs ) ) {
+			$msgs = array( $msgs );
+		}
+		//print the message
+		if ( is_array( $msgs ) && count( $msgs ) > 0 ) {
+			foreach ( $msgs as $key => $m ) {
+				// @codingStandardsIgnoreStart
+				echo '<div class="notice notice-success"><p>' . $m . '</p></div>';
 				// @codingStandardsIgnoreEnd
 			}
 		}

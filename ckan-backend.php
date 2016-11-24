@@ -104,6 +104,26 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 
 			// filter slug generation
 			add_filter( 'sanitize_title', array( $this, 'slug_must_be_string' ) );
+
+			// use custom mailer when debugging
+			add_action( 'phpmailer_init', array( $this, 'mailer_config' ) );
+		}
+
+		/**
+		 * Configures the PHPMailer of WordPress
+		 *
+		 * This function is used for debugging purposes on local setups
+		 *
+		 * @param PHPMailer $mailer The mailer instance.
+		 */
+		public function mailer_config(PHPMailer $mailer) {
+			if ( defined( 'WP_LOCAL_DEV' ) && WP_LOCAL_DEV ) {
+				$mailer->IsSMTP();
+				$mailer->Host = 'localhost'; // your SMTP server
+				$mailer->Port = 1025;
+				$mailer->SMTPDebug = 0; // write 2 if you want to see client/server communication in page
+				$mailer->CharSet = 'utf-8';
+			}
 		}
 
 		/**
@@ -130,9 +150,10 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 				return $allcaps;
 			}
 
-			// On save there is a call without a post id. Why?
+			// On the list view there is a call without a post id
 			if ( in_array( $requested_cap, array( 'edit_others_datasets', 'edit_others_organisations' ) ) && empty( $args[2] ) ) {
 				$allcaps[ $requested_cap ] = true;
+				return $allcaps;
 			}
 
 			if ( 'edit_others_organisations' === $required_cap ) {
@@ -181,9 +202,8 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 
 			// only remove capability if user is a non-admin user
 			if ( ! members_current_user_has_role( 'administrator' ) ) {
-				$other_user_id = $args[2];
-
-				if ( ! empty( $other_user_id ) ) {
+				if ( ! empty( $args[2] ) ) {
+					$other_user_id = $args[2];
 					$user_organisation       = get_the_author_meta( self::$plugin_slug . '_organisation', $current_user_id );
 					$other_user_organisation = get_user_meta( $other_user_id, self::$plugin_slug . '_organisation', true );
 					if ( $user_organisation !== $other_user_organisation || members_user_has_role( $other_user_id, 'administrator' ) || members_user_has_role( $other_user_id, 'content_manager' ) ) {
@@ -281,6 +301,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			new Ckan_Backend_Local_Dataset_Export();
 			new Ckan_Backend_Local_Harvester();
 			new Ckan_Backend_Local_Harvester_Dashboard();
+			new Ckan_Backend_User_Admin();
 		}
 
 		/**
@@ -551,6 +572,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			require_once plugin_dir_path( __FILE__ ) . 'post-types/ckan-backend-local-dataset-export.php';
 			require_once plugin_dir_path( __FILE__ ) . 'post-types/ckan-backend-local-harvester.php';
 			require_once plugin_dir_path( __FILE__ ) . 'post-types/ckan-backend-local-harvester-dashboard.php';
+			require_once plugin_dir_path( __FILE__ ) . 'post-types/ckan-backend-user-admin.php';
 			require_once plugin_dir_path( __FILE__ ) . 'sync/ckan-backend-sync-abstract.php';
 			require_once plugin_dir_path( __FILE__ ) . 'sync/ckan-backend-sync-local-dataset.php';
 			require_once plugin_dir_path( __FILE__ ) . 'sync/ckan-backend-sync-local-group.php';
