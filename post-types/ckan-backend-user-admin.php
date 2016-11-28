@@ -56,6 +56,9 @@ class Ckan_Backend_User_Admin {
 
 		// check if the form was sent
 		if ( isset( $_REQUEST['action'] ) && 'add_user' === $_REQUEST['action'] ) {
+			//check the nonce before we do anything else
+			check_admin_referer( 'create_user', 'create_user_nonce' );
+
 			$random_password = wp_generate_password();
 			$userdata = array(
 				'user_login'  => $_REQUEST['user_login'],
@@ -65,6 +68,10 @@ class Ckan_Backend_User_Admin {
 				'first_name'  => $_REQUEST['first_name'],
 				'role'        => $_REQUEST['role'],
 			);
+			if ( ! in_array( $userdata['role'], array_keys( get_editable_roles() ) ) ) {
+				wp_die( esc_html( __( 'You do not have permission to create users for this role.' ) ) );
+			}
+
 			$success = true;
 			if ( empty( $userdata['user_login'] ) ) {
 				Ckan_Backend_Helper::print_error_messages( __( 'Username is mandatory' ) );
@@ -114,6 +121,7 @@ class Ckan_Backend_User_Admin {
 		<div class="wrap organization_user">
 			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
 			<form enctype="multipart/form-data" action="" method="POST">
+			<?php wp_nonce_field( 'create_user', 'create_user_nonce' ); ?>
 			<input type="hidden" name="page" value="<?php echo esc_attr( ( isset( $_REQUEST['page'] ) ? $_REQUEST['page'] : '' ) ); ?>" />
 			<input type="hidden" name="action" value="add_user" />
 			<div class="postbox">
