@@ -68,6 +68,11 @@ class Ckan_Backend_User_Admin {
 				'first_name'  => $_REQUEST['first_name'],
 				'role'        => $_REQUEST['role'],
 			);
+			if ( ! in_array( $userdata['role'], array_keys(get_editable_roles()) ) ) {
+				wp_die( esc_html( __( 'You do not have permission to create users for this role.' ) ) );
+			}
+
+
 			$success = true;
 			if ( empty( $userdata['user_login'] ) ) {
 				Ckan_Backend_Helper::print_error_messages( __( 'Username is mandatory' ) );
