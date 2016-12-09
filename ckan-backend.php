@@ -294,6 +294,50 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 				// Stop activation redirect and show error
 				wp_die( 'Sorry, but this plugin requires CMB2 to be installed and active.' );
 			}
+			// initialize capabilities
+			$this->init_caps();
+		}
+
+		/**
+		 * Initializes capabilities used in this plugin
+		 */
+		public function init_caps() {
+			$post_types = array(
+				'datasets',
+				'groups',
+				'organisations',
+				'harvesters',
+			);
+			$taxonomies = array(
+				'keywords',
+				'mediatypes',
+			);
+			// Add all capabilities of plugin to administrator role (save in database) to make them visible in backend.
+			$admin_role = get_role( 'administrator' );
+			if ( is_object( $admin_role ) ) {
+				foreach ( $post_types as $post_type ) {
+					$admin_role->add_cap( 'edit_' . $post_type );
+					$admin_role->add_cap( 'edit_others_' . $post_type );
+					$admin_role->add_cap( 'publish_' . $post_type );
+					$admin_role->add_cap( 'read_private_' . $post_type );
+					$admin_role->add_cap( 'delete_' . $post_type );
+					$admin_role->add_cap( 'delete_private_' . $post_type );
+					$admin_role->add_cap( 'delete_published_' . $post_type );
+					$admin_role->add_cap( 'delete_others_' . $post_type );
+					$admin_role->add_cap( 'edit_private_' . $post_type );
+					$admin_role->add_cap( 'edit_published_' . $post_type );
+					$admin_role->add_cap( 'create_' . $post_type );
+				}
+				foreach ( $taxonomies as $taxonomy ) {
+					$admin_role->add_cap( 'manage_' . $taxonomy );
+					$admin_role->add_cap( 'edit_' . $taxonomy );
+					$admin_role->add_cap( 'delete_' . $taxonomy );
+					$admin_role->add_cap( 'assign_' . $taxonomy );
+				}
+
+				$admin_role->add_cap( 'edit_data_of_all_organisations' );
+				$admin_role->add_cap( 'edit_user_organisation' );
+			}
 		}
 
 		/**

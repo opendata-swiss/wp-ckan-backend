@@ -1,17 +1,22 @@
 # wp-ckan-backend
 
-WordPress plugin to manage datasets, organizations and groups in CKAN via API.
+WordPress plugin to manage datasets, organizations, groups and harvesters in CKAN via its API.
 
-## Configuration
+## Requirements
 
-In order to use this plugin you need to define two constants in your wp-config file:
+* [CMB2](https://wordpress.org/plugins/cmb2/) plugin must be installed
+
+## Installation
+
+In order to use this plugin you need to define two constants in your `wp-config.php` file:
 
 ```php 
 define( 'CKAN_API_ENDPOINT', 'http://ckan.example.com/api/3/action/' );
-define( 'CKAN_API_KEY', 'f359d6af-a3e8-4c35-aab2-17f6d4198b42' ); // adminuser key
+define( 'CKAN_API_KEY', 'f359d6af-a3e8-4c35-aab2-17f6d4198b42' ); // ckan admin user api key
 ```
 
-And it's recommended to set the language priority using a variable in wp-config file:
+Additionally you have to define an array (`$language_priority`) with all supported languages in your `wp-config.php` file.
+Please order the languages according to your needs. This order is used to find fallbacks for missing translations:
 
 ```php
 $language_priority = array(
@@ -21,8 +26,6 @@ $language_priority = array(
 	4 => 'it'
 );
 ```
-
-Adapt the values according to your needs.
 
 ## Development
 
