@@ -1,5 +1,7 @@
 # wp-ckan-backend
 
+[![Build Status](https://travis-ci.org/opendata-swiss/wp-ckan-backend.svg?branch=master)](https://travis-ci.org/opendata-swiss/wp-ckan-backend)
+
 WordPress plugin to manage datasets, organizations, groups and harvesters in CKAN via its API.
 
 ## Requirements
