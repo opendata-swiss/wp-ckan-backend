@@ -1,5 +1,7 @@
 # wp-ckan-backend
 
+[![Build Status](https://travis-ci.org/opendata-swiss/wp-ckan-backend.svg?branch=master)](https://travis-ci.org/opendata-swiss/wp-ckan-backend)
+
 WordPress plugin to manage datasets, organizations, groups and harvesters in CKAN via its API.
 
 ## Requirements
@@ -45,7 +47,7 @@ To check the code style, run the build script:
 $ ./build.sh
 ```
 
-This script runs on GitLab CI as well for every pull request.
+This script runs on Travis CI as well for every push.
 
 ## Extract messages / Compile translation files
 
