@@ -1,6 +1,6 @@
 # wp-ckan-backend
 
-WordPress plugin to manage datasets, organizations and groups in CKAN via API.
+WordPress plugin to manage datasets, organizations, groups and harvesters in CKAN via its API.
 
 ## Requirements
 
