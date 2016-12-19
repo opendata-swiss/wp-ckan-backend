@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: jazz@liip.ch\n"
 "POT-Creation-Date: 2016-11-15 17:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Stefan Oderbolz <oderbolz@gmail.com>, 2016\n"
+"Last-Translator: Andreas Weder <Andreas.Weder@gs-edi.admin.ch>, 2016\n"
 "Language-Team: Italian (https://www.transifex.com/opendataswiss/teams/54778/it/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
@@ -35,7 +35,7 @@ msgstr "Nessun formato"
 #: post-types/ckan-backend-local-organisation.php:47
 #: post-types/ckan-backend-local-organisation.php:113
 msgid "Organization"
-msgstr "Organizzazioni"
+msgstr "Organizzazione"
 
 #: ckan-backend.php:386
 msgid "Please choose an organization for this user."
@@ -51,11 +51,11 @@ msgstr "Non sincronizzato! Correggere i dati e salvare nuovamente."
 
 #: post-types/ckan-backend-user-admin.php:40
 msgid "Add Organization User"
-msgstr "Aggiungi nuova organizzazione"
+msgstr "Aggiungi nuovo utente dell'organizzazione"
 
 #: post-types/ckan-backend-user-admin.php:41
 msgid "Organization User"
-msgstr "Organizzazioni"
+msgstr "Utente dell'organizzazione"
 
 #: post-types/ckan-backend-user-admin.php:54
 #: post-types/ckan-backend-local-dataset-import.php:50
@@ -65,63 +65,65 @@ msgstr "Non dispone dei diritti per accedere a questa pagina."
 
 #: post-types/ckan-backend-user-admin.php:70
 msgid "Username is mandatory"
-msgstr ""
+msgstr "Il campo Nome utente è obbligatorio"
 
 #: post-types/ckan-backend-user-admin.php:72
 msgid "E-Mail is mandatory"
-msgstr ""
+msgstr "Il campo E-mail è obbligatorio"
 
 #: post-types/ckan-backend-user-admin.php:74
 msgid "User with this username already exists, choose a different one."
 msgstr ""
+"Questo nome utente è già usato da un altro utente. Sceglierne un altro."
 
 #: post-types/ckan-backend-user-admin.php:76
 msgid "User with this e-mail address already exists, choose a different one."
 msgstr ""
+"Questo indirizzo e-mail è già usato da un altro utente. Sceglierne un altro."
 
 #: post-types/ckan-backend-user-admin.php:81
 #, php-format
 msgid "User %s successfully created"
-msgstr ""
+msgstr "Creazione dell'utente %s riuscita"
 
 #: post-types/ckan-backend-user-admin.php:83
 #, php-format
 msgid "Error while creating user: %s"
-msgstr ""
+msgstr "Errore nella creazione dell'utente: %s"
 
 #: post-types/ckan-backend-user-admin.php:110
 msgid "Username"
-msgstr ""
+msgstr "Nome utente"
 
 #: post-types/ckan-backend-user-admin.php:110
 #: post-types/ckan-backend-user-admin.php:114
 #: post-types/ckan-backend-user-admin.php:137
 msgid "required"
-msgstr ""
+msgstr "richiesto"
 
 #: post-types/ckan-backend-user-admin.php:114
 msgid "E-Mail"
-msgstr ""
+msgstr "E-mail"
 
 #: post-types/ckan-backend-user-admin.php:118
 msgid "First name"
-msgstr ""
+msgstr "Nome"
 
 #: post-types/ckan-backend-user-admin.php:122
 msgid "Last name"
-msgstr ""
+msgstr "Cognome"
 
 #: post-types/ckan-backend-user-admin.php:126
 msgid "Role"
-msgstr ""
+msgstr "Ruolo"
 
 #: post-types/ckan-backend-user-admin.php:136
 msgid "Organisation"
-msgstr ""
+msgstr "Organizzazione"
 
 #: post-types/ckan-backend-user-admin.php:151
 msgid "Add new user"
-msgstr ""
+msgstr "Aggiungi nuovo utente"
 
 #: post-types/ckan-backend-local-dataset.php:188
 #: post-types/ckan-backend-local-harvester-dashboard.php:157
@@ -655,7 +657,7 @@ msgstr "Dashboard"
 #, php-format
 msgctxt "%s contains job count of harvester"
 msgid "Job count: %s"
-msgstr ""
+msgstr "Conteggio operazioni: %s"
 
 #: post-types/ckan-backend-local-harvester.php:139
 #, php-format
@@ -667,13 +669,13 @@ msgstr "Operazione creata il %s"
 #, php-format
 msgctxt "%s contains the date when the last job started"
 msgid "Last job started: %s"
-msgstr ""
+msgstr "Ultima operazione avviata il %s"
 
 #: post-types/ckan-backend-local-harvester.php:141
 #, php-format
 msgctxt "%s contains the date when the last job finished"
 msgid "Last job finished: %s"
-msgstr ""
+msgstr "Ultima operazione conclusa il %s"
 
 #: post-types/ckan-backend-local-harvester.php:142
 #: post-types/ckan-backend-local-harvester-dashboard.php:307
@@ -704,15 +706,15 @@ msgstr "%s errori"
 
 #: post-types/ckan-backend-local-harvester.php:149
 msgid "No jobs yet"
-msgstr ""
+msgstr "Nessuna operazione finora"
 
 #: post-types/ckan-backend-local-harvester.php:156
 msgid "Could not retrieve harvest source status"
-msgstr ""
+msgstr "Impossibile recuperare lo status della 'harvest source'"
 
 #: post-types/ckan-backend-local-harvester.php:213
 msgid "Harvester Information"
-msgstr "Informazioni sul 'harvester'"
+msgstr "Informazioni sull''harvester'"
 
 #: post-types/ckan-backend-local-harvester.php:235
 msgid "Source type"
@@ -1085,7 +1087,7 @@ msgstr "Dataset esportati"
 #, php-format
 msgctxt "%s contains the post_id of the dataset."
 msgid "Could not read identifier of dataset %s."
-msgstr ""
+msgstr "Impossibile leggere l'identificatore del dataset %s"
 
 #: post-types/ckan-backend-local-harvester-dashboard.php:56
 msgid "Harvester Dashboard"
@@ -1093,15 +1095,15 @@ msgstr "Harvester dashboard"
 
 #: post-types/ckan-backend-local-harvester-dashboard.php:105
 msgid "Successfully created new harvester job."
-msgstr "Creazione della nuova operazione nell’ 'harvester' riuscita"
+msgstr "Creazione della nuova operazione nell’'harvester' riuscita"
 
 #: post-types/ckan-backend-local-harvester-dashboard.php:119
 msgid "Current harvester job successfully aborted."
-msgstr "Interruzione dell'operazione in corso nell’ 'harvester' riuscita"
+msgstr "Interruzione dell'operazione in corso nell’'harvester' riuscita"
 
 #: post-types/ckan-backend-local-harvester-dashboard.php:133
 msgid "Successfully cleared all harvester datasets."
-msgstr "Eliminazione di tutti i dataset nell’ 'harvester' riuscita"
+msgstr "Eliminazione di tutti i dataset nell’'harvester' riuscita"
 
 #: post-types/ckan-backend-local-harvester-dashboard.php:153
 msgid "Choose Harvester:"
