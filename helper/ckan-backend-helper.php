@@ -510,6 +510,28 @@ class Ckan_Backend_Helper {
 	}
 
 	/**
+	 * Adds a child node with CDATA content to an XML document and returns it.
+	 *
+	 * @param SimpleXMLElement $parent Element that the CDATA child node should be attached to.
+	 * @param string           $name Name of the child node that should contain CDATA content.
+	 * @param string           $value Value that should be inserted into a CDATA child node.
+	 * @param string           $namespace Namespace of new child node.
+	 *
+	 * @return SimpleXMLElement Child node with CDATA content.
+	 */
+	public static function add_child_with_cdata( &$parent, $name, $value = null, $namespace = null ) {
+		$child = $parent->addChild( $name, null, $namespace );
+
+		if ( null !== $child && ! empty( $value ) ) {
+			$child_node = dom_import_simplexml( $child );
+			$child_owner = $child_node->ownerDocument;
+			$child_node->appendChild( $child_owner->createCDATASection( $value ) );
+		}
+
+		return $child;
+	}
+
+	/**
 	 * Converts UTC date to local date.
 	 *
 	 * @param string $date_string Date which is passed to the constructor of DateTime.
