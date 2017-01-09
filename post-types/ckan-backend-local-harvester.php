@@ -234,7 +234,7 @@ class Ckan_Backend_Local_Harvester {
 			'name'       => __( 'Source type', 'ogdch-backend' ) . '*',
 			'id'         => self::FIELD_PREFIX . 'source_type',
 			'type'       => 'select',
-			'options'    => array( $this, 'get_source_type_form_field_options' ),
+			'options_cb' => array( $this, 'get_source_type_form_field_options' ),
 			'attributes' => array(
 				'required' => 'required',
 			),
@@ -244,7 +244,7 @@ class Ckan_Backend_Local_Harvester {
 			'name'       => __( 'Organization', 'ogdch-backend' ) . '*',
 			'id'         => self::FIELD_PREFIX . 'organisation',
 			'type'       => 'select',
-			'options'    => array( 'Ckan_Backend_Helper', 'get_organisation_form_field_options' ),
+			'options_cb' => array( 'Ckan_Backend_Helper', 'get_organisation_form_field_options' ),
 			'attributes' => array(
 				'required' => 'required',
 			),

@@ -146,7 +146,7 @@ class Ckan_Backend_Local_Organisation {
 				'id'               => self::FIELD_PREFIX . 'parent',
 				'type'             => 'select',
 				'show_option_none' => __( 'None - top level', 'ogdch-backend' ),
-				'options'          => array( $this, 'get_parent_options' ),
+				'options_cb'       => array( $this, 'get_parent_options' ),
 			) );
 
 			/* Type */
@@ -155,7 +155,7 @@ class Ckan_Backend_Local_Organisation {
 				'id'   => self::FIELD_PREFIX . 'political_level',
 				'type' => 'select',
 				'show_option_none' => false,
-				'options' => array( 'Ckan_Backend_PoliticalLevel', 'get_political_levels' ),
+				'options_cb' => array( 'Ckan_Backend_PoliticalLevel', 'get_political_levels' ),
 			) );
 		}
 
