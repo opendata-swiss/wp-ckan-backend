@@ -561,8 +561,8 @@ class Ckan_Backend_Helper {
 	/**
 	 * Conditional tag to check whether a user has a specific role.
 	 *
-	 * @param  int     $user_id
-	 * @param  string  $role
+	 * @param int    $user_id ID of user to check role.
+	 * @param string $role Role to check.
 	 * @return bool
 	 */
 	public static function user_has_role( $user_id, $role ) {
@@ -573,7 +573,7 @@ class Ckan_Backend_Helper {
 	/**
 	 * Conditional tag to check whether the currently logged-in user has a specific role.
 	 *
-	 * @param  string  $role
+	 * @param string $role Role to check.
 	 * @return bool
 	 */
 	public static function current_user_has_role( $role ) {
