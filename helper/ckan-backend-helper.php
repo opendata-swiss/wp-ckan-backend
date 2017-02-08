@@ -448,7 +448,7 @@ class Ckan_Backend_Helper {
 			$organisation_filter   = '';
 			if ( isset( $_GET['organisation_filter'] ) ) {
 				$organisation_filter = sanitize_text_field( $_GET['organisation_filter'] );
-			} elseif ( ! members_current_user_has_role( 'administrator' ) ) {
+			} elseif ( ! current_user_can( 'administrator' ) ) {
 				// set filter on first page load if user is not an administrator
 				$organisation_filter = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
 			}
