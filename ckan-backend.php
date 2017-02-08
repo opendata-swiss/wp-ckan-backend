@@ -204,7 +204,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			$current_user_id = $args[1];
 
 			// only remove capability if user is a non-admin user
-			if ( ! members_current_user_has_role( 'administrator' ) ) {
+			if ( ! current_user_can( 'administrator' ) ) {
 				if ( ! empty( $args[2] ) ) {
 					$other_user_id = $args[2];
 					$user_organisation       = get_the_author_meta( self::$plugin_slug . '_organisation', $current_user_id );
@@ -227,7 +227,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		 * @return array
 		 */
 		public function disable_roles_for_non_admins( $roles ) {
-			if ( ! members_current_user_has_role( 'administrator' ) ) {
+			if ( ! current_user_can( 'administrator' ) ) {
 				if ( isset( $roles['administrator'] ) ) {
 					unset( $roles['administrator'] );
 				}
@@ -258,7 +258,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 				$organisation_filter   = '';
 				if ( isset( $_GET['organisation_filter'] ) ) {
 					$organisation_filter = sanitize_text_field( $_GET['organisation_filter'] );
-				} elseif ( ! members_current_user_has_role( 'administrator' ) ) {
+				} elseif ( ! current_user_can( 'administrator' ) ) {
 					// set filter on first page load if user is not an administrator
 					$organisation_filter = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
 				}
