@@ -453,6 +453,8 @@ class Ckan_Backend_Helper {
 				$organisation_filter = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
 			}
 
+			usort( $organisations, array( 'Ckan_Backend_Helper', 'compare' ) );
+
 			foreach ( $organisations as $organisation ) {
 				printf(
 					'<option value="%s"%s>%s</option>',
@@ -464,6 +466,18 @@ class Ckan_Backend_Helper {
 			?>
 		</select>
 		<?php
+	}
+
+	/**
+	 * Compare organization-post_names to sort them
+	 *
+	 * @param object $a First Object to compare.
+	 * @param object $b Second Object to compare.
+	 *
+	 * @return int
+	 */
+	public static function compare( $a, $b ) {
+		return strcmp( self::get_organization_title( $a->post_name ), self::get_organization_title( $b->post_name ) );
 	}
 
 	/**
