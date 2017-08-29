@@ -204,12 +204,12 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			$current_user_id = $args[1];
 
 			// only remove capability if user is a non-admin user
-			if ( ! members_current_user_has_role( 'administrator' ) ) {
+			if ( ! Ckan_Backend_Helper::current_user_has_role( 'administrator' ) ) {
 				if ( ! empty( $args[2] ) ) {
 					$other_user_id = $args[2];
 					$user_organisation       = get_the_author_meta( self::$plugin_slug . '_organisation', $current_user_id );
 					$other_user_organisation = get_user_meta( $other_user_id, self::$plugin_slug . '_organisation', true );
-					if ( $user_organisation !== $other_user_organisation || members_user_has_role( $other_user_id, 'administrator' ) || members_user_has_role( $other_user_id, 'content_manager' ) ) {
+					if ( $user_organisation !== $other_user_organisation || Ckan_Backend_Helper::user_has_role( $other_user_id, 'administrator' ) || Ckan_Backend_Helper::user_has_role( $other_user_id, 'content_manager' ) ) {
 						// remove edit_users capability if other user isn't in same organisation or an admin user
 						$allcaps[ $required_cap ] = false;
 					}
@@ -227,7 +227,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		 * @return array
 		 */
 		public function disable_roles_for_non_admins( $roles ) {
-			if ( ! members_current_user_has_role( 'administrator' ) ) {
+			if ( ! Ckan_Backend_Helper::current_user_has_role( 'administrator' ) ) {
 				if ( isset( $roles['administrator'] ) ) {
 					unset( $roles['administrator'] );
 				}
@@ -258,7 +258,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 				$organisation_filter   = '';
 				if ( isset( $_GET['organisation_filter'] ) ) {
 					$organisation_filter = sanitize_text_field( $_GET['organisation_filter'] );
-				} elseif ( ! members_current_user_has_role( 'administrator' ) ) {
+				} elseif ( ! Ckan_Backend_Helper::current_user_has_role( 'administrator' ) ) {
 					// set filter on first page load if user is not an administrator
 					$organisation_filter = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
 				}

@@ -448,7 +448,7 @@ class Ckan_Backend_Helper {
 			$organisation_filter   = '';
 			if ( isset( $_GET['organisation_filter'] ) ) {
 				$organisation_filter = sanitize_text_field( $_GET['organisation_filter'] );
-			} elseif ( ! members_current_user_has_role( 'administrator' ) ) {
+			} elseif ( ! Ckan_Backend_Helper::current_user_has_role( 'administrator' ) ) {
 				// set filter on first page load if user is not an administrator
 				$organisation_filter = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
 			}
@@ -556,5 +556,27 @@ class Ckan_Backend_Helper {
 	 */
 	public static function convert_date_to_readable_format( $date_string, $format = 'd.m.Y H:i:s', $default = '-' ) {
 		return ( ! empty( $date_string ) ? Ckan_Backend_Helper::get_local_date( $date_string, $format ) : $default );
+	}
+
+	/**
+	 * Conditional tag to check whether a user has a specific role.
+	 *
+	 * @param int    $user_id ID of user to check role.
+	 * @param string $role Role to check.
+	 * @return bool
+	 */
+	public static function user_has_role( $user_id, $role ) {
+		$user = new WP_User( $user_id );
+		return in_array( $role, (array) $user->roles );
+	}
+
+	/**
+	 * Conditional tag to check whether the currently logged-in user has a specific role.
+	 *
+	 * @param string $role Role to check.
+	 * @return bool
+	 */
+	public static function current_user_has_role( $role ) {
+		return is_user_logged_in() ? self::user_has_role( get_current_user_id(), $role ) : false;
 	}
 }
