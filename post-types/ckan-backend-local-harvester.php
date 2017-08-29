@@ -181,7 +181,7 @@ class Ckan_Backend_Local_Harvester {
 	 * @return array|bool Last job status of given harvest source.
 	 */
 	protected function get_harvest_source_status( $harvest_id ) {
-		$harvest_sources = $this->get_harvest_sources();
+		$harvest_sources = self::get_harvest_sources();
 
 		foreach ( $harvest_sources as $harvest_source ) {
 			if ( $harvest_id === $harvest_source['id'] ) {
@@ -366,17 +366,11 @@ class Ckan_Backend_Local_Harvester {
 			$harvest_ids_by_state = self::get_harvest_ids_by_status();
 
 			if ( ! empty( $harvest_status_filter ) ) {
-				// wp_query does not allow an empty array of meta_values, so an empty meta_value is given instead
-				if ( empty( $harvest_ids_by_state[ $harvest_status_filter ] ) ) {
-					$harvest_ids = array( '' );
-				} else {
-					$harvest_ids = $harvest_ids_by_state[ $harvest_status_filter ];
-				}
 				// @codingStandardsIgnoreStart
 				$query->query_vars['meta_query'] = array(
 					array(
 						'key'     => self::FIELD_PREFIX . 'ckan_id',
-						'value'   => $harvest_ids,
+						'value'   => $harvest_ids_by_state[ $harvest_status_filter ],
 						'compare' => 'IN',
 					)
 				);
@@ -402,6 +396,12 @@ class Ckan_Backend_Local_Harvester {
 	 * @param bool $disable_floating Disable floating of the selectbox which is default in WordPress.
 	 */
 	public static function print_harvest_status_filter( $disable_floating = false ) {
+		$harvest_states = [
+			'errored' => __( 'Errored', 'ogdch-backend' ),
+			'finished' => __( 'Finished', 'ogdch-backend' ),
+			'running' => __( 'Running', 'ogdch-backend' ),
+			'others' => __( 'Others', 'ogdch-backend' ),
+		];
 		?>
 		<select name="harvest_status_filter" <?php echo ($disable_floating) ? 'style="float: none;"' : ''; ?>>
 			<option value=""><?php esc_attr_e( 'All harvest states', 'ogdch-backend' ); ?></option>
@@ -411,14 +411,12 @@ class Ckan_Backend_Local_Harvester {
 				$harvest_status_filter = sanitize_text_field( $_GET['harvest_status_filter'] );
 			}
 
-			$harvest_sources_by_states = self::get_harvest_ids_by_status();
-
-			foreach ( $harvest_sources_by_states as $harvest_status_key => $harvest_status_value ) {
+			foreach ( $harvest_states as $harvest_status_key => $harvest_status_value ) {
 				printf(
 					'<option value="%s"%s>%s</option>',
 					esc_attr( $harvest_status_key ),
 					esc_attr( ( $harvest_status_key === $harvest_status_filter ) ? ' selected="selected"' : '' ),
-					esc_attr( $harvest_status_key )
+					esc_attr( $harvest_status_value )
 				);
 			}
 			?>
@@ -456,24 +454,25 @@ class Ckan_Backend_Local_Harvester {
 	protected static function get_harvest_ids_by_status() {
 		if ( empty( self::$harvest_ids_by_states ) ) {
 			$harvest_sources = self::get_harvest_sources();
+			// wp_query does not allow an empty array of meta_values, so an empty meta_value is given by default
 			$harvest_sources_by_states = [
-				'errored'	=> array(),
-				'updated'	=> array(),
-				'added'		=> array(),
-				'deleted'	=> array(),
+				'errored'	=> array( '' ),
+				'finished'	=> array( '' ),
+				'running'	=> array( '' ),
+				'others'	=> array( '' ),
 			];
 
 			foreach ( $harvest_sources as $harvest_source ) {
-				$status = $harvest_source['last_job_status']['stats'];
+				$status = $harvest_source['last_job_status'];
 
-				if ( $status['errored'] > 0 ) {
+				if ( $status['stats']['errored'] > 0 ) {
 					$harvest_sources_by_states['errored'][] = $harvest_source['id'];
-				} elseif ( $status['updated'] > 0 ) {
-					$harvest_sources_by_states['updated'][] = $harvest_source['id'];
-				} elseif ( $status['added'] > 0 ) {
-					$harvest_sources_by_states['added'][] = $harvest_source['id'];
-				} elseif ( $status['deleted'] > 0 ) {
-					$harvest_sources_by_states['deleted'][] = $harvest_source['id'];
+				} elseif ( 'Finished' === $status['status'] ) {
+					$harvest_sources_by_states['finished'][] = $harvest_source['id'];
+				} elseif ( 'Running' === $status['status'] ) {
+					$harvest_sources_by_states['running'][] = $harvest_source['id'];
+				} else {
+					$harvest_sources_by_states['others'][] = $harvest_source['id'];
 				}
 			}
 			self::$harvest_ids_by_states = $harvest_sources_by_states;
