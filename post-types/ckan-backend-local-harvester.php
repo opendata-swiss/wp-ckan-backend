@@ -22,6 +22,13 @@ class Ckan_Backend_Local_Harvester {
 	protected static $harvest_sources = array();
 
 	/**
+	 * Harvester-ids sorted by status of the last job.
+	 *
+	 * @var array
+	 */
+	protected static $harvest_ids_by_states = array();
+
+	/**
 	 * Constructor of this class.
 	 */
 	public function __construct() {
@@ -30,6 +37,10 @@ class Ckan_Backend_Local_Harvester {
 		// add custom columns to admin list
 		add_filter( 'manage_' . self::POST_TYPE . '_posts_columns', array( $this, 'add_list_columns' ) );
 		add_action( 'manage_' . self::POST_TYPE . '_posts_custom_column', array( $this, 'add_list_columns_data' ), 10, 2 );
+
+		// create harvest-status filter dropdown to admin list
+		add_action( 'restrict_manage_posts', array( $this, 'add_harvest_status_filter' ) );
+		add_action( 'pre_get_posts', array( $this, 'filter_posts_by_harvest_status' ) );
 
 		add_action( 'cmb2_init', array( $this, 'define_fields' ) );
 
@@ -170,21 +181,9 @@ class Ckan_Backend_Local_Harvester {
 	 * @return array|bool Last job status of given harvest source.
 	 */
 	protected function get_harvest_source_status( $harvest_id ) {
-		if ( empty( self::$harvest_sources ) ) {
-			$endpoint = CKAN_API_ENDPOINT . 'harvest_source_list';
-			$data     = array( 'return_last_job_status' => true );
+		$harvest_sources = $this->get_harvest_sources();
 
-			$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
-			$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
-
-			if ( 0 === count( $errors ) ) {
-				self::$harvest_sources = $response['result'];
-			} else {
-				Ckan_Backend_Helper::print_error_messages( $errors );
-			}
-		}
-
-		foreach ( self::$harvest_sources as $harvest_source ) {
+		foreach ( $harvest_sources as $harvest_source ) {
 			if ( $harvest_id === $harvest_source['id'] ) {
 				return $harvest_source;
 			}
@@ -341,5 +340,144 @@ class Ckan_Backend_Local_Harvester {
 		}
 
 		return $source_type_options;
+	}
+
+	/**
+	 * Applies harvest-status filter
+	 *
+	 * @param WP_Query $query The current query.
+	 */
+	public function filter_posts_by_harvest_status( $query ) {
+		global $post_type, $pagenow;
+
+		if (
+			// Only filter when were on the edit page of ckan-local-harvesters
+			self::POST_TYPE === $post_type &&
+			'edit.php' === $pagenow &&
+			// Only filter when ckan-local-harvesters are queried
+			! empty( $query->query_vars['post_type'] ) &&
+			$query->query_vars['post_type'] === self::POST_TYPE
+		) {
+			$harvest_status_filter   = '';
+			if ( isset( $_GET['harvest_status_filter'] ) ) {
+				$harvest_status_filter = sanitize_text_field( $_GET['harvest_status_filter'] );
+			}
+
+			$harvest_ids_by_state = self::get_harvest_ids_by_status();
+
+			if ( ! empty( $harvest_status_filter ) ) {
+				// wp_query does not allow an empty array of meta_values, so an empty meta_value is given instead
+				if ( empty( $harvest_ids_by_state[ $harvest_status_filter ] ) ) {
+					$harvest_ids = array( '' );
+				} else {
+					$harvest_ids = $harvest_ids_by_state[ $harvest_status_filter ];
+				}
+				// @codingStandardsIgnoreStart
+				$query->query_vars['meta_query'] = array(
+					array(
+						'key'     => self::FIELD_PREFIX . 'ckan_id',
+						'value'   => $harvest_ids,
+						'compare' => 'IN',
+					)
+				);
+				// @codingStandardsIgnoreEnd
+			}
+		}
+	}
+
+	/**
+	 * Adds harvest-status filter to admin list
+	 */
+	function add_harvest_status_filter() {
+		global $post_type;
+
+		if ( self::POST_TYPE === $post_type ) {
+			$this::print_harvest_status_filter();
+		}
+	}
+
+	/**
+	 * Generates selectbox to filter by harvest-status
+	 *
+	 * @param bool $disable_floating Disable floating of the selectbox which is default in WordPress.
+	 */
+	public static function print_harvest_status_filter( $disable_floating = false ) {
+		?>
+		<select name="harvest_status_filter" <?php echo ($disable_floating) ? 'style="float: none;"' : ''; ?>>
+			<option value=""><?php esc_attr_e( 'All harvest states', 'ogdch-backend' ); ?></option>
+			<?php
+			$harvest_status_filter   = '';
+			if ( isset( $_GET['harvest_status_filter'] ) ) {
+				$harvest_status_filter = sanitize_text_field( $_GET['harvest_status_filter'] );
+			}
+
+			$harvest_sources_by_states = self::get_harvest_ids_by_status();
+
+			foreach ( $harvest_sources_by_states as $harvest_status_key => $harvest_status_value ) {
+				printf(
+					'<option value="%s"%s>%s</option>',
+					esc_attr( $harvest_status_key ),
+					esc_attr( ( $harvest_status_key === $harvest_status_filter ) ? ' selected="selected"' : '' ),
+					esc_attr( $harvest_status_key )
+				);
+			}
+			?>
+		</select>
+		<?php
+	}
+
+	/**
+	 * Retrieves all harvest sources from the CKAN API.
+	 *
+	 * @return array List of all harvest sources.
+	 */
+	protected static function get_harvest_sources() {
+		if ( empty( self::$harvest_sources ) ) {
+			$endpoint = CKAN_API_ENDPOINT . 'harvest_source_list';
+			$data = array( 'return_last_job_status' => true );
+
+			$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
+			$errors = Ckan_Backend_Helper::check_response_for_errors( $response );
+
+			if ( 0 === count( $errors ) ) {
+				self::$harvest_sources = $response['result'];
+			} else {
+				Ckan_Backend_Helper::print_error_messages( $errors );
+			}
+		}
+		return self::$harvest_sources;
+	}
+
+	/**
+	 * Returns an Array of keys 'errored', 'updaded', 'added', 'deleted', which contain a list of harvester-ids each.
+	 *
+	 * @return array Array of harvester-job-status.
+	 */
+	protected static function get_harvest_ids_by_status() {
+		if ( empty( self::$harvest_ids_by_states ) ) {
+			$harvest_sources = self::get_harvest_sources();
+			$harvest_sources_by_states = [
+				'errored'	=> array(),
+				'updated'	=> array(),
+				'added'		=> array(),
+				'deleted'	=> array(),
+			];
+
+			foreach ( $harvest_sources as $harvest_source ) {
+				$status = $harvest_source['last_job_status']['stats'];
+
+				if ( $status['errored'] > 0 ) {
+					$harvest_sources_by_states['errored'][] = $harvest_source['id'];
+				} elseif ( $status['updated'] > 0 ) {
+					$harvest_sources_by_states['updated'][] = $harvest_source['id'];
+				} elseif ( $status['added'] > 0 ) {
+					$harvest_sources_by_states['added'][] = $harvest_source['id'];
+				} elseif ( $status['deleted'] > 0 ) {
+					$harvest_sources_by_states['deleted'][] = $harvest_source['id'];
+				}
+			}
+			self::$harvest_ids_by_states = $harvest_sources_by_states;
+		}
+		return self::$harvest_ids_by_states;
 	}
 }
