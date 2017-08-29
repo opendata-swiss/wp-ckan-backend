@@ -39,7 +39,7 @@ class Ckan_Backend_User_Admin {
 			'users.php',
 			__( 'Add New Organization User', 'ogdch-backend' ),
 			__( 'Organization User', 'ogdch-backend' ),
-			'edit_organisations',
+			'edit_user_organisation',
 			$this->menu_slug,
 			array( $this, 'user_page_callback' )
 		);
@@ -50,7 +50,7 @@ class Ckan_Backend_User_Admin {
 	 */
 	public function user_page_callback() {
 		// must check that the user has the required capability
-		if ( ! current_user_can( 'edit_organisations' ) ) {
+		if ( ! current_user_can( 'edit_user_organisation' ) ) {
 			wp_die( esc_html( __( 'You do not have sufficient permissions to access this page.' ) ) );
 		}
 
