@@ -570,6 +570,14 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			} else {
 				echo '<p class="ckan-synced error"><span class="dashicons dashicons-no"></span>' . esc_attr__( 'Not synchronized! Please fix data and save the element again.', 'ogdch-backend' ) . '</p>';
 			}
+
+			// add link to dashboard if we're on the harvster detail page
+			if ( Ckan_Backend_Local_Harvester::POST_TYPE === get_post_type( $object_id ) ) {
+				$ckan_id = get_post_meta( $object_id, Ckan_Backend_Local_Harvester::FIELD_PREFIX . 'ckan_id', true );
+				// @codingStandardsIgnoreStart
+				echo '<a class="ckan-dashboard-link" href="edit.php?post_type=' . esc_attr(Ckan_Backend_Local_Harvester::POST_TYPE) . '&page=ckan-local-harvester-dashboard-page&harvester_id=' . esc_attr($ckan_id) . '""><span class="dashicons dashicons-dashboard"></span> ' . esc_html__('Dashboard', 'ogdch-backend') . '</a>';
+				// @codingStandardsIgnoreEnd
+			}
 		}
 
 		/**
