@@ -76,6 +76,11 @@
     background-color: #cc0000;
     padding: 5px; }
 
+.ckan-dashboard-link {
+  text-decoration: none;
+  margin-top: 12px;
+  display: block; }
+
 /* Harvester Dashboard */
 .harvester-status .label {
   display: inline;
