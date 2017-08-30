@@ -365,7 +365,9 @@ class Ckan_Backend_Local_Harvester {
 
 			$harvest_ids_by_state = self::get_harvest_ids_by_status();
 
-			if ( ! empty( $harvest_status_filter ) ) {
+			if ( ! empty( $harvest_status_filter ) &&
+				array_key_exists( $harvest_status_filter, $harvest_ids_by_state )
+			) {
 				// @codingStandardsIgnoreStart
 				$query->query_vars['meta_query'] = array(
 					array(
