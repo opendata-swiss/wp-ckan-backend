@@ -586,4 +586,21 @@ class Ckan_Backend_Helper {
 	public static function current_user_has_role( $role ) {
 		return is_user_logged_in() ? self::user_has_role( get_current_user_id(), $role ) : false;
 	}
+
+	/**
+	 * Checks if given organization matches user organization.
+	 * 
+	 * @param string $organization Organization to check.
+	 * @param int    $user_id User ID to check organization. Optional. If empty check against current user. 
+	 *
+	 * @return bool
+	 */
+	public static function is_own_organization( $organization, $user_id = 0 ) {
+		if ( empty( $user_id ) ) {
+			$user_id = get_current_user_id();
+		}
+
+		$user_organization = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', $user_id );
+		return $organization === $user_organization;
+	}
 }

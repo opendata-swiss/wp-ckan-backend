@@ -541,9 +541,8 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 					// if organization couldn't be found -> something's wrong
 					continue;
 				}
-				$user_organization = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
 				// if the assigned organization not matches the organization of the current harvester -> skip
-				if ( $organization !== $user_organization ) {
+				if ( ! Ckan_Backend_Helper::is_own_organization( $organization, get_current_user_id() ) ) {
 					continue;
 				}
 			}

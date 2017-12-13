@@ -516,8 +516,7 @@ class Ckan_Backend_Local_Dataset_Import {
 		}
 		// If user isn't allowed to edit_data_of_all_organisations -> check if he has provided his own organisation
 		if ( ! current_user_can( 'edit_data_of_all_organisations' ) ) {
-			$user_organisation = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
-			if ( $user_organisation !== $organisation ) {
+			if ( ! Ckan_Backend_Helper::is_own_organization( $organisation, get_current_user_id() ) ) {
 				throw new Exception( sprintf(
 					esc_html_x( 'You are not allowed to add a dataset for another organistaion. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[your_organization_id]</dct:identifier>. Dataset %s not imported.', '%s contains the identifier of the dataset.', 'ogdch-backend' ),
 					$identifier

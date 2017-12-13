@@ -165,9 +165,8 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 				$current_user_id   = $args[1];
 				$post_id           = $args[2];
 				$organisation      = get_post_meta( $post_id, Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'ckan_name', true );
-				$user_organisation = get_the_author_meta( self::$plugin_slug . '_organisation', $current_user_id );
 				// if the assigned organisation matches the organisation of the current entity
-				if ( $organisation === $user_organisation ) {
+				if ( Ckan_Backend_Helper::is_own_organization( $organisation, $current_user_id ) ) {
 					$allcaps[ $required_cap ] = true;
 				}
 			}
@@ -176,8 +175,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 				$current_user_id   = $args[1];
 				$post_id           = $args[2];
 				$identifier        = get_post_meta( $post_id, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'identifier', true );
-				$user_organisation = get_the_author_meta( self::$plugin_slug . '_organisation', $current_user_id );
-				if ( $identifier['organisation'] === $user_organisation ) {
+				if ( Ckan_Backend_Helper::is_own_organization( $identifier['organisation'], $current_user_id ) ) {
 					$allcaps[ $required_cap ] = true;
 				}
 			}
@@ -209,10 +207,9 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			if ( ! Ckan_Backend_Helper::current_user_has_role( 'administrator' ) ) {
 				if ( ! empty( $args[2] ) ) {
 					$other_user_id = $args[2];
-					$user_organisation       = get_the_author_meta( self::$plugin_slug . '_organisation', $current_user_id );
 					$other_user_organisation = get_user_meta( $other_user_id, self::$plugin_slug . '_organisation', true );
-					if ( $user_organisation !== $other_user_organisation || Ckan_Backend_Helper::user_has_role( $other_user_id, 'administrator' ) || Ckan_Backend_Helper::user_has_role( $other_user_id, 'content_manager' ) ) {
-						// remove edit_users capability if other user isn't in same organisation or an admin user
+					if ( ! Ckan_Backend_Helper::is_own_organization( $other_user_organisation, $current_user_id ) || Ckan_Backend_Helper::user_has_role( $other_user_id, 'administrator' ) || Ckan_Backend_Helper::user_has_role( $other_user_id, 'content_manager' ) ) {
+						// remove edit_users capability if other user isn't in same organisation, an admin user or a content manager
 						$allcaps[ $required_cap ] = false;
 					}
 				}
