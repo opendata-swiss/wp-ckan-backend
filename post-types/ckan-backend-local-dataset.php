@@ -80,11 +80,20 @@ class Ckan_Backend_Local_Dataset {
 			) ); ?>
 			<span>@</span>
 			<?php
-			if ( current_user_can( 'edit_data_of_all_organisations' ) ) {
+			$check_organization = true;
+			$organisation_list = Ckan_Backend_Helper::get_organisation_form_field_options( $check_organization );
+
+			if ( count( $organisation_list ) > 1 ) {
+				$organisation_options = '';
+				$organisation_options .= '<option value="">' . esc_attr__( '- Please choose -', 'ogdch-backend' ) . '</option>';
+				foreach ( $organisation_list as $key => $title ) {
+					$organisation_options .= '<option value="' . $key . '" ' . selected( $organisation, $key, false ) . '>' . $title . '</option>';
+				}
+
 				echo $field_type_object->select( array(
 					'name'    => $field_type_object->_name( '[organisation]' ),
 					'id'      => $field_type_object->_id( '_organisation' ),
-					'options_cb' => $this->cmb2_get_organisation_options( $organisation ),
+					'options_cb' => $organisation_options,
 					'desc'    => '',
 				) );
 			} else {
@@ -172,25 +181,6 @@ class Ckan_Backend_Local_Dataset {
 			})( jQuery );
 		</script>
 		<?php
-	}
-
-	/**
-	 * Creates organisation options for selectbox
-	 *
-	 * @param bool $value Current field value.
-	 *
-	 * @return string
-	 */
-	public function cmb2_get_organisation_options( $value = false ) {
-		$organisation_list = Ckan_Backend_Helper::get_organisation_form_field_options();
-
-		$organisation_options = '';
-		$organisation_options .= '<option value="">' . esc_attr__( '- Please choose -', 'ogdch-backend' ) . '</option>';
-		foreach ( $organisation_list as $key => $title ) {
-			$organisation_options .= '<option value="' . $key . '" ' . selected( $value, $key, false ) . '>' . $title . '</option>';
-		}
-
-		return $organisation_options;
 	}
 
 	/**

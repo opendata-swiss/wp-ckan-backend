@@ -91,10 +91,38 @@ class Ckan_Backend_Helper {
 	/**
 	 * Gets all organisation instances from CKAN and returns them in an array.
 	 *
+	 * @param bool $check_organization If enabled only own organizations will be returned.
+	 *
 	 * @return array All organisation instances from CKAN
 	 */
-	public static function get_organisation_form_field_options() {
-		return self::get_form_field_options( Ckan_Backend_Local_Organisation::POST_TYPE, Ckan_Backend_Local_Organisation::FIELD_PREFIX );
+	public static function get_organisation_form_field_options( $check_organization = false ) {
+		$organization_options = self::get_form_field_options( Ckan_Backend_Local_Organisation::POST_TYPE, Ckan_Backend_Local_Organisation::FIELD_PREFIX, $check_organization );
+		if ( $check_organization ) {
+			$filtered_organization_options = array();
+			foreach ( $organization_options as $name => $title ) {
+				$organizations_args  = array(
+					'posts_per_page'   => 1,
+					'post_type'        => Ckan_Backend_Local_Organisation::POST_TYPE,
+					'post_status'      => 'publish',
+					// @codingStandardsIgnoreStart
+					'meta_key'         => Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'ckan_name',
+					'meta_value'       => $name,
+					// @codingStandardsIgnoreEnd
+				);
+				$organisations = get_posts( $organizations_args );
+				if ( count( $organisations ) !== 1 ) {
+					// If no organization for given name was found -> skip
+					continue;
+				}
+				if ( ! current_user_can( 'edit_data_of_all_organisations' ) && ! Ckan_Backend_Helper::is_own_organization( $name, get_current_user_id() ) ) {
+					continue;
+				}
+				$filtered_organization_options[ $name ] = $title;
+			}
+			return $filtered_organization_options;
+		}
+
+		return $organization_options;
 	}
 
 	/**
@@ -109,6 +137,7 @@ class Ckan_Backend_Helper {
 		$current_language = self::get_current_language();
 		$transient_name = Ckan_Backend::$plugin_slug . '_' . $post_type . '_options_' . $current_language;
 		if ( false === ( $options = get_transient( $transient_name ) ) ) {
+			$options = array();
 			$args  = array(
 				// @codingStandardsIgnoreStart
 				'posts_per_page' => -1,
@@ -224,7 +253,6 @@ class Ckan_Backend_Helper {
 				'meta_key'         => Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'ckan_name',
 				'meta_value'       => $name,
 				// @codingStandardsIgnoreEnd
-
 			);
 			$organisations = get_posts( $args );
 			if ( count( $organisations ) > 0 ) {
@@ -435,12 +463,8 @@ class Ckan_Backend_Helper {
 	 * @param bool $disable_floating Disable floating of the selectbox which is default in WordPress.
 	 */
 	public static function print_organisation_filter( $disable_floating = false ) {
-		$args          = array(
-			'posts_per_page' => - 1,
-			'post_type'      => Ckan_Backend_Local_Organisation::POST_TYPE,
-			'post_status'    => 'any',
-		);
-		$organisations = get_posts( $args );
+		$check_organization = true;
+		$organisations = self::get_organisation_form_field_options( $check_organization );
 		?>
 		<select name="organisation_filter" <?php echo ($disable_floating) ? 'style="float: none;"' : ''; ?>>
 			<option value=""><?php esc_attr_e( 'All organizations', 'ogdch-backend' ); ?></option>
@@ -453,19 +477,12 @@ class Ckan_Backend_Helper {
 				$organisation_filter = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
 			}
 
-			usort( $organisations, function ( $a, $b ) {
-				return strcmp(
-					self::get_organization_title( $a->post_name ),
-					self::get_organization_title( $b->post_name )
-				);
-			} );
-
-			foreach ( $organisations as $organisation ) {
+			foreach ( $organisations as $name => $title ) {
 				printf(
 					'<option value="%s"%s>%s</option>',
-					esc_attr( $organisation->post_name ),
-					esc_attr( ( $organisation->post_name === $organisation_filter ) ? ' selected="selected"' : '' ),
-					esc_attr( self::get_organization_title( $organisation->post_name ) )
+					esc_attr( $name ),
+					esc_attr( ( $name === $organisation_filter ) ? ' selected="selected"' : '' ),
+					esc_attr( $title )
 				);
 			}
 			?>
