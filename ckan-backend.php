@@ -337,6 +337,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 
 				$admin_role->add_cap( 'edit_data_of_all_organisations' );
 				$admin_role->add_cap( 'edit_user_organisation' );
+				$admin_role->add_cap( 'harvester_dashboard' );
 			}
 		}
 
