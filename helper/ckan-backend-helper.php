@@ -601,6 +601,26 @@ class Ckan_Backend_Helper {
 		}
 
 		$user_organization = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', $user_id );
+
+		// allow editing of child organizations
+		$organization_children_args = array(
+			'post_type'      => Ckan_Backend_Local_Organisation::POST_TYPE,
+			'post_status'    => 'any',
+			// @codingStandardsIgnoreStart
+			'posts_per_page' => -1,
+			'meta_key'       => Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'parent',
+			'meta_value'     => $user_organization,
+			// @codingStandardsIgnoreEnd
+		);
+		$organization_children = get_posts( $organization_children_args );
+		if ( ! empty( $organization_children ) ) {
+			foreach( $organization_children as $organization_child ) {
+				if ( $organization === get_post_meta( $organization_child->ID, Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'ckan_name', true ) ) {
+					return true;
+				}
+			}
+		}
+
 		return $organization === $user_organization;
 	}
 }
