@@ -589,9 +589,9 @@ class Ckan_Backend_Helper {
 
 	/**
 	 * Checks if given organization matches user organization.
-	 * 
+	 *
 	 * @param string $organization Organization to check.
-	 * @param int    $user_id User ID to check organization. Optional. If empty check against current user. 
+	 * @param int    $user_id User ID to check organization. Optional. If empty check against current user.
 	 *
 	 * @return bool
 	 */
@@ -614,8 +614,8 @@ class Ckan_Backend_Helper {
 		);
 		$organization_children = get_posts( $organization_children_args );
 		if ( ! empty( $organization_children ) ) {
-			foreach( $organization_children as $organization_child ) {
-				if ( $organization === get_post_meta( $organization_child->ID, Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'ckan_name', true ) ) {
+			foreach ( $organization_children as $organization_child ) {
+				if ( get_post_meta( $organization_child->ID, Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'ckan_name', true ) === $organization ) {
 					return true;
 				}
 			}
