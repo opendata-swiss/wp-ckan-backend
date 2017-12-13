@@ -109,7 +109,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 		}
 
 		// admin only actions
-		if ( current_user_can( 'edit_data_of_all_organisations' ) ) {
+		if ( current_user_can( 'edit_harvesters' ) ) {
 			if ( 'abort' === $current_action && ! empty( $selected_harvester_id ) ) {
 				$endpoint = CKAN_API_ENDPOINT . 'harvest_job_abort';
 				$data     = array( 'source_id' => $selected_harvester_id );
@@ -199,7 +199,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 		echo '<p><span class="dashicons dashicons-image-rotate"></span> <a href="' . esc_url( $this->current_url_without_action ) . '">' . esc_html( __( 'Refresh page', 'ogdch-backend' ) ) . '</a></p>';
 		printf( esc_html_x( 'Harvester ID: %s', '%s contains the id of the harvester', 'ogdch-backend' ), esc_html( $harvester_id ) );
 
-		if ( current_user_can( 'edit_data_of_all_organisations' ) ) {
+		if ( current_user_can( 'edit_harvesters' ) ) {
 			$harvester_search_args = array(
 				// @codingStandardsIgnoreStart
 				'meta_key'       => Ckan_Backend_Local_Harvester::FIELD_PREFIX . 'ckan_id',
@@ -259,7 +259,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 		<div class="actions">
 			<?php
 			if ( $has_unfinished_job ) {
-				if ( current_user_can( 'edit_data_of_all_organisations' ) ) {
+				if ( current_user_can( 'edit_harvesters' ) ) {
 					$abort_onclick_confirm = "if( !confirm('" . esc_attr__( 'Are you sure you want to abort the current job of this harvester?', 'ogdch-backend' ) . "') ) return false;";
 					echo '<a href="' . esc_url( add_query_arg( 'action', 'abort' ) ) . '" class="button delete" onclick="' . esc_attr( $abort_onclick_confirm ) . '">' . esc_html__( 'Abort unfinished job', 'ogdch-backend' ) . '</a>';
 				}
@@ -267,7 +267,7 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 				echo '<a href="' . esc_url( add_query_arg( 'action', 'reharvest' ) ) . '" class="button button-secondary">' . esc_html__( 'Reharvest', 'ogdch-backend' ) . '</a>';
 			}
 
-			if ( current_user_can( 'edit_data_of_all_organisations' ) ) {
+			if ( current_user_can( 'edit_harvesters' ) ) {
 				echo ' ';
 				$clear_onclick_confirm = "if( !confirm('" . esc_attr__( 'Are you sure you want to clear all data of this harvester?', 'ogdch-backend' ) . "') ) return false;";
 				echo '<a href="' . esc_url( add_query_arg( 'action', 'clear' ) ) . '" class="button delete" onclick="' . esc_attr( $clear_onclick_confirm ) . '">' . esc_html__( 'Clear', 'ogdch-backend' ) . '</a>';
