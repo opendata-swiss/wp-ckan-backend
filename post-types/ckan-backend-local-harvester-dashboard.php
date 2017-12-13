@@ -140,7 +140,11 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 			}
 		}
 
+		// select harvester if only one was found
 		$harvesters = $this->get_harvester_selection_form_field_options();
+		if ( empty( $selected_harvester_id ) && count( $harvesters ) === 1 ) {
+			$selected_harvester_id = key( $harvesters );
+		}
 		?>
 		<div class="wrap harvester_dashboard">
 			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
@@ -195,18 +199,20 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 		echo '<p><span class="dashicons dashicons-image-rotate"></span> <a href="' . esc_url( $this->current_url_without_action ) . '">' . esc_html( __( 'Refresh page', 'ogdch-backend' ) ) . '</a></p>';
 		printf( esc_html_x( 'Harvester ID: %s', '%s contains the id of the harvester', 'ogdch-backend' ), esc_html( $harvester_id ) );
 
-		$harvester_search_args = array(
-			// @codingStandardsIgnoreStart
-			'meta_key'       => Ckan_Backend_Local_Harvester::FIELD_PREFIX . 'ckan_id',
-			'meta_value'     => $harvester_id,
-			// @codingStandardsIgnoreEnd
-			'post_type'      => Ckan_Backend_Local_Harvester::POST_TYPE,
-			'post_status'    => 'any',
-			'posts_per_page' => 1,
-		);
-		$harvesters            = get_posts( $harvester_search_args );
-		if ( is_array( $harvesters ) && count( $harvesters ) > 0 ) {
-			echo ' <a href="' . esc_url( admin_url( 'post.php?post=' . esc_attr( $harvesters[0]->ID ) . '&action=edit' ) ) . '">' . esc_html__( '(edit)', 'ogdch-backend' ) . '</a>';
+		if ( current_user_can( 'edit_data_of_all_organisations' ) ) {
+			$harvester_search_args = array(
+				// @codingStandardsIgnoreStart
+				'meta_key'       => Ckan_Backend_Local_Harvester::FIELD_PREFIX . 'ckan_id',
+				'meta_value'     => $harvester_id,
+				// @codingStandardsIgnoreEnd
+				'post_type'      => Ckan_Backend_Local_Harvester::POST_TYPE,
+				'post_status'    => 'any',
+				'posts_per_page' => 1,
+			);
+			$harvesters            = get_posts( $harvester_search_args );
+			if ( is_array( $harvesters ) && count( $harvesters ) > 0 ) {
+				echo ' <a href="' . esc_url( admin_url( 'post.php?post=' . esc_attr( $harvesters[0]->ID ) . '&action=edit' ) ) . '">' . esc_html__( '(edit)', 'ogdch-backend' ) . '</a>';
+			}
 		}
 
 		if ( isset( $_GET['job_id'] ) ) {
@@ -253,15 +259,19 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 		<div class="actions">
 			<?php
 			if ( $has_unfinished_job ) {
-				$abort_onclick_confirm = "if( !confirm('" . esc_attr__( 'Are you sure you want to abort the current job of this harvester?', 'ogdch-backend' ) . "') ) return false;";
-				echo '<a href="' . esc_url( add_query_arg( 'action', 'abort' ) ) . '" class="button delete" onclick="' . esc_attr( $abort_onclick_confirm ) . '">' . esc_html__( 'Abort unfinished job', 'ogdch-backend' ) . '</a>';
+				if ( current_user_can( 'edit_data_of_all_organisations' ) ) {
+					$abort_onclick_confirm = "if( !confirm('" . esc_attr__( 'Are you sure you want to abort the current job of this harvester?', 'ogdch-backend' ) . "') ) return false;";
+					echo '<a href="' . esc_url( add_query_arg( 'action', 'abort' ) ) . '" class="button delete" onclick="' . esc_attr( $abort_onclick_confirm ) . '">' . esc_html__( 'Abort unfinished job', 'ogdch-backend' ) . '</a>';
+				}
 			} else {
 				echo '<a href="' . esc_url( add_query_arg( 'action', 'reharvest' ) ) . '" class="button button-secondary">' . esc_html__( 'Reharvest', 'ogdch-backend' ) . '</a>';
 			}
 
-			echo ' ';
-			$clear_onclick_confirm = "if( !confirm('" . esc_attr__( 'Are you sure you want to clear all data of this harvester?', 'ogdch-backend' ) . "') ) return false;";
-			echo '<a href="' . esc_url( add_query_arg( 'action', 'clear' ) ) . '" class="button delete" onclick="' . esc_attr( $clear_onclick_confirm ) . '">' . esc_html__( 'Clear', 'ogdch-backend' ) . '</a>';
+			if ( current_user_can( 'edit_data_of_all_organisations' ) ) {
+				echo ' ';
+				$clear_onclick_confirm = "if( !confirm('" . esc_attr__( 'Are you sure you want to clear all data of this harvester?', 'ogdch-backend' ) . "') ) return false;";
+				echo '<a href="' . esc_url( add_query_arg( 'action', 'clear' ) ) . '" class="button delete" onclick="' . esc_attr( $clear_onclick_confirm ) . '">' . esc_html__( 'Clear', 'ogdch-backend' ) . '</a>';
+			}
 			?>
 		</div>
 		<div class="all-jobs">
@@ -515,8 +525,11 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 				$local_harvester_args = array(
 					'posts_per_page' => 1,
 					'post_type'      => Ckan_Backend_Local_Harvester::POST_TYPE,
+					'post_status'    => 'any',
+					// @codingStandardsIgnoreStart
 					'meta_key'       => Ckan_Backend_Local_Harvester::FIELD_PREFIX . 'ckan_id',
 					'meta_value'     => $harvester['id']
+					// @codingStandardsIgnoreEnd
 				);
 				$local_harvester      = get_posts( $local_harvester_args );
 				if ( count( $local_harvester ) !== 1 ) {
