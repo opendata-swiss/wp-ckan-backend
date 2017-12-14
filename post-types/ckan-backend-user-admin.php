@@ -174,7 +174,7 @@ class Ckan_Backend_User_Admin {
 								<?php
 								echo '<option value="">' . esc_attr__( '- Please choose -', 'ogdch-backend' ) . '</option>';
 								foreach ( $organisation_list as $key => $title ) {
-									echo '<option value="' . $key . '" ' . selected( $organization, $key, false ) . '>' . $title . '</option>';
+									echo '<option value="' . esc_attr( $key ) . '" ' . selected( $organization, $key, false ) . '>' . esc_html( $title ) . '</option>';
 								}
 								?>
 							</select>
