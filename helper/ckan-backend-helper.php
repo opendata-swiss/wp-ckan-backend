@@ -170,7 +170,7 @@ class Ckan_Backend_Helper {
 			}
 
 			// TODO find a way to sort unicode values (like umlauts)
-			asort( $options, SORT_NATURAL );
+			uasort( $options, 'strcasecmp' );
 
 			// save result in transient
 			set_transient( $transient_name, $options, 1 * HOUR_IN_SECONDS );
