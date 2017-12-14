@@ -149,23 +149,7 @@ class Ckan_Backend_Helper {
 			$posts = get_posts( $args );
 			foreach ( $posts as $post ) {
 				$name  = get_post_meta( $post->ID, $field_prefix . 'ckan_name', true );
-				$title = get_post_meta( $post->ID, $field_prefix . 'title_' . $current_language, true );
-				// if title in current language is not set -> find fallback title in other language
-				if ( empty( $title ) ) {
-					global $language_priority;
-					if ( isset( $language_priority ) ) {
-						foreach ( $language_priority as $lang ) {
-							$title = get_post_meta( $post->ID, $field_prefix . 'title_' . $lang, true );
-							if ( ! empty( $title ) ) {
-								break;
-							}
-						}
-					}
-				}
-				// if title in all languages is empty use post title
-				if ( empty( $title ) ) {
-					$title = $post->post_title;
-				}
+				$title = self::get_localized_value_from_db( $post->ID, $field_prefix . 'title', $post->post_title );
 				$options[ $name ] = $title;
 			}
 
@@ -245,6 +229,7 @@ class Ckan_Backend_Helper {
 		$current_language = self::get_current_language();
 		$transient_name = Ckan_Backend::$plugin_slug . '_organization_title_' . $name . '_' . $current_language;
 		if ( false === ( $organization_title = get_transient( $transient_name ) ) ) {
+			$organization_title = '';
 			$args  = array(
 				'posts_per_page'   => 1,
 				'post_type'        => Ckan_Backend_Local_Organisation::POST_TYPE,
@@ -256,28 +241,11 @@ class Ckan_Backend_Helper {
 			);
 			$organisations = get_posts( $args );
 			if ( count( $organisations ) > 0 ) {
-				$organization_title = get_post_meta( $organisations[0]->ID, Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'title_' . $current_language, true );
-				// if title in current language is not set -> find fallback title in other language
-				if ( empty( $organization_title ) ) {
-					global $language_priority;
-					if ( isset( $language_priority ) ) {
-						foreach ( $language_priority as $lang ) {
-							$organization_title = get_post_meta( $organisations[0]->ID, Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'title_' . $lang, true );
-							if ( ! empty( $organization_title ) ) {
-								break;
-							}
-						}
-					}
-				}
-			}
-			// if title in all languages is empty use $name
-			if ( empty( $organization_title ) ) {
-				$organization_title = $name;
-			}
+				$organization_title = self::get_localized_value_from_db( $organisations[0]->ID, Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'title', $name );
 
-			// save result in transient
-			set_transient( $transient_name, $organization_title, 1 * HOUR_IN_SECONDS );
-
+				// save result in transient
+				set_transient( $transient_name, $organization_title, 1 * HOUR_IN_SECONDS );
+			}
 		}
 
 		return $organization_title;
@@ -455,6 +423,39 @@ class Ckan_Backend_Helper {
 		}
 
 		return $default;
+	}
+
+	/**
+	 * Retrieves localized value from database. Fallback to other languages if needed.
+	 *
+	 * @param int    $post_id Post ID to get value from.
+	 * @param string $field_without_locale Field name without locale suffix.
+	 * @param string $default Default value if no value could be found.
+	 *
+	 * @return string
+	 */
+	public static function get_localized_value_from_db( $post_id, $field_without_locale, $default = '' ) {
+		$value = get_post_meta( $post_id, $field_without_locale . '_' . self::get_current_language(), true );
+
+		// if value in current language is not set -> find fallback value in other language
+		if ( empty( $value ) ) {
+			global $language_priority;
+			if ( isset( $language_priority ) ) {
+				foreach ( $language_priority as $lang ) {
+					$value = get_post_meta( $post_id, $field_without_locale . '_' . $lang, true );
+					if ( ! empty( $value ) ) {
+						return $value;
+					}
+				}
+			}
+		}
+
+		// fallback to default value if no translation was found
+		if ( empty( $value ) ) {
+			$value = $default;
+		}
+
+		return $value;
 	}
 
 	/**
