@@ -335,7 +335,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 				}
 
 				$admin_role->add_cap( 'edit_data_of_all_organisations' );
-				$admin_role->add_cap( 'edit_user_organisation' );
+				$admin_role->add_cap( 'edit_organisation_users' );
 				$admin_role->add_cap( 'harvester_dashboard' );
 			}
 		}
@@ -414,7 +414,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		 * @param object $user User which is edited. Not available in 'user_new_form' action.
 		 */
 		public function add_custom_user_profile_fields( $user = null ) {
-			if ( ! current_user_can( 'edit_user_organisation' ) ) {
+			if ( ! current_user_can( 'edit_data_of_all_organisations' ) ) {
 				return;
 			}
 
@@ -458,7 +458,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		 * @param WP_Error $errors Error object where possible errors can be added.
 		 */
 		public function validate_user_fields( $errors ) {
-			if ( ! current_user_can( 'edit_user_organisation' ) ) {
+			if ( ! current_user_can( 'edit_data_of_all_organisations' ) ) {
 				return;
 			}
 
@@ -473,7 +473,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		 * @param int $user_id ID of user being saved.
 		 */
 		public function save_custom_user_profile_fields( $user_id ) {
-			if ( ! current_user_can( 'edit_user_organisation' ) ) {
+			if ( ! current_user_can( 'edit_data_of_all_organisations' ) ) {
 				return;
 			}
 
