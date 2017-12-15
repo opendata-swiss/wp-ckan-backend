@@ -6,7 +6,7 @@ WordPress plugin to manage datasets, organizations, groups and harvesters in CKA
 
 ## Requirements
 
-* [CMB2](https://wordpress.org/plugins/cmb2/) v2.2.3.1 plugin must be installed
+* [CMB2](https://wordpress.org/plugins/cmb2/) v2.2.6 plugin must be installed
 
 ## Installation
 
