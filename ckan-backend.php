@@ -63,6 +63,8 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		 * Constructor
 		 */
 		public function __construct() {
+			$this->load_dependencies();
+
 			register_activation_hook( __FILE__,  array( $this, 'activate_plugin' ) );
 			add_action( 'init', array( $this, 'bootstrap' ), 0 );
 			add_action( 'admin_enqueue_scripts', array( $this, 'add_scripts' ), 999, 1 );
@@ -342,15 +344,13 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 		}
 
 		/**
-		 * Bootstrap all post types.
+		 * Bootstraps the plugin
 		 *
 		 * @return void
 		 */
 		public function bootstrap() {
-			// Load translations
+			// Initialize text domain
 			load_plugin_textdomain( 'ogdch-backend', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
-
-			$this->load_dependencies();
 
 			self::$keywords_tax_mapping = array(
 				'en' => Ckan_Backend_Keyword_En::TAXONOMY,
