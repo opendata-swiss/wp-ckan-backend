@@ -1,0 +1,29 @@
+{
+  "name": "wp-ckan-backend",
+  "version": "1.0.0",
+  "description": "WordPress plugin to manage datasets, organizations, groups and harvesters in CKAN via its API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/opendata-swiss/wp-ckan-backend.git"
+  },
+  "keywords": [
+    "WordPress",
+    "CKAN"
+  ],
+  "author": "Team Jazz, Liip AG",
+  "license": "GPL-2.0",
+  "bugs": {
+    "url": "https://github.com/opendata-swiss/wp-ckan-backend/issues"
+  },
+  "homepage": "https://github.com/opendata-swiss/wp-ckan-backend#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^4.0.0",
+    "gulp-sass": "^3.1.0",
+    "gulp-sourcemaps": "^2.6.1"
+  }
+}
