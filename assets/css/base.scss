@@ -52,7 +52,7 @@
 }
 
 /* CMB2 style changes */
-.cmb2-wrap {
+.cmb2-postbox .cmb2-wrap {
   input.regular-text,
   input.cmb2-text-medium,
   textarea {
@@ -62,7 +62,7 @@
     width: 50%;
   }
   input.cmb2-upload-file {
-    width: 60%;
+    width: 65%;
   }
   // change size of repeatable group box
   .cmb2-metabox .cmb-repeat-group-wrap {
@@ -73,10 +73,9 @@
     font-family: "Open Sans", sans-serif;
     line-height: 1.4;
   }
-  .cmb-type-title {
-    border-bottom: 0 !important;
-    padding-bottom: 0 !important;
-    padding-top: 2em !important;
+  > .cmb-field-list > .cmb-row.cmb-type-title {
+    padding-bottom: 0;
+    border-bottom: 0;
   }
 
   // Change style of titles
