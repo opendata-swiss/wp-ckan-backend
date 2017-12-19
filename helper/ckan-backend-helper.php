@@ -91,13 +91,13 @@ class Ckan_Backend_Helper {
 	/**
 	 * Gets all organisation instances from CKAN and returns them in an array.
 	 *
-	 * @param bool $check_organization If enabled only own organizations will be returned.
+	 * @param bool $filter_organizations If enabled only own organizations will be returned.
 	 *
 	 * @return array All organisation instances from CKAN
 	 */
-	public static function get_organisation_form_field_options( $check_organization = false ) {
-		$organization_options = self::get_form_field_options( Ckan_Backend_Local_Organisation::POST_TYPE, Ckan_Backend_Local_Organisation::FIELD_PREFIX, $check_organization );
-		if ( $check_organization ) {
+	public static function get_organisation_form_field_options( $filter_organizations = false ) {
+		$organization_options = self::get_form_field_options( Ckan_Backend_Local_Organisation::POST_TYPE, Ckan_Backend_Local_Organisation::FIELD_PREFIX );
+		if ( $filter_organizations ) {
 			$filtered_organization_options = array();
 			foreach ( $organization_options as $name => $title ) {
 				$organizations_args  = array(
@@ -464,8 +464,8 @@ class Ckan_Backend_Helper {
 	 * @param bool $disable_floating Disable floating of the selectbox which is default in WordPress.
 	 */
 	public static function print_organisation_filter( $disable_floating = false ) {
-		$check_organization = true;
-		$organisations = self::get_organisation_form_field_options( $check_organization );
+		$filter_organizations = true;
+		$organisations = self::get_organisation_form_field_options( $filter_organizations );
 		?>
 		<select name="organisation_filter" <?php echo ($disable_floating) ? 'style="float: none;"' : ''; ?>>
 			<option value=""><?php esc_attr_e( 'All organizations', 'ogdch-backend' ); ?></option>

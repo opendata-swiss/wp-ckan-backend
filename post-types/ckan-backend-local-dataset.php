@@ -80,8 +80,8 @@ class Ckan_Backend_Local_Dataset {
 			) ); ?>
 			<span>@</span>
 			<?php
-			$check_organization = true;
-			$organisation_list = Ckan_Backend_Helper::get_organisation_form_field_options( $check_organization );
+			$filter_organizations = true;
+			$organisation_list = Ckan_Backend_Helper::get_organisation_form_field_options( $filter_organizations );
 
 			if ( count( $organisation_list ) > 1 ) {
 				$organisation_options = '';

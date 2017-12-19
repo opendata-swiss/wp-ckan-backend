@@ -165,8 +165,8 @@ class Ckan_Backend_User_Admin {
 					</th>
 					<td>
 						<?php
-						$check_organization = true;
-						$organisation_list = Ckan_Backend_Helper::get_organisation_form_field_options( $check_organization );
+						$filter_organizations = true;
+						$organisation_list = Ckan_Backend_Helper::get_organisation_form_field_options( $filter_organizations );
 
 						if ( count( $organisation_list ) > 1 ) {
 							?>
