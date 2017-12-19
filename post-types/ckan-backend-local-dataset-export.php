@@ -32,25 +32,41 @@ class Ckan_Backend_Local_Dataset_Export {
 	 * Callback for the import of a file.
 	 */
 	public function __construct() {
-		if ( class_exists( 'Seravo_Custom_Bulk_Action' ) ) {
-			$bulk_actions = new Seravo_Custom_Bulk_Action( array( 'post_type' => Ckan_Backend_Local_Dataset::POST_TYPE ) );
-
-			$bulk_actions->register_bulk_action( array(
-				'menu_text'    => __( 'Export', 'ogdch-backend' ),
-				'admin_notice' => __( 'Datasets exported', 'ogdch-backend' ),
-				'callback'     => array( $this, 'export_datasets' ),
-			));
-
-			$bulk_actions->init();
-		}
+		// add export bulk action to dataset admin list
+		add_filter( 'bulk_actions-edit-' . Ckan_Backend_Local_Dataset::POST_TYPE, array( $this, 'add_export_bulk_action' ), 10, 1 );
+		add_filter( 'handle_bulk_actions-edit-' . Ckan_Backend_Local_Dataset::POST_TYPE, array( $this, 'handle_export_bulk_action' ), 10, 3 );
 	}
 
 	/**
-	 * Export dataset.
+	 * Adds export bulk action.
 	 *
-	 * @param array $post_ids Ids of all posts which should be exported.
+	 * @since 4.7.0
+	 *
+	 * @param array $bulk_actions An array of the available bulk actions.
+	 *
+	 * @return array
 	 */
-	public function export_datasets( $post_ids ) {
+	public function add_export_bulk_action( $bulk_actions ) {
+		$bulk_actions['dataset_export'] = __( 'Export', 'ogdch-backend' );
+		return $bulk_actions;
+	}
+
+	/**
+	 * Handles export bulk action.
+	 *
+	 * @since 4.7.0
+	 *
+	 * @param string $redirect_to The redirect URL.
+	 * @param string $doaction    The action being taken.
+	 * @param array  $post_ids    Ids of all posts which should be exported.
+	 *
+	 * @return string
+	 */
+	public function handle_export_bulk_action( $redirect_to, $doaction, $post_ids = array() ) {
+		if ( 'dataset_export' !== $doaction ) {
+			return $redirect_to;
+		}
+
 		$export_file_name = 'opendata.swiss-export';
 		$xml_base = '<?xml version="1.0" encoding="utf-8" ?>';
 		$xml_base .= '<rdf:RDF ';

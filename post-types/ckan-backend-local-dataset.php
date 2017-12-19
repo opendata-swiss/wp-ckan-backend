@@ -84,7 +84,7 @@ class Ckan_Backend_Local_Dataset {
 				echo $field_type_object->select( array(
 					'name'    => $field_type_object->_name( '[organisation]' ),
 					'id'      => $field_type_object->_id( '_organisation' ),
-					'options' => $this->cmb2_get_organisation_options( $organisation ),
+					'options_cb' => $this->cmb2_get_organisation_options( $organisation ),
 					'desc'    => '',
 				) );
 			} else {
@@ -466,7 +466,7 @@ class Ckan_Backend_Local_Dataset {
 			'desc'             => __( 'The interval in which this dataset is updated.', 'ogdch-backend' ),
 			'type'             => 'select',
 			'show_option_none' => false,
-			'options'          => array( 'Ckan_Backend_Frequency', 'get_frequencies' ),
+			'options_cb'       => array( 'Ckan_Backend_Frequency', 'get_frequencies' ),
 		) );
 
 		$temporals_group = $cmb->add_field( array(
@@ -565,7 +565,7 @@ class Ckan_Backend_Local_Dataset {
 			'id'                => self::FIELD_PREFIX . 'themes',
 			'type'              => 'multicheck',
 			'select_all_button' => false,
-			'options'           => array( 'Ckan_Backend_Helper', 'get_group_form_field_options' ),
+			'options_cb'        => array( 'Ckan_Backend_Helper', 'get_group_form_field_options' ),
 		) );
 
 		/* Further Information */
@@ -705,7 +705,7 @@ class Ckan_Backend_Local_Dataset {
 			'desc'             => __( 'All terms of use which are not marked with an asterisk (*) are declared as closed data.', 'ogdch-backend' ),
 			'type'             => 'select',
 			'show_option_none' => false,
-			'options'          => array( 'Ckan_Backend_Rights', 'get_rights' ),
+			'options_cb'       => array( 'Ckan_Backend_Rights', 'get_rights' ),
 		) );
 
 		$cmb->add_group_field( $distributions_group, array(
