@@ -39,7 +39,7 @@ class Ckan_Backend_User_Admin {
 			'users.php',
 			__( 'Add New Organization User', 'ogdch-backend' ),
 			__( 'Organization User', 'ogdch-backend' ),
-			'edit_user_organisation',
+			'edit_organisation_users',
 			$this->menu_slug,
 			array( $this, 'user_page_callback' )
 		);
@@ -50,16 +50,17 @@ class Ckan_Backend_User_Admin {
 	 */
 	public function user_page_callback() {
 		// must check that the user has the required capability
-		if ( ! current_user_can( 'edit_user_organisation' ) ) {
+		if ( ! current_user_can( 'edit_organisation_users' ) ) {
 			wp_die( esc_html( __( 'You do not have sufficient permissions to access this page.' ) ) );
 		}
 
 		// check if the form was sent
 		if ( isset( $_REQUEST['action'] ) && 'add_user' === $_REQUEST['action'] ) {
-			//check the nonce before we do anything else
+			// check the nonce before we do anything else
 			check_admin_referer( 'create_user', 'create_user_nonce' );
 
 			$random_password = wp_generate_password();
+			$organisation = isset( $_REQUEST[ Ckan_Backend::$plugin_slug . '_organisation' ] ) ? $_REQUEST[ Ckan_Backend::$plugin_slug . '_organisation' ] : '';
 			$userdata = array(
 				'user_login'  => $_REQUEST['user_login'],
 				'user_pass'   => $random_password,
@@ -81,6 +82,12 @@ class Ckan_Backend_User_Admin {
 				Ckan_Backend_Helper::print_error_messages( __( 'E-Mail is mandatory' ) );
 				$success = false;
 			}
+			if ( empty( $organisation ) || ! Ckan_Backend_Helper::is_own_organization( $organisation ) ) {
+				Ckan_Backend_Helper::print_error_messages( __( 'Please select a valid organization.' ) );
+				// reset organisation if value is invalid
+				$organisation = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
+				$success = false;
+			}
 			if ( username_exists( $userdata['user_login'] ) ) {
 				Ckan_Backend_Helper::print_error_messages( __( 'User with this username already exists, choose a different one.' ) );
 				$success = false;
@@ -94,11 +101,8 @@ class Ckan_Backend_User_Admin {
 				wp_new_user_notification( $user_id, null, 'both' );
 
 				if ( ! is_wp_error( $user_id ) ) {
-					// do not use the organization value from $_REQUEST but rather use the value from the current user
-					$organisation = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
 					update_user_meta( $user_id, Ckan_Backend::$plugin_slug . '_organisation', $organisation );
 					Ckan_Backend_Helper::print_messages( sprintf( esc_html__( 'User %s successfully created. An e-mail to set the password has been sent to the user.', 'ogdch-backend' ), $userdata['user_login'] ) );
-
 				} else {
 					Ckan_Backend_Helper::print_error_messages( sprintf( esc_html__( 'Error while creating user: %s', 'ogdch-backend' ), $user_id->get_error_message() ) );
 					$success = false;
@@ -115,12 +119,13 @@ class Ckan_Backend_User_Admin {
 			$first_name = '';
 			$last_name = '';
 			$role = '';
+			$organisation = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
 		}
 
 		?>
 		<div class="wrap organization_user">
 			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
-			<form enctype="multipart/form-data" action="" method="POST">
+			<form action="" method="POST">
 			<?php wp_nonce_field( 'create_user', 'create_user_nonce' ); ?>
 			<input type="hidden" name="page" value="<?php echo esc_attr( ( isset( $_REQUEST['page'] ) ? $_REQUEST['page'] : '' ) ); ?>" />
 			<input type="hidden" name="action" value="add_user" />
@@ -160,9 +165,27 @@ class Ckan_Backend_User_Admin {
 					</th>
 					<td>
 						<?php
-						$organisation = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
-						$org_title = Ckan_Backend_Helper::get_organization_title( $organisation );
-						echo esc_html( $org_title );
+						$filter_organizations = true;
+						$organisation_list = Ckan_Backend_Helper::get_organisation_form_field_options( $filter_organizations );
+
+						if ( count( $organisation_list ) > 1 ) {
+							?>
+							<select name="<?php echo esc_attr( Ckan_Backend::$plugin_slug . '_organisation' ); ?>" id="<?php echo esc_attr( Ckan_Backend::$plugin_slug . '_organisation' ); ?>">
+								<?php
+								echo '<option value="">' . esc_attr__( '- Please choose -', 'ogdch-backend' ) . '</option>';
+								foreach ( $organisation_list as $key => $title ) {
+									echo '<option value="' . esc_attr( $key ) . '" ' . selected( $organisation, $key, false ) . '>' . esc_html( $title ) . '</option>';
+								}
+								?>
+							</select>
+							<?php
+						} else {
+							$organisation_title = Ckan_Backend_Helper::get_organization_title( $organisation );
+							?>
+							<input name="<?php echo esc_attr( Ckan_Backend::$plugin_slug . '_organisation' ); ?>" type="hidden" id="<?php echo esc_attr( Ckan_Backend::$plugin_slug . '_organisation' ); ?>" value="<?php echo esc_attr( $organisation ); ?>" />
+							<?php
+							echo esc_html( $organisation_title );
+						}
 						?>
 					</td>
 				</tr>

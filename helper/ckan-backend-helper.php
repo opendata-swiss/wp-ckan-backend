@@ -91,10 +91,38 @@ class Ckan_Backend_Helper {
 	/**
 	 * Gets all organisation instances from CKAN and returns them in an array.
 	 *
+	 * @param bool $filter_organizations If enabled only own organizations will be returned.
+	 *
 	 * @return array All organisation instances from CKAN
 	 */
-	public static function get_organisation_form_field_options() {
-		return self::get_form_field_options( Ckan_Backend_Local_Organisation::POST_TYPE, Ckan_Backend_Local_Organisation::FIELD_PREFIX );
+	public static function get_organisation_form_field_options( $filter_organizations = false ) {
+		$organization_options = self::get_form_field_options( Ckan_Backend_Local_Organisation::POST_TYPE, Ckan_Backend_Local_Organisation::FIELD_PREFIX );
+		if ( $filter_organizations ) {
+			$filtered_organization_options = array();
+			foreach ( $organization_options as $name => $title ) {
+				$organizations_args  = array(
+					'posts_per_page'   => 1,
+					'post_type'        => Ckan_Backend_Local_Organisation::POST_TYPE,
+					'post_status'      => 'publish',
+					// @codingStandardsIgnoreStart
+					'meta_key'         => Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'ckan_name',
+					'meta_value'       => $name,
+					// @codingStandardsIgnoreEnd
+				);
+				$organisations = get_posts( $organizations_args );
+				if ( count( $organisations ) !== 1 ) {
+					// If no organization for given name was found -> skip
+					continue;
+				}
+				if ( ! current_user_can( 'edit_data_of_all_organisations' ) && ! Ckan_Backend_Helper::is_own_organization( $name, get_current_user_id() ) ) {
+					continue;
+				}
+				$filtered_organization_options[ $name ] = $title;
+			}
+			return $filtered_organization_options;
+		}
+
+		return $organization_options;
 	}
 
 	/**
@@ -109,6 +137,7 @@ class Ckan_Backend_Helper {
 		$current_language = self::get_current_language();
 		$transient_name = Ckan_Backend::$plugin_slug . '_' . $post_type . '_options_' . $current_language;
 		if ( false === ( $options = get_transient( $transient_name ) ) ) {
+			$options = array();
 			$args  = array(
 				// @codingStandardsIgnoreStart
 				'posts_per_page' => -1,
@@ -120,28 +149,12 @@ class Ckan_Backend_Helper {
 			$posts = get_posts( $args );
 			foreach ( $posts as $post ) {
 				$name  = get_post_meta( $post->ID, $field_prefix . 'ckan_name', true );
-				$title = get_post_meta( $post->ID, $field_prefix . 'title_' . $current_language, true );
-				// if title in current language is not set -> find fallback title in other language
-				if ( empty( $title ) ) {
-					global $language_priority;
-					if ( isset( $language_priority ) ) {
-						foreach ( $language_priority as $lang ) {
-							$title = get_post_meta( $post->ID, $field_prefix . 'title_' . $lang, true );
-							if ( ! empty( $title ) ) {
-								break;
-							}
-						}
-					}
-				}
-				// if title in all languages is empty use post title
-				if ( empty( $title ) ) {
-					$title = $post->post_title;
-				}
+				$title = self::get_localized_value_from_db( $post->ID, $field_prefix . 'title', $post->post_title );
 				$options[ $name ] = $title;
 			}
 
 			// TODO find a way to sort unicode values (like umlauts)
-			asort( $options, SORT_NATURAL );
+			uasort( $options, 'strcasecmp' );
 
 			// save result in transient
 			set_transient( $transient_name, $options, 1 * HOUR_IN_SECONDS );
@@ -216,6 +229,7 @@ class Ckan_Backend_Helper {
 		$current_language = self::get_current_language();
 		$transient_name = Ckan_Backend::$plugin_slug . '_organization_title_' . $name . '_' . $current_language;
 		if ( false === ( $organization_title = get_transient( $transient_name ) ) ) {
+			$organization_title = '';
 			$args  = array(
 				'posts_per_page'   => 1,
 				'post_type'        => Ckan_Backend_Local_Organisation::POST_TYPE,
@@ -224,32 +238,14 @@ class Ckan_Backend_Helper {
 				'meta_key'         => Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'ckan_name',
 				'meta_value'       => $name,
 				// @codingStandardsIgnoreEnd
-
 			);
 			$organisations = get_posts( $args );
 			if ( count( $organisations ) > 0 ) {
-				$organization_title = get_post_meta( $organisations[0]->ID, Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'title_' . $current_language, true );
-				// if title in current language is not set -> find fallback title in other language
-				if ( empty( $organization_title ) ) {
-					global $language_priority;
-					if ( isset( $language_priority ) ) {
-						foreach ( $language_priority as $lang ) {
-							$organization_title = get_post_meta( $organisations[0]->ID, Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'title_' . $lang, true );
-							if ( ! empty( $organization_title ) ) {
-								break;
-							}
-						}
-					}
-				}
-			}
-			// if title in all languages is empty use $name
-			if ( empty( $organization_title ) ) {
-				$organization_title = $name;
-			}
+				$organization_title = self::get_localized_value_from_db( $organisations[0]->ID, Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'title', $name );
 
-			// save result in transient
-			set_transient( $transient_name, $organization_title, 1 * HOUR_IN_SECONDS );
-
+				// save result in transient
+				set_transient( $transient_name, $organization_title, 1 * HOUR_IN_SECONDS );
+			}
 		}
 
 		return $organization_title;
@@ -430,17 +426,46 @@ class Ckan_Backend_Helper {
 	}
 
 	/**
+	 * Retrieves localized value from database. Fallback to other languages if needed.
+	 *
+	 * @param int    $post_id Post ID to get value from.
+	 * @param string $field_without_locale Field name without locale suffix.
+	 * @param string $default Default value if no value could be found.
+	 *
+	 * @return string
+	 */
+	public static function get_localized_value_from_db( $post_id, $field_without_locale, $default = '' ) {
+		$value = get_post_meta( $post_id, $field_without_locale . '_' . self::get_current_language(), true );
+
+		// if value in current language is not set -> find fallback value in other language
+		if ( empty( $value ) ) {
+			global $language_priority;
+			if ( isset( $language_priority ) ) {
+				foreach ( $language_priority as $lang ) {
+					$value = get_post_meta( $post_id, $field_without_locale . '_' . $lang, true );
+					if ( ! empty( $value ) ) {
+						return $value;
+					}
+				}
+			}
+		}
+
+		// fallback to default value if no translation was found
+		if ( empty( $value ) ) {
+			$value = $default;
+		}
+
+		return $value;
+	}
+
+	/**
 	 * Generates selectbox to filter organisations
 	 *
 	 * @param bool $disable_floating Disable floating of the selectbox which is default in WordPress.
 	 */
 	public static function print_organisation_filter( $disable_floating = false ) {
-		$args          = array(
-			'posts_per_page' => - 1,
-			'post_type'      => Ckan_Backend_Local_Organisation::POST_TYPE,
-			'post_status'    => 'any',
-		);
-		$organisations = get_posts( $args );
+		$filter_organizations = true;
+		$organisations = self::get_organisation_form_field_options( $filter_organizations );
 		?>
 		<select name="organisation_filter" <?php echo ($disable_floating) ? 'style="float: none;"' : ''; ?>>
 			<option value=""><?php esc_attr_e( 'All organizations', 'ogdch-backend' ); ?></option>
@@ -453,19 +478,12 @@ class Ckan_Backend_Helper {
 				$organisation_filter = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
 			}
 
-			usort( $organisations, function ( $a, $b ) {
-				return strcmp(
-					self::get_organization_title( $a->post_name ),
-					self::get_organization_title( $b->post_name )
-				);
-			} );
-
-			foreach ( $organisations as $organisation ) {
+			foreach ( $organisations as $name => $title ) {
 				printf(
 					'<option value="%s"%s>%s</option>',
-					esc_attr( $organisation->post_name ),
-					esc_attr( ( $organisation->post_name === $organisation_filter ) ? ' selected="selected"' : '' ),
-					esc_attr( self::get_organization_title( $organisation->post_name ) )
+					esc_attr( $name ),
+					esc_attr( ( $name === $organisation_filter ) ? ' selected="selected"' : '' ),
+					esc_attr( $title )
 				);
 			}
 			?>
@@ -585,5 +603,42 @@ class Ckan_Backend_Helper {
 	 */
 	public static function current_user_has_role( $role ) {
 		return is_user_logged_in() ? self::user_has_role( get_current_user_id(), $role ) : false;
+	}
+
+	/**
+	 * Checks if given organization matches user organization or child organizations.
+	 *
+	 * @param string $organization Organization to check.
+	 * @param int    $user_id User ID to check organization. Optional. If empty check against current user.
+	 *
+	 * @return bool
+	 */
+	public static function is_own_organization( $organization, $user_id = 0 ) {
+		if ( empty( $user_id ) ) {
+			$user_id = get_current_user_id();
+		}
+
+		$user_organization = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', $user_id );
+
+		// allow editing of child organizations
+		$organization_children_args = array(
+			'post_type'      => Ckan_Backend_Local_Organisation::POST_TYPE,
+			'post_status'    => 'any',
+			// @codingStandardsIgnoreStart
+			'posts_per_page' => -1,
+			'meta_key'       => Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'parent',
+			'meta_value'     => $user_organization,
+			// @codingStandardsIgnoreEnd
+		);
+		$organization_children = get_posts( $organization_children_args );
+		if ( ! empty( $organization_children ) ) {
+			foreach ( $organization_children as $organization_child ) {
+				if ( get_post_meta( $organization_child->ID, Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'ckan_name', true ) === $organization ) {
+					return true;
+				}
+			}
+		}
+
+		return $organization === $user_organization;
 	}
 }
