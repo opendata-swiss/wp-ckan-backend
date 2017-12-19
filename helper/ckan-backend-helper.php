@@ -606,7 +606,7 @@ class Ckan_Backend_Helper {
 	}
 
 	/**
-	 * Checks if given organization matches user organization.
+	 * Checks if given organization matches user organization or child organizations.
 	 *
 	 * @param string $organization Organization to check.
 	 * @param int    $user_id User ID to check organization. Optional. If empty check against current user.
