@@ -60,7 +60,7 @@ class Ckan_Backend_User_Admin {
 			check_admin_referer( 'create_user', 'create_user_nonce' );
 
 			$random_password = wp_generate_password();
-			$organization = isset( $_REQUEST[ Ckan_Backend::$plugin_slug . '_organization' ] ) ? $_REQUEST[ Ckan_Backend::$plugin_slug . '_organization' ] : '';
+			$organisation = isset( $_REQUEST[ Ckan_Backend::$plugin_slug . '_organisation' ] ) ? $_REQUEST[ Ckan_Backend::$plugin_slug . '_organisation' ] : '';
 			$userdata = array(
 				'user_login'  => $_REQUEST['user_login'],
 				'user_pass'   => $random_password,
@@ -82,10 +82,10 @@ class Ckan_Backend_User_Admin {
 				Ckan_Backend_Helper::print_error_messages( __( 'E-Mail is mandatory' ) );
 				$success = false;
 			}
-			if ( empty( $organization ) || ! Ckan_Backend_Helper::is_own_organization( $organization ) ) {
+			if ( empty( $organisation ) || ! Ckan_Backend_Helper::is_own_organization( $organisation ) ) {
 				Ckan_Backend_Helper::print_error_messages( __( 'Please select a valid organization.' ) );
-				// reset organization if value is invalid
-				$organization = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
+				// reset organisation if value is invalid
+				$organisation = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
 				$success = false;
 			}
 			if ( username_exists( $userdata['user_login'] ) ) {
@@ -101,7 +101,7 @@ class Ckan_Backend_User_Admin {
 				wp_new_user_notification( $user_id, null, 'both' );
 
 				if ( ! is_wp_error( $user_id ) ) {
-					update_user_meta( $user_id, Ckan_Backend::$plugin_slug . '_organisation', $organization );
+					update_user_meta( $user_id, Ckan_Backend::$plugin_slug . '_organisation', $organisation );
 					Ckan_Backend_Helper::print_messages( sprintf( esc_html__( 'User %s successfully created. An e-mail to set the password has been sent to the user.', 'ogdch-backend' ), $userdata['user_login'] ) );
 				} else {
 					Ckan_Backend_Helper::print_error_messages( sprintf( esc_html__( 'Error while creating user: %s', 'ogdch-backend' ), $user_id->get_error_message() ) );
@@ -119,7 +119,7 @@ class Ckan_Backend_User_Admin {
 			$first_name = '';
 			$last_name = '';
 			$role = '';
-			$organization = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
+			$organisation = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
 		}
 
 		?>
@@ -170,21 +170,21 @@ class Ckan_Backend_User_Admin {
 
 						if ( count( $organisation_list ) > 1 ) {
 							?>
-							<select name="<?php echo esc_attr( Ckan_Backend::$plugin_slug . '_organization' ); ?>" id="<?php echo esc_attr( Ckan_Backend::$plugin_slug . '_organization' ); ?>">
+							<select name="<?php echo esc_attr( Ckan_Backend::$plugin_slug . '_organisation' ); ?>" id="<?php echo esc_attr( Ckan_Backend::$plugin_slug . '_organisation' ); ?>">
 								<?php
 								echo '<option value="">' . esc_attr__( '- Please choose -', 'ogdch-backend' ) . '</option>';
 								foreach ( $organisation_list as $key => $title ) {
-									echo '<option value="' . esc_attr( $key ) . '" ' . selected( $organization, $key, false ) . '>' . esc_html( $title ) . '</option>';
+									echo '<option value="' . esc_attr( $key ) . '" ' . selected( $organisation, $key, false ) . '>' . esc_html( $title ) . '</option>';
 								}
 								?>
 							</select>
 							<?php
 						} else {
-							$organization_title = Ckan_Backend_Helper::get_organization_title( $organization );
+							$organisation_title = Ckan_Backend_Helper::get_organization_title( $organisation );
 							?>
-							<input name="<?php echo esc_attr( Ckan_Backend::$plugin_slug . '_organization' ); ?>" type="hidden" id="<?php echo esc_attr( Ckan_Backend::$plugin_slug . '_organization' ); ?>" value="<?php echo esc_attr( $organization ); ?>" />
+							<input name="<?php echo esc_attr( Ckan_Backend::$plugin_slug . '_organisation' ); ?>" type="hidden" id="<?php echo esc_attr( Ckan_Backend::$plugin_slug . '_organisation' ); ?>" value="<?php echo esc_attr( $organisation ); ?>" />
 							<?php
-							echo esc_html( $organization_title );
+							echo esc_html( $organisation_title );
 						}
 						?>
 					</td>
