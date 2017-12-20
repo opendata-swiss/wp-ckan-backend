@@ -89,6 +89,13 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 		if ( isset( $_GET[ $harvester_selection_field_name ] ) ) {
 			$selected_harvester_id = $_GET[ $harvester_selection_field_name ];
 		}
+
+		// select harvester if only one was found
+		$harvesters = $this->get_harvester_selection_form_field_options();
+		if ( empty( $selected_harvester_id ) && count( $harvesters ) === 1 ) {
+			$selected_harvester_id = key( $harvesters );
+		}
+
 		$current_action = '';
 		if ( isset( $_GET['action'] ) ) {
 			$current_action = $_GET['action'];
@@ -138,12 +145,6 @@ class Ckan_Backend_Local_Harvester_Dashboard {
 					Ckan_Backend_Helper::print_error_messages( $errors );
 				}
 			}
-		}
-
-		// select harvester if only one was found
-		$harvesters = $this->get_harvester_selection_form_field_options();
-		if ( empty( $selected_harvester_id ) && count( $harvesters ) === 1 ) {
-			$selected_harvester_id = key( $harvesters );
 		}
 		?>
 		<div class="wrap harvester_dashboard">
