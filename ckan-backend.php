@@ -93,7 +93,7 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 
 			// Add organisation filter dropdown to user admin list
 			add_filter( 'pre_user_query', array( $this, 'filter_user_organisation' ) );
-			add_filter( 'restrict_manage_users', array( $this, 'add_user_organisation_filter' ) );
+			add_filter( 'restrict_manage_users', array( $this, 'add_user_organisation_filter' ), 10 , 1 );
 
 			// Add body class to uses which can edit data of all organizations
 			add_filter( 'admin_body_class', array( $this, 'add_admin_body_class' ) );
@@ -240,10 +240,15 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 
 		/**
 		 * Add organisation filter dropdown to user admin list
+		 *
+		 * @param string $which The location of the extra table nav markup: 'top' or 'bottom'.
 		 */
-		public function add_user_organisation_filter() {
-			Ckan_Backend_Helper::print_organisation_filter( true );
-			submit_button( __( 'Filter' ), 'button', 'filter_action', false, array( 'id' => 'post-query-submit' ) );
+		public function add_user_organisation_filter( $which ) {
+			$field_name = 'organisation_filter_' . $which;
+			Ckan_Backend_Helper::print_organisation_filter( true, $field_name );
+			$submit_id = 'post-query-submit-' . $which;
+			$submit_name = 'filter_action_' . $which;
+			submit_button( __( 'Filter' ), 'button', $submit_name, false, array( 'id' => $submit_id ) );
 		}
 
 		/**
@@ -255,8 +260,10 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			global $pagenow;
 			if ( is_admin() && 'users.php' === $pagenow ) {
 				$organisation_filter   = '';
-				if ( isset( $_GET['organisation_filter'] ) ) {
-					$organisation_filter = sanitize_text_field( $_GET['organisation_filter'] );
+				if ( isset( $_GET['organisation_filter_top'] ) && ! empty( $_GET['filter_action_top'] ) ) {
+					$organisation_filter = sanitize_text_field( $_GET['organisation_filter_top'] );
+				} elseif ( isset( $_GET['organisation_filter_bottom'] ) && ! empty( $_GET['filter_action_bottom'] ) ) {
+					$organisation_filter = sanitize_text_field( $_GET['organisation_filter_bottom'] );
 				} elseif ( ! Ckan_Backend_Helper::current_user_has_role( 'administrator' ) ) {
 					// set filter on first page load if user is not an administrator
 					$organisation_filter = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );

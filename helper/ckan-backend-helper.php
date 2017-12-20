@@ -461,18 +461,19 @@ class Ckan_Backend_Helper {
 	/**
 	 * Generates selectbox to filter organisations
 	 *
-	 * @param bool $disable_floating Disable floating of the selectbox which is default in WordPress.
+	 * @param bool   $disable_floating Disable floating of the selectbox which is default in WordPress.
+	 * @param string $field_name Name organisation filter field. Default 'organisation_filter'.
 	 */
-	public static function print_organisation_filter( $disable_floating = false ) {
+	public static function print_organisation_filter( $disable_floating = false, $field_name = 'organisation_filter' ) {
 		$filter_organizations = true;
 		$organisations = self::get_organisation_form_field_options( $filter_organizations );
 		?>
-		<select name="organisation_filter" <?php echo ($disable_floating) ? 'style="float: none;"' : ''; ?>>
+		<select name="<?php echo esc_attr( $field_name ); ?>" <?php echo ($disable_floating) ? 'style="float: none;"' : ''; ?>>
 			<option value=""><?php esc_attr_e( 'All organizations', 'ogdch-backend' ); ?></option>
 			<?php
 			$organisation_filter   = '';
-			if ( isset( $_GET['organisation_filter'] ) ) {
-				$organisation_filter = sanitize_text_field( $_GET['organisation_filter'] );
+			if ( isset( $_GET[ $field_name ] ) ) {
+				$organisation_filter = sanitize_text_field( $_GET[ $field_name ] );
 			} elseif ( ! Ckan_Backend_Helper::current_user_has_role( 'administrator' ) ) {
 				// set filter on first page load if user is not an administrator
 				$organisation_filter = get_the_author_meta( Ckan_Backend::$plugin_slug . '_organisation', get_current_user_id() );
