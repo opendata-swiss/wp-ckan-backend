@@ -584,11 +584,11 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 
 			if ( Ckan_Backend_Local_Dataset::POST_TYPE === $post_type ) {
 				$synced = get_post_meta( $post->ID, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'ckan_synced', true );
-			} elseif( Ckan_Backend_Local_Group::POST_TYPE === $post_type ) {
+			} elseif ( Ckan_Backend_Local_Group::POST_TYPE === $post_type ) {
 				$synced = get_post_meta( $post->ID, Ckan_Backend_Local_Group::FIELD_PREFIX . 'ckan_synced', true );
-			} elseif( Ckan_Backend_Local_Organisation::POST_TYPE === $post_type ) {
+			} elseif ( Ckan_Backend_Local_Organisation::POST_TYPE === $post_type ) {
 				$synced = get_post_meta( $post->ID, Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'ckan_synced', true );
-			} elseif( Ckan_Backend_Local_Harvester::POST_TYPE === $post_type ) {
+			} elseif ( Ckan_Backend_Local_Harvester::POST_TYPE === $post_type ) {
 				$synced = get_post_meta( $post->ID, Ckan_Backend_Local_Harvester::FIELD_PREFIX . 'ckan_synced', true );
 			}
 			?>
