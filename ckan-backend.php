@@ -104,6 +104,9 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			// add custom CMB2 field type ckan_synced
 			add_action( 'cmb2_render_ckan_synced', array( $this, 'cmb2_render_callback_ckan_synced' ), 10, 5 );
 
+			// Add ckan sync status to submitbox
+			add_action( 'post_submitbox_start', array( $this, 'add_ckan_sync_status_to_submitbox' ), 10, 1 );
+
 			// order custom post types alphabetically in admin list
 			add_action( 'pre_get_posts', array( $this, 'set_post_order_in_admin' ) );
 
@@ -583,6 +586,59 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 				echo '<a class="ckan-dashboard-link" href="edit.php?post_type=' . esc_attr(Ckan_Backend_Local_Harvester::POST_TYPE) . '&page=ckan-local-harvester-dashboard-page&harvester_id=' . esc_attr($ckan_id) . '""><span class="dashicons dashicons-dashboard"></span> ' . esc_html__('Dashboard', 'ogdch-backend') . '</a>';
 				// @codingStandardsIgnoreEnd
 			}
+		}
+
+		/**
+		 * Adds ckan sync status to submitbox (Only works with WP >=4.9)
+		 *
+		 * @param WP_Post|null $post WP_Post object for the current post on Edit Post screen,
+		 *                           null on Edit Link screen.
+		 */
+		public function add_ckan_sync_status_to_submitbox( $post = null ) {
+			if ( is_null( $post ) ) {
+				return;
+			}
+
+			$post_type = get_post_type( $post );
+			$synced = false;
+
+			$supported_post_types = array(
+				Ckan_Backend_Local_Dataset::POST_TYPE,
+				Ckan_Backend_Local_Group::POST_TYPE,
+				Ckan_Backend_Local_Organisation::POST_TYPE,
+				Ckan_Backend_Local_Harvester::POST_TYPE,
+			);
+			if ( ! in_array( $post_type, $supported_post_types, true ) ) {
+				return;
+			}
+
+			if ( Ckan_Backend_Local_Dataset::POST_TYPE === $post_type ) {
+				$synced = get_post_meta( $post->ID, Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'ckan_synced', true );
+			} elseif( Ckan_Backend_Local_Group::POST_TYPE === $post_type ) {
+				$synced = get_post_meta( $post->ID, Ckan_Backend_Local_Group::FIELD_PREFIX . 'ckan_synced', true );
+			} elseif( Ckan_Backend_Local_Organisation::POST_TYPE === $post_type ) {
+				$synced = get_post_meta( $post->ID, Ckan_Backend_Local_Organisation::FIELD_PREFIX . 'ckan_synced', true );
+			} elseif( Ckan_Backend_Local_Harvester::POST_TYPE === $post_type ) {
+				$synced = get_post_meta( $post->ID, Ckan_Backend_Local_Harvester::FIELD_PREFIX . 'ckan_synced', true );
+			}
+			?>
+			<div class="ckan-sync-status">
+				<?php esc_html_e( 'CKAN Sync Status:', 'ogdch-backend' ) ?>
+				<?php
+				// If status is auto-draft the post is not saved yet.
+				$post_status = get_post_status( $post->ID );
+				if ( 'auto-draft' === $post_status ) {
+					echo '<p class="ckan-synced warning"><span class="dashicons dashicons-edit"></span>' . esc_html__( 'Not saved yet.', 'ogdch-backend' ) . '</p>';
+				} else {
+					if ( $synced ) {
+						echo '<p class="ckan-synced success"><span class="dashicons dashicons-yes"></span>' . esc_html__( 'All good!', 'ogdch-backend' ) . '</p>';
+					} else {
+						echo '<p class="ckan-synced error"><span class="dashicons dashicons-no"></span>' . esc_html__( 'Not synchronized! Please fix data and save the element again.', 'ogdch-backend' ) . '</p>';
+					}
+				}
+				?>
+			</div>
+			<?php
 		}
 
 		/**
