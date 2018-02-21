@@ -100,24 +100,48 @@
 }
 
 /* CKAN Synchronized field */
+#post-body .ckan-sync-status {
+  margin-bottom: 10px;
+}
+// Copy & Pasted from edit.css
+#post-body .ckan-sync-status:before {
+  color: #82878c;
+}
+#post-body .ckan-sync-status:before {
+  font: normal 20px/1 dashicons;
+  speak: none;
+  display: inline-block;
+  margin-left: -1px;
+  padding-right: 3px;
+  vertical-align: top;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+#post-body .ckan-sync-status:before {
+  content: "\f515";
+}
+
 .ckan-synced {
   margin: 0;
+  margin-top: 3px;
   color: #fff;
   padding: 5px;
 
   &.success {
     background-color: #00A200;
   }
+  &.warning {
+    background-color: #f0ad4e;
+  }
   &.error {
     background-color: #cc0000;
-    padding: 5px;
   }
 }
 
 .ckan-dashboard-link {
   text-decoration: none;
-  margin-top: 12px;
-  display: block;
+  margin-top: 5px;
+  display: inline-block;
 }
 
 /* Harvester Dashboard */
