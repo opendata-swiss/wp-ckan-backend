@@ -1266,8 +1266,6 @@ msgid ""
 "User %s successfully created. An e-mail to set the password has been sent to"
 " the user."
 msgstr ""
-"Benutzer %s erfolgreich erstellt. Eine Email um das Passwort zu definieren "
-"wurde an den Benutzer gesendet."
 
 #: post-types/ckan-backend-user-admin.php:107
 #, php-format
