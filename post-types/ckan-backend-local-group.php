@@ -175,12 +175,6 @@ class Ckan_Backend_Local_Group {
 			),
 		) );
 
-		$cmb_side_ckan->add_field( array(
-			'name' => __( 'Sync Status', 'ogdch-backend' ),
-			'type' => 'ckan_synced',
-			'id'   => self::FIELD_PREFIX . 'ckan_synced',
-		) );
-
 		/* CMB Sidebox for RDF Reference */
 		$cmb_side_ckan = new_cmb2_box( array(
 			'id'           => self::POST_TYPE . '-sidebox-rdf',

@@ -101,9 +101,6 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 			// hide specific row actions
 			add_filter( 'post_row_actions', array( $this, 'hide_row_actions' ), 10, 2 );
 
-			// add custom CMB2 field type ckan_synced
-			add_action( 'cmb2_render_ckan_synced', array( $this, 'cmb2_render_callback_ckan_synced' ), 10, 5 );
-
 			// Add ckan sync status to submitbox
 			add_action( 'post_submitbox_start', array( $this, 'add_ckan_sync_status_to_submitbox' ), 10, 1 );
 
@@ -559,33 +556,6 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 				unset( $actions['view'] );
 			}
 			return $actions;
-		}
-
-		/**
-		 * Renders CMB2 field of type ckan_synced. Field ID must be equal to synced meta key in database
-		 *
-		 * @param CMB2_Field $field The passed in `CMB2_Field` object.
-		 * @param mixed      $escaped_value The value of this field escaped. It defaults to `sanitize_text_field`.
-		 * @param int        $object_id The ID of the current object.
-		 * @param string     $object_type The type of object you are working with.
-		 * @param CMB2_Types $field_type_object This `CMB2_Types` object.
-		 */
-		public function cmb2_render_callback_ckan_synced( $field, $escaped_value, $object_id, $object_type, $field_type_object ) {
-			$meta_key = $field->id();
-			$synced = get_post_meta( $object_id, $meta_key, true );
-			if ( $synced ) {
-				echo '<p class="ckan-synced success"><span class="dashicons dashicons-yes"></span>' . esc_attr__( 'All good!', 'ogdch-backend' ) . '</p>';
-			} else {
-				echo '<p class="ckan-synced error"><span class="dashicons dashicons-no"></span>' . esc_attr__( 'Not synchronized! Please fix data and save the element again.', 'ogdch-backend' ) . '</p>';
-			}
-
-			// add link to dashboard if we're on the harvster detail page
-			if ( Ckan_Backend_Local_Harvester::POST_TYPE === get_post_type( $object_id ) ) {
-				$ckan_id = get_post_meta( $object_id, Ckan_Backend_Local_Harvester::FIELD_PREFIX . 'ckan_id', true );
-				// @codingStandardsIgnoreStart
-				echo '<a class="ckan-dashboard-link" href="edit.php?post_type=' . esc_attr(Ckan_Backend_Local_Harvester::POST_TYPE) . '&page=ckan-local-harvester-dashboard-page&harvester_id=' . esc_attr($ckan_id) . '""><span class="dashicons dashicons-dashboard"></span> ' . esc_html__('Dashboard', 'ogdch-backend') . '</a>';
-				// @codingStandardsIgnoreEnd
-			}
 		}
 
 		/**

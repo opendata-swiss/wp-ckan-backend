@@ -42,6 +42,9 @@ class Ckan_Backend_Local_Harvester {
 		add_action( 'restrict_manage_posts', array( $this, 'add_harvest_status_filter' ) );
 		add_action( 'pre_get_posts', array( $this, 'filter_posts_by_harvest_status' ) );
 
+		// add harvester dashboard link
+		add_action( 'edit_form_after_title', array( $this, 'add_harvester_dashboard_link' ), 10, 1 );
+
 		add_action( 'cmb2_init', array( $this, 'define_fields' ) );
 
 		// initialize local harvester sync
@@ -303,12 +306,6 @@ class Ckan_Backend_Local_Harvester {
 				'readonly' => 'readonly',
 			),
 		) );
-
-		$cmb_side_ckan->add_field( array(
-			'name' => __( 'Sync Status', 'ogdch-backend' ),
-			'type' => 'ckan_synced',
-			'id'   => self::FIELD_PREFIX . 'ckan_synced',
-		) );
 	}
 
 	/**
@@ -480,5 +477,19 @@ class Ckan_Backend_Local_Harvester {
 			self::$harvest_ids_by_states = $harvest_sources_by_states;
 		}
 		return self::$harvest_ids_by_states;
+	}
+
+	/**
+	 * Adds harvester dashboard link below title.
+	 *
+	 * @param WP_Post $post Post object.
+	 */
+	public function add_harvester_dashboard_link( $post ) {
+		if ( self::POST_TYPE === get_post_type( $post ) ) {
+			$ckan_id = get_post_meta( $post->ID, self::FIELD_PREFIX . 'ckan_id', true );
+			// @codingStandardsIgnoreStart
+			echo '<a class="ckan-dashboard-link" href="edit.php?post_type=' . esc_attr( self::POST_TYPE ) . '&page=ckan-local-harvester-dashboard-page&harvester_id=' . esc_attr( $ckan_id ) . '"><span class="dashicons dashicons-dashboard"></span> ' . esc_html__('Open Harvester Dashboard', 'ogdch-backend') . '</a>';
+			// @codingStandardsIgnoreEnd
+		}
 	}
 }

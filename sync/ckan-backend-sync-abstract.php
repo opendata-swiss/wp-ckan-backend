@@ -300,8 +300,7 @@ abstract class Ckan_Backend_Sync_Abstract {
 	 * @param bool $success Flag which indicates if synchronization was successfull.
 	 */
 	public function set_synced_meta( $post_id, $success = true ) {
-		// Set ckan_synced from CKAN and add it to $_POST because the real meta save will follow after this action
+		// Set ckan_synced from CKAN
 		update_post_meta( $post_id, $this->field_prefix . 'ckan_synced', $success );
-		$_POST[ $this->field_prefix . 'ckan_synced' ]   = $success;
 	}
 }
