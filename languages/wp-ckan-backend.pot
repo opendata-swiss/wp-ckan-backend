@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wp-ckan-backend 1.0.0\n"
 "Report-Msgid-Bugs-To: jazz@liip.ch\n"
-"POT-Creation-Date: 2017-08-29 09:57+0000\n"
+"POT-Creation-Date: 2018-02-21 14:16+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,35 +16,43 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ckan-backend.php:247
+#: ckan-backend.php:251
 msgid "Filter"
 msgstr ""
 
-#: ckan-backend.php:398
+#: ckan-backend.php:403
 msgid "Search dataset..."
 msgstr ""
 
-#: ckan-backend.php:401
+#: ckan-backend.php:406
 msgid "No media type"
 msgstr ""
 
-#: ckan-backend.php:425 ckan-backend.php:430 ckan-backend.php:494
-#: post-types/ckan-backend-local-dataset.php:205
-#: post-types/ckan-backend-local-harvester.php:244
+#: ckan-backend.php:430 ckan-backend.php:435 ckan-backend.php:499
+#: post-types/ckan-backend-local-dataset.php:195
+#: post-types/ckan-backend-local-harvester.php:247
 #: post-types/ckan-backend-local-organisation.php:47
 #: post-types/ckan-backend-local-organisation.php:113
 msgid "Organization"
 msgstr ""
 
-#: ckan-backend.php:468
+#: ckan-backend.php:473
 msgid "Please choose an organization for this user."
 msgstr ""
 
-#: ckan-backend.php:569
+#: ckan-backend.php:596
+msgid "CKAN Sync Status:"
+msgstr ""
+
+#: ckan-backend.php:601
+msgid "Not saved yet."
+msgstr ""
+
+#: ckan-backend.php:604
 msgid "All good!"
 msgstr ""
 
-#: ckan-backend.php:571
+#: ckan-backend.php:606
 msgid "Not synchronized! Please fix data and save the element again."
 msgstr ""
 
@@ -56,19 +64,15 @@ msgstr ""
 msgid "API responded with unknown error."
 msgstr ""
 
-#: helper/ckan-backend-helper.php:446
+#: helper/ckan-backend-helper.php:472
 msgid "All organizations"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset-export.php:39
+#: post-types/ckan-backend-local-dataset-export.php:50
 msgid "Export"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset-export.php:40
-msgid "Datasets exported"
-msgstr ""
-
-#: post-types/ckan-backend-local-dataset-export.php:124
+#: post-types/ckan-backend-local-dataset-export.php:140
 #, php-format
 msgctxt "%s contains the post_id of the dataset."
 msgid "Could not read identifier of dataset %s."
@@ -179,255 +183,256 @@ msgctxt "%s contains the identifier of the dataset."
 msgid "The organization id is missing in the identifier. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[organization_id]</dct:identifier>. Dataset %s not imported."
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset-import.php:522
+#: post-types/ckan-backend-local-dataset-import.php:521
 #, php-format
 msgctxt "%s contains the identifier of the dataset."
 msgid "You are not allowed to add a dataset for another organistaion. Please provide the dataset identifier in the following form <dct:identifier>[original_dataset_id]@[your_organization_id]</dct:identifier>. Dataset %s not imported."
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset-import.php:530
+#: post-types/ckan-backend-local-dataset-import.php:529
 #, php-format
 msgctxt "%1$s contains the organisation id of the dataset. %2$s contains the identifier of the dataset."
 msgid "Organization %1$s does not exist. Dataset %2$s not imported."
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset-import.php:648
+#: post-types/ckan-backend-local-dataset-import.php:647
 #, php-format
 msgctxt "%1$s contains the rights of the dataset. %2$s contains the identifier of the dataset."
 msgid "Term of use %1$s does not exist. Dataset %2$s not imported."
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset-import.php:705
-#: post-types/ckan-backend-local-dataset-import.php:715
+#: post-types/ckan-backend-local-dataset-import.php:704
+#: post-types/ckan-backend-local-dataset-import.php:714
 #, php-format
 msgctxt "%1$s contains the theme uri. %2$s contains the identifier of the dataset."
 msgid "Category %1$s does not exist. Dataset %2$s not imported."
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:188
-#: post-types/ckan-backend-local-harvester-dashboard.php:157
+#: post-types/ckan-backend-local-dataset.php:88
+#: post-types/ckan-backend-local-harvester-dashboard.php:166
+#: post-types/ckan-backend-user-admin.php:175
 msgid "- Please choose -"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:308
+#: post-types/ckan-backend-local-dataset.php:298
 msgid "This dataset is disabled and will not be published on the website."
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:320
-#: post-types/ckan-backend-local-dataset.php:322
-#: post-types/ckan-backend-local-dataset.php:323
-#: post-types/ckan-backend-local-dataset.php:343
+#: post-types/ckan-backend-local-dataset.php:310
+#: post-types/ckan-backend-local-dataset.php:312
+#: post-types/ckan-backend-local-dataset.php:313
+#: post-types/ckan-backend-local-dataset.php:333
 msgid "Datasets"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:321
-#: post-types/ckan-backend-local-dataset.php:395
-#: post-types/ckan-backend-local-dataset.php:623
+#: post-types/ckan-backend-local-dataset.php:311
+#: post-types/ckan-backend-local-dataset.php:385
+#: post-types/ckan-backend-local-dataset.php:613
 msgid "Dataset"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:324
+#: post-types/ckan-backend-local-dataset.php:314
 msgid "All Datasets"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:325
+#: post-types/ckan-backend-local-dataset.php:315
 msgid "Add New Dataset"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:326
+#: post-types/ckan-backend-local-dataset.php:316
 #: post-types/ckan-backend-local-group.php:52
-#: post-types/ckan-backend-local-harvester.php:64
+#: post-types/ckan-backend-local-harvester.php:67
 #: post-types/ckan-backend-local-organisation.php:52
 msgid "Add New"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:327
+#: post-types/ckan-backend-local-dataset.php:317
 msgid "New Dataset"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:328
+#: post-types/ckan-backend-local-dataset.php:318
 msgid "Edit Dataset"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:329
+#: post-types/ckan-backend-local-dataset.php:319
 msgid "Update Dataset"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:330
+#: post-types/ckan-backend-local-dataset.php:320
 msgid "View Dataset"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:331
+#: post-types/ckan-backend-local-dataset.php:321
 msgid "Search Datasets"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:332
+#: post-types/ckan-backend-local-dataset.php:322
 msgid "No Datasets found"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:333
+#: post-types/ckan-backend-local-dataset.php:323
 msgid "No Datasets found in Trash"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:344
+#: post-types/ckan-backend-local-dataset.php:334
 msgid "Datasets which get synced with CKAN"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:404
+#: post-types/ckan-backend-local-dataset.php:394
 msgid "Dataset Identifier"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:406
+#: post-types/ckan-backend-local-dataset.php:396
 msgid "Unique identifier of the dataset linked with the publisher. A good way to make sure this identifier is unique is to use the source system ID."
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:415
+#: post-types/ckan-backend-local-dataset.php:405
 msgid "Dataset Information"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:423
-#: post-types/ckan-backend-local-dataset.php:598
-#: post-types/ckan-backend-local-dataset.php:654
+#: post-types/ckan-backend-local-dataset.php:413
+#: post-types/ckan-backend-local-dataset.php:588
+#: post-types/ckan-backend-local-dataset.php:644
 #: post-types/ckan-backend-local-group.php:129
 #: post-types/ckan-backend-local-organisation.php:129
 msgid "Title"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:430
-#: post-types/ckan-backend-local-dataset.php:661
+#: post-types/ckan-backend-local-dataset.php:420
+#: post-types/ckan-backend-local-dataset.php:651
 #: post-types/ckan-backend-local-group.php:135
-#: post-types/ckan-backend-local-harvester.php:227
+#: post-types/ckan-backend-local-harvester.php:230
 #: post-types/ckan-backend-local-organisation.php:135
 msgid "Description"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:439
+#: post-types/ckan-backend-local-dataset.php:429
 msgid "Dates"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:445
-#: post-types/ckan-backend-local-dataset.php:684
+#: post-types/ckan-backend-local-dataset.php:435
+#: post-types/ckan-backend-local-dataset.php:674
 msgid "Issued"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:447
+#: post-types/ckan-backend-local-dataset.php:437
 msgid "Date of the first publication of this dataset. If this date is unknown, the date of the first publication on this portal can be used."
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:452
-#: post-types/ckan-backend-local-dataset.php:460
-#: post-types/ckan-backend-local-dataset.php:488
-#: post-types/ckan-backend-local-dataset.php:495
-#: post-types/ckan-backend-local-dataset.php:691
-#: post-types/ckan-backend-local-dataset.php:699
+#: post-types/ckan-backend-local-dataset.php:442
+#: post-types/ckan-backend-local-dataset.php:450
+#: post-types/ckan-backend-local-dataset.php:478
+#: post-types/ckan-backend-local-dataset.php:485
+#: post-types/ckan-backend-local-dataset.php:681
+#: post-types/ckan-backend-local-dataset.php:689
 msgctxt "Valid date format string for date field"
 msgid "m/d/Y"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:456
-#: post-types/ckan-backend-local-dataset.php:695
+#: post-types/ckan-backend-local-dataset.php:446
+#: post-types/ckan-backend-local-dataset.php:685
 msgid "Modified"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:458
+#: post-types/ckan-backend-local-dataset.php:448
 msgid "Date when dataset was last modified (since the first publication on the portal)."
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:464
+#: post-types/ckan-backend-local-dataset.php:454
 msgid "Update interval"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:466
+#: post-types/ckan-backend-local-dataset.php:456
 msgid "The interval in which this dataset is updated."
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:475
+#: post-types/ckan-backend-local-dataset.php:465
 msgid "Temporal coverage"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:476
+#: post-types/ckan-backend-local-dataset.php:466
 msgid "One or more time period(s) that this dataset covers."
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:478
+#: post-types/ckan-backend-local-dataset.php:468
 msgid "Temporal coverage {#}"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:479
+#: post-types/ckan-backend-local-dataset.php:469
 msgid "Add another Temporal coverage"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:480
+#: post-types/ckan-backend-local-dataset.php:470
 msgid "Remove Temporal coverage"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:485
+#: post-types/ckan-backend-local-dataset.php:475
 msgid "Start Date"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:492
+#: post-types/ckan-backend-local-dataset.php:482
 msgid "End Date"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:500
+#: post-types/ckan-backend-local-dataset.php:490
 msgid "Publisher Information"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:508
+#: post-types/ckan-backend-local-dataset.php:498
 msgid "Publishers"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:509
+#: post-types/ckan-backend-local-dataset.php:499
 msgid "The actual publisher(s) of this dataset. This can be the same as the organization which publishes this dataset. At least one publisher is required."
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:511
+#: post-types/ckan-backend-local-dataset.php:501
 msgid "Publisher {#}"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:512
+#: post-types/ckan-backend-local-dataset.php:502
 msgid "Add another Publisher"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:513
+#: post-types/ckan-backend-local-dataset.php:503
 msgid "Remove Publisher"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:518
-#: post-types/ckan-backend-local-dataset.php:539
+#: post-types/ckan-backend-local-dataset.php:508
+#: post-types/ckan-backend-local-dataset.php:529
 msgid "Name"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:529
+#: post-types/ckan-backend-local-dataset.php:519
 msgid "Contact points"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:530
+#: post-types/ckan-backend-local-dataset.php:520
 msgid "The contact point if there are questions about this dataset. At least one contact point is required."
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:532
+#: post-types/ckan-backend-local-dataset.php:522
 msgid "Contact Point {#}"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:533
+#: post-types/ckan-backend-local-dataset.php:523
 msgid "Add another Contact Point"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:534
+#: post-types/ckan-backend-local-dataset.php:524
 msgid "Remove Contact Point"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:548
+#: post-types/ckan-backend-local-dataset.php:538
 msgid "Email"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:557
-#: post-types/ckan-backend-local-dataset.php:573
+#: post-types/ckan-backend-local-dataset.php:547
+#: post-types/ckan-backend-local-dataset.php:563
 msgid "Further Information"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:564
+#: post-types/ckan-backend-local-dataset.php:554
 #: post-types/ckan-backend-local-group.php:46
 #: post-types/ckan-backend-local-group.php:48
 #: post-types/ckan-backend-local-group.php:49
@@ -435,192 +440,185 @@ msgstr ""
 msgid "Categories"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:579
+#: post-types/ckan-backend-local-dataset.php:569
 msgid "Landing Page"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:581
+#: post-types/ckan-backend-local-dataset.php:571
 msgid "Website with further information about the dataset."
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:588
+#: post-types/ckan-backend-local-dataset.php:578
 msgid "Relations"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:589
+#: post-types/ckan-backend-local-dataset.php:579
 msgid "Further information related to this dataset."
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:591
+#: post-types/ckan-backend-local-dataset.php:581
 msgid "Relation {#}"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:592
+#: post-types/ckan-backend-local-dataset.php:582
 msgid "Add another Relation"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:593
+#: post-types/ckan-backend-local-dataset.php:583
 msgid "Remove Relation"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:599
+#: post-types/ckan-backend-local-dataset.php:589
 msgid "Use the title 'legal_basis' to provide a link to the legal basis of this dataset."
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:605
-#: post-types/ckan-backend-local-harvester.php:218
+#: post-types/ckan-backend-local-dataset.php:595
+#: post-types/ckan-backend-local-harvester.php:221
 #: post-types/ckan-backend-local-organisation.php:164
 msgid "URL"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:613
+#: post-types/ckan-backend-local-dataset.php:603
 msgid "Dataset Relations"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:614
+#: post-types/ckan-backend-local-dataset.php:604
 msgid "Relations to other datasets."
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:616
+#: post-types/ckan-backend-local-dataset.php:606
 msgid "Dataset Relation {#}"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:617
+#: post-types/ckan-backend-local-dataset.php:607
 msgid "Add another Dataset Relation"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:618
+#: post-types/ckan-backend-local-dataset.php:608
 msgid "Remove Dataset Relation"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:630
+#: post-types/ckan-backend-local-dataset.php:620
 msgid "Distributions"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:639
+#: post-types/ckan-backend-local-dataset.php:629
 msgid "Distribution {#}"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:640
+#: post-types/ckan-backend-local-dataset.php:630
 msgid "Add another Distribution"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:641
+#: post-types/ckan-backend-local-dataset.php:631
 msgid "Remove Distribution"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:646
+#: post-types/ckan-backend-local-dataset.php:636
 msgid "Identifier"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:647
+#: post-types/ckan-backend-local-dataset.php:637
 msgid "Identifier of the distribution in the source system of the publisher."
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:657
+#: post-types/ckan-backend-local-dataset.php:647
 msgid "If the title is left empty, the title of the dataset is used instead."
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:664
+#: post-types/ckan-backend-local-dataset.php:654
 msgid "If the description is left empty, the description of the dataset is used instead."
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:670
+#: post-types/ckan-backend-local-dataset.php:660
 msgid "Language"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:672
+#: post-types/ckan-backend-local-dataset.php:662
 msgid "Languages in which this distribution is available. If the distribution is language-independent do not check anything."
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:676
+#: post-types/ckan-backend-local-dataset.php:666
 msgid "English"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:677
+#: post-types/ckan-backend-local-dataset.php:667
 msgid "German"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:678
+#: post-types/ckan-backend-local-dataset.php:668
 msgid "French"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:679
+#: post-types/ckan-backend-local-dataset.php:669
 msgid "Italian"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:686
+#: post-types/ckan-backend-local-dataset.php:676
 msgid "Date of the publication of this distribution."
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:697
+#: post-types/ckan-backend-local-dataset.php:687
 msgid "Date of the last change of the distribution."
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:703
+#: post-types/ckan-backend-local-dataset.php:693
 msgid "Terms of use"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:705
+#: post-types/ckan-backend-local-dataset.php:695
 msgid "All terms of use which are not marked with an asterisk (*) are declared as closed data."
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:712
+#: post-types/ckan-backend-local-dataset.php:702
 msgid "Access URL"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:714
+#: post-types/ckan-backend-local-dataset.php:704
 msgid "URL where the distribution can be found. This could be either a download URL, an API url or a landing page URL. If the distribution is only available through a landing page, this field must contain the URL of the landing page. If a download URL was given for this distribution, this field has to contain the same value."
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:722
+#: post-types/ckan-backend-local-dataset.php:712
 msgid "Download URL"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:724
+#: post-types/ckan-backend-local-dataset.php:714
 msgid "URL of a file, if the distribution can be downloaded."
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:729
+#: post-types/ckan-backend-local-dataset.php:719
 msgid "Size (in Bytes)"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:735
+#: post-types/ckan-backend-local-dataset.php:725
 #: taxonomies/ckan-backend-mediatype.php:31
 msgid "Format"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:743
-#: post-types/ckan-backend-local-dataset.php:751
+#: post-types/ckan-backend-local-dataset.php:733
+#: post-types/ckan-backend-local-dataset.php:741
 msgid "Disable Dataset"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:760
+#: post-types/ckan-backend-local-dataset.php:750
 #: post-types/ckan-backend-local-group.php:151
-#: post-types/ckan-backend-local-harvester.php:280
+#: post-types/ckan-backend-local-harvester.php:283
 #: post-types/ckan-backend-local-organisation.php:178
 msgid "CKAN Data"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:769
+#: post-types/ckan-backend-local-dataset.php:759
 #: post-types/ckan-backend-local-group.php:160
-#: post-types/ckan-backend-local-harvester.php:289
+#: post-types/ckan-backend-local-harvester.php:292
 #: post-types/ckan-backend-local-organisation.php:187
 msgid "ID"
 msgstr ""
 
-#: post-types/ckan-backend-local-dataset.php:779
+#: post-types/ckan-backend-local-dataset.php:769
 #: post-types/ckan-backend-local-group.php:170
-#: post-types/ckan-backend-local-harvester.php:299
+#: post-types/ckan-backend-local-harvester.php:302
 #: post-types/ckan-backend-local-organisation.php:197
 msgid "Name (Slug)"
-msgstr ""
-
-#: post-types/ckan-backend-local-dataset.php:788
-#: post-types/ckan-backend-local-group.php:179
-#: post-types/ckan-backend-local-harvester.php:308
-#: post-types/ckan-backend-local-organisation.php:206
-msgid "Sync Status"
 msgstr ""
 
 #: post-types/ckan-backend-local-group.php:47
@@ -677,11 +675,11 @@ msgstr ""
 msgid "Image"
 msgstr ""
 
-#: post-types/ckan-backend-local-group.php:187
+#: post-types/ckan-backend-local-group.php:181
 msgid "RDF Reference"
 msgstr ""
 
-#: post-types/ckan-backend-local-group.php:196
+#: post-types/ckan-backend-local-group.php:190
 msgid "RDF URI"
 msgstr ""
 
@@ -690,347 +688,348 @@ msgid "Harvester Dashboard"
 msgstr ""
 
 #: post-types/ckan-backend-local-harvester-dashboard.php:57
-#: post-types/ckan-backend-local-harvester.php:124
-#: post-types/ckan-backend-local-harvester.php:171
+#: post-types/ckan-backend-local-harvester.php:127
+#: post-types/ckan-backend-local-harvester.php:174
 msgid "Dashboard"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:105
+#: post-types/ckan-backend-local-harvester-dashboard.php:112
 msgid "Successfully created new harvester job."
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:119
+#: post-types/ckan-backend-local-harvester-dashboard.php:129
 msgid "Current harvester job successfully aborted."
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:133
+#: post-types/ckan-backend-local-harvester-dashboard.php:143
 msgid "Successfully cleared all harvester datasets."
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:153
+#: post-types/ckan-backend-local-harvester-dashboard.php:162
 msgid "Choose Harvester:"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:164
+#: post-types/ckan-backend-local-harvester-dashboard.php:173
 msgid "Show"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:175
+#: post-types/ckan-backend-local-harvester-dashboard.php:184
 msgid "Please select a harvester first."
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:191
+#: post-types/ckan-backend-local-harvester-dashboard.php:200
 msgid "Refresh page"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:192
+#: post-types/ckan-backend-local-harvester-dashboard.php:201
 #, php-format
 msgctxt "%s contains the id of the harvester"
 msgid "Harvester ID: %s"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:205
+#: post-types/ckan-backend-local-harvester-dashboard.php:215
 msgid "(edit)"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:227
+#: post-types/ckan-backend-local-harvester-dashboard.php:238
 msgid "Show all jobs"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:229
+#: post-types/ckan-backend-local-harvester-dashboard.php:240
 msgid "Show less jobs"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:252
+#: post-types/ckan-backend-local-harvester-dashboard.php:264
 msgid "Are you sure you want to abort the current job of this harvester?"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:253
+#: post-types/ckan-backend-local-harvester-dashboard.php:265
 msgid "Abort unfinished job"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:255
+#: post-types/ckan-backend-local-harvester-dashboard.php:268
 msgid "Reharvest"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:259
+#: post-types/ckan-backend-local-harvester-dashboard.php:273
 msgid "Are you sure you want to clear all data of this harvester?"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:260
+#: post-types/ckan-backend-local-harvester-dashboard.php:274
 msgid "Clear"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:267
+#: post-types/ckan-backend-local-harvester-dashboard.php:282
 msgid "All Harvest Jobs"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:269
+#: post-types/ckan-backend-local-harvester-dashboard.php:284
 msgid "Latest Harvest Job"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:275
+#: post-types/ckan-backend-local-harvester-dashboard.php:290
 msgid "No Jobs found for this harvester."
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:301
+#: post-types/ckan-backend-local-harvester-dashboard.php:316
 #, php-format
 msgctxt "%s contains the date and time when the jobs was created."
 msgid "Job created at %s"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:307
-#: post-types/ckan-backend-local-harvester.php:153
+#: post-types/ckan-backend-local-harvester-dashboard.php:322
+#: post-types/ckan-backend-local-harvester.php:156
 #, php-format
 msgctxt "%s contains the number of added datasets."
 msgid "%s added"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:308
-#: post-types/ckan-backend-local-harvester.php:154
+#: post-types/ckan-backend-local-harvester-dashboard.php:323
+#: post-types/ckan-backend-local-harvester.php:157
 #, php-format
 msgctxt "%s contains the number of updated datasets."
 msgid "%s updated"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:309
-#: post-types/ckan-backend-local-harvester.php:155
+#: post-types/ckan-backend-local-harvester-dashboard.php:324
+#: post-types/ckan-backend-local-harvester.php:158
 #, php-format
 msgctxt "%s contains the number of deleted datasets."
 msgid "%s deleted"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:310
+#: post-types/ckan-backend-local-harvester-dashboard.php:325
 #, php-format
 msgctxt "%s contains the number of errors."
 msgid "%s errors"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:317
+#: post-types/ckan-backend-local-harvester-dashboard.php:332
 msgid "Job ID"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:321
+#: post-types/ckan-backend-local-harvester-dashboard.php:336
 msgid "Created"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:325
+#: post-types/ckan-backend-local-harvester-dashboard.php:340
 msgid "Started"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:329
+#: post-types/ckan-backend-local-harvester-dashboard.php:344
+#: post-types/ckan-backend-local-harvester.php:400
 msgid "Finished"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:333
-#: post-types/ckan-backend-local-harvester.php:123
+#: post-types/ckan-backend-local-harvester-dashboard.php:348
+#: post-types/ckan-backend-local-harvester.php:126
 msgid "Status"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:339
+#: post-types/ckan-backend-local-harvester-dashboard.php:354
 msgid "Show Job details"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:356
+#: post-types/ckan-backend-local-harvester-dashboard.php:371
 msgid "Job detail"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:357
+#: post-types/ckan-backend-local-harvester-dashboard.php:372
 msgid "Back to Job list"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:374
+#: post-types/ckan-backend-local-harvester-dashboard.php:389
 msgid "Error summary"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:384
+#: post-types/ckan-backend-local-harvester-dashboard.php:399
 msgid "No errors for this job"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:388
-#: post-types/ckan-backend-local-harvester-dashboard.php:419
+#: post-types/ckan-backend-local-harvester-dashboard.php:403
+#: post-types/ckan-backend-local-harvester-dashboard.php:434
 msgid "Job Errors"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:394
-#: post-types/ckan-backend-local-harvester-dashboard.php:429
+#: post-types/ckan-backend-local-harvester-dashboard.php:409
+#: post-types/ckan-backend-local-harvester-dashboard.php:444
 msgid "Document Errors"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:413
+#: post-types/ckan-backend-local-harvester-dashboard.php:428
 msgid "Error Report"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:438
+#: post-types/ckan-backend-local-harvester-dashboard.php:453
 #, php-format
 msgctxt "%s contains the line number of the error."
 msgid "(Line: %s)"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:465
+#: post-types/ckan-backend-local-harvester-dashboard.php:480
 msgid "Count"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester-dashboard.php:466
+#: post-types/ckan-backend-local-harvester-dashboard.php:481
 msgid "Message"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester.php:58
-#: post-types/ckan-backend-local-harvester.php:60
 #: post-types/ckan-backend-local-harvester.php:61
-#: post-types/ckan-backend-local-harvester.php:75
+#: post-types/ckan-backend-local-harvester.php:63
+#: post-types/ckan-backend-local-harvester.php:64
+#: post-types/ckan-backend-local-harvester.php:78
 msgid "Harvesters"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester.php:59
-#: post-types/ckan-backend-local-harvester.php:203
+#: post-types/ckan-backend-local-harvester.php:62
+#: post-types/ckan-backend-local-harvester.php:206
 msgid "Harvester"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester.php:62
+#: post-types/ckan-backend-local-harvester.php:65
 msgid "All Harvesters"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester.php:63
+#: post-types/ckan-backend-local-harvester.php:66
 msgid "Add New Harvester"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester.php:65
+#: post-types/ckan-backend-local-harvester.php:68
 msgid "New Harvester"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester.php:66
+#: post-types/ckan-backend-local-harvester.php:69
 msgid "Edit Harvester"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester.php:67
+#: post-types/ckan-backend-local-harvester.php:70
 msgid "Update Harvester"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester.php:68
+#: post-types/ckan-backend-local-harvester.php:71
 msgid "View Harvester"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester.php:69
+#: post-types/ckan-backend-local-harvester.php:72
 msgid "Search Harvesters"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester.php:70
+#: post-types/ckan-backend-local-harvester.php:73
 msgid "No Harvesters found"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester.php:71
+#: post-types/ckan-backend-local-harvester.php:74
 msgid "No Harvesters found in Trash"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester.php:76
+#: post-types/ckan-backend-local-harvester.php:79
 msgid "Harvesters which get synced with CKAN"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester.php:147
+#: post-types/ckan-backend-local-harvester.php:150
 #, php-format
 msgctxt "%s contains job count of harvester"
 msgid "Job count: %s"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester.php:150
+#: post-types/ckan-backend-local-harvester.php:153
 #, php-format
 msgctxt "%s contains the date when the last job was created"
 msgid "Last job created: %s"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester.php:151
+#: post-types/ckan-backend-local-harvester.php:154
 #, php-format
 msgctxt "%s contains the date when the last job started"
 msgid "Last job started: %s"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester.php:152
+#: post-types/ckan-backend-local-harvester.php:155
 #, php-format
 msgctxt "%s contains the date when the last job finished"
 msgid "Last job finished: %s"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester.php:156
+#: post-types/ckan-backend-local-harvester.php:159
 #, php-format
 msgctxt "%s contains the number of errored dataset."
 msgid "%s errored"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester.php:160
+#: post-types/ckan-backend-local-harvester.php:163
 msgid "No jobs yet"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester.php:167
+#: post-types/ckan-backend-local-harvester.php:170
 msgid "Could not retrieve harvest source status"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester.php:212
+#: post-types/ckan-backend-local-harvester.php:215
 msgid "Harvester Information"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester.php:234
+#: post-types/ckan-backend-local-harvester.php:237
 msgid "Source type"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester.php:254
+#: post-types/ckan-backend-local-harvester.php:257
 msgid "Update frequency"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester.php:258
+#: post-types/ckan-backend-local-harvester.php:261
 msgid "Manual"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester.php:259
+#: post-types/ckan-backend-local-harvester.php:262
 #: taxonomies/ckan-backend-frequency.php:34
 msgid "Monthly"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester.php:260
+#: post-types/ckan-backend-local-harvester.php:263
 #: taxonomies/ckan-backend-frequency.php:30
 msgid "Weekly"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester.php:261
+#: post-types/ckan-backend-local-harvester.php:264
 #: taxonomies/ckan-backend-frequency.php:32
 msgid "Biweekly"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester.php:262
+#: post-types/ckan-backend-local-harvester.php:265
 #: taxonomies/ckan-backend-frequency.php:27
 msgid "Daily"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester.php:263
+#: post-types/ckan-backend-local-harvester.php:266
 msgid "Always"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester.php:271
+#: post-types/ckan-backend-local-harvester.php:274
 msgid "Configuration"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester.php:273
+#: post-types/ckan-backend-local-harvester.php:276
 msgid "Only a valid JSON object is allowed. Eg. { \"option\": \"value\" }"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester.php:406
+#: post-types/ckan-backend-local-harvester.php:399
 msgid "Errored"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester.php:407
-msgid "Updated"
+#: post-types/ckan-backend-local-harvester.php:401
+msgid "Running"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester.php:408
-msgid "Added"
+#: post-types/ckan-backend-local-harvester.php:402
+msgid "Others"
 msgstr ""
 
-#: post-types/ckan-backend-local-harvester.php:409
-msgid "Deleted"
-msgstr ""
-
-#: post-types/ckan-backend-local-harvester.php:413
+#: post-types/ckan-backend-local-harvester.php:406
 msgid "All harvest states"
+msgstr ""
+
+#: post-types/ckan-backend-local-harvester.php:491
+msgid "Open Harvester Dashboard"
 msgstr ""
 
 #: post-types/ckan-backend-local-organisation.php:46
@@ -1104,67 +1103,71 @@ msgstr ""
 msgid "Organization User"
 msgstr ""
 
-#: post-types/ckan-backend-user-admin.php:72
+#: post-types/ckan-backend-user-admin.php:73
 msgid "You do not have permission to create users for this role."
 msgstr ""
 
-#: post-types/ckan-backend-user-admin.php:77
+#: post-types/ckan-backend-user-admin.php:78
 msgid "Username is mandatory"
 msgstr ""
 
-#: post-types/ckan-backend-user-admin.php:81
+#: post-types/ckan-backend-user-admin.php:82
 msgid "E-Mail is mandatory"
 msgstr ""
 
-#: post-types/ckan-backend-user-admin.php:85
+#: post-types/ckan-backend-user-admin.php:86
+msgid "Please select a valid organization."
+msgstr ""
+
+#: post-types/ckan-backend-user-admin.php:92
 msgid "User with this username already exists, choose a different one."
 msgstr ""
 
-#: post-types/ckan-backend-user-admin.php:89
+#: post-types/ckan-backend-user-admin.php:96
 msgid "User with this e-mail address already exists, choose a different one."
 msgstr ""
 
-#: post-types/ckan-backend-user-admin.php:100
+#: post-types/ckan-backend-user-admin.php:105
 #, php-format
 msgid "User %s successfully created. An e-mail to set the password has been sent to the user."
 msgstr ""
 
-#: post-types/ckan-backend-user-admin.php:103
+#: post-types/ckan-backend-user-admin.php:107
 #, php-format
 msgid "Error while creating user: %s"
 msgstr ""
 
-#: post-types/ckan-backend-user-admin.php:132
+#: post-types/ckan-backend-user-admin.php:137
 msgid "Username"
 msgstr ""
 
-#: post-types/ckan-backend-user-admin.php:132
-#: post-types/ckan-backend-user-admin.php:136
-#: post-types/ckan-backend-user-admin.php:159
+#: post-types/ckan-backend-user-admin.php:137
+#: post-types/ckan-backend-user-admin.php:141
+#: post-types/ckan-backend-user-admin.php:164
 msgid "required"
 msgstr ""
 
-#: post-types/ckan-backend-user-admin.php:136
+#: post-types/ckan-backend-user-admin.php:141
 msgid "E-Mail"
 msgstr ""
 
-#: post-types/ckan-backend-user-admin.php:140
+#: post-types/ckan-backend-user-admin.php:145
 msgid "First name"
 msgstr ""
 
-#: post-types/ckan-backend-user-admin.php:144
+#: post-types/ckan-backend-user-admin.php:149
 msgid "Last name"
 msgstr ""
 
-#: post-types/ckan-backend-user-admin.php:148
+#: post-types/ckan-backend-user-admin.php:153
 msgid "Role"
 msgstr ""
 
-#: post-types/ckan-backend-user-admin.php:158
+#: post-types/ckan-backend-user-admin.php:163
 msgid "Organisation"
 msgstr ""
 
-#: post-types/ckan-backend-user-admin.php:171
+#: post-types/ckan-backend-user-admin.php:194
 msgid "Add new user"
 msgstr ""
 
