@@ -620,6 +620,15 @@ class Ckan_Backend_Dataset_Model {
 			$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'description_' . $lang ] = $this->get_description( $lang );
 		}
 
+		// initialize empty arrays to make sure that we always return all fields
+		$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'publishers' ] = array();
+		$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'contact_points' ] = array();
+		$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'relations' ] = array();
+		$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'temporals' ] = array();
+		$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'see_alsos' ] = array();
+		$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'temporals' ] = array();
+		$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'distributions' ] = array();
+
 		foreach ( $this->get_publishers() as $publisher ) {
 			$dataset[ Ckan_Backend_Local_Dataset::FIELD_PREFIX . 'publishers' ][] = $publisher->to_array();
 		}
