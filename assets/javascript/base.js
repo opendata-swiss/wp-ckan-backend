@@ -69,6 +69,5 @@ jQuery( document ).ready(function( $ ) {
     $('.cmb-remove-row').append('<p class="cmb2-metabox-description" style="align: right">' + baseConfig.datasetEdit.deleteText + '</p>');
 
     var code = "jQuery(this).siblings('button').prop('disabled', function(i, v) { return !v; });";
-    //var code = "jQuery(this).next().attr('disabled', false);";
     $('.cmb-remove-row').prepend('<input type="checkbox" style="position: relative; top:5px; margin-bottom: 15px;" onchange="' + code + '"></input></span>');
 });
