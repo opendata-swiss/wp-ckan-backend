@@ -405,6 +405,9 @@ if ( ! class_exists( 'Ckan_Backend', false ) ) {
 					'mediatypeSearch' => array(
 						'placeholder' => __( 'No media type', 'ogdch-backend' ),
 					),
+					'datasetEdit' => array(
+						'deleteText' => __( 'Click checkbox to enable delete button', 'ogdch-backend' ),
+					),
 				)
 			);
 
