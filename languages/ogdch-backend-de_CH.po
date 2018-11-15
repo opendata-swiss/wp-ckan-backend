@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: wp-ckan-backend 1.0.0\n"
 "Report-Msgid-Bugs-To: jazz@liip.ch\n"
 "POT-Creation-Date: 2018-11-14 11:07+0100\n"
-"PO-Revision-Date: 2018-11-14 11:33+0100\n"
+"PO-Revision-Date: 2018-11-15 13:50+0100\n"
 "Last-Translator: Jürg Hunziker <juerg.hunziker@gmail.com>, 2018\n"
 "Language-Team: German (https://www.transifex.com/opendataswiss/teams/54778/"
 "de/)\n"
@@ -871,7 +871,7 @@ msgstr "Übergeordnete Organisation"
 
 #: post-types/ckan-backend-local-organisation.php:148
 msgid "None - top level"
-msgstr "Keine Ã¼bergeordnete Organisation"
+msgstr "Keine übergeordnete Organisation"
 
 #: post-types/ckan-backend-local-organisation.php:154
 msgid "Political level"
@@ -893,7 +893,7 @@ msgstr "Importieren"
 
 #: post-types/ckan-backend-local-dataset-import.php:69
 msgid "No datasets found in given import file"
-msgstr "Keine DatensÃ¤tze in der Import-Datei gefunden."
+msgstr "Keine Datensätze in der Import-Datei gefunden."
 
 #: post-types/ckan-backend-local-dataset-import.php:82
 #, php-format
@@ -1153,7 +1153,7 @@ msgstr "Aktueller Harvester Job wurde erfolgreich abgebrochen."
 
 #: post-types/ckan-backend-local-harvester-dashboard.php:143
 msgid "Successfully cleared all harvester datasets."
-msgstr "Die DatensÃ¤tze des Harvesters wurden erfolgreich gelöscht."
+msgstr "Die Datensätze des Harvesters wurden erfolgreich gelöscht."
 
 #: post-types/ckan-backend-local-harvester-dashboard.php:162
 msgid "Choose Harvester:"
@@ -1205,8 +1205,7 @@ msgstr "Erneut harvesten"
 
 #: post-types/ckan-backend-local-harvester-dashboard.php:273
 msgid "Are you sure you want to clear all data of this harvester?"
-msgstr ""
-"Sind Sie sicher, dass Sie alle Daten dieses Harvesters lÃ¶schen wollen?"
+msgstr "Sind Sie sicher, dass Sie alle Daten dieses Harvesters löschen wollen?"
 
 #: post-types/ckan-backend-local-harvester-dashboard.php:274
 msgid "Clear"
@@ -1302,7 +1301,7 @@ msgstr "CKAN Synchronisation abgebrochen! Bitte einen Titel angeben."
 
 #: taxonomies/ckan-backend-frequency.php:25
 msgid "Irregular"
-msgstr "UnregelmÃ¤ssig"
+msgstr "Unregelmässig"
 
 #: taxonomies/ckan-backend-frequency.php:26
 msgid "Continuous"
@@ -1383,7 +1382,7 @@ msgstr "Neuer Format Name"
 
 #: taxonomies/ckan-backend-mediatype.php:50
 msgid "Formats for CKAN datasets"
-msgstr "Formate für CKAN DatensÃ¤tze"
+msgstr "Formate für CKAN Datensätze"
 
 #: taxonomies/ckan-backend-politicallevel.php:25
 msgid "Confederation"
@@ -1474,7 +1473,7 @@ msgid ""
 "Not Required"
 msgstr ""
 "* Nicht-kommerzielle Nutzung erlaubt / Kommerzielle Nutzung mit Erlaubnis "
-"zulÃ¤ssig / Referenz nicht erforderlich"
+"zulässig / Referenz nicht erforderlich"
 
 #: taxonomies/ckan-backend-rights.php:28
 msgid ""
@@ -1482,7 +1481,7 @@ msgid ""
 "Required"
 msgstr ""
 "* Nicht-kommerzielle Nutzung erlaubt / Kommerzielle Nutzung mit Erlaubnis "
-"zulÃ¤ssig / Referenz erforderlich"
+"zulässig / Referenz erforderlich"
 
 #: taxonomies/ckan-backend-rights.php:29
 msgid ""
@@ -1530,7 +1529,7 @@ msgid ""
 "Not Required"
 msgstr ""
 "Nicht-kommerzielle Nutzung nicht erlaubt / Kommerzielle Nutzung mit "
-"Erlaubnis zulÃ¤ssig / Referenz nicht erforderlich"
+"Erlaubnis zulässig / Referenz nicht erforderlich"
 
 #: taxonomies/ckan-backend-rights.php:36
 msgid ""
@@ -1538,7 +1537,7 @@ msgid ""
 "Required"
 msgstr ""
 "Nicht-kommerzielle Nutzung nicht erlaubt / Kommerzielle Nutzung mit "
-"Erlaubnis zulÃ¤ssig / Referenz erforderlich"
+"Erlaubnis zulässig / Referenz erforderlich"
 
 #: helper/ckan-backend-helper.php:54
 msgid "There was a problem sending the request."
