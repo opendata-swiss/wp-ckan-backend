@@ -145,7 +145,7 @@ class Ckan_Backend_Local_Dataset {
 		?>
 		<script type="text/javascript">
 			(function($) {
-				$("[name='<?php echo esc_attr( $field->args['_name'] ); ?>'").select2(datasetSearchOptions);
+				$("[name='<?php echo esc_attr( $field->args['_name'] ); ?>']").select2(datasetSearchOptions);
 			})( jQuery );
 		</script>
 		<?php
@@ -177,7 +177,7 @@ class Ckan_Backend_Local_Dataset {
 		</select>
 		<script type="text/javascript">
 			(function($) {
-				$("[name='<?php echo esc_attr( $field->args['_name'] ); ?>'").select2(mediatypeSearchOptions);
+				$("[name='<?php echo esc_attr( $field->args['_name'] ); ?>']").select2(mediatypeSearchOptions);
 			})( jQuery );
 		</script>
 		<?php
