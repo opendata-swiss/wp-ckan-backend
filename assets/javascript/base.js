@@ -46,7 +46,7 @@ jQuery( document ).ready(function( $ ) {
                 var name = $(row).find('.' + boxClassName)[0].name;
                 // remove the previous select2 rendering, as CMB2 copies everything
                 $("[name='" + name + "'] + .select2-container").remove();
-                var new_select = $("[name='" + name + "'").select2(options);
+                var new_select = $("[name='" + name + "']").select2(options);
                 // select empty value as original is copied
                 new_select.val('').trigger('change');
             });
