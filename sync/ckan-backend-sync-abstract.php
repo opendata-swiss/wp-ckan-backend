@@ -220,6 +220,11 @@ abstract class Ckan_Backend_Sync_Abstract {
 		}
 
 		$data     = wp_json_encode( $data );
+
+		// echo "<pre>";
+		// var_dump($data);
+		// echo "</pre>";
+		//die;
 		$response = Ckan_Backend_Helper::do_api_request( $endpoint, $data );
 		$errors   = Ckan_Backend_Helper::check_response_for_errors( $response );
 		$this->store_errors_in_notices_option( $errors );

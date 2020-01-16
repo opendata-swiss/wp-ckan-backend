@@ -73,6 +73,10 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 			'temporals'           => $temporals,
 			'see_alsos'           => $see_alsos,
 		);
+		// echo "<pre>";
+		// var_dump($data);
+		// echo "</pre>";
+		// die;
 
 		$organisation = $identifier['organisation'];
 		if ( ! empty( $organisation ) ) {
@@ -143,6 +147,7 @@ class Ckan_Backend_Sync_Local_Dataset extends Ckan_Backend_Sync_Abstract {
 						'media_type'   => $resource['media_type'],
 						'format'       => key_exists( 'format', $resource ) ? $resource['format'] : '',
 						'coverage'     => key_exists( 'coverage', $resource ) ? $resource['coverage'] : '',
+					    'hash'         => 23
 					);
 				}
 			}
